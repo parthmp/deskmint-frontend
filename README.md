@@ -38,7 +38,7 @@ Clone this repository:
    cd deskmint-frontend
    npm install
    npm run dev
-
+   ```
 
 🔒 **License**: DeskMint is source-available software licensed under the [Elastic License 2.0](./LICENSE). You are free to view, modify, and self-host it for personal and commercial usage. However, you are not allowed to offer it as a hosted service or sell it as a SaaS product without a commercial license.
 
