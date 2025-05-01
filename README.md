@@ -31,13 +31,15 @@ This repository contains the frontend for DeskMint. The frontend is built using 
 1. **Node.js** (v16.x or higher)
 2. **npm**
 
-### Steps
 
-1. Clone this repository:
+Clone this repository:
    ```bash
    git clone https://github.com/your-username/deskmint-frontend.git
    cd deskmint-frontend
    npm install
    npm run dev
+
+
+🔒 **License**: DeskMint is source-available software licensed under the [Elastic License 2.0](./LICENSE). You are free to view, modify, and self-host it for personal and commercial usage. However, you are not allowed to offer it as a hosted service or sell it as a SaaS product without a commercial license.
 
 
