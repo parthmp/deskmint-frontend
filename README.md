@@ -34,7 +34,7 @@ This repository contains the frontend for DeskMint. The frontend is built using 
 
 Clone this repository:
    ```bash
-   git clone https://github.com/your-username/deskmint-frontend.git
+   git clone https://github.com/parthmp/deskmint-frontend.git
    cd deskmint-frontend
    npm install
    npm run dev
