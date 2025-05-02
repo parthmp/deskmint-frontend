@@ -1,0 +1,12 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "module": "esnext", // Change this line to the appropriate value
+    "target": "esnext",  // You can keep this or change depending on your needs
+    // other options...
+  }
+}
