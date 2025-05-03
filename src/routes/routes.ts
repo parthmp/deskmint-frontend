@@ -3,15 +3,15 @@ import type { RouteRecordRaw } from 'vue-router'
 
 
 // Import your components
-import Home from './../components/Home.vue'
+import Dashboard from './../components/Dashboard.vue'
 import About from './../components/About.vue'
 
 // Define routes
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'Dashboard',
+    component: Dashboard
   },
   {
     path: '/about',

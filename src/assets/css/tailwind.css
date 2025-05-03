@@ -1,1 +1,18 @@
 @import "tailwindcss";
+
+@layer utilities {
+    .in-scrollbar, .in-scrollbar::-webkit-scrollbar{
+        -ms-overflow-style: thin;
+        scrollbar-width: thin;
+        scrollbar-color: gray transparent;
+    }
+}
+
+@theme {
+    --font-display: "Satoshi", "sans-serif";
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
+}
