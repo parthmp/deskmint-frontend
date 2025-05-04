@@ -98,6 +98,9 @@
             },
             updateScreenSize() {
                 this.isMobile = window.innerWidth < 768;
+                if(this.isMobile){
+                    this.menuState = false;
+                }
             }
         },
         computed: {
@@ -117,6 +120,7 @@
             }
         },
         mounted() {
+            this.updateScreenSize();
             window.addEventListener('resize', this.updateScreenSize);
         },
         beforeUnmount() {
