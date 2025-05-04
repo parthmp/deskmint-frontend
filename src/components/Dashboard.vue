@@ -14,7 +14,7 @@
         </div>
           
         <div class="grid grid-cols-1 mt-12" :class="{'md:grid-cols-[minmax(260px,auto)_1fr]' : (menuState && !isMobile), 'md:grid-cols-[minmax(40px,auto)_1fr]' : (!menuState && !isMobile)}">
-            <div class="mt-[5px] h-[100vh] overflow-auto in-scrollbar" :class="{'max-w-[260px]' : isMobile}">
+            <div class="mt-[5px] h-[100vh] overflow-auto in-scrollbar" v-show="conditionalShow" :class="{'max-w-[260px]' : isMobile}">
                 <div v-for="(item, index) in menuItems" v-bind:key="item.id" class="mb-[5px]">
                     <a href="javascript:;" @click="showHideMenuItems(index)">
                         <div class="flex bg-amber-300">
@@ -95,7 +95,32 @@
                     
                 });
                 
+            },
+            updateScreenSize() {
+                this.isMobile = window.innerWidth < 768;
             }
+        },
+        computed: {
+            conditionalShow: function(){
+                
+                if(this.isMobile){
+                    if(this.menuState){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else{
+                    return true;
+                }
+
+                
+            }
+        },
+        mounted() {
+            window.addEventListener('resize', this.updateScreenSize);
+        },
+        beforeUnmount() {
+            window.removeEventListener('resize', this.updateScreenSize);
         }
     }
 
