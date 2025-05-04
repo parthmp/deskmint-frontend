@@ -10,11 +10,11 @@
                 </div>
                 
                 </div>
-            <div class="bg-amber-600">col 2 (flexible)</div>
+            <div class="bg-amber-600" v-show="!isMobile">col 2 (flexible)</div>
         </div>
           
         <div class="grid grid-cols-1 mt-12" :class="{'md:grid-cols-[minmax(260px,auto)_1fr]' : (menuState && !isMobile), 'md:grid-cols-[minmax(40px,auto)_1fr]' : (!menuState && !isMobile)}">
-            <div class="mt-[5px] h-[100vh] overflow-auto in-scrollbar" v-show="conditionalShow" :class="{'max-w-[260px]' : isMobile}">
+            <div class="mt-[5px] h-[100vh] overflow-auto in-scrollbar" v-show="conditionalShow" :class="{'max-w-[260px]' : isMobile, 'fixed': isMobile}">
                 <div v-for="(item, index) in menuItems" v-bind:key="item.id" class="mb-[5px]">
                     <a href="javascript:;" @click="showHideMenuItems(index)">
                         <div class="flex bg-amber-300">
