@@ -1,39 +1,41 @@
 <template>
     <div>
+
         <!--topbar-->
-        <div class="bg-amber-300 flex flex-col pl-0 fixed top-0 w-full md:flex-row">
-            <div v-if="showMenu" class="hidden w-64 md:w-64 md:block text-center font-bold px-3 py-4">DeskMint</div>
-            <a href="javascript:;" @click="showMenu = !showMenu" class="p-3 pl-4 pb-3 pr-4 mt-0 bg-amber-950 w-fit text-xl"><div class=""><menu-icon :size="32" /></div></a>
-        </div>
-
-        <div class="mt-14 bg-green-600">
-            <div class="flex flex-col md:flex-row">
-                <!--sidebar-->
-                <div v-show="showMenu" class="fixed z-10 md:relative md:block h-[100vh] overflow-x-auto in-scrollbar bg-amber-50">
-                    <aside class="w-64 md:w-64">
-                        <nav>
-                            <ul>
-                                <li class="block bg-amber-500 block mt-2"><a href="" class="p-2 block"><menu-icon :size="26" />&nbsp;<span v-show="!isMobile && showMenu">Test</span></a></li>
-                                <li class="block bg-amber-500 block mt-2"><a href="" class="p-2 block"><menu-icon :size="26" />&nbsp;<span v-show="!isMobile && showMenu">Test</span></a></li>
-                                <li class="block bg-amber-500 block mt-2 relative"><a href="" class="p-2 block"><menu-icon :size="26" />&nbsp;<span v-show="!isMobile && showMenu">Test</span>
-                                    <span class="absolute top-2 right-2"><menu-icon :size="26" /></span></a>
-                                    <ul class="ml-2 hidden">
-                                        <li class="block bg-amber-500 block mt-2"><a href="" class="p-2 block"><menu-icon :size="26" />&nbsp;Test</a></li>
-                                        <li class="block bg-amber-500 block mt-2"><a href="" class="p-2 block"><menu-icon :size="26" />&nbsp;Test</a></li>
-                                        <li class="block bg-amber-500 block mt-2"><a href="" class="p-2 block"><menu-icon :size="26" />&nbsp;Test</a></li>
-                                        <li class="block bg-amber-500 block mt-2"><a href="" class="p-2 block"><menu-icon :size="26" />&nbsp;Test</a></li>
-                                    </ul>
-                                
-                                </li>
-                                <li class="block bg-amber-500 block mt-2"><a href="" class="p-2 block"><menu-icon :size="26" />&nbsp;<span v-show="!isMobile && showMenu">Test</span></a></li>
-                            </ul>
-                        </nav>
-                    </aside>
+        <div class="grid grid-cols-1 md:grid-cols-[minmax(260px,auto)_1fr] fixed w-full top-0">
+            <div class="bg-amber-200 p-[5px] font-bold">
+                <div class="flex items-center">
+                    <span class=""><a @click="setMenuState()" href="javascript:;"><menu-icon :size="40" /></a></span>
+                    <span class="ml-[14px] text-lg">DeskMint</span>
                 </div>
-
-                <!--content area-->
-                <div>2aa</div>
+                
+                </div>
+            <div class="bg-amber-600">col 2 (flexible)</div>
+        </div>
+          
+        <div class="grid grid-cols-1 mt-12" :class="{'md:grid-cols-[minmax(260px,auto)_1fr]' : (menuState && !isMobile), 'md:grid-cols-[minmax(40px,auto)_1fr]' : (!menuState && !isMobile)}">
+            <div class="mt-[5px] h-[100vh] overflow-auto in-scrollbar" :class="{'max-w-[260px]' : isMobile}">
+                <div v-for="(item, index) in menuItems" v-bind:key="item.id" class="mb-[5px]">
+                    <a href="javascript:;" @click="showHideMenuItems(index)">
+                        <div class="flex bg-amber-300">
+                            <span class="ml-[6px]"><menu-icon :size="32" /></span>
+                            <span class="p-[5px]" v-show="menuState">{{ item.label }}</span>
+                            <span class="ml-auto mr-[10px]" v-show="menuState && !isMobile"><menu-icon :size="32" /></span>
+                        </div>
+                    </a>
+                    <div class="submenus ml-[25px]" v-show="item.showSubMenus" :class="{'absolute': !menuState, 'ml-[40px]': !menuState, 'mt-[-20px]': !menuState}">
+                        <a v-for="(itemsub, indexsub) in menuItems[index].submenu" v-bind:key="indexsub" href="javascript:;">
+                            <div>
+                                <div class="flex bg-amber-300 mb-[5px]">
+                                    <span class="ml-[6px]"><menu-icon :size="32" /></span>
+                                    <span class="p-[5px]">{{ itemsub.label }}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
+            <div class="bg-amber-400">content</div>
         </div>
 
     </div>
@@ -50,12 +52,50 @@
         },
         data : function(){
             return {
-                showMenu : true,
+                menuState : true,
+                currentSubMenuIndex: 0,
+                menuItems : [
+                    {
+                        id: 1,
+                        label: 'Menu Item 1',
+                        hasSubmenu: true,
+                        showSubMenus: false,
+                        path: '/',
+                        submenu: [
+                            { label: 'Submenu 1-1', path : '/' },
+                            { label: 'Submenu 1-2', path : '/' }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        label: 'Menu Item 2',
+                        hasSubmenu: true,
+                        showSubMenus: false,
+                        path: '/',
+                        submenu: [
+                            { label: 'Submenu 1-1', path : '/' },
+                            { label: 'Submenu 1-2', path : '/' }
+                        ]
+                    }
+                ],
                 isMobile: window.innerWidth < 768
             }
         },
         methods:{
-            
+            setMenuState : function(){
+                this.menuState = !this.menuState;
+            },
+            showHideMenuItems : function(index:any){
+                this.menuItems[index].showSubMenus = !this.menuItems[index].showSubMenus;
+
+                this.menuItems.forEach(mitem => {
+                    if(mitem.id != this.menuItems[index].id){
+                        mitem.showSubMenus = false;
+                    }
+                    
+                });
+                
+            }
         }
     }
 
