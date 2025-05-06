@@ -1,10 +1,12 @@
 <template>
-    <div>
+    <div @touchstart="handleTouchStart"
+    @touchmove="handleTouchMove"
+    @touchend="handleTouchEnd">
 
-       <div class="grid grid-cols-1 transition-all duration-300 ease-in-out" :class="{'md:grid-cols-[minmax(0px,75px)_1fr]':((!menuState && !isMobile)), 'md:grid-cols-[minmax(0px,290px)_1fr]':(menuState && !isMobile)}">
+       <div class="grid grid-cols-1 transition-all duration-300 slide-in-out" :class="{'md:grid-cols-[minmax(0px,75px)_1fr]':((!menuState && !isMobile)), 'md:grid-cols-[minmax(0px,290px)_1fr]':(menuState && !isMobile)}">
         <transition name="sidebar-slide">
-            <div v-show="determineShow" ref="sidebar_menu_ref" class="bg-amber-300" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" :class="{'w-3/5':isMobile, 'fixed':isMobile, 'left-0': isMobile, 'top-0':isMobile}">
-                <div class="flex items-center" :class="{'p-[16px]':menuState, 'p-[12px]':!menuState, 'pl-[22px]':menuState}">
+            <div v-show="determineShow" v-if="(isMobileCount > 0 && isMobile) || (!isMobile)" ref="sidebar_menu_ref"  class="bg-white" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" :class="{'w-3/5':isMobile, 'fixed':isMobile, 'left-0': isMobile, 'top-0':isMobile}">
+                <div class="flex items-center p-[12px]" :class="{'mds:p-[12px]':menuState}">
                     <div>
                         <svg width="51" height="40" viewBox="0 0 51 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12.446 0L22.7801 8.82887C23.3936 9.35302 23.7473 10.1222 23.7473 10.9323V17.5862L13.4131 8.75734C12.7996 8.23319 12.446 7.464 12.446 6.65386V0Z" fill="#00A050"></path>
@@ -22,11 +24,12 @@
                     </div>
                 </div>
                 <div>
-                    <div class="p-[12px] overflow-auto h-[100vh] in-scrollbar">
+                    <div :class="{'md:w-[290px]':!isMobile}" class="p-[12px] overflow-auto h-[100vh] in-scrollbar">
                         <ul>
                             
                             <li class="" v-for="(item, index) in menuItems" v-bind:key="index">
-                                <a href="javascript:;" @click="showHideSubMenu(index)" class="nav-menu-item block">
+                                <a href="javascript:;" @click.stop="showHideSubMenu(index)" class="nav-menu-item block">
+
                                     <span><MenuIcon :size="28" /></span>
                                     <span v-show="menuState || isMobile">{{ item.label }}</span>
                                     <span v-if="item.hasSubmenu" v-show="menuState || isMobile" class="float-right"><ChevronRight v-if="!item.showSubMenus" :size="28" /> <ChevronDown v-if="item.showSubMenus" :size="28" /></span>
@@ -61,7 +64,7 @@
                     <div>2</div>
                     <div>3</div>
                 </div>
-                <div>content</div>
+                <div style="height:1000px">content</div>
             </div>
        </div>
 
@@ -127,8 +130,11 @@
                 menuSwitchShow : false, /* to control when it is to be showed, menuSwitchShow = false +  menuState = true (default behaviour),  menuSwitchShow = true + menuState = false (collapse behaviour for desktops) */
                 menuState : true, /* to show/hide sidebar menu */
                 darkMode: false,
-
+                isMobileCount : 0,
                 currentSubMenuIndex: 0,
+                touchStartX: 0,
+                touchEndX: 0,
+                minSwipeDistance: 50, // Minimum horizontal swipe distance (px)
                 menuItems : [
                     {
                         id: 10,
@@ -204,7 +210,6 @@
             handleCollapse : function(){
                 if(!this.isMobile){
                     
-                    console.log('handle co');
                     if(this.menuSwitchShow){
                         this.menuSwitchShow = false;
                         this.menuState = true;
@@ -215,7 +220,7 @@
                 }
             },
             showPhoneMenu : function(){
-                console.log('inside here');
+                
                 this.menuState = true;
                 /*if(this.isMobile){
                     
@@ -227,24 +232,68 @@
                 
             },
             handleClickOutside(event:any){
+                console.log('see this?');
+                if(this.isMobile){
 
-                const sidebar_menu_ref = this.$refs.sidebar_menu_ref;
-                const toggleBtn = this.$refs.menu_toggle_btn;
-                
-                if (sidebar_menu_ref && !sidebar_menu_ref.contains(event.target) && this.isMobile && (!toggleBtn || !toggleBtn.contains(event.target))) {
-                    this.menuState = false;
+                    const sidebar_menu_ref = this.$refs.sidebar_menu_ref;
+                    const toggleBtn = this.$refs.menu_toggle_btn;
+                    
+                    if (sidebar_menu_ref && !sidebar_menu_ref.contains(event.target) && this.isMobile && (!toggleBtn || !toggleBtn.contains(event.target))) {
+                        this.menuState = false;
+                    }
                 }
                 
             },
             updateScreenSize() {
                 this.isMobile = window.innerWidth < 768;
                 if(this.isMobile){
+                    this.isMobileCount++;
                     this.menuState = false;
                 }else{
                     //this.menuState = true;
                     //this.menuSwitchShow = false;
                 }
+            },
+
+            handleTouchStart(e) {
+                this.touchStartX = e.changedTouches[0].screenX;
+            },
+            handleTouchMove(e) {
+                this.touchEndX = e.changedTouches[0].screenX;
+            },
+            handleTouchEnd(e) {
+                // Get the target element that was touched
+                const targetElement = e.target;
+                
+                // Check if the touch ended on a menu item or chevron
+                const isMenuItemClick = targetElement.closest('.nav-menu-item') !== null;
+                const isChevronClick = targetElement.closest('svg') !== null && 
+                                    (targetElement.closest('.float-right') !== null || 
+                                    targetElement.closest('a[href="javascript:;"]') !== null);
+                
+                // Only process swipe if it's not a click on menu items or chevrons
+                if (!isMenuItemClick && !isChevronClick) {
+                    const distance = this.touchEndX - this.touchStartX;
+                    const minSwipeDistance = this.minSwipeDistance;
+
+                    // If the swipe distance is smaller than the minimum threshold, treat it as a tap
+                    if (Math.abs(distance) < minSwipeDistance) return;
+
+                    if (this.isMobile) {
+                        // If the swipe is more than the threshold in the right direction, open the menu
+                        if (distance > minSwipeDistance && !this.menuState) {
+                            this.menuState = true;
+                        }
+                        
+                        // If the swipe is more than the threshold in the left direction, close the menu
+                        else if (distance < -minSwipeDistance && this.menuState) {
+                            this.menuState = false;
+                        }
+                    }
+                }
             }
+
+
         },
         computed: {
             determineShow : function(){
