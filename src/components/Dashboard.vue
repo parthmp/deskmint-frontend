@@ -3,9 +3,9 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd">
 
-       <div class="grid grid-cols-1 transition-all duration-300 slide-in-out" :class="{'md:grid-cols-[minmax(0px,75px)_1fr]':((!menuState && !isMobile)), 'md:grid-cols-[minmax(0px,290px)_1fr]':(menuState && !isMobile)}">
+       <div class="grid grid-cols-1 transition-all duration-400 slide-in-out" :class="{'md:grid-cols-[minmax(0px,72px)_1fr]':((!menuState && !isMobile)), 'md:grid-cols-[minmax(0px,290px)_1fr]':(menuState && !isMobile)}">
         <transition name="sidebar-slide">
-            <div v-show="determineShow" v-if="(isMobileCount > 0 && isMobile) || (!isMobile)" ref="sidebar_menu_ref"  class="bg-white" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" :class="{'w-3/5':isMobile, 'fixed':isMobile, 'left-0': isMobile, 'top-0':isMobile}">
+            <div v-show="determineShow" v-if="(isMobileCount > 0 && isMobile) || (!isMobile)" ref="sidebar_menu_ref"  class="bg-white sidebar_menu" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" :class="{'w-3/5':isMobile, 'fixed':isMobile, 'left-0': isMobile, 'top-0':isMobile}">
                 <div class="flex items-center p-[12px]" :class="{'mds:p-[12px]':menuState}">
                     <div>
                         <svg width="51" height="40" viewBox="0 0 51 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,21 +24,23 @@
                     </div>
                 </div>
                 <div>
-                    <div :class="{'md:w-[290px]':!isMobile}" class="p-[12px] overflow-auto h-[100vh] in-scrollbar">
+                    <div  class="p-[12px] overflow-auto h-[100vh] in-scrollbar">
                         <ul>
                             
                             <li class="" v-for="(item, index) in menuItems" v-bind:key="index">
-                                <a href="javascript:;" @click.stop="showHideSubMenu(index)" class="nav-menu-item block">
-
-                                    <span><MenuIcon :size="28" /></span>
-                                    <span v-show="menuState || isMobile">{{ item.label }}</span>
-                                    <span v-if="item.hasSubmenu" v-show="menuState || isMobile" class="float-right"><ChevronRight v-if="!item.showSubMenus" :size="28" /> <ChevronDown v-if="item.showSubMenus" :size="28" /></span>
+                                <a href="javascript:;" @click.stop="showHideSubMenu(index)" class="nav-menu-item block active">
+                                    <span class="flex flex-row items-center">
+                                        <span><component :is="item.icon" :size="28" /></span>
+                                        <span v-show="menuState || isMobile">{{ item.label }}</span>
+                                        <span v-if="item.hasSubmenu" v-show="menuState || isMobile" class="flex-1 flex justify-end"><ChevronRight v-if="!item.showSubMenus" :size="28" /> <ChevronDown v-if="item.showSubMenus" :size="28" /></span>
+                                    </span>
+                                    
                                 </a>
                                 <transition name="slide">
                                     <ul v-show="item.hasSubmenu && ((item.showSubMenus && (!isMobile && menuState)) || (isMobile && item.showSubMenus))" class="submenu">
                                         <li v-for="(itemsub, indexsub) in item.submenu" :key="indexsub" class="">
-                                            <a href="javascript:;" class="nav-menu-item block active">
-                                                <span><CircleOutline :size="20" /></span>
+                                            <a href="javascript:;" class="nav-menu-item block">
+                                                <span><component :is="itemsub.icon" :size="20" /></span>
                                                 <span>{{ itemsub.label }}</span>
                                             </a>
                                         </li>
@@ -112,6 +114,8 @@
     import CircleOutline from 'vue-material-design-icons/CircleOutline.vue';
     import PlusBox from 'vue-material-design-icons/PlusBox.vue';
     import ViewDashboard from 'vue-material-design-icons/ViewDashboard.vue';
+    import AccountGroup from 'vue-material-design-icons/AccountGroup.vue';
+    import Message from 'vue-material-design-icons/Message.vue';
     
 
     export default{
@@ -122,7 +126,9 @@
             ChevronDown,
             CircleOutline,
             ViewDashboard,
+            AccountGroup,
             PlusBox,
+            Message,
             MenuIcon
         },
         data : function(){
