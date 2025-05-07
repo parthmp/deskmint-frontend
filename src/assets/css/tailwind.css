@@ -7,7 +7,11 @@
         -ms-overflow-style: thin;
         scrollbar-width: thin;
         scrollbar-color: gray transparent;
+        overflow-y: overlay;
+       
     }
+
+    
 }
 
 @theme {
@@ -35,10 +39,6 @@
     box-shadow:0 0.125rem 0.5rem 0 rgba(47, 43, 61, 0.12);
     @apply text-heading-color;
 }
-.sidebar_menu a{
-    font-family: "Public Sans", -apple-system, blinkmacsystemfont, "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-    @apply text-heading-color;
-}
 .nav-menu-item a:nth-child(1){
     @apply mr-[2.5px] mb-[10px];
 }
@@ -46,7 +46,7 @@
     @apply relative left-[3px];
 }
 .submenu {
-    @apply ml-[10px] mb-[15px];
+    @apply ml-[10px];
 }
 .submenu li a{
    @apply pb-[7.3px];
