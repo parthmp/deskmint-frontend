@@ -2,9 +2,9 @@
     <div class="" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
         <div  class="grid grid-cols-1 transition-all duration-400 slide-in-out" :class="{'md:grid-cols-[minmax(0px,79px)_1fr]':(!pin_switch && !hovering_on_menu), 'md:grid-cols-[minmax(0px,290px)_1fr]': (pin_switch || hovering_on_menu)}">
             <transition name="sidebar-slide">
-                <div ref="sidebar_menu_ref" v-show="(is_mobile && pin_switch) || (!is_mobile)" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="h-[100vh] pt-[16px] md:sticky top-0 left-0 bg-amber-100 sidebar_menu" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-0':is_mobile, 'w-[60%]':is_mobile}">
+                <div ref="sidebar_menu_ref" v-show="(is_mobile && pin_switch) || (!is_mobile)" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="h-[100vh] pt-[16px] md:sticky top-0 left-0  sidebar_menu bg-white" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-0':is_mobile, 'w-[60%]':is_mobile}">
                     <div class="">
-                        <div class="flex flex-row">
+                        <div class="flex flex-row pl-[16px] pr-[16px]">
                             <div>
                                 <svg width="51" height="40" viewBox="0 0 51 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12.446 0L22.7801 8.82887C23.3936 9.35302 23.7473 10.1222 23.7473 10.9323V17.5862L13.4131 8.75734C12.7996 8.23319 12.446 7.464 12.446 6.65386V0Z" fill="#00A050"></path>
@@ -22,42 +22,51 @@
                                 <p v-show="(pin_switch || hovering_on_menu || is_mobile)" class="text-[24px] ml-[10px] font-bold mb-[4px] text-heading-color">DeskMint</p>
                             </div>
                             <div class="flex-1 flex justify-end">
-                                <a v-show="(pin_switch || hovering_on_menu) && pin_switch == false && !is_mobile" @click="pin_switch = !pin_switch" href="javascript:;" ref="menu_toggle_btn"><PinOutline :size="26" /></a>
-                                <a v-show="(pin_switch || hovering_on_menu) && pin_switch == true && !is_mobile" @click="pin_switch = !pin_switch" href="javascript:;" ref="menu_toggle_btn"><PinOffOutline :size="26" /></a>
+                                <a class="mt-[5px]" v-show="(pin_switch || hovering_on_menu) && pin_switch == false && !is_mobile" @click="pin_switch = !pin_switch" href="javascript:;" ref="menu_toggle_btn"><PinOutline :size="26" /></a>
+                                <a class="mt-[5px]" v-show="(pin_switch || hovering_on_menu) && pin_switch == true && !is_mobile" @click="pin_switch = !pin_switch" href="javascript:;" ref="menu_toggle_btn"><PinOffOutline :size="26" /></a>
                                 <!--<a href="javascript:;" ref="menu_toggle_btn"><PinOffOutline :size="26" /></a>-->
                             </div>
                         </div>
-                        <div class="pt-[12px] pl-[16px] pr-[16px] overflow-auto ml-[1px] h-[100vh]">
-                            <ul>
+                        <simplebar data-simplebar-auto-hide="true">
+                        
+                            <div class="pt-[12px] pl-[16px] pr-[16px] ml-[1px] h-[100vh]">
+                                
+                                <ul>
 
-                                <li class="" v-for="(item, index) in menu_items" v-bind:key="index">
-                                    <a @click.stop="showHideSubMenus(index)" href="javascript:;" class="nav-menu-item block active">
-                                        <span class="flex flex-row items-center">
-                                            <span><component :is="item.icon" :size="28" /></span>
-                                            <span v-show="(pin_switch == true || hovering_on_menu || is_mobile)">{{ item.label }}</span>
-                                            <span v-if="item.hasSubmenu" class="flex-1 flex justify-end"><ChevronRight v-if="!item.showSubMenus" :size="28" /> <ChevronDown v-if="item.showSubMenus" :size="28" /></span>
-                                        </span>
-                                    </a>
-                                    <transition name="slide">
-                                        <ul class="submenu" v-show="item.showSubMenus && (pin_switch == true || hovering_on_menu || is_mobile)">
-                                            <li v-for="(itemsub, indexsub) in item.submenu" :key="indexsub" class="">
-                                                <a href="javascript:;" class="nav-menu-item block">
-                                                    <span><component :is="itemsub.icon" :size="20" /></span>
-                                                    <span>{{ itemsub.label }}</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </transition>
-                                </li>
+                                    <li class="" v-for="(item, index) in menu_items" v-bind:key="index">
+                                        <a @click.stop="showHideSubMenus(index)" href="javascript:;" class="nav-menu-item block active">
+                                            <span class="flex flex-row items-center">
+                                                <span><component :is="item.icon" :size="28" /></span>
+                                                <span v-show="(pin_switch == true || hovering_on_menu || is_mobile)">{{ item.label }}</span>
+                                                <span v-show="item.hasSubmenu && (pin_switch == true || hovering_on_menu || is_mobile)" class="flex-1 flex justify-end"><ChevronRight v-if="!item.showSubMenus && (pin_switch == true || hovering_on_menu || is_mobile)" :size="28" /> <ChevronDown v-if="item.showSubMenus" :size="28" /></span>
+                                            </span>
+                                        </a>
+                                        <transition name="slide">
+                                            <ul class="submenu" v-show="item.showSubMenus && (pin_switch == true || hovering_on_menu || is_mobile)">
+                                                <li v-for="(itemsub, indexsub) in item.submenu" :key="indexsub" class="">
+                                                    <a href="javascript:;" class="nav-menu-item block">
+                                                        <span><component :is="itemsub.icon" :size="20" /></span>
+                                                        <span>{{ itemsub.label }}</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </transition>
+                                    </li>
+
+                                    
+                                
+                                    
+                                    
+                                </ul>
                             
-                                
-                                
-                            </ul>
-                        </div>
+                            </div>
+                        </simplebar>
                     </div>
                 </div>
             </transition>
-            <div style="height:6000px;" class="bg-amber-500">Content here</div>
+            <div style="height:6000px;" class="bg-amber-500">
+                This is test
+            </div>
         </div>
     </div>
 </template>
@@ -88,7 +97,31 @@
   transform: translateX(0);
 }
 </style>
+<style>
+/* Force override SimpleBar styles */
+.simplebar-scrollbar {
+  width: 10px !important;
+  right: 0 !important;
+}
 
+.simplebar-scrollbar::before {
+  background-color: var(--color-mint-color) !important;
+  opacity: 0.3 !important; /* Start hidden */
+  width: 6px !important;
+  border-radius: 3px !important;
+  margin: 2px !important;
+  transition: opacity 0.5s ease !important;
+}
+
+.simplebar-scrollbar.simplebar-visible::before {
+  opacity: 0.5 !important; /* Show on hover/scroll */
+}
+
+.simplebar-track {
+  background: transparent !important;
+  width: 10px !important;
+}
+</style>
 <script lang="ts">
     import MenuIcon from 'vue-material-design-icons/Menu.vue';
     import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue';
@@ -102,6 +135,8 @@
     import PinOutline from 'vue-material-design-icons/Pin.vue';
     import PinOffOutline from 'vue-material-design-icons/PinOffOutline.vue';
     
+    import simplebar from 'simplebar-vue';
+    import 'simplebar-vue/dist/simplebar.min.css';
 
     export default {
         name: 'Dashboard',
@@ -116,7 +151,8 @@
             AccountGroup,
             PlusBox,
             Message,
-            MenuIcon
+            MenuIcon,
+            simplebar
         },
         data : function() {
             return {
