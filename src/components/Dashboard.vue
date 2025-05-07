@@ -2,7 +2,7 @@
     <div class="" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
         <div  class="grid grid-cols-1 transition-all duration-400 slide-in-out" :class="{'md:grid-cols-[minmax(0px,79px)_1fr]':(!pin_switch && !hovering_on_menu), 'md:grid-cols-[minmax(0px,290px)_1fr]': (pin_switch || hovering_on_menu)}">
             <transition name="sidebar-slide">
-                <div ref="sidebar_menu_ref" v-show="(is_mobile && pin_switch && mobile_menu_counter > 0) || (!is_mobile)" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="h-[100vh] pt-[16px] md:sticky top-0 left-0  sidebar_menu bg-white" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-0':is_mobile, 'w-[60%]':is_mobile, 'z-10':is_mobile}">
+                <div ref="sidebar_menu_ref" v-show="(is_mobile && pin_switch && mobile_menu_counter > 0) || (!is_mobile)" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="h-[100vh] pt-[16px] md:sticky top-0 left-0  sidebar_menu bg-white z-10" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-0':is_mobile, 'w-[60%]':is_mobile, 'z-10':is_mobile}">
                     <div class="">
                         <div class="flex flex-row pl-[16px] pr-[16px]">
                             <div>
@@ -63,13 +63,19 @@
                     </div>
                 </div>
             </transition>
-            <div style="height:6000px;" class="bg-amber-500">
+            <div class="">
                 <!--topbar fixed-->
-                <div class="sticky top-0 left-0 bg-white w-full p-[12px]">
-                    <div class="flex flex-row">
+                <div class="fixed top-0 left-0 bg-white w-full md:sticky p-[12px] topbar">
+                    <div class="flex flex-row-reverse custom-container">
                         <a v-show="is_mobile" @click.stop="showHideMobileMenu()" href="javascript:;"><menu-icon :size="32" /></a>
+                        <a href="javascript:;" class=" "><img class="rounded-4xl size-10 border border-[10px_solid_var(--color-mint-color)] border-wid" src="https://avatar.iran.liara.run/public/26"></a>
                     </div>
                 </div>
+                <br>
+                <br>
+                <br>
+                <br>
+                123
             </div>
         </div>
     </div>

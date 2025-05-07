@@ -35,7 +35,7 @@
 .nav-menu-item.active{
     @apply bg-gradient-to-r from-[var(--color-mint-color)] to-[var(--color-mint-color-end)] text-white shadow-[0_0_1px_var(--color-shadow)] shadow-2xl;
 }
-.sidebar_menu{
+.sidebar_menu, .topbar{
     box-shadow:0 0.125rem 0.5rem 0 rgba(47, 43, 61, 0.12);
     @apply text-heading-color;
 }
@@ -50,4 +50,7 @@
 }
 .submenu li a{
    @apply pb-[7.3px];
+}
+.custom-container{
+    @apply pl-[24px] pr-[24px];
 }
