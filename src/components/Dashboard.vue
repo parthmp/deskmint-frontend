@@ -2,7 +2,7 @@
     <div class="" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
         <div  class="grid grid-cols-1 transition-all duration-400 slide-in-out" :class="{'md:grid-cols-[minmax(0px,79px)_1fr]':(!pin_switch && !hovering_on_menu), 'md:grid-cols-[minmax(0px,290px)_1fr]': (pin_switch || hovering_on_menu)}">
             <transition name="sidebar-slide">
-                <div ref="sidebar_menu_ref" v-show="(is_mobile && pin_switch) || (!is_mobile)" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="h-[100vh] pt-[16px] md:sticky top-0 left-0  sidebar_menu bg-white" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-0':is_mobile, 'w-[60%]':is_mobile}">
+                <div ref="sidebar_menu_ref" v-show="(is_mobile && pin_switch && mobile_menu_counter > 0) || (!is_mobile)" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="h-[100vh] pt-[16px] md:sticky top-0 left-0  sidebar_menu bg-white" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-0':is_mobile, 'w-[60%]':is_mobile, 'z-10':is_mobile}">
                     <div class="">
                         <div class="flex flex-row pl-[16px] pr-[16px]">
                             <div>
@@ -24,7 +24,6 @@
                             <div class="flex-1 flex justify-end">
                                 <a class="mt-[5px]" v-show="(pin_switch || hovering_on_menu) && pin_switch == false && !is_mobile" @click="pin_switch = !pin_switch" href="javascript:;" ref="menu_toggle_btn"><PinOutline :size="26" /></a>
                                 <a class="mt-[5px]" v-show="(pin_switch || hovering_on_menu) && pin_switch == true && !is_mobile" @click="pin_switch = !pin_switch" href="javascript:;" ref="menu_toggle_btn"><PinOffOutline :size="26" /></a>
-                                <!--<a href="javascript:;" ref="menu_toggle_btn"><PinOffOutline :size="26" /></a>-->
                             </div>
                         </div>
                         <simplebar data-simplebar-auto-hide="true">
@@ -65,7 +64,12 @@
                 </div>
             </transition>
             <div style="height:6000px;" class="bg-amber-500">
-                This is test
+                <!--topbar fixed-->
+                <div class="sticky top-0 left-0 bg-white w-full p-[12px]">
+                    <div class="flex flex-row">
+                        <a v-show="is_mobile" @click.stop="showHideMobileMenu()" href="javascript:;"><menu-icon :size="32" /></a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -164,6 +168,7 @@
                 min_swipe_distance: 50, // Minimum horizontal swipe distance (px)
                 pin_switch: true,
                 hovering_on_menu: false,
+                mobile_menu_counter: 0,
                 menu_items: [
                     {
                         id: 10,
@@ -234,16 +239,20 @@
 
             updateScreenSize : function(){
                 this.is_mobile = window.innerWidth < 768;
+                this.mobile_menu_counter = 1;
+                if(this.is_mobile){
+                    this.pin_switch = false;
+                }
             },
             handleTouchStart(e) {
                 this.touch_start_x = e.changedTouches[0].screenX;
             },
             handleTouchMove(e) {
                 this.touch_end_x = e.changedTouches[0].screenX;
-                console.log('moved');
+                
             },
             handleClickOutside(event:any){
-                console.log('see this?');
+                
                 if(this.is_mobile){
 
                     const sidebar_menu_ref = this.$refs.sidebar_menu_ref;
@@ -254,6 +263,9 @@
                     }
                 }
                 
+            },
+            showHideMobileMenu : function(){
+                this.pin_switch = !this.pin_switch;
             },
             handleTouchEnd(e) {
                 // Get the target element that was touched
