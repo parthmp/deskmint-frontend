@@ -5,7 +5,7 @@
         <div  class="grid grid-cols-1 transition-all duration-400 slide-in-out" :class="{'md:grid-cols-[minmax(0px,79px)_1fr]':(!pin_switch && !hovering_on_menu), 'md:grid-cols-[minmax(0px,290px)_1fr]': (pin_switch || hovering_on_menu)}">
             <transition name="sidebar-slide">
                 
-                <div ref="sidebar_menu_ref" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="h-[100vh] pt-[16px] md:sticky duration-300 sidebar_menu bg-white z-10" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-[-60%]':!show_on_mobile, 'left-0': show_on_mobile,'w-[60%]':is_mobile, 'z-10':is_mobile}" :style="{ left: is_mobile ? mobile_sidebar_left_pos+'%' : '' }">
+                <div ref="sidebar_menu_ref" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="pt-[16px] md:sticky duration-300 sidebar_menu bg-white z-10" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-[-60%]':!show_on_mobile, 'left-0': show_on_mobile,'w-[60%]':is_mobile, 'z-10':is_mobile, 'h-[100vh]': is_mobile}" :style="{ left: is_mobile ? mobile_sidebar_left_pos+'%' : '' }">
                     <div class="">
                         <div class="flex flex-row pl-[16px] pr-[16px]">
                             <div>
@@ -24,14 +24,14 @@
                             <div>
                                 <p v-show="(pin_switch || hovering_on_menu || is_mobile)" class="text-[24px] ml-[10px] font-bold mb-[4px] text-heading-color">DeskMint</p>
                             </div>
-                            <div class="flex-1 flex justify-end">
+                            <!--<div class="flex-1 flex justify-end">
                                 <a class="mt-[5px]" v-show="(pin_switch || hovering_on_menu) && pin_switch == false && !is_mobile" @click="pin_switch = !pin_switch" href="javascript:;" ref="menu_toggle_btn"><PinOutline :size="26" /></a>
                                 <a class="mt-[5px]" v-show="(pin_switch || hovering_on_menu) && pin_switch == true && !is_mobile" @click="pin_switch = !pin_switch" href="javascript:;" ref="menu_toggle_btn"><PinOffOutline :size="26" /></a>
-                            </div>
+                            </div>-->
                         </div>
                         <simplebar data-simplebar-auto-hide="true">
                         
-                            <div class="pt-[12px] pl-[16px] pr-[16px] ml-[1px] h-[100vh]">
+                            <div class="pt-[12px] pl-[16px] pr-[16px] ml-[1px]">
                                 
                                 <ul>
 
@@ -261,7 +261,8 @@
                 this.is_mobile = window.innerWidth < 768;
                 this.mobile_menu_counter = 1;
                 if(this.is_mobile){
-                    this.pin_switch = false;
+                    /*this.pin_switch = false;*/
+                    
                 }
             },
             onTouchStart(event:any) {
@@ -317,7 +318,7 @@
             }
         },
             showHideMobileMenu : function(){
-                this.pin_switch = !this.pin_switch;
+                /*this.pin_switch = !this.pin_switch;*/
                 this.show_on_mobile = true;
                 this.mobile_sidebar_left_pos = 0;
             },
