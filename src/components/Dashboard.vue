@@ -1,8 +1,11 @@
 <template>
-    <div class="" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
+    <div class="" @touchstart="onTouchStart"
+    @touchmove="onTouchMove"
+    @touchend="onTouchEnd">
         <div  class="grid grid-cols-1 transition-all duration-400 slide-in-out" :class="{'md:grid-cols-[minmax(0px,79px)_1fr]':(!pin_switch && !hovering_on_menu), 'md:grid-cols-[minmax(0px,290px)_1fr]': (pin_switch || hovering_on_menu)}">
             <transition name="sidebar-slide">
-                <div ref="sidebar_menu_ref" v-show="(is_mobile && pin_switch && mobile_menu_counter > 0) || (!is_mobile)" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="h-[100vh] pt-[16px] md:sticky top-0 left-0  sidebar_menu bg-white z-10" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-0':is_mobile, 'w-[60%]':is_mobile, 'z-10':is_mobile}">
+                
+                <div ref="sidebar_menu_ref" @mouseover="mouseOverMenu" @mouseleave="mouseLeaveMenu" class="h-[100vh] pt-[16px] md:sticky duration-300 sidebar_menu bg-white z-10" :class="{'fixed':is_mobile, 'top-0':is_mobile, 'left-[-60%]':!show_on_mobile, 'left-0': show_on_mobile,'w-[60%]':is_mobile, 'z-10':is_mobile}" :style="{ left: is_mobile ? mobile_sidebar_left_pos+'%' : '' }">
                     <div class="">
                         <div class="flex flex-row pl-[16px] pr-[16px]">
                             <div>
@@ -66,9 +69,16 @@
             <div class="">
                 <!--topbar fixed-->
                 <div class="fixed top-0 left-0 bg-white w-full md:sticky p-[12px] topbar">
-                    <div class="flex flex-row-reverse custom-container">
-                        <a v-show="is_mobile" @click.stop="showHideMobileMenu()" href="javascript:;"><menu-icon :size="32" /></a>
-                        <a href="javascript:;" class=" "><img class="rounded-4xl size-10 border border-[10px_solid_var(--color-mint-color)] border-wid" src="https://avatar.iran.liara.run/public/26"></a>
+                    <div class="flex pl-[5px] float-start">
+                        <a class="" v-show="is_mobile" @click.stop="showHideMobileMenu()" href="javascript:;"><menu-icon :size="40" /></a>
+                    </div>
+                    <div class="flex custom-container justify-end">
+                        <a href="javascript:;" class=" "><img class="rounded-4xl size-10 border border-[10px_solid_var(--color-mint-color)] border-wid" src=""></a>
+                        <div class="flex-none absolute mt-[40px] min-w-[100px] bg-red-200 block profile-menu">
+                            <ul>
+                                <li><a href="">Profile</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <br>
@@ -170,11 +180,15 @@
                 show_sidebar: true, /* to show/hide sidebar menu */
                 dark_mode: false,
                 touch_start_x: 0,
-                touch_end_x: 0,
-                min_swipe_distance: 50, // Minimum horizontal swipe distance (px)
+                current_swipe_x: 0,
+                max_swipe_distance: 45, // Minimum horizontal swipe distance (px)
                 pin_switch: true,
                 hovering_on_menu: false,
+                show_on_mobile: false,
                 mobile_menu_counter: 0,
+                mobile_sidebar_left_pos: -60,
+                is_swiping: false,
+                sidebar_left: 60,
                 menu_items: [
                     {
                         id: 10,
@@ -250,12 +264,44 @@
                     this.pin_switch = false;
                 }
             },
-            handleTouchStart(e) {
-                this.touch_start_x = e.changedTouches[0].screenX;
+            onTouchStart(event) {
+                this.touch_start_x = event.touches[0].clientX;
+                this.is_swiping = true;
             },
-            handleTouchMove(e) {
-                this.touch_end_x = e.changedTouches[0].screenX;
+            onTouchMove(event) {
+                this.current_swipe_x = event.touches[0].clientX;
                 
+                if(this.is_mobile){
+                
+                    
+                    const distance = Math.min(this.current_swipe_x - this.touch_start_x, this.max_swipe_distance);
+                    const percentage = (distance / this.max_swipe_distance) * 100;
+
+                    let sidebar_width_px = window.innerWidth * 0.6;
+                    
+                    const newPositionPercentage = Math.min((sidebar_width_px * (percentage / 100)), sidebar_width_px);
+                    this.mobile_sidebar_left_pos = `-${sidebar_width_px - newPositionPercentage}`;
+                    
+
+                }
+            },
+            onTouchEnd() {
+                console.log('ENDED');
+                if(this.is_mobile){
+                    console.log(this.mobile_sidebar_left_pos);
+                    let mobile_sidebar_left_pos_abs = Math.abs(this.mobile_sidebar_left_pos);
+                    if(mobile_sidebar_left_pos_abs == 0){
+                        this.show_on_mobile = false;
+                    }
+                    this.pin_switch = !this.pin_switch;
+                    this.show_on_mobile = true;
+                    
+                    if (this.current_swipe_x - this.touch_start_x >= this.maxSwipe) {
+                        this.show_on_mobile = true;
+                    } else {
+                        this.show_on_mobile = false;
+                    }
+                }
             },
             handleClickOutside(event:any){
                 
@@ -266,46 +312,18 @@
                     
                     if (sidebar_menu_ref && !sidebar_menu_ref.contains(event.target) && this.is_mobile && (!toggleBtn || !toggleBtn.contains(event.target))) {
                         this.pin_switch = false;
+                        this.show_on_mobile = false;
+                        this.mobile_sidebar_left_pos = -60;
                     }
                 }
                 
             },
             showHideMobileMenu : function(){
                 this.pin_switch = !this.pin_switch;
+                this.show_on_mobile = true;
+                this.mobile_sidebar_left_pos = 0;
             },
-            handleTouchEnd(e) {
-                // Get the target element that was touched
-                const targetElement = e.target;
-                
-                // Check if the touch ended on a menu item or chevron
-                const isMenuItemClick = targetElement.closest('.nav-menu-item') !== null;
-                const isChevronClick = targetElement.closest('svg') !== null && 
-                                    (targetElement.closest('.float-right') !== null || 
-                                    targetElement.closest('a[href="javascript:;"]') !== null);
-                                    console.log('see '+this.is_mobile);
-                // Only process swipe if it's not a click on menu items or chevrons
-                if (!isMenuItemClick && !isChevronClick) {
-                    const distance = this.touch_end_x - this.touch_start_x;
-                    const minSwipeDistance = this.min_swipe_distance;
-
-                    // If the swipe distance is smaller than the minimum threshold, treat it as a tap
-                    if (Math.abs(distance) < minSwipeDistance) return;
-                    
-                    if (this.is_mobile) {
-                        
-                        // If the swipe is more than the threshold in the right direction, open the menu
-                        if (distance > minSwipeDistance && !this.pin_switch) {
-                            
-                            this.pin_switch = true;
-                        }
-                        
-                        // If the swipe is more than the threshold in the left direction, close the menu
-                        else if (distance < -minSwipeDistance && this.pin_switch) {
-                            this.pin_switch = false;
-                        }
-                    }
-                }
-            }
+          
         },
         computed: {
             
