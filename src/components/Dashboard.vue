@@ -66,7 +66,7 @@
                     </div>
                 </div>
             </transition>
-            <div class="">
+            <div class="bg-blue-200" style="min-height: 1500px;">
                 <!--topbar fixed-->
                 <div class="fixed top-0 left-0 bg-white w-full md:sticky p-[12px] topbar">
                     <div class="flex pl-[5px] float-start">
@@ -181,7 +181,7 @@
                 dark_mode: false,
                 touch_start_x: 0,
                 current_swipe_x: 0,
-                max_swipe_distance: 45, // Minimum horizontal swipe distance (px)
+                max_swipe_distance: 60, // Minimum horizontal swipe distance (px)
                 pin_switch: true,
                 hovering_on_menu: false,
                 show_on_mobile: false,
@@ -264,11 +264,11 @@
                     this.pin_switch = false;
                 }
             },
-            onTouchStart(event) {
+            onTouchStart(event:any) {
                 this.touch_start_x = event.touches[0].clientX;
                 this.is_swiping = true;
             },
-            onTouchMove(event) {
+            onTouchMove(event:any) {
                 this.current_swipe_x = event.touches[0].clientX;
                 
                 if(this.is_mobile){
@@ -280,15 +280,15 @@
                     let sidebar_width_px = window.innerWidth * 0.6;
                     
                     const newPositionPercentage = Math.min((sidebar_width_px * (percentage / 100)), sidebar_width_px);
-                    this.mobile_sidebar_left_pos = `-${sidebar_width_px - newPositionPercentage}`;
-                    
+                    //this.mobile_sidebar_left_pos = `-${sidebar_width_px - newPositionPercentage}`;
+                    this.mobile_sidebar_left_pos = -(sidebar_width_px - newPositionPercentage);
 
                 }
             },
             onTouchEnd() {
-                console.log('ENDED');
+                
                 if(this.is_mobile){
-                    console.log(this.mobile_sidebar_left_pos);
+                    
                     let mobile_sidebar_left_pos_abs = Math.abs(this.mobile_sidebar_left_pos);
                     if(mobile_sidebar_left_pos_abs == 0){
                         this.show_on_mobile = false;
@@ -296,28 +296,26 @@
                     this.pin_switch = !this.pin_switch;
                     this.show_on_mobile = true;
                     
-                    if (this.current_swipe_x - this.touch_start_x >= this.maxSwipe) {
+                    if (this.current_swipe_x - this.touch_start_x >= this.max_swipe_distance) {
                         this.show_on_mobile = true;
                     } else {
                         this.show_on_mobile = false;
                     }
                 }
             },
-            handleClickOutside(event:any){
+            handleClickOutside(event: any) {
+            if (this.is_mobile) {
+                const sidebar_menu_ref = this.$refs.sidebar_menu_ref as HTMLElement;
+                const toggleBtn = this.$refs.menu_toggle_btn as HTMLElement;
                 
-                if(this.is_mobile){
-
-                    const sidebar_menu_ref = this.$refs.sidebar_menu_ref;
-                    const toggleBtn = this.$refs.menu_toggle_btn;
-                    
-                    if (sidebar_menu_ref && !sidebar_menu_ref.contains(event.target) && this.is_mobile && (!toggleBtn || !toggleBtn.contains(event.target))) {
-                        this.pin_switch = false;
-                        this.show_on_mobile = false;
-                        this.mobile_sidebar_left_pos = -60;
-                    }
+                if (sidebar_menu_ref && !sidebar_menu_ref.contains(event.target) && 
+                    this.is_mobile && (!toggleBtn || !toggleBtn.contains(event.target))) {
+                    this.pin_switch = false;
+                    this.show_on_mobile = false;
+                    this.mobile_sidebar_left_pos = -60;
                 }
-                
-            },
+            }
+        },
             showHideMobileMenu : function(){
                 this.pin_switch = !this.pin_switch;
                 this.show_on_mobile = true;
