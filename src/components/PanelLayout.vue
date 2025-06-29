@@ -2,7 +2,7 @@
 		<div class="container-fluid" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">	
 			<div class="big-content">
 				<aside class="relative">
-					<div class="sidebar overflow-auto" :class="{'closed':!sidebar_full, 'phone': phone_show}">sidebar
+					<div class="sidebar overflow-auto styled-scrollbar" :class="{'closed':!sidebar_full, 'phone': phone_show}">sidebar
 						<a href="javascript:;" @click="sidebar_full = !sidebar_full">
 							<span v-if="sidebar_full">Close</span>
 							<span v-if="!sidebar_full">Open</span>

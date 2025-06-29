@@ -5,6 +5,18 @@
 :root{
 	--sidebar-open-width:275px;
 	--sidebar-close-width:85px;
+
+	--styled-scrollbar-background: red;
+	--shreddit-content-background: green;
+	--color-neutral-border: black;
+}
+.styled-scrollbar {
+    scrollbar-color: transparent transparent;
+    scrollbar-width: thin;
+    --scrollbar-background: var(--styled-scrollbar-background, var(--shreddit-content-background));
+}
+.styled-scrollbar.visible, .styled-scrollbar:hover {
+    scrollbar-color: var(--color-neutral-border) transparent;
 }
 .sidebar-menu{
 	@apply bg-amber-600 max-w-full md:max-w-1/2;
@@ -46,7 +58,9 @@
 	@apply grow bg-amber-200 transition-all;
 }
 .sidebar{
-	@apply fixed md:block h-[100vh] md:w-[var(--sidebar-open-width)] translate-x-[-100%] md:translate-x-0 transition-all z-20 bg-amber-300;
+	@apply fixed md:block h-[100vh] md:w-[var(--sidebar-open-width)] translate-x-[-100%] md:translate-x-0 transition-all z-20 bg-white;
+
+	
 }
 .sidebar.closed{
 	@apply md:fixed h-[100vh] md:w-[var(--sidebar-close-width)];
