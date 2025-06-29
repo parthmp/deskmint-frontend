@@ -7,6 +7,7 @@
 							<span v-if="sidebar_full">Close</span>
 							<span v-if="!sidebar_full">Open</span>
 						</a>
+						<IconHome :size="26" stroke-width="2" />
 
 						<br>
 						<br>
@@ -32,12 +33,14 @@
 </template>
 <script>
 
+import { IconHome } from '@tabler/icons-vue';
+
 
 export default {
 
 	name: 'PanelLayout',
 	components: {
-
+		IconHome
 	},
 	data : function(){
 		return {
