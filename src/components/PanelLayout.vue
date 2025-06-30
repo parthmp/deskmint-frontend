@@ -22,7 +22,7 @@
 							<div class="sidebar-menu-items">
 								<ul class="main-menu-list">
 									<li v-for="(menu_item, i) in menu_items" :key="i">
-										<router-link :to="menu_item.path" class="block" @click="menu_item.show_submenu = !menu_item.show_submenu" :class="{'active-menu-link': menu_item.is_active}">
+										<router-link :to="menu_item.path" class="block" @click="resetMenuItems(i)" :class="{'active-menu-link': menu_item.is_active}">
 											<span class="flex items-center">
 												<component v-if="sidebar_full || hover_sidebar" :is="menu_item.icon" :size="menu_item.icon_size"></component>
 												<component v-if="!sidebar_full && !hover_sidebar" :is="menu_item.icon" :size="36"></component>
@@ -37,7 +37,7 @@
 											<ul v-if="hover_sidebar || sidebar_full" v-show="menu_item.show_submenu" class="submenu">
 												
 												<li v-for="(menu_sub_item, z) in menu_item.submenu" :key="z">
-													<router-link :to="menu_sub_item.path" class="block" :class="{'active-menu-link': menu_sub_item.is_active}">
+													<router-link :to="menu_sub_item.path" class="block" :class="{'active-menu-link': menu_sub_item.is_active}"  @click="setSubActiveItem(i, z)">
 														<span class="flex items-center">
 															<component :is="menu_sub_item.icon" :size="menu_sub_item.icon_size"></component>
 															<span class="menu-item-text">&nbsp;&nbsp;Dashboard</span>
@@ -46,6 +46,7 @@
 												</li>
 												
 											</ul>
+											
 										</transition>
 									</li>
 									
@@ -129,7 +130,7 @@ export default {
 						menu_text: 'Dashboard',
 						has_submenu : true,
 						show_submenu : false,
-						is_active: true,
+						is_active: false,
 						submenu: [
 							{
 								path: '/',
@@ -171,7 +172,7 @@ export default {
 								path: '/',
 								icon: 'IconDashboard',
 								icon_size: 22,
-								is_active: true,
+								is_active: false,
 								menu_text: 'Dashboard sub'
 							}
 						]
@@ -248,6 +249,42 @@ export default {
 		},
 		updateScreenSize : function(){
 			this.is_mobile = window.innerWidth <= 767;
+		},
+
+		resetMenuItems : function(index, mtype = ''){
+			
+			
+			for(let z = 0 ; z < this.menu_items.length ; z++){
+
+				this.menu_items[z].is_active = false;
+
+				if(this.menu_items[z].has_submenu == true){
+					for(let x = 0 ; x < this.menu_items[z].submenu.length ; x++){
+						this.menu_items[z].submenu[x].is_active = false;
+					}
+				}
+
+			}
+
+			if(mtype == ''){
+				this.setActiveMenu(index);
+			}
+			
+			
+			
+		},
+		
+		setActiveMenu : function(index){
+			this.menu_items[index].show_submenu = !this.menu_items[index].show_submenu;
+			this.menu_items[index].is_active = true;
+		},
+
+		setSubActiveItem : function(i, z){
+
+			this.resetMenuItems(i, 'sub');
+
+			this.menu_items[i].submenu[z].is_active = true;
+
 		}
 		
 	},
