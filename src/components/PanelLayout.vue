@@ -20,27 +20,27 @@
 						<div class="overflow-auto styled-scrollbar h-[100vh]">
 							<a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show">Phone Launcher</a>
 							<div class="sidebar-menu-items">
-								<ul>
-									<li>
-										<a href="" class="block">
+								<ul class="main-menu-list">
+									<li v-for="(menu_item, i) in menu_items" :key="i">
+										<router-link :to="menu_item.path" class="block" @click="menu_item.show_submenu = !menu_item.show_submenu">
 											<span class="flex items-center">
-												<IconDashboard :size="22"></IconDashboard>
-												<span class="menu-item-text">&nbsp;&nbsp;Dashboard</span>
-												<span class="grow justify-items-end"><IconChevronRight :size="22" class=""></IconChevronRight></span>
-												
+												<component :is="menu_item.icon" :size="menu_item.icon_size"></component>
+												<span class="menu-item-text">&nbsp;&nbsp;{{ menu_item.menu_text }}</span>
+												<span v-if="menu_item.has_submenu" class="grow justify-items-end"><IconChevronRight :size="22" class=""></IconChevronRight></span>
 											</span>
-										</a>
+										</router-link>
+										<ul v-if="menu_item.has_submenu" class="submenu">
+											<li v-for="(menu_sub_item, z) in menu_item.submenu" :key="z" :class="{'hidden': !menu_item.show_submenu}">
+												<router-link :to="menu_sub_item.path" class="block">
+													<span class="flex items-center">
+														<component :is="menu_sub_item.icon" :size="menu_item.icon_size"></component>
+														<span class="menu-item-text">&nbsp;&nbsp;Dashboard</span>
+													</span>
+												</router-link>
+											</li>
+										</ul>
 									</li>
-									<li>
-										<a href="" class="block">
-											<span class="flex items-center">
-												<IconDashboard :size="28"></IconDashboard>
-												<span class="menu-item-text">&nbsp;Dashboard</span>
-												<span class="grow justify-items-end"><IconChevronRight :size="22" class=""></IconChevronRight></span>
-												
-											</span>
-										</a>
-									</li>
+									
 								</ul>
 							</div>
 						</div>
@@ -88,7 +88,82 @@ export default {
 			touchStartY: 0,
 			minSwipeDistance: 30,
 			is_mobile: false,
-			hover_sidebar: false
+			hover_sidebar: false,
+
+			menu_items : [
+					{
+						path: '/',
+						icon: 'IconDashboard',
+						icon_size: 22,
+						menu_text: 'Dashboard',
+						has_submenu : true,
+						show_submenu : false,
+						submenu: [
+							{
+								path: '/',
+								icon: 'IconDashboard',
+								icon_size: 22,
+								menu_text: 'Dashboard',
+								path: ''
+							}
+						]
+					},
+					{
+						path: '/',
+						icon: 'IconDashboard',
+						icon_size: 22,
+						menu_text: 'Dashboard ns',
+						has_submenu : false,
+						show_submenu : false,
+						submenu: []
+					},
+					{
+						path: '/',
+						icon: 'IconDashboard',
+						icon_size: 22,
+						menu_text: 'Dashboard 2',
+						has_submenu : true,
+						show_submenu : false,
+						submenu: [
+							{
+								path: '/',
+								icon: 'IconDashboard',
+								icon_size: 22,
+								menu_text: 'Dashboard'
+							},
+							{
+								path: '/',
+								icon: 'IconDashboard',
+								icon_size: 22,
+								menu_text: 'Dashboard sub'
+							}
+						]
+					},
+					{
+						path: '/',
+						icon: 'IconDashboard',
+						icon_size: 22,
+						menu_text: 'Dashboard 3',
+						has_submenu : true,
+						show_submenu : false,
+						submenu: [
+							{
+								path: '/',
+								icon: 'IconDashboard',
+								icon_size: 22,
+								menu_text: 'Dashboard 5'
+							},
+							{
+								path: '/',
+								icon: 'IconDashboard',
+								icon_size: 22,
+								menu_text: 'Dashboard sub 5'
+							}
+						]
+					}
+				]
+			
+
 		}
 	},
 	methods:{

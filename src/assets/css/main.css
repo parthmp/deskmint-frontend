@@ -92,20 +92,20 @@
 	@apply fixed p-4 bg-white w-full;
 }
 .sidebar-logo-area{
-	@apply m-[15px];
+	@apply m-[20px] ml-[25px];
 }
 .sidebar-logo-area .logo{
 	@apply max-w-[170px];
 }
 .sidebar-logo-area .logo-icon{
-	@apply min-w-[36px] ml-[8.5px];
+	@apply min-w-[36px];
 }
 .sidebar-menu-items{
 	@apply  m-[14px];
 }
-.sidebar-menu-items li a{
-	@apply p-[10px] rounded-xl mt-[10px] font-semibold text-gray-text;
+.sidebar-menu-items ul li a{
+	@apply p-[10px] rounded-xl mt-[10px] font-semibold text-gray-text ;
 }
-.sidebar-menu-items li a:hover{
+.sidebar-menu-items ul li a:hover{
 	@apply  bg-gray-background;
 }
