@@ -2,7 +2,7 @@
 		<div class="container-fluid" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">	
 			<div class="big-content">
 				<aside class="relative">
-					<div class="sidebar" @mouseover="hover_sidebar = true" @mouseleave="hover_sidebar = false" :class="{'closed':!sidebar_full, 'phone': phone_show}">
+					<div class="sidebar" @mouseenter="hover_sidebar = true" @mouseleave="hover_sidebar = false" :class="{'closed':!sidebar_full, 'phone': phone_show}">
 						<div class="sidebar-logo-area">
 							<div class="flex items-center">
 								<a v-show="sidebar_full || (hover_sidebar && !is_mobile)" href="javascript:;"><img src="./../assets/images/deskmit-logo.svg" class="logo" alt=""></a>
@@ -18,27 +18,35 @@
 						</div>
 						
 						<div class="overflow-auto styled-scrollbar h-[100vh]">
-							<a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show">Phone Launcher</a>
+							
 							<div class="sidebar-menu-items">
 								<ul class="main-menu-list">
 									<li v-for="(menu_item, i) in menu_items" :key="i">
-										<router-link :to="menu_item.path" class="block" @click="menu_item.show_submenu = !menu_item.show_submenu">
+										<router-link :to="menu_item.path" class="block" @click="menu_item.show_submenu = !menu_item.show_submenu" :class="{'active-menu-link': menu_item.is_active}">
 											<span class="flex items-center">
-												<component :is="menu_item.icon" :size="menu_item.icon_size"></component>
-												<span class="menu-item-text">&nbsp;&nbsp;{{ menu_item.menu_text }}</span>
-												<span v-if="menu_item.has_submenu" class="grow justify-items-end"><IconChevronRight :size="22" class=""></IconChevronRight></span>
+												<component v-if="sidebar_full || hover_sidebar" :is="menu_item.icon" :size="menu_item.icon_size"></component>
+												<component v-if="!sidebar_full && !hover_sidebar" :is="menu_item.icon" :size="36"></component>
+												<span v-if="hover_sidebar || sidebar_full" class="menu-item-text">&nbsp;&nbsp;{{ menu_item.menu_text }}</span>
+												<span data-exclude="true" v-if="menu_item.has_submenu && (hover_sidebar || sidebar_full)" class="grow justify-items-end">
+													<IconChevronRight :class="{'chevron-rotated':menu_item.show_submenu}" :size="22" class="chevron-icon"></IconChevronRight>
+												</span>
+												
 											</span>
 										</router-link>
-										<ul v-if="menu_item.has_submenu" class="submenu">
-											<li v-for="(menu_sub_item, z) in menu_item.submenu" :key="z" :class="{'hidden': !menu_item.show_submenu}">
-												<router-link :to="menu_sub_item.path" class="block">
-													<span class="flex items-center">
-														<component :is="menu_sub_item.icon" :size="menu_item.icon_size"></component>
-														<span class="menu-item-text">&nbsp;&nbsp;Dashboard</span>
-													</span>
-												</router-link>
-											</li>
-										</ul>
+										<transition name="slide">
+											<ul v-if="hover_sidebar || sidebar_full" v-show="menu_item.show_submenu" class="submenu">
+												
+												<li v-for="(menu_sub_item, z) in menu_item.submenu" :key="z">
+													<router-link :to="menu_sub_item.path" class="block" :class="{'active-menu-link': menu_sub_item.is_active}">
+														<span class="flex items-center">
+															<component :is="menu_sub_item.icon" :size="menu_sub_item.icon_size"></component>
+															<span class="menu-item-text">&nbsp;&nbsp;Dashboard</span>
+														</span>
+													</router-link>
+												</li>
+												
+											</ul>
+										</transition>
 									</li>
 									
 								</ul>
@@ -61,6 +69,27 @@
 			</div>
 		</div>
 </template>
+<style scoped>
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
+  max-height: 500px; /* Adjust based on expected submenu size */
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+.chevron-icon {
+  transition: transform 0.3s ease;
+}
+
+.chevron-rotated {
+  transform: rotate(90deg);
+}
+</style>
 <script>
 
 import { IconCircle } from '@tabler/icons-vue';
@@ -68,6 +97,7 @@ import { IconCircleDot } from '@tabler/icons-vue';
 import { IconX } from '@tabler/icons-vue';
 import { IconDashboard } from '@tabler/icons-vue';
 import { IconChevronRight } from '@tabler/icons-vue';
+import { IconChevronDown } from '@tabler/icons-vue';
 
 
 export default {
@@ -78,6 +108,7 @@ export default {
 		IconCircleDot,
 		IconX,
 		IconChevronRight,
+		IconChevronDown,
 		IconDashboard
 	},
 	data : function(){
@@ -98,12 +129,14 @@ export default {
 						menu_text: 'Dashboard',
 						has_submenu : true,
 						show_submenu : false,
+						is_active: true,
 						submenu: [
 							{
 								path: '/',
-								icon: 'IconDashboard',
-								icon_size: 22,
+								icon: 'IconCircle',
+								icon_size: 18,
 								menu_text: 'Dashboard',
+								is_active: false,
 								path: ''
 							}
 						]
@@ -115,6 +148,7 @@ export default {
 						menu_text: 'Dashboard ns',
 						has_submenu : false,
 						show_submenu : false,
+						is_active: false,
 						submenu: []
 					},
 					{
@@ -124,17 +158,20 @@ export default {
 						menu_text: 'Dashboard 2',
 						has_submenu : true,
 						show_submenu : false,
+						is_active: false,
 						submenu: [
 							{
 								path: '/',
 								icon: 'IconDashboard',
 								icon_size: 22,
+								is_active: false,
 								menu_text: 'Dashboard'
 							},
 							{
 								path: '/',
 								icon: 'IconDashboard',
 								icon_size: 22,
+								is_active: true,
 								menu_text: 'Dashboard sub'
 							}
 						]
@@ -146,17 +183,20 @@ export default {
 						menu_text: 'Dashboard 3',
 						has_submenu : true,
 						show_submenu : false,
+						is_active: false,
 						submenu: [
 							{
 								path: '/',
 								icon: 'IconDashboard',
 								icon_size: 22,
+								is_active: false,
 								menu_text: 'Dashboard 5'
 							},
 							{
 								path: '/',
 								icon: 'IconDashboard',
 								icon_size: 22,
+								is_active: false,
 								menu_text: 'Dashboard sub 5'
 							}
 						]
@@ -196,10 +236,12 @@ export default {
 
 		handleOutsideClick: function(e) {
 			if (this.phone_show && window.innerWidth < 768) {
+				
 				const sidebar = this.$el.querySelector('.sidebar.phone');
 				const launcher = e.target.closest('a[href="javascript:;"]');
+				const excludeme = e.target.closest('span[data-exclude="true"]');
 				
-				if (sidebar && !sidebar.contains(e.target) && !launcher) {
+				if (sidebar && !sidebar.contains(e.target) && !launcher && !excludeme) {
 					this.phone_show = false;
 				}
 			}

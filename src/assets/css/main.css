@@ -106,6 +106,6 @@
 .sidebar-menu-items ul li a{
 	@apply p-[10px] rounded-xl mt-[10px] font-semibold text-gray-text ;
 }
-.sidebar-menu-items ul li a:hover{
+.sidebar-menu-items ul li a:hover, .active-menu-link{
 	@apply  bg-gray-background;
 }
