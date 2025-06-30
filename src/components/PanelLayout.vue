@@ -2,19 +2,49 @@
 		<div class="container-fluid" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">	
 			<div class="big-content">
 				<aside class="relative">
-					<div class="sidebar overflow-auto styled-scrollbar" :class="{'closed':!sidebar_full, 'phone': phone_show}">sidebar
-						<a href="javascript:;" @click="sidebar_full = !sidebar_full">
-							<span v-if="sidebar_full">Close</span>
-							<span v-if="!sidebar_full">Open</span>
-						</a>
-						<IconHome :size="26" stroke-width="2" />
-
-						<br>
-						<br>
-						<br>
+					<div class="sidebar" @mouseover="hover_sidebar = true" @mouseleave="hover_sidebar = false" :class="{'closed':!sidebar_full, 'phone': phone_show}">
+						<div class="sidebar-logo-area">
+							<div class="flex items-center">
+								<a v-show="sidebar_full || (hover_sidebar && !is_mobile)" href="javascript:;"><img src="./../assets/images/deskmit-logo.svg" class="logo" alt=""></a>
+								<a v-show="!sidebar_full && !hover_sidebar && !is_mobile" href="javascript:;"><img src="./../assets/images/deskmit-logo-icon.svg" class="logo-icon" alt=""></a>
+								<div v-show="sidebar_full || (hover_sidebar && !is_mobile)" class="grow">
+									<a v-if="!sidebar_full && !is_mobile" href="javascript:;" @click="sidebar_full = !sidebar_full" class="close-sidebar-icon float-end"><IconCircle></IconCircle></a>
+									<a v-if="sidebar_full && !is_mobile" href="javascript:;" @click="sidebar_full = !sidebar_full" class="close-sidebar-icon float-end"><IconCircleDot></IconCircleDot></a>
+								</div>
+								<div v-show="sidebar_full && is_mobile" class="grow">
+									<a href="javascript:;" @click="phone_show = false" class="close-sidebar-icon float-end"><IconX></IconX></a>
+								</div>
+							</div>
+						</div>
 						
-						<a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show">Phone Launcher</a>
-						<p v-for="(i, z) in 500" :key="i">sidebar menu</p>
+						<div class="overflow-auto styled-scrollbar h-[100vh]">
+							<a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show">Phone Launcher</a>
+							<div class="sidebar-menu-items">
+								<ul>
+									<li>
+										<a href="" class="block">
+											<span class="flex items-center">
+												<IconDashboard :size="22"></IconDashboard>
+												<span class="menu-item-text">&nbsp;&nbsp;Dashboard</span>
+												<span class="grow justify-items-end"><IconChevronRight :size="22" class=""></IconChevronRight></span>
+												
+											</span>
+										</a>
+									</li>
+									<li>
+										<a href="" class="block">
+											<span class="flex items-center">
+												<IconDashboard :size="28"></IconDashboard>
+												<span class="menu-item-text">&nbsp;Dashboard</span>
+												<span class="grow justify-items-end"><IconChevronRight :size="22" class=""></IconChevronRight></span>
+												
+											</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+						
 					
 					</div>
 				</aside>
@@ -33,14 +63,22 @@
 </template>
 <script>
 
-import { IconHome } from '@tabler/icons-vue';
+import { IconCircle } from '@tabler/icons-vue';
+import { IconCircleDot } from '@tabler/icons-vue';
+import { IconX } from '@tabler/icons-vue';
+import { IconDashboard } from '@tabler/icons-vue';
+import { IconChevronRight } from '@tabler/icons-vue';
 
 
 export default {
 
 	name: 'PanelLayout',
 	components: {
-		IconHome
+		IconCircle,
+		IconCircleDot,
+		IconX,
+		IconChevronRight,
+		IconDashboard
 	},
 	data : function(){
 		return {
@@ -48,7 +86,9 @@ export default {
 			phone_show: false,
 			touchStartX: 0,
 			touchStartY: 0,
-			minSwipeDistance: 30
+			minSwipeDistance: 30,
+			is_mobile: false,
+			hover_sidebar: false
 		}
 	},
 	methods:{
@@ -88,6 +128,9 @@ export default {
 					this.phone_show = false;
 				}
 			}
+		},
+		updateScreenSize : function(){
+			this.is_mobile = window.innerWidth <= 767;
 		}
 		
 	},
@@ -100,9 +143,12 @@ export default {
 	},
 	mounted(){
 		document.addEventListener('click', this.handleOutsideClick);
+		window.addEventListener('resize', this.updateScreenSize);
+		this.updateScreenSize();
 	},
 	beforeUnmount() {
 		document.removeEventListener('click', this.handleOutsideClick);
+		window.removeEventListener('resize', this.updateScreenSize);
 	}
 
 }
