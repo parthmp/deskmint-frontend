@@ -4,6 +4,8 @@
 
 @import "./reset.css";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 
 :root{
 	--sidebar-open-width:275px;
@@ -23,6 +25,7 @@
 	--color-gray-background: #f2f2f3;
 	--color-deskmint-green: #0FA557;
 	--color-deskmint-green-dark: #039F4E;
+	--color-deskmint-green-light: #88FFC1;
 }
 @layer utilities {
 
@@ -76,7 +79,7 @@
 	@apply grow  transition-all;
 }
 .sidebar{
-	@apply fixed md:block h-[100vh] md:w-[var(--sidebar-open-width)] translate-x-[-100%] md:translate-x-0 transition-all z-20 bg-white shadow-xl;
+	@apply fixed md:block h-[100vh] md:w-[var(--sidebar-open-width)] translate-x-[-100%] md:translate-x-0 transition-all z-20 bg-white shadow-xl dark:bg-black dark:text-white;
 
 	
 }
@@ -95,7 +98,7 @@
 	@apply md:ml-[var(--sidebar-close-width)];
 }
 .topbar{
-	@apply fixed p-4 bg-white w-full;
+	@apply fixed p-4 bg-white w-full drop-shadow-md;
 }
 .sidebar-logo-area{
 	@apply m-[20px] ml-[25px];
@@ -110,7 +113,7 @@
 	@apply  m-[14px];
 }
 .sidebar-menu-items ul li a {
-  @apply p-[10px] rounded-xl mt-[10px] font-semibold text-gray-text transition-colors duration-300;
+  @apply p-[10px] rounded-lg mt-[10px] font-semibold text-gray-text transition-colors duration-300;
 }
 
 .sidebar-menu-items ul li a:hover {
@@ -123,4 +126,22 @@
 
 .submenu{
 	@apply mb-[20px];
+}
+.barcard{
+	@apply absolute top-12 left-[-90px] bg-white p-[5px] rounded-lg z-10;
+}
+.barcard ul li a{
+	@apply p-[14px] pt-[7px] pb-[7px] mt-[5px] rounded-lg transition-all duration-300;
+}
+.barcard ul li a:hover, .active_theme_tab{
+	@apply bg-deskmint-green-light drop-shadow-sm;
+}
+.barcard-shortcut{
+	@apply absolute top-8 left-[-200px] z-20 shadow-lg p-[25px] rounded-lg;
+}
+.shortcut-card{
+	@apply flex flex-col items-center shadow-xl ml-[15px] p-[25px];
+}
+.shortcut-card a{
+	@apply ml-[15px];
 }

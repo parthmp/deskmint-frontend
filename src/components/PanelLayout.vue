@@ -1,11 +1,12 @@
 <template>
-		<div class="container-fluid" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">	
+		<div :data-theme="current_theme_name" class="container-fluid" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">	
 			<div class="big-content">
 				<aside class="relative">
 					<div class="sidebar" @mouseenter="hover_sidebar = true" @mouseleave="hover_sidebar = false" :class="{'closed':!sidebar_full, 'phone': phone_show}">
 						<div class="sidebar-logo-area">
 							<div class="flex items-center">
-								<a v-show="sidebar_full || (hover_sidebar && !is_mobile)" href="javascript:;"><img src="./../assets/images/deskmit-logo.svg" class="logo" alt=""></a>
+								<a v-show="(((sidebar_full) || (hover_sidebar && !is_mobile)) && current_theme_name == 'light')" href="javascript:;"><img src="./../assets/images/deskmit-logo.svg" class="logo" alt=""></a>
+								<a v-show="(((sidebar_full) || (hover_sidebar && !is_mobile)) && current_theme_name == 'dark')" href="javascript:;"><img src="./../assets/images/deskmit-logo-white.svg" class="logo" alt=""></a>
 								<a v-show="!sidebar_full && !hover_sidebar && !is_mobile" href="javascript:;"><img src="./../assets/images/deskmit-logo-icon.svg" class="logo-icon" alt=""></a>
 								<div v-show="sidebar_full || (hover_sidebar && !is_mobile)" class="grow">
 									<a v-if="!sidebar_full && !is_mobile" href="javascript:;" @click="sidebar_full = !sidebar_full" class="close-sidebar-icon float-end"><IconCircle></IconCircle></a>
@@ -28,7 +29,7 @@
 												<component v-if="!sidebar_full && !hover_sidebar" :is="menu_item.icon" :size="36"></component>
 												<span v-if="hover_sidebar || sidebar_full" class="menu-item-text">&nbsp;&nbsp;{{ menu_item.menu_text }}</span>
 												<span data-exclude="true" v-if="menu_item.has_submenu && (hover_sidebar || sidebar_full)" class="grow justify-items-end">
-													<IconChevronRight :class="{'chevron-rotated':menu_item.show_submenu}" :size="22" class="chevron-icon"></IconChevronRight>
+													<!--<IconChevronRight :class="{'chevron-rotated':menu_item.show_submenu}" :size="22" class="chevron-icon"></IconChevronRight>-->
 												</span>
 												
 											</span>
@@ -60,11 +61,72 @@
 				<main class="main-content" :class="{'md:ml-[var(--sidebar-close-width)]':!sidebar_full, 'md:ml-[var(--sidebar-open-width)]':sidebar_full}">
 					<div class="topbar">
 						<a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show"><IconAlignLeft></IconAlignLeft></a>
-						
+						<div class="row">
+							<div class="col-md-8">1</div>
+							<div class="col-md-4 flex items-center gap-6">
+								
+								<div class="relative">
+									<a href="javascript:;" class="theme_launcher" @click="show_theme_menu = !show_theme_menu"><component :is="theme_icon"></component></a>
+									<div class="barcard" v-show="show_theme_menu">
+										<ul>
+											<li>
+												<a class="flex items-center gap-2" @click="setCurrentTheme('light')" :class="{'active_theme_tab':(current_theme_name == 'light')}" href="javascript:;"><IconSun></IconSun>&nbsp;Light</a>
+											</li>
+											<li>
+												<a class="flex items-center gap-2" @click="setCurrentTheme('dark')" :class="{'active_theme_tab':(current_theme_name == 'dark')}" href="javascript:;"><IconMoon></IconMoon>&nbsp;Dark</a>
+											</li>
+											<li>
+												<a class="flex items-center gap-2" @click="setCurrentTheme('system')" :class="{'active_theme_tab':(current_theme_name == 'system')}" href="javascript:;"><IconDeviceImac></IconDeviceImac>&nbsp;System</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+								<div class="relative">
+									
+									<a href="javascript:;" class="shortcut_launcher" @click="show_theme_menu = !show_theme_menu"><IconTableShortcut></IconTableShortcut></a>
+									<div class="barcard-shortcut">
+										<div class="flex">
+											<div>
+												<a href="javascript:;">
+													<div class="shortcut-card">
+														<IconCarSuv :size="36"></IconCarSuv>
+														<p>Shortcut</p>	
+													</div>
+												</a>
+											</div>
+											<div>
+												<a href="javascript:;">
+													<div class="shortcut-card">
+														<IconCarSuv :size="36"></IconCarSuv>
+														<p>Shortcut</p>	
+													</div>
+												</a>
+											</div>
+											<div>
+												<a href="javascript:;">
+													<div class="shortcut-card">
+														<IconCarSuv :size="36"></IconCarSuv>
+														<p>Shortcut</p>	
+													</div>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+							</div>
+						</div>
 					</div>
 					<section>
 						this is content section
-						<p v-for="(i, z) in 500" :key="i"></p>
+						<p v-for="(i, z) in 500" :key="i">2266666666666666666666666666666</p>
+						<div class="row">
+							<div class="col-md-9">1</div>
+							<div class="col-md-3">1111111111111111111111111111111111111111111111111 11111111111111111111111111111111111111 11111111111111111111111 1111111</div>
+							<div class="col-md-6">1</div>
+							<div class="col-md-6">1</div>
+							<div class="col-md-6">1</div>
+						</div>
 					</section>
 				</main>
 			</div>
@@ -100,6 +162,11 @@ import { IconDashboard } from '@tabler/icons-vue';
 import { IconChevronRight } from '@tabler/icons-vue';
 import { IconChevronDown } from '@tabler/icons-vue';
 import { IconAlignLeft } from '@tabler/icons-vue';
+import { IconMoon } from '@tabler/icons-vue';
+import { IconSun } from '@tabler/icons-vue';
+import { IconDeviceImac } from '@tabler/icons-vue';
+import { IconTableShortcut } from '@tabler/icons-vue';
+import { IconCarSuv } from '@tabler/icons-vue';
 
 
 export default {
@@ -112,6 +179,11 @@ export default {
 		IconChevronRight,
 		IconChevronDown,
 		IconAlignLeft,
+		IconSun,
+		IconMoon,
+		IconDeviceImac,
+		IconTableShortcut,
+		IconCarSuv,
 		IconDashboard
 	},
 	data : function(){
@@ -123,7 +195,11 @@ export default {
 			minSwipeDistance: 30,
 			is_mobile: false,
 			hover_sidebar: false,
-
+			show_theme_menu: false,
+			current_theme_name: 'light',
+			system_theme_name: '',
+			theme_icon: 'IconMoon',
+			phone_breakpoint: 768,
 			menu_items : [
 					{
 						path: '/',
@@ -238,7 +314,7 @@ export default {
 		},
 
 		handleOutsideClick: function(e) {
-			if (this.phone_show && window.innerWidth < 768) {
+			if (this.phone_show && window.innerWidth < this.phone_breakpoint) {
 				
 				const sidebar = this.$el.querySelector('.sidebar.phone');
 				const launcher = e.target.closest('a[href="javascript:;"]');
@@ -246,11 +322,19 @@ export default {
 				
 				if (sidebar && !sidebar.contains(e.target) && !launcher && !excludeme) {
 					this.phone_show = false;
+					
 				}
+				
 			}
+			const theme_launcher = e.target.closest('a[class="theme_launcher"]');
+				
+			if (!theme_launcher) {
+				this.show_theme_menu = false;
+			}
+			
 		},
 		updateScreenSize : function(){
-			this.is_mobile = window.innerWidth <= 767;
+			this.is_mobile = window.innerWidth < this.phone_breakpoint;
 		},
 
 		resetMenuItems : function(index, mtype = ''){
@@ -287,6 +371,23 @@ export default {
 
 			this.menu_items[i].submenu[z].is_active = true;
 
+		},
+
+		setCurrentTheme : function(theme_name){
+			
+			if(theme_name == 'system'){
+				this.current_theme_name = this.system_theme_name;
+				
+			}else{
+				this.current_theme_name = theme_name;
+			}
+
+			if(this.current_theme_name == 'dark'){
+				this.theme_icon = 'IconMoon';
+			}else{
+				this.theme_icon = 'IconSun';
+			}
+		
 		}
 		
 	},
@@ -301,6 +402,12 @@ export default {
 		document.addEventListener('click', this.handleOutsideClick);
 		window.addEventListener('resize', this.updateScreenSize);
 		this.updateScreenSize();
+		if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			this.system_theme_name = 'dark'
+		}else{
+			this.system_theme_name = 'light'
+		}
+		this.setCurrentTheme('light');
 	},
 	beforeUnmount() {
 		document.removeEventListener('click', this.handleOutsideClick);
