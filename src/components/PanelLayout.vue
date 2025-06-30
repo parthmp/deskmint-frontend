@@ -59,12 +59,12 @@
 				</aside>
 				<main class="main-content" :class="{'md:ml-[var(--sidebar-close-width)]':!sidebar_full, 'md:ml-[var(--sidebar-open-width)]':sidebar_full}">
 					<div class="topbar">
-						<a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show">Phone Launcher</a>
-						123
+						<a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show"><IconAlignLeft></IconAlignLeft></a>
+						
 					</div>
 					<section>
 						this is content section
-						<p v-for="(i, z) in 500" :key="i">test aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+						<p v-for="(i, z) in 500" :key="i"></p>
 					</section>
 				</main>
 			</div>
@@ -99,6 +99,7 @@ import { IconX } from '@tabler/icons-vue';
 import { IconDashboard } from '@tabler/icons-vue';
 import { IconChevronRight } from '@tabler/icons-vue';
 import { IconChevronDown } from '@tabler/icons-vue';
+import { IconAlignLeft } from '@tabler/icons-vue';
 
 
 export default {
@@ -110,6 +111,7 @@ export default {
 		IconX,
 		IconChevronRight,
 		IconChevronDown,
+		IconAlignLeft,
 		IconDashboard
 	},
 	data : function(){
