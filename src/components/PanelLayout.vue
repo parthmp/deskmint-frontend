@@ -83,9 +83,37 @@
 								</div>
 								<div class="relative">
 									
-									<a href="javascript:;" class="shortcut_launcher" @click="show_theme_menu = !show_theme_menu"><IconTableShortcut></IconTableShortcut></a>
-									<div class="barcard-shortcut">
-										<div class="flex">
+									<a href="javascript:;" class="shortcuts_launcher" @click="show_shortcuts_menu = !show_shortcuts_menu"><IconTableShortcut></IconTableShortcut></a>
+									<div v-show="show_shortcuts_menu" class="barcard-shortcut styled-scrollbar">
+										<div class="flex gap-4">
+											<div>
+												<a href="javascript:;" @click="show_shortcuts_menu = false">
+													<div class="shortcut-card">
+														<IconCarSuv :size="36"></IconCarSuv>
+														<p>Shortcut</p>	
+													</div>
+												</a>
+											</div>
+											
+											<div>
+												<a href="javascript:;" @click="show_shortcuts_menu = false">
+													<div class="shortcut-card">
+														<IconCarSuv :size="36"></IconCarSuv>
+														<p>Shortcut</p>	
+													</div>
+												</a>
+											</div>
+											<div>
+												<a href="javascript:;" @click="show_shortcuts_menu = false">
+													<div class="shortcut-card">
+														<IconCarSuv :size="36"></IconCarSuv>
+														<p>Shortcut</p>	
+													</div>
+												</a>
+											</div>
+										</div>
+										<br>
+										<div class="flex gap-4">
 											<div>
 												<a href="javascript:;">
 													<div class="shortcut-card">
@@ -94,6 +122,35 @@
 													</div>
 												</a>
 											</div>
+											
+											<div>
+												<a href="javascript:;">
+													<div class="shortcut-card">
+														<IconCarSuv :size="36"></IconCarSuv>
+														<p>Shortcut</p>	
+													</div>
+												</a>
+											</div>
+											<div>
+												<a href="javascript:;">
+													<div class="shortcut-card">
+														<IconCarSuv :size="36"></IconCarSuv>
+														<p>Shortcut</p>	
+													</div>
+												</a>
+											</div>
+										</div>
+										<br>
+										<div class="flex gap-4">
+											<div>
+												<a href="javascript:;">
+													<div class="shortcut-card">
+														<IconCarSuv :size="36"></IconCarSuv>
+														<p>Shortcut</p>	
+													</div>
+												</a>
+											</div>
+											
 											<div>
 												<a href="javascript:;">
 													<div class="shortcut-card">
@@ -113,19 +170,66 @@
 										</div>
 									</div>
 								</div>
+
+								<div class="relative">
+									
+									<a href="javascript:;" class="notifications_launcher" @click="show_notifications_menu = !show_notifications_menu"><IconTableShortcut></IconTableShortcut></a>
+									<div class="barcard-shortcut styled-scrollbar">
+										
+										123
+									</div>
+								</div>
 								
 							</div>
 						</div>
 					</div>
 					<section>
 						this is content section
-						<p v-for="(i, z) in 500" :key="i">2266666666666666666666666666666</p>
-						<div class="row">
-							<div class="col-md-9">1</div>
-							<div class="col-md-3">1111111111111111111111111111111111111111111111111 11111111111111111111111111111111111111 11111111111111111111111 1111111</div>
-							<div class="col-md-6">1</div>
-							<div class="col-md-6">1</div>
-							<div class="col-md-6">1</div>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<br>
+						<div class="row gap-4 m-[15px]!">
+							<div class="col-md-4">
+								<div class="card p-[35px]! rounded-lg" style="box-shadow: 0px 0px 50px green;">
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
+
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
+
+								</div>
+							</div>
+
+							<div class="col-md-4">
+								<div class="card p-[35px]! rounded-lg" style="box-shadow: 0px 0px 50px green;">
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
+
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
+
+								</div>
+							</div>
+
+							<div class="col-md-4">
+								<div class="card p-[35px]! rounded-lg" style="box-shadow: 0px 0px 50px green;">
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
+
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
+
+								</div>
+							</div>
+							
 						</div>
 					</section>
 				</main>
@@ -196,6 +300,8 @@ export default {
 			is_mobile: false,
 			hover_sidebar: false,
 			show_theme_menu: false,
+			show_shortcuts_menu: false,
+			show_notifications_menu: false,
 			current_theme_name: 'light',
 			system_theme_name: '',
 			theme_icon: 'IconMoon',
@@ -330,6 +436,12 @@ export default {
 				
 			if (!theme_launcher) {
 				this.show_theme_menu = false;
+			}
+
+			const shortcuts_launcher = e.target.closest('a[class="shortcuts_launcher"]');
+				
+			if (!shortcuts_launcher) {
+				this.show_shortcuts_menu = false;
 			}
 			
 		},

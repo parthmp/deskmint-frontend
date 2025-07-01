@@ -26,6 +26,8 @@
 	--color-deskmint-green: #0FA557;
 	--color-deskmint-green-dark: #039F4E;
 	--color-deskmint-green-light: #88FFC1;
+
+	--shadow-four-side: 0px 0px 15px #e7e7e7;
 }
 @layer utilities {
 
@@ -137,10 +139,13 @@
 	@apply bg-deskmint-green-light drop-shadow-sm;
 }
 .barcard-shortcut{
-	@apply absolute top-8 left-[-200px] z-20 shadow-lg p-[25px] rounded-lg;
+	@apply absolute top-12 left-[-200px] z-20 shadow-four-side p-[25px] rounded-xl max-h-[300px] overflow-auto bg-white;
 }
 .shortcut-card{
-	@apply flex flex-col items-center shadow-xl ml-[15px] p-[25px];
+	@apply flex flex-col items-center shadow-four-side p-[25px] rounded-lg transition-all duration-300;
+}
+.shortcut-card:hover{
+	@apply shadow-none bg-gray-background;
 }
 .shortcut-card a{
 	@apply ml-[15px];
