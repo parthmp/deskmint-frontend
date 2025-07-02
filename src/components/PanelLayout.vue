@@ -173,10 +173,41 @@
 
 								<div class="relative">
 									
-									<a href="javascript:;" class="notifications_launcher" @click="show_notifications_menu = !show_notifications_menu"><IconTableShortcut></IconTableShortcut></a>
-									<div class="barcard-shortcut styled-scrollbar">
+									<a href="javascript:;" class="notifications_launcher relative" @click="show_notifications_menu = !show_notifications_menu"><IconBell></IconBell>
+										<span class="red-pill-notification-alert"></span>
+									</a>
+									<div v-show="show_notifications_menu" class="notifications-area styled-scrollbar">
 										
-										123
+										<div class="notification">
+											<a href="javascript:;" class="flex gap-3">
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames </p>
+												<IconX class="grow" :size="66"></IconX>
+											</a>
+										</div>
+										<hr>
+										<div class="notification">
+											<a href="javascript:;" class="flex gap-3">
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames </p>
+												<IconX class="grow" :size="66"></IconX>
+											</a>
+										</div>
+										<hr>
+										<div class="notification">
+											<a href="javascript:;" class="flex gap-3">
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames </p>
+												<IconX class="grow" :size="66"></IconX>
+											</a>
+										</div>
+										<hr>
+										<div class="notification">
+											<a href="javascript:;" class="flex gap-3">
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames </p>
+												<IconX class="grow" :size="66"></IconX>
+											</a>
+										</div>
+										<hr>
+										
+										
 									</div>
 								</div>
 								
@@ -259,7 +290,7 @@
 </style>
 <script>
 
-import { IconCircle } from '@tabler/icons-vue';
+import { IconCircle, IconXPowerY } from '@tabler/icons-vue';
 import { IconCircleDot } from '@tabler/icons-vue';
 import { IconX } from '@tabler/icons-vue';
 import { IconDashboard } from '@tabler/icons-vue';
@@ -271,6 +302,7 @@ import { IconSun } from '@tabler/icons-vue';
 import { IconDeviceImac } from '@tabler/icons-vue';
 import { IconTableShortcut } from '@tabler/icons-vue';
 import { IconCarSuv } from '@tabler/icons-vue';
+import { IconBell } from '@tabler/icons-vue';
 
 
 export default {
@@ -288,6 +320,7 @@ export default {
 		IconDeviceImac,
 		IconTableShortcut,
 		IconCarSuv,
+		IconBell,
 		IconDashboard
 	},
 	data : function(){
@@ -442,6 +475,12 @@ export default {
 				
 			if (!shortcuts_launcher) {
 				this.show_shortcuts_menu = false;
+			}
+
+			const notifications_launcher = e.target.closest('a[class="notifications_launcher relative"]');
+				
+			if (!notifications_launcher) {
+				this.show_notifications_menu = false;
 			}
 			
 		},

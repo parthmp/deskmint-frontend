@@ -139,7 +139,7 @@
 	@apply bg-deskmint-green-light drop-shadow-sm;
 }
 .barcard-shortcut{
-	@apply absolute top-12 left-[-200px] z-20 shadow-four-side p-[25px] rounded-xl max-h-[300px] overflow-auto bg-white;
+	@apply absolute top-12 left-[-380px] z-20 shadow-four-side p-[25px] rounded-xl max-h-[300px] overflow-auto bg-white;
 }
 .shortcut-card{
 	@apply flex flex-col items-center shadow-four-side p-[25px] rounded-lg transition-all duration-300;
@@ -149,4 +149,22 @@
 }
 .shortcut-card a{
 	@apply ml-[15px];
+}
+.red-pill-notification-alert{
+	@apply absolute border-4 border-[red] rounded-4xl top-0 right-0;
+}
+.notifications-area{
+	@apply absolute z-20 shadow-four-side bg-white rounded-xl max-h-[300px] overflow-auto top-12 left-[-368px] min-w-[400px];
+}
+.notification a{
+	@apply p-[25px];
+}
+.notification{
+	@apply transition-all duration-300;
+}
+.notification:hover{
+	@apply bg-gray-background;
+}
+.notifications-area hr{
+	@apply border-y-gray-background;
 }
