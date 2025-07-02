@@ -210,6 +210,19 @@
 										
 									</div>
 								</div>
+
+								<div class="relative">
+									
+									<a href="javascript:;" class="notifications_launcher relative" @click="show_profile_menu = !show_profile_menu">
+										<img src="./../assets/images/profile-picture.png" class="profile-picture-topbar">
+										<span class="green-pill-alert"></span>
+									</a>
+									<div class="profile-area">
+										
+										
+										
+									</div>
+								</div>
 								
 							</div>
 						</div>
@@ -335,6 +348,7 @@ export default {
 			show_theme_menu: false,
 			show_shortcuts_menu: false,
 			show_notifications_menu: false,
+			show_profile_menu: false,
 			current_theme_name: 'light',
 			system_theme_name: '',
 			theme_icon: 'IconMoon',

@@ -100,7 +100,7 @@
 	@apply md:ml-[var(--sidebar-close-width)];
 }
 .topbar{
-	@apply fixed p-4 bg-white w-full drop-shadow-md;
+	@apply fixed p-2 bg-white w-full drop-shadow-md;
 }
 .sidebar-logo-area{
 	@apply m-[20px] ml-[25px];
@@ -167,4 +167,10 @@
 }
 .notifications-area hr{
 	@apply border-y-gray-background;
+}
+.profile-picture-topbar{
+	@apply rounded-4xl max-w-[40px];
+}
+.green-pill-alert{
+	@apply absolute border-5 border-[green] rounded-4xl right-0 bottom-0 shadow-[0px_0px_1px_white];
 }
