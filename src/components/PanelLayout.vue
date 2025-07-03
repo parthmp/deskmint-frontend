@@ -59,11 +59,13 @@
 					</div>
 				</aside>
 				<main class="main-content" :class="{'md:ml-[var(--sidebar-close-width)]':!sidebar_full, 'md:ml-[var(--sidebar-open-width)]':sidebar_full}">
-					<div class="topbar">
+					<div class="topbar" :class="{'md:left-[var(--sidebar-close-width)] md:w-[calc(100%-var(--sidebar-close-width))]': !sidebar_full, 'md:left-[var(--sidebar-open-width)] md:w-[calc(100%-var(--sidebar-open-width))]': sidebar_full }"
+>
+
 						<a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show"><IconAlignLeft></IconAlignLeft></a>
-						<div class="row">
-							<div class="col-md-8">1</div>
-							<div class="col-md-4 flex items-center gap-6">
+						<div class="flex mr-[10px]! ml-[10px]!">
+							<div class="">1</div>
+							<div class="grow self-end flex items-center justify-end gap-6">
 								
 								<div class="relative">
 									<a href="javascript:;" class="theme_launcher" @click="show_theme_menu = !show_theme_menu"><component :is="theme_icon"></component></a>
