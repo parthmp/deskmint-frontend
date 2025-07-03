@@ -59,15 +59,15 @@
 					</div>
 				</aside>
 				<main class="main-content" :class="{'md:ml-[var(--sidebar-close-width)]':!sidebar_full, 'md:ml-[var(--sidebar-open-width)]':sidebar_full}">
-					<div class="topbar" :class="{'md:left-[var(--sidebar-close-width)] md:w-[calc(100%-var(--sidebar-close-width))]': !sidebar_full, 'md:left-[var(--sidebar-open-width)] md:w-[calc(100%-var(--sidebar-open-width))]': sidebar_full }"
+					<div class="topbar w-full" :class="{'md:left-[var(--sidebar-close-width)] md:w-[calc(100%-var(--sidebar-close-width))]': !sidebar_full, 'md:left-[var(--sidebar-open-width)] md:w-[calc(100%-var(--sidebar-open-width))]': sidebar_full }"
 >
 
-						<a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show"><IconAlignLeft></IconAlignLeft></a>
-						<div class="flex mr-[10px]! ml-[10px]!">
-							<div class="">1</div>
+						
+						<div class="flex items-center mr-[10px]! ml-[10px]!">
+							<div class=""><a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show"><IconAlignLeft :size="30"></IconAlignLeft></a></div>
 							<div class="grow self-end flex items-center justify-end gap-6">
 								
-								<div class="relative">
+								<div class="md:relative">
 									<a href="javascript:;" class="theme_launcher" @click="show_theme_menu = !show_theme_menu"><component :is="theme_icon"></component></a>
 									<div class="barcard" v-show="show_theme_menu">
 										<ul>
@@ -83,12 +83,12 @@
 										</ul>
 									</div>
 								</div>
-								<div class="relative">
+								<div class="md:relative">
 									
 									<a href="javascript:;" class="shortcuts_launcher" @click="show_shortcuts_menu = !show_shortcuts_menu"><IconTableShortcut></IconTableShortcut></a>
 									<div v-show="show_shortcuts_menu" class="barcard-shortcut styled-scrollbar">
 										<div class="flex gap-4">
-											<div>
+											<div class="grow">
 												<a href="javascript:;" @click="show_shortcuts_menu = false">
 													<div class="shortcut-card">
 														<IconCarSuv :size="36"></IconCarSuv>
@@ -97,7 +97,7 @@
 												</a>
 											</div>
 											
-											<div>
+											<div class="grow">
 												<a href="javascript:;" @click="show_shortcuts_menu = false">
 													<div class="shortcut-card">
 														<IconCarSuv :size="36"></IconCarSuv>
@@ -105,7 +105,7 @@
 													</div>
 												</a>
 											</div>
-											<div>
+											<div class="grow">
 												<a href="javascript:;" @click="show_shortcuts_menu = false">
 													<div class="shortcut-card">
 														<IconCarSuv :size="36"></IconCarSuv>
@@ -116,7 +116,7 @@
 										</div>
 										<br>
 										<div class="flex gap-4">
-											<div>
+											<div class="grow">
 												<a href="javascript:;">
 													<div class="shortcut-card">
 														<IconCarSuv :size="36"></IconCarSuv>
@@ -125,7 +125,7 @@
 												</a>
 											</div>
 											
-											<div>
+											<div class="grow">
 												<a href="javascript:;">
 													<div class="shortcut-card">
 														<IconCarSuv :size="36"></IconCarSuv>
@@ -133,7 +133,7 @@
 													</div>
 												</a>
 											</div>
-											<div>
+											<div class="grow">
 												<a href="javascript:;">
 													<div class="shortcut-card">
 														<IconCarSuv :size="36"></IconCarSuv>
@@ -144,7 +144,7 @@
 										</div>
 										<br>
 										<div class="flex gap-4">
-											<div>
+											<div class="grow">
 												<a href="javascript:;">
 													<div class="shortcut-card">
 														<IconCarSuv :size="36"></IconCarSuv>
@@ -153,7 +153,7 @@
 												</a>
 											</div>
 											
-											<div>
+											<div class="grow">
 												<a href="javascript:;">
 													<div class="shortcut-card">
 														<IconCarSuv :size="36"></IconCarSuv>
@@ -161,7 +161,7 @@
 													</div>
 												</a>
 											</div>
-											<div>
+											<div class="grow">
 												<a href="javascript:;">
 													<div class="shortcut-card">
 														<IconCarSuv :size="36"></IconCarSuv>
@@ -173,7 +173,7 @@
 									</div>
 								</div>
 
-								<div class="relative">
+								<div class="md:relative">
 									
 									<a href="javascript:;" class="notifications_launcher relative" @click="show_notifications_menu = !show_notifications_menu"><IconBell></IconBell>
 										<span class="red-pill-notification-alert"></span>
@@ -213,7 +213,7 @@
 									</div>
 								</div>
 
-								<div class="relative">
+								<div class="md:relative">
 									
 									<a href="javascript:;" class="profile_menu_launcher relative" @click="show_profile_menu = !show_profile_menu">
 										<img src="./../assets/images/profile-picture.png" class="profile-picture-topbar">

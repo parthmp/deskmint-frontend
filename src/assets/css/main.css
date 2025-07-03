@@ -130,7 +130,7 @@
 	@apply mb-[20px];
 }
 .barcard{
-	@apply absolute top-12 right-0 bg-white p-[5px] rounded-lg z-10;
+	@apply absolute top-16 md:top-12 left-0 w-full md:left-[initial] md:w-[initial] md:right-0 bg-white p-[5px] rounded-lg z-10;
 }
 .barcard ul li a{
 	@apply p-[14px] pt-[7px] pb-[7px] mt-[5px] rounded-lg transition-all duration-300;
@@ -139,7 +139,7 @@
 	@apply bg-deskmint-green-light drop-shadow-sm;
 }
 .barcard-shortcut{
-	@apply absolute top-12 right-0 z-20 shadow-four-side p-[15px] rounded-lg max-h-[300px] overflow-auto bg-white;
+	@apply absolute top-16 md:top-12 w-full left-0 md:w-[initial] md:left-[initial] right-0 z-20 shadow-four-side p-[15px] rounded-lg max-h-[300px] overflow-auto bg-white;
 }
 .shortcut-card{
 	@apply flex flex-col items-center shadow-four-side p-[25px] rounded-lg transition-all duration-300;
@@ -154,7 +154,7 @@
 	@apply absolute border-4 border-[red] rounded-4xl top-0 right-0;
 }
 .notifications-area{
-	@apply absolute z-20 shadow-four-side bg-white rounded-lg max-h-[300px] p-[5px] overflow-auto top-12 right-0 min-w-[400px];
+	@apply absolute z-20 shadow-four-side bg-white rounded-lg max-h-[300px] p-[5px] overflow-auto top-16 md:top-12 right-0 min-w-[400px];
 }
 .notification a{
 	@apply p-[25px];
@@ -175,7 +175,7 @@
 	@apply absolute border-5 border-[green] rounded-4xl right-0 bottom-0 shadow-[0px_0px_1px_white] outline-2 outline-white;
 }
 .profile-area{
-	@apply absolute top-14 z-20 min-w-[200px] right-0 p-[5px] shadow-four-side rounded-lg max-h-[300px] gap-5 bg-white;
+	@apply absolute w-full md:w-[initial] top-16 md:top-14 z-20 min-w-[200px] right-0 p-[5px] shadow-four-side rounded-lg max-h-[300px] gap-5 bg-white;
 }
 .profile-item{
 	@apply flex items-center block pl-[20px] pr-[20px] pt-[15px] pb-[15px] rounded-lg transition-all duration-300;
