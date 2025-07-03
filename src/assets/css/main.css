@@ -139,13 +139,13 @@
 	@apply bg-deskmint-green-light drop-shadow-sm;
 }
 .barcard-shortcut{
-	@apply absolute top-12 left-[-380px] z-20 shadow-four-side p-[25px] rounded-xl max-h-[300px] overflow-auto bg-white;
+	@apply absolute top-12 left-[-380px] z-20 shadow-four-side p-[15px] rounded-lg max-h-[300px] overflow-auto bg-white;
 }
 .shortcut-card{
 	@apply flex flex-col items-center shadow-four-side p-[25px] rounded-lg transition-all duration-300;
 }
-.shortcut-card:hover{
-	@apply shadow-none bg-gray-background;
+.shortcut-card:hover, .profile-item:hover{
+	@apply shadow-none bg-deskmint-green-light;
 }
 .shortcut-card a{
 	@apply ml-[15px];
@@ -154,23 +154,29 @@
 	@apply absolute border-4 border-[red] rounded-4xl top-0 right-0;
 }
 .notifications-area{
-	@apply absolute z-20 shadow-four-side bg-white rounded-xl max-h-[300px] overflow-auto top-12 left-[-368px] min-w-[400px];
+	@apply absolute z-20 shadow-four-side bg-white rounded-lg max-h-[300px] p-[5px] overflow-auto top-12 left-[-368px] min-w-[400px];
 }
 .notification a{
 	@apply p-[25px];
 }
 .notification{
-	@apply transition-all duration-300;
+	@apply rounded-lg m-[5px] transition-all duration-300;
 }
 .notification:hover{
-	@apply bg-gray-background;
+	@apply bg-deskmint-green-light;
 }
-.notifications-area hr{
+.notifications-area hr,.profile-area hr{
 	@apply border-y-gray-background;
 }
 .profile-picture-topbar{
 	@apply rounded-4xl max-w-[40px];
 }
 .green-pill-alert{
-	@apply absolute border-5 border-[green] rounded-4xl right-0 bottom-0 shadow-[0px_0px_1px_white];
+	@apply absolute border-5 border-[green] rounded-4xl right-0 bottom-0 shadow-[0px_0px_1px_white] outline-2 outline-white;
+}
+.profile-area{
+	@apply absolute top-14 left-[-155px] z-20 min-w-[200px] p-[5px] shadow-four-side rounded-lg max-h-[300px] gap-5 bg-white;
+}
+.profile-item{
+	@apply flex items-center block pl-[20px] pr-[20px] pt-[15px] pb-[15px] rounded-lg transition-all duration-300;
 }

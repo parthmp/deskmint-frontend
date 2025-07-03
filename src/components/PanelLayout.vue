@@ -213,14 +213,26 @@
 
 								<div class="relative">
 									
-									<a href="javascript:;" class="notifications_launcher relative" @click="show_profile_menu = !show_profile_menu">
+									<a href="javascript:;" class="profile_menu_launcher relative" @click="show_profile_menu = !show_profile_menu">
 										<img src="./../assets/images/profile-picture.png" class="profile-picture-topbar">
 										<span class="green-pill-alert"></span>
 									</a>
-									<div class="profile-area">
+									<div v-show="show_profile_menu" class="profile-area">
 										
-										
-										
+										<a href="javascript:;" class="profile-item">
+											<IconUser :size="26"></IconUser>
+											<span class="grow ml-[5px]!">&nbsp;My Profile</span>
+										</a>
+										<hr>
+										<a href="javascript:;" class="profile-item">
+											<IconSettings :size="26"></IconSettings>
+											<span class="grow ml-[5px]!">&nbsp;Settings</span>
+										</a>
+										<hr>
+										<a href="javascript:;" class="profile-item">
+											<IconLogout :size="26"></IconLogout>
+											<span class="grow ml-[5px]!">&nbsp;Logout</span>
+										</a>
 									</div>
 								</div>
 								
@@ -316,6 +328,9 @@ import { IconDeviceImac } from '@tabler/icons-vue';
 import { IconTableShortcut } from '@tabler/icons-vue';
 import { IconCarSuv } from '@tabler/icons-vue';
 import { IconBell } from '@tabler/icons-vue';
+import { IconUser } from '@tabler/icons-vue';
+import { IconSettings } from '@tabler/icons-vue';
+import { IconLogout } from '@tabler/icons-vue';
 
 
 export default {
@@ -334,6 +349,9 @@ export default {
 		IconTableShortcut,
 		IconCarSuv,
 		IconBell,
+		IconUser,
+		IconSettings,
+		IconLogout,
 		IconDashboard
 	},
 	data : function(){
@@ -495,6 +513,12 @@ export default {
 				
 			if (!notifications_launcher) {
 				this.show_notifications_menu = false;
+			}
+
+			const profile_menu_launcher = e.target.closest('a[class="profile_menu_launcher relative"]');
+				
+			if (!profile_menu_launcher) {
+				this.show_profile_menu = false;
 			}
 			
 		},
