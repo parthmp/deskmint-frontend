@@ -295,6 +295,7 @@
 		</div>
 </template>
 <style scoped>
+/*@reference "tailwindcss/theme";*/
 .slide-enter-active,
 .slide-leave-active {
   transition: all 0.3s ease;
@@ -314,6 +315,10 @@
 .chevron-rotated {
   transform: rotate(90deg);
 }
+/*
+.card{
+	@apply text-yellow-800;
+}*/
 </style>
 <script>
 

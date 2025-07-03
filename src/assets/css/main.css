@@ -28,6 +28,20 @@
 	--color-deskmint-green-light: #88FFC1;
 
 	--shadow-four-side: 0px 0px 15px #e7e7e7;
+	--color-background-1: #ffffff;
+	--color-background-2: #F8F7FA;
+	--color-background-card: #ffffff;
+}
+@layer theme {
+  * {
+    @variant dark {
+      --color-gray-text: #cfcde4;
+	  --shadow-four-side: 0px 0px 15px #000;
+	  --color-background-1: #2f3349;
+	  --color-background-2: #25293C;
+	  --color-background-card: #2F3349;
+    }
+  }
 }
 @layer utilities {
 
@@ -72,16 +86,16 @@
     scrollbar-color: var(--color-neutral-border) transparent;
 }
 .sidebar-menu{
-	@apply bg-amber-600 max-w-full md:max-w-1/2;
+	@apply max-w-full md:max-w-1/2;
 }
 .big-content{
 	@apply flex relative transition-all;
 }
 .main-content{
-	@apply grow  transition-all;
+	@apply bg-background-2 h-[100vh] grow transition-all;
 }
 .sidebar{
-	@apply fixed md:block h-[100vh] md:w-[var(--sidebar-open-width)] translate-x-[-100%] md:translate-x-0 transition-all z-20 bg-white shadow-xl dark:bg-black dark:text-white;
+	@apply fixed md:block h-[100vh] md:w-[var(--sidebar-open-width)] translate-x-[-100%] md:translate-x-0 transition-all z-20 bg-background-1 shadow-xl ;
 
 	
 }
@@ -100,7 +114,7 @@
 	@apply md:ml-[var(--sidebar-close-width)];
 }
 .topbar{
-	@apply p-2 fixed top-0 bg-white drop-shadow-md;
+	@apply bg-background-card p-2 fixed top-0 drop-shadow-md;
 }
 .sidebar-logo-area{
 	@apply m-[20px] ml-[25px];
@@ -130,7 +144,7 @@
 	@apply mb-[20px];
 }
 .barcard{
-	@apply absolute top-16 md:top-12 left-0 w-full md:left-[initial] md:w-[initial] md:right-0 bg-white p-[5px] rounded-lg z-10;
+	@apply absolute top-16 md:top-12 left-0 w-full md:left-[initial] md:w-[initial] md:right-0 bg-background-card text-gray-text p-[5px] rounded-lg z-10;
 }
 .barcard ul li a{
 	@apply p-[14px] pt-[7px] pb-[7px] mt-[5px] rounded-lg transition-all duration-300;
@@ -139,13 +153,13 @@
 	@apply bg-deskmint-green-light drop-shadow-sm;
 }
 .barcard-shortcut{
-	@apply absolute top-16 md:top-12 w-full left-0 md:w-[initial] md:left-[initial] right-0 z-20 shadow-four-side p-[15px] rounded-lg max-h-[300px] overflow-auto bg-white;
+	@apply absolute top-16 md:top-12 w-full left-0 md:w-[initial] md:left-[initial] right-0 z-20 shadow-four-side p-[15px] rounded-lg max-h-[300px] overflow-auto bg-background-card text-gray-text;
 }
 .shortcut-card{
 	@apply flex flex-col items-center shadow-four-side p-[25px] rounded-lg transition-all duration-300;
 }
 .shortcut-card:hover, .profile-item:hover{
-	@apply shadow-none bg-deskmint-green-light;
+	@apply shadow-none bg-deskmint-green-light ;
 }
 .shortcut-card a{
 	@apply ml-[15px];
