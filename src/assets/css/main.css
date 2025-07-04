@@ -11,37 +11,52 @@
 	--sidebar-open-width:275px;
 	--sidebar-close-width:85px;
 
-	--styled-scrollbar-background: red;
-	--shreddit-content-background: green;
-	--color-neutral-border: black;
+	
+	--color-neutral-border: #e7e7e7;
+	
 }
 
-*, span{
+body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	font-family: "KoHo", "sans-serif";
 	font-size: 16px;
+	color:var(--color-default-text);
 }
+
 @theme{
+	
+	--color-default-text-iv: #DADADA;
+	--color-default-text: #444050;
 	--color-gray-text: #444050;
 	--color-gray-background: #f2f2f3;
 	--color-deskmint-green: #0FA557;
 	--color-deskmint-green-dark: #039F4E;
-	--color-deskmint-green-light: #88FFC1;
+	--color-deskmint-green-light: RGBA(136,255,193, 1);
 
 	--shadow-four-side: 0px 0px 15px #e7e7e7;
 	--color-background-1: #ffffff;
 	--color-background-2: #F8F7FA;
 	--color-background-card: #ffffff;
+	--shadow-lg: 0 0px 15px rgba(0, 0, 0, 0.20);
+	
+	
 }
 @layer theme {
   * {
     @variant dark {
-      --color-gray-text: #cfcde4;
-	  --shadow-four-side: 0px 0px 15px #000;
-	  --color-background-1: #2f3349;
-	  --color-background-2: #25293C;
-	  --color-background-card: #2F3349;
+		--color-default-text-iv: #444050;
+		--color-default-text:#DADADA;
+		--shadow-four-side: 0px 0px 15px #000;
+		--color-background-1: #2f3349;
+		--color-background-2: #25293C;
+		--color-background-card: #2F3349;
+		--shadow-lg: 0 0px 25px rgba(0, 0, 0, 1);
+		
+		
+		--color-neutral-border: #464D72;
     }
+	
   }
+  
 }
 @layer utilities {
 
@@ -129,7 +144,7 @@
 	@apply  m-[14px];
 }
 .sidebar-menu-items ul li a {
-  @apply p-[10px] rounded-lg mt-[10px] font-semibold text-gray-text transition-colors duration-300;
+  @apply p-[10px] rounded-lg mt-[10px] font-semibold transition-colors duration-300;
 }
 
 .sidebar-menu-items ul li a:hover {
@@ -137,29 +152,32 @@
 }
 
 .sidebar-menu-items ul li .active-menu-link {
-  @apply bg-gradient-to-r from-deskmint-green-dark to-deskmint-green text-white drop-shadow-lg;
+  @apply bg-gradient-to-r from-deskmint-green-dark to-deskmint-green text-white! shadow-lg;
 }
 
 .submenu{
 	@apply mb-[20px];
 }
 .barcard{
-	@apply absolute top-16 md:top-12 left-0 w-full md:left-[initial] md:w-[initial] md:right-0 bg-background-card text-gray-text p-[5px] rounded-lg z-10;
+	@apply absolute top-16 md:top-12 left-0 w-full md:left-[initial] md:w-[initial] md:right-0 bg-background-card text-gray-text p-[5px] rounded-lg shadow-lg z-10;
 }
 .barcard ul li a{
-	@apply p-[14px] pt-[7px] pb-[7px] mt-[5px] rounded-lg transition-all duration-300;
+	@apply p-[14px] pt-[7px] pb-[7px] mt-[5px] rounded-lg text-default-text transition-all duration-300;
 }
 .barcard ul li a:hover, .active_theme_tab{
-	@apply bg-deskmint-green-light drop-shadow-sm;
+	@apply shadow-lg bg-deskmint-green-light dark:text-default-text-iv! drop-shadow-sm;
 }
 .barcard-shortcut{
-	@apply absolute top-16 md:top-12 w-full left-0 md:w-[initial] md:left-[initial] right-0 z-20 shadow-four-side p-[15px] rounded-lg max-h-[300px] overflow-auto bg-background-card text-gray-text;
+	@apply absolute top-16 md:top-12 w-full left-0 md:w-[initial] md:left-[initial] right-0 z-20 shadow-lg p-[15px] rounded-lg max-h-[300px] overflow-auto bg-background-card text-gray-text;
 }
 .shortcut-card{
-	@apply flex flex-col items-center shadow-four-side p-[25px] rounded-lg transition-all duration-300;
+	@apply flex flex-col items-center shadow-lg p-[25px] rounded-lg transition-all duration-300;
 }
 .shortcut-card:hover, .profile-item:hover{
-	@apply shadow-none bg-deskmint-green-light ;
+	@apply shadow-none bg-deskmint-green-light dark:text-default-text-iv;
+}
+.shortcut-card:hover p{
+	@apply dark:text-default-text-iv;
 }
 .shortcut-card a{
 	@apply ml-[15px];
@@ -168,7 +186,7 @@
 	@apply absolute border-4 border-[red] rounded-4xl top-0 right-0;
 }
 .notifications-area{
-	@apply absolute z-20 shadow-four-side bg-white rounded-lg max-h-[300px] p-[5px] overflow-auto top-16 md:top-12 right-0 min-w-[400px];
+	@apply absolute z-20 shadow-lg bg-background-card rounded-lg max-h-[300px] p-[5px] overflow-auto top-16 md:top-12 right-0 min-w-[400px];
 }
 .notification a{
 	@apply p-[25px];
@@ -179,17 +197,20 @@
 .notification:hover{
 	@apply bg-deskmint-green-light;
 }
+.notification:hover p{
+	@apply dark:text-default-text-iv!;
+}
 .notifications-area hr,.profile-area hr{
-	@apply border-y-gray-background;
+	@apply border-y-gray-background dark:border-default-text-iv;
 }
 .profile-picture-topbar{
 	@apply rounded-4xl max-w-[40px];
 }
 .green-pill-alert{
-	@apply absolute border-5 border-[green] rounded-4xl right-0 bottom-0 shadow-[0px_0px_1px_white] outline-2 outline-white;
+	@apply absolute border-5 border-[green] rounded-4xl right-0 bottom-0 shadow-[0px_0px_1px_white] outline-2 outline-white dark:outline-background-card;
 }
 .profile-area{
-	@apply absolute w-full md:w-[initial] top-16 md:top-14 z-20 min-w-[200px] right-0 p-[5px] shadow-four-side rounded-lg max-h-[300px] gap-5 bg-white;
+	@apply absolute w-full bg-background-card md:w-[initial] top-16 md:top-14 z-20 min-w-[200px] right-0 p-[5px] shadow-lg rounded-lg max-h-[300px] gap-5 ;
 }
 .profile-item{
 	@apply flex items-center block pl-[20px] pr-[20px] pt-[15px] pb-[15px] rounded-lg transition-all duration-300;

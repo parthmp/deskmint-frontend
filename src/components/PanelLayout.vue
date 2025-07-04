@@ -29,7 +29,7 @@
 												<component v-if="!sidebar_full && !hover_sidebar" :is="menu_item.icon" :size="36"></component>
 												<span v-if="hover_sidebar || sidebar_full" class="menu-item-text">&nbsp;&nbsp;{{ menu_item.menu_text }}</span>
 												<span data-exclude="true" v-if="menu_item.has_submenu && (hover_sidebar || sidebar_full)" class="grow justify-items-end">
-													<!--<IconChevronRight :class="{'chevron-rotated':menu_item.show_submenu}" :size="22" class="chevron-icon"></IconChevronRight>-->
+													<IconChevronRight :class="{'chevron-rotated':menu_item.show_submenu}" :size="22" class="chevron-icon"></IconChevronRight>
 												</span>
 												
 											</span>
