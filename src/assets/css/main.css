@@ -21,7 +21,9 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	font-size: 16px;
 	color:var(--color-default-text);
 }
-
+.main-section a, footer a{
+	color:#16772e !important;
+}
 @theme{
 	
 	--color-default-text-iv: #DADADA;
@@ -30,12 +32,14 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	--color-gray-background: #f2f2f3;
 	--color-deskmint-green: #0FA557;
 	--color-deskmint-green-dark: #039F4E;
-	--color-deskmint-green-light: RGBA(136,255,193, 1);
+	/*--color-deskmint-green-light: RGBA(136,255,193, 1);*/
+	--color-deskmint-green-light: RGBA(22,119,46, 0.15);
 
 	--shadow-four-side: 0px 0px 15px #e7e7e7;
 	--color-background-1: #ffffff;
 	--color-background-2: #F8F7FA;
 	--color-background-card: #ffffff;
+	--color-hover: #EBEBEB;
 	--shadow-lg: 0 0px 15px rgba(0, 0, 0, 0.20);
 	
 	
@@ -48,9 +52,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 		--shadow-four-side: 0px 0px 15px #000;
 		--color-background-1: #2f3349;
 		--color-background-2: #25293C;
+		--color-hover: #3D435B;
 		--color-background-card: #2F3349;
 		--shadow-lg: 0 0px 25px rgba(0, 0, 0, 1);
-		
+		--color-deskmint-green-light: RGBA(3,159,78, 0.15);
 		
 		--color-neutral-border: #464D72;
     }
@@ -107,7 +112,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply flex relative transition-all;
 }
 .main-content{
-	@apply bg-background-2 h-[100vh] grow transition-all;
+	@apply bg-background-2 block h-full md:min-h-[1000px] lg:min-h-[1200px] 2xl:min-h-[1400px] grow transition-all;
 }
 .sidebar{
 	@apply fixed md:block h-[100vh] md:w-[var(--sidebar-open-width)] translate-x-[-100%] md:translate-x-0 transition-all z-20 bg-background-1 shadow-xl ;
@@ -138,7 +143,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply max-w-[170px];
 }
 .sidebar-logo-area .logo-icon{
-	@apply min-w-[36px];
+	@apply min-w-[34px];
 }
 .sidebar-menu-items{
 	@apply  m-[14px];
@@ -159,13 +164,16 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply mb-[20px];
 }
 .barcard{
-	@apply absolute top-16 md:top-12 left-0 w-full md:left-[initial] md:w-[initial] md:right-0 bg-background-card text-gray-text p-[5px] rounded-lg shadow-lg z-10;
+	@apply absolute top-16 md:top-12 left-0 w-full md:left-[initial] md:w-[initial] md:right-0 bg-background-card text-gray-text px-[5px] pb-[5px] rounded-lg shadow-lg z-10;
 }
 .barcard ul li a{
 	@apply p-[14px] pt-[7px] pb-[7px] mt-[5px] rounded-lg text-default-text transition-all duration-300;
 }
-.barcard ul li a:hover, .active_theme_tab{
-	@apply shadow-lg bg-deskmint-green-light dark:text-default-text-iv! drop-shadow-sm;
+.barcard ul li a:hover{
+	@apply bg-hover;
+}
+.active_theme_tab{
+	@apply bg-deskmint-green-light! text-deskmint-green!;
 }
 .barcard-shortcut{
 	@apply absolute top-16 md:top-12 w-full left-0 md:w-[initial] md:left-[initial] right-0 z-20 shadow-lg p-[15px] rounded-lg max-h-[300px] overflow-auto bg-background-card text-gray-text;
@@ -174,10 +182,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply flex flex-col items-center shadow-lg p-[25px] rounded-lg transition-all duration-300;
 }
 .shortcut-card:hover, .profile-item:hover{
-	@apply shadow-none bg-deskmint-green-light dark:text-default-text-iv;
+	@apply shadow-none bg-hover dark:text-default-text;
 }
 .shortcut-card:hover p{
-	@apply dark:text-default-text-iv;
+	@apply dark:text-default-text;
 }
 .shortcut-card a{
 	@apply ml-[15px];
@@ -195,10 +203,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply rounded-lg m-[5px] transition-all duration-300;
 }
 .notification:hover{
-	@apply bg-deskmint-green-light;
+	@apply bg-hover;
 }
 .notification:hover p{
-	@apply dark:text-default-text-iv!;
+	@apply dark:text-default-text!;
 }
 .notifications-area hr,.profile-area hr{
 	@apply border-y-gray-background dark:border-default-text-iv;
@@ -214,4 +222,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 }
 .profile-item{
 	@apply flex items-center block pl-[20px] pr-[20px] pt-[15px] pb-[15px] rounded-lg transition-all duration-300;
+}
+.global-footer{
+	@apply text-center  w-full;
+}
+.card{
+	@apply bg-background-card rounded-lg p-[25px] mx-[15px];
 }

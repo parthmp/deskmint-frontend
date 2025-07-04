@@ -29,7 +29,7 @@
 												<component v-if="!sidebar_full && !hover_sidebar" :is="menu_item.icon" :size="36"></component>
 												<span v-if="hover_sidebar || sidebar_full" class="menu-item-text">&nbsp;&nbsp;{{ menu_item.menu_text }}</span>
 												<span data-exclude="true" v-if="menu_item.has_submenu && (hover_sidebar || sidebar_full)" class="grow justify-items-end">
-													<IconChevronRight :class="{'chevron-rotated':menu_item.show_submenu}" :size="22" class="chevron-icon"></IconChevronRight>
+													<!--<IconChevronRight :class="{'chevron-rotated':menu_item.show_submenu}" :size="22" class="chevron-icon"></IconChevronRight>-->
 												</span>
 												
 											</span>
@@ -241,28 +241,17 @@
 							</div>
 						</div>
 					</div>
-					<section>
+					<section class="main-section">
 						this is content section
 						<br>
 						<br>
 						<br>
 						<br>
 						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
-						<div class="row gap-4 m-[15px]!">
+						
+						<div class="row">
 							<div class="col-md-4">
-								<div class="card p-[35px]! rounded-lg" style="box-shadow: 0px 0px 50px green;">
+								<div class="card">
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
 
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
@@ -271,7 +260,7 @@
 							</div>
 
 							<div class="col-md-4">
-								<div class="card p-[35px]! rounded-lg" style="box-shadow: 0px 0px 50px green;">
+								<div class="card">
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
 
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
@@ -280,7 +269,7 @@
 							</div>
 
 							<div class="col-md-4">
-								<div class="card p-[35px]! rounded-lg" style="box-shadow: 0px 0px 50px green;">
+								<div class="card">
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
 
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
@@ -290,6 +279,13 @@
 							
 						</div>
 					</section>
+					
+					<br>
+					<br>
+					<br>
+					<footer class="global-footer">
+						<p class="flex items-center justify-center">Made with&nbsp;<IconHeartFilled class="text-red-500" :size="22"></IconHeartFilled>&nbsp;by&nbsp;<a href="https://parthparmar.dev" target="_blank" class="underline font-bold!">Parth Parmar</a></p>
+					</footer>
 				</main>
 			</div>
 		</div>
@@ -338,6 +334,7 @@ import { IconBell } from '@tabler/icons-vue';
 import { IconUser } from '@tabler/icons-vue';
 import { IconSettings } from '@tabler/icons-vue';
 import { IconLogout } from '@tabler/icons-vue';
+import { IconHeartFilled } from '@tabler/icons-vue';
 
 
 export default {
@@ -359,6 +356,7 @@ export default {
 		IconUser,
 		IconSettings,
 		IconLogout,
+		IconHeartFilled,
 		IconDashboard
 	},
 	data : function(){
