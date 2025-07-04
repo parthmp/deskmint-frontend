@@ -63,7 +63,7 @@
 >
 
 						
-						<div class="flex items-center mr-[10px]! ml-[10px]!">
+						<div class="flex items-center mr-[19px]! ml-[10px]!">
 							<div class=""><a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show"><IconAlignLeft :size="30"></IconAlignLeft></a></div>
 							<div class="grow self-end flex items-center justify-end gap-6">
 								
@@ -242,14 +242,9 @@
 						</div>
 					</div>
 					<section class="main-section">
-						this is content section
-						<br>
-						<br>
-						<br>
-						<br>
-						<br>
 						
-						<div class="row">
+						
+						<div class="row gap-6">
 							<div class="col-md-4">
 								<div class="card">
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>

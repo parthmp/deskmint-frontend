@@ -20,6 +20,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	font-family: "KoHo", "sans-serif";
 	font-size: 16px;
 	color:var(--color-default-text);
+	line-height: 22px;
 }
 .main-section a, footer a{
 	color:#16772e !important;
@@ -226,6 +227,9 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 .global-footer{
 	@apply text-center  w-full;
 }
+.main-section{
+	@apply mt-[80px] pl-[25px] pr-[23px];
+}
 .card{
-	@apply bg-background-card rounded-lg p-[25px] mx-[15px];
+	@apply bg-background-card rounded-lg p-[25px];
 }
