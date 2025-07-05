@@ -199,10 +199,13 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply absolute z-20 shadow-lg bg-background-card rounded-lg max-h-[300px] p-[5px] overflow-auto top-16 md:top-12 right-0 min-w-[400px];
 }
 .notification a{
-	@apply p-[25px];
+	@apply p-[15px];
 }
 .notification{
 	@apply rounded-lg m-[5px] transition-all duration-300;
+}
+.notification p{
+	@apply text-[14px]!;
 }
 .notification:hover{
 	@apply bg-hover;

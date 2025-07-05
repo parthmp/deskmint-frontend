@@ -35,7 +35,7 @@
 											</span>
 										</router-link>
 										<transition name="slide">
-											<ul v-if="hover_sidebar || sidebar_full" v-show="menu_item.show_submenu" class="submenu">
+											<ul v-if="(hover_sidebar || sidebar_full)" v-show="menu_item.show_submenu && menu_item.submenu.length > 0" class="submenu">
 												
 												<li v-for="(menu_sub_item, z) in menu_item.submenu" :key="z">
 													<router-link :to="menu_sub_item.path" class="block" :class="{'active-menu-link': menu_sub_item.is_active}"  @click="setSubActiveItem(i, z)">
@@ -182,32 +182,36 @@
 										
 										<div class="notification">
 											<a href="javascript:;" class="flex gap-3">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames </p>
-												<IconX class="grow" :size="66"></IconX>
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere</p>
+												<IconX class="grow" :size="36"></IconX>
 											</a>
 										</div>
 										<hr>
+
 										<div class="notification">
 											<a href="javascript:;" class="flex gap-3">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames </p>
-												<IconX class="grow" :size="66"></IconX>
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere</p>
+												<IconX class="grow" :size="36"></IconX>
 											</a>
 										</div>
 										<hr>
+
 										<div class="notification">
 											<a href="javascript:;" class="flex gap-3">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames </p>
-												<IconX class="grow" :size="66"></IconX>
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere</p>
+												<IconX class="grow" :size="36"></IconX>
 											</a>
 										</div>
 										<hr>
+
 										<div class="notification">
 											<a href="javascript:;" class="flex gap-3">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames </p>
-												<IconX class="grow" :size="66"></IconX>
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere</p>
+												<IconX class="grow" :size="36"></IconX>
 											</a>
 										</div>
 										<hr>
+										
 										
 										
 									</div>
@@ -395,7 +399,7 @@ export default {
 						path: '/',
 						icon: 'IconDashboard',
 						icon_size: 22,
-						menu_text: 'Dashboard ns',
+						menu_text: 'Dashboard ABC',
 						has_submenu : false,
 						show_submenu : false,
 						is_active: false,
