@@ -3,7 +3,7 @@
 	<div class="container mx-auto!">
 		<br>
 		<br>
-		<a href="javascript:;" @click="setCurrentTheme()" class="absolute right-5 top-5">
+		<a href="javascript:;" @click="setCurrentTheme()" class="absolute right-3 top-3">
 			<icon-sun v-if="theme_name == 'light'" :size="32"></icon-sun>
 			<icon-moon v-if="theme_name == 'dark'" :size="32"></icon-moon>
 		</a>
@@ -12,13 +12,22 @@
 			<div class="col-span-12 lg:col-span-4">
 				<div class="card p-12!">
 					<div class="deskmint-logo flex justify-center">
-						<img v-if="theme_name=='light'" src="./../../assets//images/deskmit-logo.svg" alt="">
-						<img v-if="theme_name=='dark'" src="./../../assets//images/deskmit-logo-white.svg" alt="">
+						<img v-if="theme_name=='light'" src="./../../assets/images/deskmit-logo.svg" alt="">
+						<img v-if="theme_name=='dark'" src="./../../assets/images/deskmit-logo-white.svg" alt="">
 					</div>
 					<br>
 					
 					<h3>Welcome to DeskMint! 👋</h3>
 					<p>Please login to your account to manage your firm.</p>
+					<br>
+
+					<form action="javascript:;" method="POST">
+						<div class="form-group">
+							<label for="email">Email Address</label>
+							<input type="email" class="form-control" id="email">
+						</div>
+					</form>
+
 				</div>
 			</div>
 			<div class="col-span-12 lg:col-span-4"></div>
