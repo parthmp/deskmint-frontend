@@ -22,12 +22,9 @@
 					<br>
 
 					<form action="javascript:;" method="POST">
-						<div class="form-group">
-							<label for="email">Email Address</label>
-							<input type="email" class="form-control" id="email">
-						</div>
+						<input-email @email-input="get_email_address" default_value="44"></input-email>
 					</form>
-
+					
 				</div>
 			</div>
 			<div class="col-span-12 lg:col-span-4"></div>
@@ -54,18 +51,21 @@ p{
 
 	import { IconSun, IconMoon } from '@tabler/icons-vue';
 	import { useThemeOptions } from '../../stores/theme';
+	import InputEmail from './../inputs/InputEmail.vue';
 
 	export default{
 		name : 'Login',
 		components : {
 			IconSun,
-			IconMoon
+			IconMoon,
+			InputEmail
 		},
 		data: function(){
 			return {
 				system_theme_name : 'light',
 				theme_icon : 'IconSun',
-				current_theme_name: 'light'
+				current_theme_name: 'light',
+				email_address: ''
 			}
 		},
 		computed: {
@@ -81,6 +81,9 @@ p{
 				}
 				
 				
+			},
+			get_email_address : function(e:string){
+				this.email_address = e;
 			}
 		},
 		mounted : function(){

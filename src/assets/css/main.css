@@ -36,6 +36,9 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	--color-deskmint-green-dark: #039F4E;
 	/*--color-deskmint-green-light: RGBA(136,255,193, 1);*/
 	--color-deskmint-green-light: RGBA(22,119,46, 0.15);
+	--color-input-border: #5E647D;
+	--color-input-border-hover: #939BC3;
+
 
 	--shadow-four-side: 0px 0px 15px #e7e7e7;
 	--color-background-1: #ffffff;
@@ -247,4 +250,17 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 }
 .fix-collapsed-icon{
 	@apply pl-[13.5px]!;
+}
+.form-group input{
+	@apply block w-full border-1 border-input-border rounded-sm transition-all duration-300 py-[6px] px-[13px] bg-transparent!;
+}
+
+.form-group input:hover{
+	@apply  border-input-border-hover;
+}
+.form-group input:focus{
+	@apply border-1 border-deskmint-green! outline-1 outline-deskmint-green;
+}
+.form-group label{
+	@apply text-[14px];
 }
