@@ -6,6 +6,8 @@
 
 <script lang="ts">
 
+	import { useThemeOptions } from './stores/theme';
+
 	export default{
 		name : 'App',
 		components : {
@@ -13,14 +15,22 @@
 		},
 		data: function(){
 			return {
-				theme: 'light'
+				
 			}
 		},
 		methods : {
 
 		},
-		mounted : function(){
+		watch : {
 
+		},
+		computed: {
+			theme() {
+				return useThemeOptions().get_theme;
+			}
+		},
+		mounted : function(){
+			
 		}
 
 	}

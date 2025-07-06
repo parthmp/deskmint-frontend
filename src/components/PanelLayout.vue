@@ -351,6 +351,8 @@ import { IconSettings } from '@tabler/icons-vue';
 import { IconLogout } from '@tabler/icons-vue';
 import { IconHeartFilled } from '@tabler/icons-vue';
 
+import { useThemeOptions } from '../stores/theme';
+
 
 export default {
 
@@ -387,7 +389,7 @@ export default {
 			show_shortcuts_menu: false,
 			show_notifications_menu: false,
 			show_profile_menu: false,
-			current_theme_name: 'light',
+			/*current_theme_name: 'light',*/
 			system_theme_name: '',
 			theme_icon: 'IconMoon',
 			phone_breakpoint: 1024,
@@ -474,6 +476,11 @@ export default {
 				]
 			
 
+		}
+	},
+	computed: {
+		current_theme_name : function(){
+			return useThemeOptions().get_theme;
 		}
 	},
 	methods:{
@@ -590,10 +597,10 @@ export default {
 		setCurrentTheme : function(theme_name){
 			
 			if(theme_name == 'system'){
-				this.current_theme_name = this.system_theme_name;
+				useThemeOptions().set_theme(this.system_theme_name);
 				
 			}else{
-				this.current_theme_name = theme_name;
+				useThemeOptions().set_theme(theme_name);
 			}
 
 			if(this.current_theme_name == 'dark'){
@@ -601,7 +608,8 @@ export default {
 			}else{
 				this.theme_icon = 'IconSun';
 			}
-		
+			
+			
 		}
 		
 	},
@@ -618,10 +626,10 @@ export default {
 		this.updateScreenSize();
 		if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 			this.system_theme_name = 'dark'
+			
 		}else{
 			this.system_theme_name = 'light'
 		}
-		this.setCurrentTheme('light');
 	},
 	beforeUnmount() {
 		document.removeEventListener('click', this.handleOutsideClick);
