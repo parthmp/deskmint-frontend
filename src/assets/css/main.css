@@ -43,7 +43,14 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	--color-background-card: #ffffff;
 	--color-hover: #EBEBEB;
 	--shadow-lg: 0 0px 15px rgba(0, 0, 0, 0.20);
-	
+	/*
+	--breakpoint-*: initial;
+	--breakpoint-sm: 768px;
+	--breakpoint-md: 1025px;
+	--breakpoint-lg: 1200px;
+	--breakpoint-xl: 1280px;
+	--breakpoint-2xl: 1440px;
+	*/
 	
 }
 @layer theme {
@@ -67,23 +74,24 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 }
 @layer utilities {
 
+	/*
 	.row {
 		@apply grid grid-cols-12;
-	}
+	}*/
 
 	/* col-md-[1-12] */
-	.col-md-1  { @apply col-span-12 md:col-span-1; }
-	.col-md-2  { @apply col-span-12 md:col-span-2; }
-	.col-md-3  { @apply col-span-12 md:col-span-3; }
-	.col-md-4  { @apply col-span-12 md:col-span-4; }
-	.col-md-5  { @apply col-span-12 md:col-span-5; }
-	.col-md-6  { @apply col-span-12 md:col-span-6; }
-	.col-md-7  { @apply col-span-12 md:col-span-7; }
-	.col-md-8  { @apply col-span-12 md:col-span-8; }
-	.col-md-9  { @apply col-span-12 md:col-span-9; }
-	.col-md-10 { @apply col-span-12 md:col-span-10; }
-	.col-md-11 { @apply col-span-12 md:col-span-11; }
-	.col-md-12 { @apply col-span-12 md:col-span-12; }
+	/*.col-md-1  { @apply col-span-12 lg:col-span-1; }
+	.col-md-2  { @apply col-span-12 lg:col-span-2; }
+	.col-md-3  { @apply col-span-12 lg:col-span-3; }
+	.col-lg-4  { @apply col-span-12 xl:col-span-4; }
+	.col-md-5  { @apply col-span-12 lg:col-span-5; }
+	.col-md-6  { @apply col-span-12 lg:col-span-6; }
+	.col-md-7  { @apply col-span-12 lg:col-span-7; }
+	.col-lg-8  { @apply col-span-12 lg:col-span-8; }
+	.col-lg-9  { @apply col-span-12 lg:col-span-9; }
+	.col-lg-10 { @apply col-span-12 lg:col-span-10; }
+	.col-lg-11 { @apply col-span-12 lg:col-span-11; }
+	.col-lg-12 { @apply col-span-12 lg:col-span-12; }*/
 
 	.from-bg-deskmint-green{
 		background: var(--color-deskmint-green);
@@ -108,24 +116,24 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
     scrollbar-color: var(--color-neutral-border) transparent;
 }
 .sidebar-menu{
-	@apply max-w-full md:max-w-1/2;
+	@apply max-w-full lg:max-w-1/2;
 }
 .big-content{
 	@apply flex relative transition-all;
 }
 .main-content{
-	@apply bg-background-2 block h-full md:min-h-[1000px] lg:min-h-[1200px] 2xl:min-h-[1400px] grow transition-all;
+	@apply bg-background-2 block h-full lg:min-h-[1000px] lg:min-h-[1200px] 2xl:min-h-[1400px] grow transition-all;
 }
 .sidebar{
-	@apply fixed md:block h-[100vh] md:w-[var(--sidebar-open-width)] translate-x-[-100%] md:translate-x-0 transition-all z-20 bg-background-1 shadow-xl ;
+	@apply fixed lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-100%] lg:translate-x-0 transition-all duration-200 z-20 bg-background-1 shadow-lg;
 
 	
 }
 .sidebar.closed{
-	@apply md:fixed h-[100vh] md:w-[var(--sidebar-close-width)];
+	@apply lg:fixed h-[100vh] lg:w-[var(--sidebar-close-width)];
 }
 .sidebar.closed:hover{
-	@apply md:w-[var(--sidebar-open-width)] z-25;
+	@apply lg:w-[var(--sidebar-open-width)] z-25;
 }
 .sidebar.phone{
 	/*style="display:block;position:absolute;left:0;width:500px;background:white"*/
@@ -133,7 +141,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	
 }
 .sidebar.closed:hover .main-content{
-	@apply md:ml-[var(--sidebar-close-width)];
+	@apply lg:ml-[var(--sidebar-close-width)];
 }
 .topbar{
 	@apply bg-background-card p-2 fixed top-0 shadow-none;
@@ -166,7 +174,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply mb-[20px];
 }
 .barcard{
-	@apply absolute top-16 md:top-12 left-0 w-full md:left-[initial] md:w-[initial] md:right-0 bg-background-card text-gray-text px-[5px] pb-[5px] rounded-lg shadow-lg z-10;
+	@apply absolute top-16 lg:top-12 left-0 w-full lg:left-[initial] lg:w-[initial] lg:right-0 bg-background-card text-gray-text px-[5px] pb-[5px] rounded-lg shadow-lg z-10;
 }
 .barcard ul li a{
 	@apply p-[14px] pt-[7px] pb-[7px] mt-[5px] rounded-lg text-default-text transition-all duration-300;
@@ -178,7 +186,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply bg-deskmint-green-light! text-deskmint-green!;
 }
 .barcard-shortcut{
-	@apply absolute top-16 md:top-12 w-full left-0 md:w-[initial] md:left-[initial] right-0 z-20 shadow-lg p-[15px] rounded-lg max-h-[300px] overflow-auto bg-background-card text-gray-text;
+	@apply absolute top-16 lg:top-12 w-full left-0 lg:w-[initial] lg:left-[initial] right-0 z-20 shadow-lg p-[15px] rounded-lg max-h-[300px] overflow-auto bg-background-card text-gray-text;
 }
 .shortcut-card{
 	@apply flex flex-col items-center shadow-lg p-[25px] rounded-lg transition-all duration-300;
@@ -196,7 +204,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply absolute border-4 border-[red] rounded-4xl top-0 right-0;
 }
 .notifications-area{
-	@apply absolute z-20 shadow-lg bg-background-card rounded-lg max-h-[300px] p-[5px] overflow-auto top-16 md:top-12 right-0 min-w-[400px];
+	@apply absolute z-20 shadow-lg bg-background-card rounded-lg max-h-[300px] p-[5px] overflow-auto top-16 lg:top-12 right-0 min-w-[400px];
 }
 .notification a{
 	@apply p-[15px];
@@ -223,7 +231,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply absolute border-5 border-[green] rounded-4xl right-0 bottom-0 shadow-[0px_0px_1px_white] outline-2 outline-white dark:outline-background-card;
 }
 .profile-area{
-	@apply absolute w-full bg-background-card md:w-[initial] top-16 md:top-14 z-20 min-w-[200px] right-0 p-[5px] shadow-lg rounded-lg max-h-[300px] gap-5 ;
+	@apply absolute w-full bg-background-card lg:w-[initial] top-16 lg:top-14 z-20 min-w-[200px] right-0 p-[5px] shadow-lg rounded-lg max-h-[300px] gap-5 ;
 }
 .profile-item{
 	@apply flex items-center block pl-[20px] pr-[20px] pt-[15px] pb-[15px] rounded-lg transition-all duration-300;
@@ -236,4 +244,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 }
 .card{
 	@apply bg-background-card rounded-lg p-[25px];
+}
+.fix-collapsed-icon{
+	@apply pl-[13.5px]!;
 }

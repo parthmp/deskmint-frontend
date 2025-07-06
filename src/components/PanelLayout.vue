@@ -9,8 +9,8 @@
 								<a v-show="(((sidebar_full) || (hover_sidebar && !is_mobile)) && current_theme_name == 'dark')" href="javascript:;"><img src="./../assets/images/deskmit-logo-white.svg" class="logo" alt=""></a>
 								<a v-show="!sidebar_full && !hover_sidebar && !is_mobile" href="javascript:;"><img src="./../assets/images/deskmit-logo-icon.svg" class="logo-icon" alt=""></a>
 								<div v-show="sidebar_full || (hover_sidebar && !is_mobile)" class="grow">
-									<a v-if="!sidebar_full && !is_mobile" href="javascript:;" @click="sidebar_full = !sidebar_full" class="close-sidebar-icon float-end"><IconCircle></IconCircle></a>
-									<a v-if="sidebar_full && !is_mobile" href="javascript:;" @click="sidebar_full = !sidebar_full" class="close-sidebar-icon float-end"><IconCircleDot></IconCircleDot></a>
+									<a v-if="!sidebar_full && !is_mobile" href="javascript:;" @click="updateSidebar()" class="close-sidebar-icon float-end"><IconCircle></IconCircle></a>
+									<a v-if="sidebar_full && !is_mobile" href="javascript:;" @click="updateSidebar()" class="close-sidebar-icon float-end"><IconCircleDot></IconCircleDot></a>
 								</div>
 								<div v-show="sidebar_full && is_mobile" class="grow">
 									<a href="javascript:;" @click="phone_show = false" class="close-sidebar-icon float-end"><IconX></IconX></a>
@@ -23,13 +23,15 @@
 							<div class="sidebar-menu-items">
 								<ul class="main-menu-list">
 									<li v-for="(menu_item, i) in menu_items" :key="i">
-										<router-link :to="menu_item.path" class="block" @click="resetMenuItems(i)" :class="{'active-menu-link': menu_item.is_active}">
+										<router-link :to="menu_item.path" class="block" @click="resetMenuItems(i)" :class="{'active-menu-link': menu_item.is_active, 'fix-collapsed-icon': (hover_sidebar == false && sidebar_full == false)}">
 											<span class="flex items-center">
 												<component v-if="sidebar_full || hover_sidebar" :is="menu_item.icon" :size="menu_item.icon_size"></component>
-												<component v-if="!sidebar_full && !hover_sidebar" :is="menu_item.icon" :size="36"></component>
-												<span v-if="hover_sidebar || sidebar_full" class="menu-item-text">&nbsp;&nbsp;{{ menu_item.menu_text }}</span>
+												<component v-if="!sidebar_full && !hover_sidebar" :is="menu_item.icon" :size="28"></component>
+												<transition name="fade-delay">
+													<span v-if="sidebar_full || hover_sidebar" class="menu-item-text">&nbsp;&nbsp;{{ menu_item.menu_text }}</span>
+												</transition>
 												<span data-exclude="true" v-if="menu_item.has_submenu && (hover_sidebar || sidebar_full)" class="grow justify-items-end">
-													<!--<IconChevronRight :class="{'chevron-rotated':menu_item.show_submenu}" :size="22" class="chevron-icon"></IconChevronRight>-->
+													<IconChevronRight :class="{'chevron-rotated':menu_item.show_submenu}" :size="22" class="chevron-icon"></IconChevronRight>
 												</span>
 												
 											</span>
@@ -58,16 +60,16 @@
 					
 					</div>
 				</aside>
-				<main class="main-content" :class="{'md:ml-[var(--sidebar-close-width)]':!sidebar_full, 'md:ml-[var(--sidebar-open-width)]':sidebar_full}">
-					<div class="topbar w-full" :class="{'md:left-[var(--sidebar-close-width)] md:w-[calc(100%-var(--sidebar-close-width))]': !sidebar_full, 'md:left-[var(--sidebar-open-width)] md:w-[calc(100%-var(--sidebar-open-width))]': sidebar_full }"
+				<main class="main-content" :class="{'lg:ml-[var(--sidebar-close-width)]':!sidebar_full, 'lg:ml-[var(--sidebar-open-width)]':sidebar_full}">
+					<div class="topbar w-full" :class="{'lg:left-[var(--sidebar-close-width)] lg:w-[calc(100%-var(--sidebar-close-width))]': !sidebar_full, 'lg:left-[var(--sidebar-open-width)] lg:w-[calc(100%-var(--sidebar-open-width))]': sidebar_full }"
 >
 
 						
 						<div class="flex items-center mr-[19px]! ml-[10px]!">
-							<div class=""><a href="javascript:;" class="md:hidden" @click="phone_show = !phone_show"><IconAlignLeft :size="30"></IconAlignLeft></a></div>
+							<div class=""><a href="javascript:;" class="lg:hidden" @click="phone_show = !phone_show"><IconAlignLeft :size="30"></IconAlignLeft></a></div>
 							<div class="grow self-end flex items-center justify-end gap-6">
 								
-								<div class="md:relative">
+								<div class="lg:relative">
 									<a href="javascript:;" class="theme_launcher" @click="show_theme_menu = !show_theme_menu"><component :is="theme_icon"></component></a>
 									<div class="barcard" v-show="show_theme_menu">
 										<ul>
@@ -83,7 +85,7 @@
 										</ul>
 									</div>
 								</div>
-								<div class="md:relative">
+								<div class="lg:relative">
 									
 									<a href="javascript:;" class="shortcuts_launcher" @click="show_shortcuts_menu = !show_shortcuts_menu"><IconTableShortcut></IconTableShortcut></a>
 									<div v-show="show_shortcuts_menu" class="barcard-shortcut styled-scrollbar">
@@ -173,7 +175,7 @@
 									</div>
 								</div>
 
-								<div class="md:relative">
+								<div class="lg:relative">
 									
 									<a href="javascript:;" class="notifications_launcher relative" @click="show_notifications_menu = !show_notifications_menu"><IconBell></IconBell>
 										<span class="red-pill-notification-alert"></span>
@@ -217,7 +219,7 @@
 									</div>
 								</div>
 
-								<div class="md:relative">
+								<div class="lg:relative">
 									
 									<a href="javascript:;" class="profile_menu_launcher relative" @click="show_profile_menu = !show_profile_menu">
 										<img src="./../assets/images/profile-picture.png" class="profile-picture-topbar">
@@ -248,8 +250,8 @@
 					<section class="main-section">
 						
 						
-						<div class="row gap-6">
-							<div class="col-md-4">
+						<div class="grid grid-cols-12 gap-6">
+							<div class="col-span-12 lg:col-span-6 xl:col-span-4">
 								<div class="card">
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
 
@@ -258,7 +260,7 @@
 								</div>
 							</div>
 
-							<div class="col-md-4">
+							<div class="col-span-12 lg:col-span-6 xl:col-span-4">
 								<div class="card">
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
 
@@ -267,7 +269,7 @@
 								</div>
 							</div>
 
-							<div class="col-md-4">
+							<div class="col-span-12 lg:col-span-12 xl:col-span-4">
 								<div class="card">
 									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
 
@@ -314,6 +316,20 @@
 .card{
 	@apply text-yellow-800;
 }*/
+.fade-delay-enter-active,
+.fade-delay-leave-active {
+  transition: opacity 0.1s ease;
+}
+
+.fade-delay-enter-from,
+.fade-delay-leave-to {
+  opacity: 0;
+}
+
+.fade-delay-enter-active {
+  transition-delay: 0.1s; /* This is your delay */
+}
+
 </style>
 <script>
 
@@ -374,7 +390,7 @@ export default {
 			current_theme_name: 'light',
 			system_theme_name: '',
 			theme_icon: 'IconMoon',
-			phone_breakpoint: 768,
+			phone_breakpoint: 1024,
 			menu_items : [
 					{
 						path: '/',
@@ -461,6 +477,11 @@ export default {
 		}
 	},
 	methods:{
+		updateSidebar : function(){
+			/* for touch devices */
+			this.sidebar_full = !this.sidebar_full;
+			this.hover_sidebar = !this.hover_sidebar;
+		},
 		handleTouchStart: function(e) {
 			this.touchStartX = e.touches[0].clientX;
 			this.touchStartY = e.touches[0].clientY;

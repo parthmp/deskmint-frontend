@@ -1,9 +1,14 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import PanelLayout from './../src/components/PanelLayout.vue';
+import Login from './../src/components/Login.vue';
 
 const routes = [
 	{
 		path: '/',
+		component: Login,	
+	},
+	{
+		path: '/panel',
 		component: PanelLayout,	
 	}
 	
