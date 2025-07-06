@@ -12,7 +12,7 @@ This repository contains the frontend for DeskMint. The frontend is built using 
 - **Tailwind CSS** (for utility-first CSS styling)
 - **Axios** (for making API calls to the backend)
 - **Vue Router** (for routing between pages)
-- **Vuex** (for state management)
+- **Pinia** (for state management)
 - **Dark Mode** (a toggleable dark/light theme)
 - **Custom UI Components** (Buttons, Tables, Checkboxes, etc.)
 
