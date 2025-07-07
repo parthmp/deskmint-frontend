@@ -22,7 +22,7 @@
 					<br>
 
 					<form action="javascript:;" method="POST">
-						<input-email @email-input="get_email_address" default_value="44"></input-email>
+						<input-email @email-input="get_email_address" :required="false"></input-email>
 					</form>
 					
 				</div>
@@ -84,6 +84,7 @@ p{
 			},
 			get_email_address : function(e:string){
 				this.email_address = e;
+				console.log(this.email_address);
 			}
 		},
 		mounted : function(){
