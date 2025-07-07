@@ -3,9 +3,9 @@
 	<div class="container mx-auto!">
 		<br>
 		<br>
-		<a href="javascript:;" @click="setCurrentTheme()" class="absolute right-3 top-3">
-			<icon-sun v-if="theme_name == 'light'" :size="32"></icon-sun>
-			<icon-moon v-if="theme_name == 'dark'" :size="32"></icon-moon>
+		<a href="javascript:;" @click="setCurrentTheme" class="absolute right-3 top-3">
+			<icon-sun v-if="theme_name === 'light'" :size="32"></icon-sun>
+			<icon-moon v-if="theme_name === 'dark'" :size="32"></icon-moon>
 		</a>
 		<div class="grid grid-cols-12">
 			<div class="col-span-12 lg:col-span-4"></div>
@@ -21,7 +21,7 @@
 					<p>Please login to your account to manage your firm.</p>
 					<br>
 
-					<form action="javascript:;" method="POST">
+					<form @submit.prevent="login">
 						<input-email @email-input="get_email_address" :required="false"></input-email>
 					</form>
 					
@@ -53,44 +53,47 @@ p{
 	import { useThemeOptions } from '../../stores/theme';
 	import InputEmail from './../inputs/InputEmail.vue';
 
-	export default{
+	import { defineComponent } from 'vue';
+
+	export default defineComponent({
 		name : 'Login',
 		components : {
-			IconSun,
-			IconMoon,
-			InputEmail
+			IconSun : IconSun,
+			IconMoon : IconMoon,
+			InputEmail : InputEmail
 		},
-		data: function(){
+		data():{
+			email_address: string
+		}
+		{
 			return {
-				system_theme_name : 'light',
-				theme_icon : 'IconSun',
-				current_theme_name: 'light',
 				email_address: ''
 			}
 		},
 		computed: {
-			theme_name: () => { return useThemeOptions().get_theme; }
+			theme_name(): string { return useThemeOptions().get_theme; }
 		},
 		methods : {
-			setCurrentTheme : function(){
+			setCurrentTheme() : void{
 
-				if(this.theme_name == 'light'){
-					useThemeOptions().set_theme('dark');
-				}else{
-					useThemeOptions().set_theme('light');
-				}
+				const theme = useThemeOptions();
+   			 	theme.set_theme(this.theme_name === 'light' ? 'dark' : 'light');
 				
 				
 			},
-			get_email_address : function(e:string){
+			get_email_address(e:string) : void {
 				this.email_address = e;
-				console.log(this.email_address);
+				console.log('==='+this.email_address+'===');
+			},
+
+			login() : void{
+				console.log('form submitted');
 			}
 		},
 		mounted : function(){
 			
 		}
 
-	}
+	});
 
 </script>

@@ -8,10 +8,12 @@
 
 	import LoginForm from './blocks/LoginForm.vue';
 
-	export default{
+	import { defineComponent } from 'vue';
+
+	export default defineComponent({
 		name : 'Login',
 		components : {
-			LoginForm
+			LoginForm : LoginForm
 		},
 		data: function(){
 			return {
@@ -25,6 +27,6 @@
 
 		}
 
-	}
+	});
 
 </script>

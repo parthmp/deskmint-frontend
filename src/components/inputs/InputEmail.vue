@@ -14,42 +14,51 @@
 <!--for test-->
 <script lang="ts">
 
-	
-	export default{
-		name : 'InputEmail',
-		components : {
-			
+	import { defineComponent } from 'vue';
+
+	import common from '../../helpers/common';
+
+	export default defineComponent({
+
+		name: 'InputEmail',
+
+		props: {
+			default_value: {
+				type: String,
+				default: '',
+			},
+			required: {
+				type: Boolean,
+				default: true,
+			},
 		},
-		props: ['default_value', 'required'],
-		data: function(){
+
+		data() {
 			return {
-				input_value: '',
-				input_required: true
-			}
+				input_value: '' as string,
+				input_required: true as boolean,
+			};
 		},
-		computed :{
-			
-			is_valid : function(){
-				console.log('IV == '+this.input_value);
-				/*if(this.input_required == false){
-					return true;
-				}else{
-					let temp = String(this.input_value).toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-					console.log('temp == '+temp);
-				}*/
-			}
 
+		computed: {
+			is_valid(): boolean {
+			if (this.input_required === false) return true;
+				const email = String(common.sanitize(this.input_value)).toLowerCase();
+				const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+				return regex.test(email);
+			},
 		},
-		methods : {
-			emit_value : function(){
+
+		methods: {
+			emit_value(): void {
 				this.$emit('email-input', this.input_value);
-			}
+			},
 		},
-		mounted : function(){
-			this.input_value = this.default_value;
-			this.input_required = this.required;
-		}
 
-	}
+		mounted(){
+			this.input_value = common.sanitize(this.default_value);
+			this.input_required = this.required;
+		},
+	});
 
 </script>
