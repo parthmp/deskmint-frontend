@@ -333,23 +333,7 @@
 </style>
 <script>
 
-import { IconCircle, IconXPowerY } from '@tabler/icons-vue';
-import { IconCircleDot } from '@tabler/icons-vue';
-import { IconX } from '@tabler/icons-vue';
-import { IconDashboard } from '@tabler/icons-vue';
-import { IconChevronRight } from '@tabler/icons-vue';
-import { IconChevronDown } from '@tabler/icons-vue';
-import { IconAlignLeft } from '@tabler/icons-vue';
-import { IconMoon } from '@tabler/icons-vue';
-import { IconSun } from '@tabler/icons-vue';
-import { IconDeviceImac } from '@tabler/icons-vue';
-import { IconTableShortcut } from '@tabler/icons-vue';
-import { IconCarSuv } from '@tabler/icons-vue';
-import { IconBell } from '@tabler/icons-vue';
-import { IconUser } from '@tabler/icons-vue';
-import { IconSettings } from '@tabler/icons-vue';
-import { IconLogout } from '@tabler/icons-vue';
-import { IconHeartFilled } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconHeartFilled } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 
