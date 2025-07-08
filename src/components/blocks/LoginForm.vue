@@ -21,18 +21,17 @@
 					<p>Please login to your account to manage your firm.</p>
 					<br>
 
-					<Form @submit="login" ref="blaform">
-						<div class="form-group">
-						<label for="email">Email Address</label>
-						<Field type="email" class="form-control" id="email" name="email" rules="required|email" :validate-on-input="true"></Field>
-						<error-message name="email"></error-message>
-						<!--<Field name="email" rules="required|email" v-slot="{ field, meta }">
-							<input v-bind="field" @input="onFieldInput(meta)" />
-						</Field>-->
-						
-						<!--<p class="text-red-400!">{{ custom_error }}</p>-->
-						</div>
-					</Form>
+					<form @submit.prevent="login" ref="blaform">
+						<input-email v-model="email_address"></input-email>
+						<p>EMAIL: {{ email_address }}</p>
+						<!--
+							Add
+							is_valid
+							v-model
+							default error text
+
+						-->
+					</form>
 
 					
 				</div>
@@ -63,7 +62,6 @@ p{
 	import { useThemeOptions } from '../../stores/theme';
 	import InputEmail from './../inputs/InputEmail.vue';
 
-	import { Form, Field, ErrorMessage } from 'vee-validate';
 
 	import { defineComponent } from 'vue';
 
@@ -77,10 +75,7 @@ p{
 		components : {
 			IconSun : IconSun,
 			IconMoon : IconMoon,
-			InputEmail : InputEmail,
-			Form:Form,
-			Field:Field,
-			ErrorMessage :ErrorMessage 
+			InputEmail : InputEmail
 		},
 		data():myData
 		{

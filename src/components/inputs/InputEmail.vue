@@ -2,7 +2,7 @@
 	
 	<div class="form-group">
 		<label for="email">Email Address</label>
-		<input type="email" @keyup="emit_value" v-model="input_value" class="form-control" id="email">
+		<input type="email" v-model="input_value" @input="$emit('update:modelValue', $event.target.value)" class="form-control" id="email">
 		<p v-if="!is_valid" class="text-red-600">Please enter valid email address.</p>
 	</div>
 	
@@ -28,6 +28,10 @@
 		name: 'InputEmail',
 
 		props: {
+			modelValue: {
+				type: String,
+				required: true
+			},
 			default_value: {
 				type: String,
 				default: '',
