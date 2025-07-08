@@ -21,9 +21,19 @@
 					<p>Please login to your account to manage your firm.</p>
 					<br>
 
-					<form @submit.prevent="login">
-						<input-email @email-input="get_email_address" :required="false"></input-email>
-					</form>
+					<Form @submit="login" ref="blaform">
+						<div class="form-group">
+						<label for="email">Email Address</label>
+						<Field type="email" class="form-control" id="email" name="email" rules="required|email" :validate-on-input="true"></Field>
+						<error-message name="email"></error-message>
+						<!--<Field name="email" rules="required|email" v-slot="{ field, meta }">
+							<input v-bind="field" @input="onFieldInput(meta)" />
+						</Field>-->
+						
+						<!--<p class="text-red-400!">{{ custom_error }}</p>-->
+						</div>
+					</Form>
+
 					
 				</div>
 			</div>
@@ -53,10 +63,13 @@ p{
 	import { useThemeOptions } from '../../stores/theme';
 	import InputEmail from './../inputs/InputEmail.vue';
 
+	import { Form, Field, ErrorMessage } from 'vee-validate';
+
 	import { defineComponent } from 'vue';
 
 	export interface myData{
-		email_address: string
+		email_address: string,
+		custom_error: string
 	}
 
 	export default defineComponent({
@@ -64,18 +77,35 @@ p{
 		components : {
 			IconSun : IconSun,
 			IconMoon : IconMoon,
-			InputEmail : InputEmail
+			InputEmail : InputEmail,
+			Form:Form,
+			Field:Field,
+			ErrorMessage :ErrorMessage 
 		},
 		data():myData
 		{
 			return {
-				email_address: ''
+				email_address: '',
+				custom_error: 'Custom error',
 			}
 		},
 		computed: {
 			theme_name(): string { return useThemeOptions().get_theme; }
 		},
 		methods : {
+			/*onFieldInput(meta:any) {
+				
+				if(meta.valid){
+					console.log('validted');
+					this.custom_error = 'your email is valid';
+				}else{
+					console.log('bad');
+					this.custom_error = 'your email is NOT valid';
+				}
+      
+    		}
+			,*/
+
 			setCurrentTheme() : void{
 
 				const theme = useThemeOptions();
@@ -88,12 +118,14 @@ p{
 				console.log('==='+this.email_address+'===');
 			},
 
-			login() : void{
-				console.log('form submitted');
+			login(values:any, actions:any) : void{
+				actions.setFieldError('email', 'this email is already taken');
+
+				//console.log('form submitted');
 			}
 		},
 		mounted : function(){
-			
+			//this.$refs.blaform.setFieldError('email', 'dare?');
 		}
 
 	});
