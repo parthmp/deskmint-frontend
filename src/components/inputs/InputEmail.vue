@@ -18,6 +18,11 @@
 
 	import common from '../../helpers/common';
 
+	export interface InputEmailInterface{
+		input_value: string,
+		input_required: boolean
+	}
+
 	export default defineComponent({
 
 		name: 'InputEmail',
@@ -33,10 +38,10 @@
 			},
 		},
 
-		data() {
+		data() : InputEmailInterface {
 			return {
-				input_value: '' as string,
-				input_required: true as boolean,
+				input_value: '',
+				input_required: true,
 			};
 		},
 

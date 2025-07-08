@@ -331,36 +331,72 @@
 }
 
 </style>
-<script>
+<script lang="ts">
 
 import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconHeartFilled } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
+import { defineComponent } from 'vue';
 
+export interface MenuSubItem {
+	path: string;
+	icon: string;
+	icon_size: number;
+	menu_text: string;
+	is_active: boolean;
+}
 
-export default {
+export interface MenuItem {
+	path: string;
+	icon: string;
+	icon_size: number;
+	menu_text: string;
+	has_submenu: boolean;
+	show_submenu: boolean;
+	is_active: boolean;
+	submenu: MenuSubItem[];
+}
+
+export interface PanelData {
+	sidebar_full: boolean;
+	phone_show: boolean;
+	touchStartX: number;
+	touchStartY: number;
+	minSwipeDistance: number;
+	is_mobile: boolean;
+	hover_sidebar: boolean;
+	show_theme_menu: boolean;
+	show_shortcuts_menu: boolean;
+	show_notifications_menu: boolean;
+	show_profile_menu: boolean;
+	system_theme_name: string;
+	theme_icon: string;
+	phone_breakpoint: number;
+	menu_items: MenuItem[];
+}
+export default defineComponent({
 
 	name: 'PanelLayout',
 	components: {
-		IconCircle,
-		IconCircleDot,
-		IconX,
-		IconChevronRight,
-		IconChevronDown,
-		IconAlignLeft,
-		IconSun,
-		IconMoon,
-		IconDeviceImac,
-		IconTableShortcut,
-		IconCarSuv,
-		IconBell,
-		IconUser,
-		IconSettings,
-		IconLogout,
-		IconHeartFilled,
-		IconDashboard
+		IconCircle:IconCircle,
+		IconCircleDot:IconCircleDot,
+		IconX:IconX,
+		IconChevronRight:IconChevronRight,
+		IconChevronDown:IconChevronDown,
+		IconAlignLeft:IconAlignLeft,
+		IconSun:IconSun,
+		IconMoon:IconMoon,
+		IconDeviceImac:IconDeviceImac,
+		IconTableShortcut:IconTableShortcut,
+		IconCarSuv:IconCarSuv,
+		IconBell:IconBell,
+		IconUser:IconUser,
+		IconSettings:IconSettings,
+		IconLogout:IconLogout,
+		IconHeartFilled:IconHeartFilled,
+		IconDashboard:IconDashboard
 	},
-	data : function(){
+	data() : PanelData{
 		return {
 			sidebar_full : true,
 			phone_show: false,
@@ -393,7 +429,6 @@ export default {
 								icon_size: 18,
 								menu_text: 'Dashboard',
 								is_active: false,
-								path: ''
 							}
 						]
 					},
@@ -463,22 +498,22 @@ export default {
 		}
 	},
 	computed: {
-		current_theme_name : function(){
+		current_theme_name() : string {
 			return useThemeOptions().get_theme;
 		}
 	},
 	methods:{
-		updateSidebar : function(){
+		updateSidebar() : void{
 			/* for touch devices */
 			this.sidebar_full = !this.sidebar_full;
 			this.hover_sidebar = !this.hover_sidebar;
 		},
-		handleTouchStart: function(e) {
+		handleTouchStart(e:any): void {
 			this.touchStartX = e.touches[0].clientX;
 			this.touchStartY = e.touches[0].clientY;
 		},
 
-		handleTouchEnd: function(e){
+		handleTouchEnd(e:any): void {
 			const touchEndX = e.changedTouches[0].clientX;
 			const touchEndY = e.changedTouches[0].clientY;
 			
@@ -494,13 +529,13 @@ export default {
 				}
 			}
 		},
-		handleTouchMove: function(e) {
+		handleTouchMove(e:any) : void {
 			if (this.touchStartX < 50) {
 				e.preventDefault();
 			}
 		},
 
-		handleOutsideClick: function(e) {
+		handleOutsideClick(e:any): void {
 			if (this.phone_show && window.innerWidth < this.phone_breakpoint) {
 				
 				const sidebar = this.$el.querySelector('.sidebar.phone');
@@ -538,11 +573,11 @@ export default {
 			}
 			
 		},
-		updateScreenSize : function(){
+		updateScreenSize() : void{
 			this.is_mobile = window.innerWidth < this.phone_breakpoint;
 		},
 
-		resetMenuItems : function(index, mtype = ''){
+		resetMenuItems(index:number, mtype = '') : void{
 			
 			
 			for(let z = 0 ; z < this.menu_items.length ; z++){
@@ -565,12 +600,12 @@ export default {
 			
 		},
 		
-		setActiveMenu : function(index){
+		setActiveMenu(index:number) : void {
 			this.menu_items[index].show_submenu = !this.menu_items[index].show_submenu;
 			this.menu_items[index].is_active = true;
 		},
 
-		setSubActiveItem : function(i, z){
+		setSubActiveItem(i:number, z:number) : void {
 
 			this.resetMenuItems(i, 'sub');
 
@@ -578,7 +613,7 @@ export default {
 
 		},
 
-		setCurrentTheme : function(theme_name){
+		setCurrentTheme(theme_name:string) : void{
 			
 			if(theme_name == 'system'){
 				useThemeOptions().set_theme(this.system_theme_name);
@@ -620,7 +655,7 @@ export default {
 		window.removeEventListener('resize', this.updateScreenSize);
 	}
 
-}
+})
 
 
 </script>

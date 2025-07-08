@@ -55,6 +55,10 @@ p{
 
 	import { defineComponent } from 'vue';
 
+	export interface myData{
+		email_address: string
+	}
+
 	export default defineComponent({
 		name : 'Login',
 		components : {
@@ -62,9 +66,7 @@ p{
 			IconMoon : IconMoon,
 			InputEmail : InputEmail
 		},
-		data():{
-			email_address: string
-		}
+		data():myData
 		{
 			return {
 				email_address: ''
