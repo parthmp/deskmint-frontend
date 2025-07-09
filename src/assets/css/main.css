@@ -254,6 +254,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 .fix-collapsed-icon{
 	@apply pl-[13.5px]!;
 }
+
+.form-group:not(:first-child){
+	@apply mt-[18px];
+}
 .form-group input{
 	@apply block w-full border-1 border-input-border rounded-sm transition-all duration-300 py-[6px] px-[13px] bg-transparent!;
 }

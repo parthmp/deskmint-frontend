@@ -23,6 +23,11 @@
 
 					<form @submit.prevent="login" ref="blaform">
 						<input-email v-model="email_address" field="Email Address" :required="true" @is-valid="validated_email = $event"></input-email>
+						<input-password v-model="password" field="Password" :required="true" @is-valid="validated_password = $event"></input-password>
+						<div class="form-group">
+							<button>Submit</button>
+						</div>
+						
 					</form>
 
 					
@@ -53,16 +58,18 @@ p{
 	import { IconSun, IconMoon } from '@tabler/icons-vue';
 	import { useThemeOptions } from '../../stores/theme';
 	import InputEmail from './../inputs/InputEmail.vue';
+	import InputPassword from '../inputs/InputPassword.vue';
 
 
 	import { defineComponent } from 'vue';
 
 	export interface myData{
 		email_address: string,
+		password: string,
 		custom_error: string,
 		validated_email: boolean,
-		error_trigger:number,
-		temp:number
+		validated_password: boolean,
+		error_trigger:number
 	}
 
 	export default defineComponent({
@@ -70,16 +77,18 @@ p{
 		components : {
 			IconSun : IconSun,
 			IconMoon : IconMoon,
-			InputEmail : InputEmail
+			InputEmail : InputEmail,
+			InputPassword:InputPassword
 		},
 		data():myData
 		{
 			return {
 				email_address: '',
+				password: '',
 				custom_error: 'Invalid email',
 				validated_email: false,
-				error_trigger:0,
-				temp:1
+				validated_password: false,
+				error_trigger:0
 			}
 		},
 		computed: {
@@ -114,7 +123,7 @@ p{
 			login() : void{
 
 				
-				setTimeout(() => {
+				/*setTimeout(() => {
 					
 					if(this.temp % 2 === 0){
 						this.error_trigger++;
@@ -128,9 +137,11 @@ p{
 					
 					
 
-				}, 200);
+				}, 200);*/
 
-				console.log('insied');
+				console.log('this is test');
+				console.log('email: '+this.validated_email);
+				console.log('pass: '+this.validated_password);
 		
 				
 			}
