@@ -22,15 +22,7 @@
 					<br>
 
 					<form @submit.prevent="login" ref="blaform">
-						<input-email v-model="email_address" :required="true" :error="custom_error" :error_trigger="error_trigger" @is-valid="validated_email = $event"></input-email>
-						<p>EMAIL: {{ email_address }}</p>
-						<!--
-							Add
-							is_valid
-							v-model
-							default error text
-
-						-->
+						<input-email v-model="email_address" field="Email Address" :required="true" @is-valid="validated_email = $event"></input-email>
 					</form>
 
 					
@@ -69,7 +61,8 @@ p{
 		email_address: string,
 		custom_error: string,
 		validated_email: boolean,
-		error_trigger:number
+		error_trigger:number,
+		temp:number
 	}
 
 	export default defineComponent({
@@ -85,7 +78,8 @@ p{
 				email_address: '',
 				custom_error: 'Invalid email',
 				validated_email: false,
-				error_trigger:0
+				error_trigger:0,
+				temp:1
 			}
 		},
 		computed: {
@@ -118,17 +112,27 @@ p{
 			},
 
 			login() : void{
-				this.error_trigger++;
-				this.custom_error = 'Email already exists.';
-				/*this.error_trigger++;
-			
 
-				this.$nextTick(() => {
-  this.custom_error = 'Email already exists.';
-});*/
 				
-				console.log('works');
-				console.log(this.validated_email);
+				setTimeout(() => {
+					
+					if(this.temp % 2 === 0){
+						this.error_trigger++;
+						this.custom_error = 'Email already exists.';
+						this.temp += 1;
+						console.log('temp=='+this.temp);
+					}else{
+						console.log('works');
+						console.log(this.validated_email);
+					}
+					
+					
+
+				}, 200);
+
+				console.log('insied');
+		
+				
 			}
 		},
 		mounted : function(){

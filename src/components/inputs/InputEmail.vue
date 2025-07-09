@@ -1,9 +1,9 @@
 <template>
 	
 	<div class="form-group">
-		<label for="email">Email Address</label>
+		<label for="email">{{ field }}</label>
 		<input type="text" v-model="input_value" @input="$emit('update:modelValue', $event.target.value)" class="form-control" id="email" :class="{'red-input-order':!valid_status && !first_load}">
-		<p v-if="!valid_status && !first_load" class="text-red-600">{{ error_message }}</p>
+		<p v-if="!valid_status && !first_load" class="text-red-500! text-[14px]!">{{ error_message }}</p>
 	</div>
 	
 </template>
@@ -49,6 +49,9 @@
 			},
 			error_trigger : {
 				type:Number
+			},
+			field:{
+				type:String
 			}
 		},
 
@@ -60,6 +63,7 @@
 				valid_status : false,
 				frozen_error : '',
 				first_load: false
+				
 			};
 		},
 
@@ -68,9 +72,9 @@
 
 				if(common.isset(this.error)){
 					this.error_message = this.error;
-					//this.valid_status = false;
+					this.valid_status = false;
 				}else{
-					this.error_message = 'Please enter a valid email address';
+					this.error_message = 'Please enter a valid '+ this.field.toLowerCase();
 				}
 				
 				if(this.error_trigger > 0){
@@ -120,7 +124,7 @@
 				this.error_message = this.error;
 				this.frozen_error = this.error;
 			}else{
-				this.error_message = 'Please enter a valid email address';
+				this.error_message = 'Please enter a valid '+ this.field.toLowerCase();
 				this.frozen_error = this.error_message;
 			}
 
