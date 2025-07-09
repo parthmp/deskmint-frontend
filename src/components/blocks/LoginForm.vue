@@ -21,15 +21,51 @@
 					<p>Please login to your account to manage your firm.</p>
 					<br>
 
-					<form @submit.prevent="login" ref="blaform">
-						<input-email v-model="email_address" field="Email Address" :required="true" @is-valid="validated_email = $event"></input-email>
-						<input-password v-model="password" field="Password" :required="true" @is-valid="validated_password = $event"></input-password>
+					<form @submit.prevent="login" class="form">
+						<!--<input-email v-model="email_address" field="Email Address" :required="true" :show_errors="show_errors" @is-valid="validated_email = $event"></input-email>
+						<input-password v-model="password" field="Password" :required="true" :show_errors="show_errors" @is-valid="validated_password = $event"></input-password>-->
 						<div class="form-group">
-							<vue-turnstile :site-key="turnstile_key" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>
+							<label for="email">Email Address</label>
+							<input type="email" v-model="email_address" class="form-control" id="email" :class="{'red-input-order':(email_address.trim() == '' || !is_email(email_address)) && submit}">
+							<span v-if="(email_address.trim() == '' || !is_email(email_address)) && submit" class="text-red-500! text-[14px]! block">Please enter valid email address</span>
 						</div>
 						<div class="form-group">
-							<button>Submit</button>
+							<label for="password">Password</label>
+							
+							<div class="relative">
+								<input :type="password.input_type" v-model="password.value" class="form-control" id="password" :class="{'red-input-order':(password.value == '' || password.value.length < 8) && submit}">
+								
+								<span class="absolute right-2 top-[20%]">
+									<icon-eye v-if="password.input_type == 'text'" @click="password.input_type = 'password'" class="cursor-pointer"></icon-eye>
+									<icon-eye-closed v-if="password.input_type == 'password'" @click="password.input_type = 'text'" class="cursor-pointer"></icon-eye-closed>
+								</span>
+								
+							</div>
+							<span v-if="(password.value == '' || password.value.length < 8) && submit" class="text-red-500! text-[14px]! block">Password must be at least 8 characters long</span>
 						</div>
+	
+						<div class="form-group">
+							<!--<vue-turnstile :site-key="turnstile_key" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>-->
+						</div>
+						<div class="flex flex-row items-center mt-[5px]!">
+							<a href="" class="underline">Forgot Password?</a>
+							<label for="remember_me" class="grow">
+								<span class="float-end">
+									<span class="flex items-center gap-2">
+										<div class="checkbox-wrapper">
+											<label>
+												<input type="checkbox" v-model="remember_me" id="checkbox" />
+												<span class="checkbox"></span>
+											</label>
+										</div>
+										<label for="checkbox">Remember me</label>
+									</span>
+								</span>
+							</label>
+							
+						</div>
+						<input-button></input-button>
+						
 						
 					</form>
 
@@ -60,24 +96,27 @@ p{
 
 	import { IconSun, IconMoon } from '@tabler/icons-vue';
 	import { useThemeOptions } from '../../stores/theme';
-	import InputEmail from './../inputs/InputEmail.vue';
-	import InputPassword from '../inputs/InputPassword.vue';
+	
+	import InputButton from '../inputs/InputButton.vue';
+	
+	import { IconEyeClosed, IconEye } from '@tabler/icons-vue';
 
 	import VueTurnstile from 'vue-turnstile';
 
 	import { constants } from '../../constants';
+	import common from '../../helpers/common';
 	
 	import { defineComponent } from 'vue';
 
 	export interface myData{
 		email_address: string,
-		password: string,
-		custom_error: string,
-		validated_email: boolean,
-		validated_password: boolean,
-		error_trigger:number,
+		password: any,
+		
 		turnstile_token:string
-		turnstile_key:string
+		turnstile_key:string,
+		
+		remember_me:boolean,
+		submit:boolean
 	}
 
 	export default defineComponent({
@@ -85,21 +124,26 @@ p{
 		components : {
 			IconSun,
 			IconMoon,
-			InputEmail,
-			InputPassword,
-			VueTurnstile
+			
+			InputButton,
+			
+			VueTurnstile,
+			IconEyeClosed,
+			IconEye
 		},
 		data():myData
 		{
 			return {
 				email_address: '',
-				password: '',
-				custom_error: 'Invalid email',
-				validated_email: false,
-				validated_password: false,
-				error_trigger:0,
+				password: {
+					input_type: 'password',
+					value:''
+				},
+				
 				turnstile_token:'',
-				turnstile_key: constants.TURNSTILE_KEY
+				turnstile_key: constants.TURNSTILE_KEY,
+				remember_me: false,
+				submit: false
 			}
 		},
 		computed: {
@@ -120,6 +164,10 @@ p{
     		}
 			,*/
 
+			is_email(email_add:string) : boolean{
+				return common.is_email(email_add);
+			},
+
 			setCurrentTheme() : void{
 
 				const theme = useThemeOptions();
@@ -135,33 +183,10 @@ p{
 			login() : void{
 
 				
-				/*setTimeout(() => {
-					
-					if(this.temp % 2 === 0){
-						this.error_trigger++;
-						this.custom_error = 'Email already exists.';
-						this.temp += 1;
-						console.log('temp=='+this.temp);
-					}else{
-						console.log('works');
-						console.log(this.validated_email);
-					}
-					
-					
-
-				}, 200);*/
-
-				console.log('this is test');
-				console.log('email: '+this.validated_email);
-				console.log('token: '+this.turnstile_token);
-				console.log('pass: '+this.validated_password);
-		
+				this.submit = true;
+				console.log(this.remember_me);
 				
 			}
-		},
-		mounted : function(){
-			//this.$refs.blaform.setFieldError('email', 'dare?');
-			
 		}
 
 	});

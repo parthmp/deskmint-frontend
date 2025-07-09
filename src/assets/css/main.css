@@ -23,12 +23,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	color:var(--color-default-text);
 	line-height: initial;
 }
-.main-section a, footer a{
-	color:#16772e !important;
-}
+
 @theme{
 	
-	--color-default-text-iv: #DADADA;
+	--color-default-text-iv: #cfcde4;
 	--color-default-text: #444050;
 	--color-gray-text: #444050;
 	--color-gray-background: #f2f2f3;
@@ -39,7 +37,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	
 	--color-input-border:color-mix(in sRGB, #2f2b3d 22%, #fff);
 	--color-input-border-hover: #939BC3;
-
+	--color-url-color:#007D1E;
 
 	--shadow-four-side: 0px 0px 15px #e7e7e7;
 	--color-background-1: #ffffff;
@@ -61,7 +59,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
   * {
     @variant dark {
 		--color-default-text-iv: #444050;
-		--color-default-text:#DADADA;
+		--color-default-text:#cfcde4;
 		--shadow-four-side: 0px 0px 15px #000;
 		--color-background-1: #2f3349;
 		--color-background-2: #25293C;
@@ -69,7 +67,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 		--color-background-card: #2F3349;
 		--shadow-lg: 0 0px 25px rgba(0, 0, 0, 1);
 		--color-deskmint-green-light: RGBA(3,159,78, 0.15);
-		
+		--color-url-color:#20c547;
 		--color-neutral-border: #464D72;
 		--color-input-border: #5E647D;
 		
@@ -112,6 +110,9 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	.sidebar:hover{
 		@apply w-[275px];
 	}*/
+}
+.main-section a, footer a, form a{
+	@apply text-url-color;
 }
 .styled-scrollbar {
     scrollbar-color: transparent transparent;
@@ -273,4 +274,27 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 }
 .red-input-order{
 	@apply border-1! border-solid! outline-1 outline-red-500 border-red-500!;
+}
+.checkbox-wrapper-39 *,
+  .checkbox-wrapper-39 *::before,
+  .checkbox-wrapper-39 *::after{
+	@apply box-border;
+}
+
+.checkbox-wrapper label {
+	@apply block w-[20px] h-[20px] cursor-pointer;
+}
+
+.checkbox-wrapper input {
+	@apply invisible hidden;
+}
+
+.checkbox-wrapper input:checked ~ .checkbox {
+
+	@apply rotate-45 w-[8px] ml-[5px] border-deskmint-green-dark border-t-transparent border-l-transparent rounded-none;
+
+}
+
+.checkbox-wrapper .checkbox {
+	@apply block w-[inherit] h-[inherit] border-2 border-solid border-input-border rounded-[5px] shadow-none transition-all duration-300;
 }

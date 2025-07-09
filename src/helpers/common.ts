@@ -15,6 +15,12 @@ export default {
 		return args.every(arg => arg !== undefined && arg !== null);
 	},
 
+	is_email(email_address:string):boolean{
+		const email = String(email_address).toLowerCase();
+		const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		return regex.test(email);
+	},
+
 	// Add form validation utilities
 	setupFormValidation(component: any): void {
 		const form = component.$el.closest('form');
