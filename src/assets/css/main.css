@@ -36,7 +36,8 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	--color-deskmint-green-dark: #039F4E;
 	/*--color-deskmint-green-light: RGBA(136,255,193, 1);*/
 	--color-deskmint-green-light: RGBA(22,119,46, 0.15);
-	--color-input-border: #5E647D;
+	
+	--color-input-border:color-mix(in sRGB, #2f2b3d 22%, #fff);
 	--color-input-border-hover: #939BC3;
 
 
@@ -70,6 +71,8 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 		--color-deskmint-green-light: RGBA(3,159,78, 0.15);
 		
 		--color-neutral-border: #464D72;
+		--color-input-border: #5E647D;
+		
     }
 	
   }
@@ -259,8 +262,11 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply  border-input-border-hover;
 }
 .form-group input:focus{
-	@apply border-1 border-deskmint-green! outline-1 outline-deskmint-green;
+	@apply border-1 border-deskmint-green! outline-1 outline-deskmint-green shadow-lg;
 }
 .form-group label{
 	@apply text-[14px];
+}
+.red-input-order{
+	@apply border-1! border-solid! outline-1 outline-red-500 border-red-500!;
 }

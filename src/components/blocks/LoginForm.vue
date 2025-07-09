@@ -22,7 +22,7 @@
 					<br>
 
 					<form @submit.prevent="login" ref="blaform">
-						<input-email v-model="email_address"></input-email>
+						<input-email v-model="email_address" :required="true" :error="custom_error" :error_trigger="error_trigger" @is-valid="validated_email = $event"></input-email>
 						<p>EMAIL: {{ email_address }}</p>
 						<!--
 							Add
@@ -67,7 +67,9 @@ p{
 
 	export interface myData{
 		email_address: string,
-		custom_error: string
+		custom_error: string,
+		validated_email: boolean,
+		error_trigger:number
 	}
 
 	export default defineComponent({
@@ -81,7 +83,9 @@ p{
 		{
 			return {
 				email_address: '',
-				custom_error: 'Custom error',
+				custom_error: 'Invalid email',
+				validated_email: false,
+				error_trigger:0
 			}
 		},
 		computed: {
@@ -106,21 +110,30 @@ p{
 				const theme = useThemeOptions();
    			 	theme.set_theme(this.theme_name === 'light' ? 'dark' : 'light');
 				
-				
 			},
+			
 			get_email_address(e:string) : void {
 				this.email_address = e;
 				console.log('==='+this.email_address+'===');
 			},
 
-			login(values:any, actions:any) : void{
-				actions.setFieldError('email', 'this email is already taken');
+			login() : void{
+				this.error_trigger++;
+				this.custom_error = 'Email already exists.';
+				/*this.error_trigger++;
+			
 
-				//console.log('form submitted');
+				this.$nextTick(() => {
+  this.custom_error = 'Email already exists.';
+});*/
+				
+				console.log('works');
+				console.log(this.validated_email);
 			}
 		},
 		mounted : function(){
 			//this.$refs.blaform.setFieldError('email', 'dare?');
+			
 		}
 
 	});
