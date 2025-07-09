@@ -25,6 +25,9 @@
 						<input-email v-model="email_address" field="Email Address" :required="true" @is-valid="validated_email = $event"></input-email>
 						<input-password v-model="password" field="Password" :required="true" @is-valid="validated_password = $event"></input-password>
 						<div class="form-group">
+							<vue-turnstile :site-key="turnstile_key" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>
+						</div>
+						<div class="form-group">
 							<button>Submit</button>
 						</div>
 						
@@ -60,7 +63,10 @@ p{
 	import InputEmail from './../inputs/InputEmail.vue';
 	import InputPassword from '../inputs/InputPassword.vue';
 
+	import VueTurnstile from 'vue-turnstile';
 
+	import { constants } from '../../constants';
+	
 	import { defineComponent } from 'vue';
 
 	export interface myData{
@@ -69,16 +75,19 @@ p{
 		custom_error: string,
 		validated_email: boolean,
 		validated_password: boolean,
-		error_trigger:number
+		error_trigger:number,
+		turnstile_token:string
+		turnstile_key:string
 	}
 
 	export default defineComponent({
 		name : 'Login',
 		components : {
-			IconSun : IconSun,
-			IconMoon : IconMoon,
-			InputEmail : InputEmail,
-			InputPassword:InputPassword
+			IconSun,
+			IconMoon,
+			InputEmail,
+			InputPassword,
+			VueTurnstile
 		},
 		data():myData
 		{
@@ -88,12 +97,15 @@ p{
 				custom_error: 'Invalid email',
 				validated_email: false,
 				validated_password: false,
-				error_trigger:0
+				error_trigger:0,
+				turnstile_token:'',
+				turnstile_key: constants.TURNSTILE_KEY
 			}
 		},
 		computed: {
 			theme_name(): string { return useThemeOptions().get_theme; }
 		},
+		watch:{},
 		methods : {
 			/*onFieldInput(meta:any) {
 				
@@ -141,6 +153,7 @@ p{
 
 				console.log('this is test');
 				console.log('email: '+this.validated_email);
+				console.log('token: '+this.turnstile_token);
 				console.log('pass: '+this.validated_password);
 		
 				
