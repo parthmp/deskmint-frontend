@@ -1,8 +1,16 @@
 <template>
 	<div class="form-group">
-		<label for="email">Email Address</label>
-		<input type="email" v-model="input_value" class="form-control" id="email" @input="EmitModel" :class="{'red-input-order': highlight_error}">
-		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid email address</span>
+		<label for="password">Password</label>
+		<div class="relative">
+			<input :type="input_type" v-model="input_value" class="form-control" id="password" :class="{'red-input-order':highlight_error}">
+			
+			<span class="absolute right-2 top-[20%]">
+				<icon-eye v-if="input_type == 'text'" @click="input_type = 'password'" class="cursor-pointer"></icon-eye>
+				<icon-eye-closed v-if="input_type == 'password'" @click="input_type = 'text'" class="cursor-pointer"></icon-eye-closed>
+			</span>
+			
+		</div>
+		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Password must be at least 8 characters long</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
@@ -11,6 +19,7 @@
 
 	export interface InputEmailInterface{
 		input_value: string,
+		input_type: string,
 		input_required: boolean,
 		is_valid: boolean,
 		local_error: string,
@@ -19,11 +28,13 @@
 
 	import common from '../../helpers/common';
 
+	import { IconEyeClosed, IconEye } from '@tabler/icons-vue';
+
 	import { defineComponent } from 'vue';
 
 	export default defineComponent({
 
-		name : 'InputEmail',
+		name : 'InputPassword',
 
 		props : {
 			modelValue : {
@@ -40,6 +51,7 @@
 		data() : InputEmailInterface {
 			return {
 				input_value: '',
+				input_type: 'password',
 				input_required: false,
 				is_valid : true,
 				local_error : '',
@@ -48,7 +60,8 @@
 		},
 
 		components: {
-
+			IconEyeClosed,
+			IconEye
 		},
 
 		watch: {
@@ -76,9 +89,7 @@
 				
 				if(this.input_required === true){
 					
-					this.input_value = common.stripTags(common.sanitize(this.input_value));
-					
-					if(common.is_email(this.input_value) === true){
+					if(this.input_value.length > 7){
 						this.is_valid = true;
 					}else{
 						this.is_valid = false;
@@ -87,20 +98,15 @@
 				}else{
 					this.is_valid = true;
 				}
+				console.log(this.input_value);
 				
-				this.input_value = this.sanitizeInput(this.input_value);
 				this.$emit('update:modelValue', this.input_value);
-				
 				this.$emit('is-valid', this.is_valid);
 				return this.is_valid;
 				
 			},
-			EmitModel(e:any) : void{
-				this.input_value = this.sanitizeInput(e.target.value);
+			EmitModel(e:any) : void{	
 				this.$emit('update:modelValue', this.input_value);
-			},
-			sanitizeInput(in_string:string) : string{
-				return common.stripTags(common.sanitize(in_string));
 			}
 		},
 

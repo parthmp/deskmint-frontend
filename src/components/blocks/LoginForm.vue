@@ -30,21 +30,8 @@
 							<span v-if="(email_address.trim() == '' || !is_email(email_address)) && submit" class="text-red-500! text-[14px]! block">Please enter valid email address</span>
 						</div>-->
 						<input-email v-model="email_address.value" :required="true" :error="email_address.error" ref="email_address"></input-email>
-						<p>Emitted from child : {{ email_address.value }}</p>
-						<div class="form-group">
-							<label for="password">Password</label>
-							
-							<div class="relative">
-								<input :type="password.input_type" v-model="password.value" class="form-control" id="password" :class="{'red-input-order':(password.value == '' || password.value.length < 8) && submit}">
-								
-								<span class="absolute right-2 top-[20%]">
-									<icon-eye v-if="password.input_type == 'text'" @click="password.input_type = 'password'" class="cursor-pointer"></icon-eye>
-									<icon-eye-closed v-if="password.input_type == 'password'" @click="password.input_type = 'text'" class="cursor-pointer"></icon-eye-closed>
-								</span>
-								
-							</div>
-							<span v-if="(password.value == '' || password.value.length < 8) && submit" class="text-red-500! text-[14px]! block">Password must be at least 8 characters long</span>
-						</div>
+						<input-password v-model="password.value" :required="true" :error="password.error" ref="password"></input-password>
+						
 	
 						<div class="form-group">
 							<!--<vue-turnstile :site-key="turnstile_key" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>-->
@@ -101,8 +88,7 @@ p{
 	
 	import InputButton from '../inputs/InputButton.vue';
 	import InputEmail from '../inputs/InputEmail.vue';
-	
-	import { IconEyeClosed, IconEye } from '@tabler/icons-vue';
+	import InputPassword from '../inputs/InputPassword.vue';
 
 	import VueTurnstile from 'vue-turnstile';
 
@@ -129,10 +115,8 @@ p{
 			IconMoon,
 			InputEmail,
 			InputButton,
-			
-			VueTurnstile,
-			IconEyeClosed,
-			IconEye
+			InputPassword,
+			VueTurnstile
 		},
 		data():myData
 		{
@@ -143,7 +127,8 @@ p{
 				},
 				password: {
 					input_type: 'password',
-					value:''
+					value:'',
+					error: ''
 				},
 				
 				turnstile_token:'',
@@ -195,6 +180,7 @@ p{
 
 				//this.error_trigger += 1;
 				let temp2 = this.$refs.email_address.validate();
+				let temp2_pass = this.$refs.password.validate();
 				if(!temp2){
 					this.email_address.error = '';
 				}
@@ -206,7 +192,9 @@ p{
 					}
 				}, 1000);
 				console.log(this.email_address.value+" VAL ==");
+				console.log(this.password.value+" VAL pass ==");
 				console.log(temp2+" TEMP2 ==");
+				console.log(temp2_pass+" TEMP2 pass ==");
 				//console.log(this.email_address);
 				/*
 				setTimeout(() => {
