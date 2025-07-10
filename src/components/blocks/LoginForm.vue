@@ -164,15 +164,12 @@ p{
    			 	theme.set_theme(this.theme_name === 'light' ? 'dark' : 'light');
 				
 			},
-			
-			get_email_address(e:string) : void {
-				this.email_address = e;
-				console.log('==='+this.email_address+'===');
-			},
 
 			login() : void{
 
 				let check_valid = this.$refs.remember_me.validate();
+				this.$refs.email_address.validate();
+				this.$refs.password.validate();
 				console.log(check_valid+'  validated bacsed on required');
 				console.log(this.remember_me+' CHK Value');
 				//this.error_trigger += 1;

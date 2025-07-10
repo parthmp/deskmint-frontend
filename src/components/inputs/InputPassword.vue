@@ -98,8 +98,7 @@
 				}else{
 					this.is_valid = true;
 				}
-				console.log(this.input_value);
-				
+			
 				this.$emit('update:modelValue', this.input_value);
 				this.$emit('is-valid', this.is_valid);
 				return this.is_valid;
