@@ -1,20 +1,19 @@
 <template>
 	<div class="form-group">
-		<button class="text-white cursor-pointer text-base text-center font-bold 
- outline-none border-none transition-all duration-300 ease-linear relative z-0 
- bg-gradient-to-r from-deskmint-green-dark to-deskmint-green rounded-[5px] hover:after:w-full after:content-[''] after:absolute 
- after:z-[-1] after:transition-all after:duration-300 after:ease-linear after:right-0 
- after:top-0 after:w-0 after:h-full after:rounded-[5px] p-[15px] hover:shadow-lg w-full flex flex-col items-center"
->
-  Login
-  <IconRotateClockwise class="animate-spin" :size="30"></IconRotateClockwise>
+		<button class="flex flex-col items-center w-full bg-deskmint-original-dark hover:hover:bg-deskmint-original-dark-plus shadow-lg p-[8px] px-[30px]  m-auto active:scale-[0.97] text-white rounded-[5px] cursor-pointer transition-all duration-300">
+  		<span class="flex gap-1 items-center"><component is="IconSend" :size="17"></component>&nbsp;Login</span>
+  		<IconRotateClockwise v-if="false" class="animate-spin" :size="30"></IconRotateClockwise>
 </button>
 	</div>
 </template>
 
+<style>
+
+</style>
+
 <script lang="ts">
 
-	import { IconRotateClockwise } from '@tabler/icons-vue';
+	import { IconRotateClockwise, IconSend } from '@tabler/icons-vue';
 
 	import { defineComponent } from 'vue';
 
@@ -29,7 +28,8 @@
 		},
 
 		components: {
-			IconRotateClockwise
+			IconRotateClockwise,
+			IconSend
 		},
 
 		methods: {

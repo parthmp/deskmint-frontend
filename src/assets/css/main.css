@@ -16,7 +16,7 @@
 	
 }
 
-body, p, h1, h2, h3, h4, h5, h6, li, div, input{
+body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	  font-family: "Poppins", sans-serif;
 
 	font-size: 16px;
@@ -41,10 +41,14 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 
 	--shadow-four-side: 0px 0px 15px #e7e7e7;
 	--color-background-1: #ffffff;
-	--color-background-2: #F8F7FA;
+	--color-background-2: #F6FFEF;
 	--color-background-card: #ffffff;
 	--color-hover: #EBEBEB;
 	--shadow-lg: 0 0px 15px rgba(0, 0, 0, 0.20);
+	--color-deskmint-original:#007B3B;
+	--color-deskmint-original-dark:#006832;
+	--color-deskmint-original-dark-plus:#005328;
+	--color-deskmint-original-light:#00823E;
 	/*
 	--breakpoint-*: initial;
 	--breakpoint-sm: 768px;
@@ -110,6 +114,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	.sidebar:hover{
 		@apply w-[275px];
 	}*/
+	
 }
 .main-section a, footer a, form a{
 	@apply text-url-color;
@@ -132,7 +137,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply bg-background-2 block h-full lg:min-h-[1000px] lg:min-h-[1200px] 2xl:min-h-[1400px] grow transition-all;
 }
 .sidebar{
-	@apply fixed lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-100%] lg:translate-x-0 transition-all duration-200 z-20 bg-background-1 shadow-lg;
+	@apply fixed lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-100%] lg:translate-x-0 transition-all duration-200 z-20 bg-background-2;
 
 	
 }
@@ -151,7 +156,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply lg:ml-[var(--sidebar-close-width)];
 }
 .topbar{
-	@apply bg-background-card p-2 fixed top-0 shadow-none;
+	@apply bg-background-2 p-2 fixed top-0 shadow-none;
 }
 .sidebar-logo-area{
 	@apply m-[20px] ml-[25px];
@@ -250,7 +255,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input{
 	@apply mt-[80px] pl-[25px] pr-[23px];
 }
 .card{
-	@apply bg-background-card rounded-lg p-[25px];
+	@apply bg-background-card rounded-lg shadow-[0px_0px_10px_deskmint-background-2] p-[25px];
 }
 .fix-collapsed-icon{
 	@apply pl-[13.5px]!;
