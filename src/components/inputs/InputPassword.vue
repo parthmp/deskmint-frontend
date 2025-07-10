@@ -2,7 +2,7 @@
 	<div class="form-group">
 		<label for="password">Password</label>
 		<div class="relative">
-			<input :type="input_type" v-model="input_value" class="form-control" id="password" :class="{'red-input-order':highlight_error}">
+			<input :type="input_type" v-model="input_value" class="form-control" @input="EmitModel" id="password" :class="{'red-input-order':highlight_error}">
 			
 			<span class="absolute right-2 top-[20%]">
 				<icon-eye v-if="input_type == 'text'" @click="input_type = 'password'" class="cursor-pointer"></icon-eye>

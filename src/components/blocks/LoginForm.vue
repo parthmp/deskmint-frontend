@@ -40,15 +40,7 @@
 							<a href="" class="underline">Forgot Password?</a>
 							<label for="remember_me" class="grow">
 								<span class="float-end">
-									<span class="flex items-center gap-2">
-										<div class="checkbox-wrapper">
-											<label>
-												<input type="checkbox" v-model="remember_me" id="checkbox" />
-												<span class="checkbox"></span>
-											</label>
-										</div>
-										<label for="checkbox">Remember me</label>
-									</span>
+									<input-checkbox ref="remember_me" v-model="remember_me"></input-checkbox>
 								</span>
 							</label>
 							
@@ -89,6 +81,7 @@ p{
 	import InputButton from '../inputs/InputButton.vue';
 	import InputEmail from '../inputs/InputEmail.vue';
 	import InputPassword from '../inputs/InputPassword.vue';
+	import InputCheckbox from '../inputs/InputCheckbox.vue';
 
 	import VueTurnstile from 'vue-turnstile';
 
@@ -116,7 +109,8 @@ p{
 			InputEmail,
 			InputButton,
 			InputPassword,
-			VueTurnstile
+			VueTurnstile,
+			InputCheckbox
 		},
 		data():myData
 		{
@@ -178,8 +172,11 @@ p{
 
 			login() : void{
 
+				let check_valid = this.$refs.remember_me.validate();
+				console.log(check_valid+'  validated bacsed on required');
+				console.log(this.remember_me+' CHK Value');
 				//this.error_trigger += 1;
-				let temp2 = this.$refs.email_address.validate();
+				/*let temp2 = this.$refs.email_address.validate();
 				let temp2_pass = this.$refs.password.validate();
 				if(!temp2){
 					this.email_address.error = '';
@@ -194,7 +191,7 @@ p{
 				console.log(this.email_address.value+" VAL ==");
 				console.log(this.password.value+" VAL pass ==");
 				console.log(temp2+" TEMP2 ==");
-				console.log(temp2_pass+" TEMP2 pass ==");
+				console.log(temp2_pass+" TEMP2 pass ==");*/
 				//console.log(this.email_address);
 				/*
 				setTimeout(() => {
