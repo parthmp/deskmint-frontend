@@ -24,11 +24,13 @@
 					<form @submit.prevent="login" class="form">
 						<!--<input-email v-model="email_address" field="Email Address" :required="true" :show_errors="show_errors" @is-valid="validated_email = $event"></input-email>
 						<input-password v-model="password" field="Password" :required="true" :show_errors="show_errors" @is-valid="validated_password = $event"></input-password>-->
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label for="email">Email Address</label>
 							<input type="email" v-model="email_address" class="form-control" id="email" :class="{'red-input-order':(email_address.trim() == '' || !is_email(email_address)) && submit}">
 							<span v-if="(email_address.trim() == '' || !is_email(email_address)) && submit" class="text-red-500! text-[14px]! block">Please enter valid email address</span>
-						</div>
+						</div>-->
+						<input-email v-model="email_address.value" :required="true" :error="email_address.error" ref="email_address"></input-email>
+						<p>Emitted from child : {{ email_address.value }}</p>
 						<div class="form-group">
 							<label for="password">Password</label>
 							
@@ -98,6 +100,7 @@ p{
 	import { useThemeOptions } from '../../stores/theme';
 	
 	import InputButton from '../inputs/InputButton.vue';
+	import InputEmail from '../inputs/InputEmail.vue';
 	
 	import { IconEyeClosed, IconEye } from '@tabler/icons-vue';
 
@@ -109,14 +112,14 @@ p{
 	import { defineComponent } from 'vue';
 
 	export interface myData{
-		email_address: string,
+		email_address: any,
 		password: any,
 		
 		turnstile_token:string
 		turnstile_key:string,
-		
 		remember_me:boolean,
-		submit:boolean
+		submit:boolean,
+		custom_error: string
 	}
 
 	export default defineComponent({
@@ -124,7 +127,7 @@ p{
 		components : {
 			IconSun,
 			IconMoon,
-			
+			InputEmail,
 			InputButton,
 			
 			VueTurnstile,
@@ -134,7 +137,10 @@ p{
 		data():myData
 		{
 			return {
-				email_address: '',
+				email_address: {
+					value:'',
+					error: '',
+				},
 				password: {
 					input_type: 'password',
 					value:''
@@ -143,13 +149,18 @@ p{
 				turnstile_token:'',
 				turnstile_key: constants.TURNSTILE_KEY,
 				remember_me: false,
-				submit: false
+				submit: false,
+				custom_error: ''
 			}
 		},
 		computed: {
 			theme_name(): string { return useThemeOptions().get_theme; }
 		},
-		watch:{},
+		watch:{
+			/*"email_address.value"() : void{
+				this.$refs.email_address.validate();
+			}*/
+		},
 		methods : {
 			/*onFieldInput(meta:any) {
 				
@@ -182,9 +193,29 @@ p{
 
 			login() : void{
 
+				//this.error_trigger += 1;
+				let temp2 = this.$refs.email_address.validate();
+				if(!temp2){
+					this.email_address.error = '';
+				}
 				
-				this.submit = true;
-				console.log(this.remember_me);
+				setTimeout(() => {
+					
+					if(temp2){
+						//this.email_address.error = 'Email already exists.';
+					}
+				}, 1000);
+				console.log(this.email_address.value+" VAL ==");
+				console.log(temp2+" TEMP2 ==");
+				//console.log(this.email_address);
+				/*
+				setTimeout(() => {
+					console.log(this.email_address);
+				}, 100);*/
+				//this.submit = true;
+				//console.log(this.email_address.valid);
+				
+				
 				
 			}
 		}

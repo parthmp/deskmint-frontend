@@ -11,6 +11,10 @@ export default {
 		return value.trim();
 	},
 
+	stripTags(sample:string) : string{
+		return sample.replace(/<[^>]*>/g, '');
+	},
+
 	isset(...args: any[]): boolean {
 		return args.every(arg => arg !== undefined && arg !== null);
 	},
