@@ -1,13 +1,14 @@
 <template>
 	
-	<div class="container mx-auto!">
+	<div class="container mx-auto! pl-[10px]! pr-[10px]!">
 		<br>
 		<br>
 		<a href="javascript:;" @click="setCurrentTheme" class="absolute right-3 top-3">
 			<icon-sun v-if="theme_name === 'light'" :size="32"></icon-sun>
 			<icon-moon v-if="theme_name === 'dark'" :size="32"></icon-moon>
 		</a>
-		<div class="grid grid-cols-12">
+	
+		<div class="grid grid-cols-12 mt-[15px]!">
 			<div class="col-span-12 lg:col-span-4"></div>
 			<div class="col-span-12 lg:col-span-4">
 				<div class="card p-12!">
@@ -22,20 +23,11 @@
 					<br>
 
 					<form @submit.prevent="login" class="form">
-						<!--<input-email v-model="email_address" field="Email Address" :required="true" :show_errors="show_errors" @is-valid="validated_email = $event"></input-email>
-						<input-password v-model="password" field="Password" :required="true" :show_errors="show_errors" @is-valid="validated_password = $event"></input-password>-->
-						<!--<div class="form-group">
-							<label for="email">Email Address</label>
-							<input type="email" v-model="email_address" class="form-control" id="email" :class="{'red-input-order':(email_address.trim() == '' || !is_email(email_address)) && submit}">
-							<span v-if="(email_address.trim() == '' || !is_email(email_address)) && submit" class="text-red-500! text-[14px]! block">Please enter valid email address</span>
-						</div>-->
 						<input-email v-model="email_address.value" :required="true" :error="email_address.error" ref="email_address"></input-email>
 						<input-password v-model="password.value" :required="true" :error="password.error" ref="password"></input-password>
-						
-	
-						<div class="form-group">
+						<!--<div class="form-group">
 							<vue-turnstile :site-key="turnstile_key" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>
-						</div>
+						</div>-->
 						<div class="flex flex-row items-center mt-[5px]!">
 							<a href="" class="underline">Forgot Password?</a>
 							<label for="remember_me" class="grow">
@@ -71,6 +63,7 @@ h3{
 p{
 	@apply text-left font-medium mt-2;
 }
+
 </style>
 
 <script lang="ts">
@@ -78,6 +71,8 @@ p{
 	import { IconSun, IconMoon } from '@tabler/icons-vue';
 	import { useThemeOptions } from '../../stores/theme';
 	
+	import { toastEvents } from '../../events/toastEvents';
+
 	import InputButton from '../inputs/InputButton.vue';
 	import InputEmail from '../inputs/InputEmail.vue';
 	import InputPassword from '../inputs/InputPassword.vue';
@@ -88,12 +83,12 @@ p{
 	import { constants } from '../../constants';
 	import common from '../../helpers/common';
 	
+	
 	import { defineComponent } from 'vue';
 
 	export interface myData{
 		email_address: any,
 		password: any,
-		
 		turnstile_token:string
 		turnstile_key:string,
 		remember_me:boolean,
@@ -154,6 +149,8 @@ p{
     		}
 			,*/
 
+			
+
 			is_email(email_add:string) : boolean{
 				return common.is_email(email_add);
 			},
@@ -166,6 +163,12 @@ p{
 			},
 
 			login() : void{
+				
+				
+				toastEvents.emit('toast', {
+					type:'success',
+					message:'Password must be at least 8 characters long'
+				});
 
 				let check_valid = this.$refs.remember_me.validate();
 				this.$refs.email_address.validate();

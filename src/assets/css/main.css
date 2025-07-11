@@ -15,7 +15,34 @@
 	--color-neutral-border: #e7e7e7;
 	
 }
+/* toast styles start */
 
+.Vue-Toastification__toast--success.my-custom-toast-class, .Vue-Toastification__toast--info.my-custom-toast-class, .Vue-Toastification__toast--error.my-custom-toast-class {
+	border-radius: 5px;
+	margin:0px;
+	margin-top:15px;
+	scale: 0.95;
+	min-height: 0px;
+	padding:15px 25px 15px 15px;
+}
+.Vue-Toastification__toast--info.my-custom-toast-class {
+	background-color: #00619D !important;
+}
+
+.Vue-Toastification__toast--success.my-custom-toast-class {
+	background-color: #009D1D !important;
+}
+.Vue-Toastification__toast-body{
+	width:fit-content !important;
+	color: white !important;
+}
+.Vue-Toastification__close-button{
+	width:15px !important;
+	color:white !important;
+	opacity: 1 !important;
+}
+
+/* toast styles end */
 body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	  font-family: "Poppins", sans-serif;
 
@@ -139,7 +166,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply flex relative transition-all;
 }
 .main-content{
-	@apply bg-background-2 block h-full lg:min-h-[1000px] lg:min-h-[1200px] 2xl:min-h-[1400px] grow transition-all;
+	@apply bg-background-2 block min-h-[100vh]! grow transition-all;
 }
 .sidebar{
 	@apply fixed lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-100%] lg:translate-x-0 transition-all  duration-200 z-20 bg-background-2;
@@ -308,3 +335,4 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 .checkbox-wrapper .checkbox {
 	@apply block w-[inherit] h-[inherit] border-2 border-solid border-input-border rounded-[5px] shadow-none transition-all duration-300;
 }
+

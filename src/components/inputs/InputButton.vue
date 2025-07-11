@@ -1,9 +1,9 @@
 <template>
 	<div class="form-group">
-		<button class="flex flex-col items-center w-full bg-deskmint-original-dark hover:hover:bg-deskmint-original-dark-plus shadow-lg p-[8px] px-[30px]  m-auto active:scale-[0.97] text-white rounded-[5px] cursor-pointer transition-all duration-300">
-  		<span class="flex gap-1 items-center"><component is="IconSend" :size="17"></component>&nbsp;Login</span>
-  		<IconRotateClockwise v-if="false" class="animate-spin" :size="30"></IconRotateClockwise>
-</button>
+		<button class="flex flex-col items-center w-full bg-deskmint-original-dark hover:hover:bg-deskmint-original-dark-plus shadow-lg p-[8px] px-[30px]  m-auto active:scale-[0.97] text-white rounded-[5px] cursor-pointer transition-all duration-300" :disabled="disabled" @click="emitSubmit">
+			<span v-if="!disabled" class="flex gap-1 items-center"><component :is="icon" :size="17"></component>&nbsp;Login</span>
+			<IconRotateClockwise2 v-if="disabled" class="animate-spin" :size="30"></IconRotateClockwise2>
+		</button>
 	</div>
 </template>
 
@@ -13,7 +13,12 @@
 
 <script lang="ts">
 
-	import { IconRotateClockwise, IconSend } from '@tabler/icons-vue';
+	export interface InputButtonIntarface{
+		icon:string,
+		disabled:boolean
+	}
+
+	import { IconRotateClockwise2, IconSend } from '@tabler/icons-vue';
 
 	import { defineComponent } from 'vue';
 
@@ -23,17 +28,22 @@
 
 		props : ['full_width'],
 
-		data() : any {
-			return {};
+		data() : InputButtonIntarface {
+			return {
+				icon : '',
+				disabled: false
+			};
 		},
 
 		components: {
-			IconRotateClockwise,
+			IconRotateClockwise2,
 			IconSend
 		},
 
 		methods: {
-
+			emitSubmit() : void{
+				this.$emit('submit', true);
+			}
 		}
 
 	});
