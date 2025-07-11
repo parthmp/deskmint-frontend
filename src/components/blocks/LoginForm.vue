@@ -25,9 +25,9 @@
 					<form @submit.prevent="login" class="form">
 						<input-email v-model="email_address.value" :required="true" :error="email_address.error" ref="email_address"></input-email>
 						<input-password v-model="password.value" :required="true" :error="password.error" ref="password"></input-password>
-						<!--<div class="form-group">
+						<div class="form-group">
 							<vue-turnstile :site-key="turnstile_key" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>
-						</div>-->
+						</div>
 						<div class="flex flex-row items-center mt-[5px]!">
 							<a href="" class="underline">Forgot Password?</a>
 							<label for="remember_me" class="grow">
@@ -37,7 +37,7 @@
 							</label>
 							
 						</div>
-						<input-button></input-button>
+						<input-button :disabled="btn_disabled" :icon="'IconLogin2'"></input-button>
 						
 						
 					</form>
@@ -93,7 +93,8 @@ p{
 		turnstile_key:string,
 		remember_me:boolean,
 		submit:boolean,
-		custom_error: string
+		custom_error: string,
+		btn_disabled: boolean
 	}
 
 	export default defineComponent({
@@ -124,7 +125,8 @@ p{
 				turnstile_key: constants.TURNSTILE_KEY,
 				remember_me: false,
 				submit: false,
-				custom_error: ''
+				custom_error: '',
+				btn_disabled : false
 			}
 		},
 		computed: {
@@ -163,42 +165,35 @@ p{
 			},
 
 			login() : void{
+				console.log('submitted');
+				this.btn_disabled = true;
 				
-				
-				toastEvents.emit('toast', {
-					type:'success',
-					message:'Password must be at least 8 characters long'
-				});
+				if(this.turnstile_token === ''){
+					this.btn_disabled = false;
+					toastEvents.emit('toast', {
+						type:'error',
+						message: 'Please check the captcha checkbox'
+					});
+				}else{
 
-				let check_valid = this.$refs.remember_me.validate();
-				this.$refs.email_address.validate();
-				this.$refs.password.validate();
-				console.log(check_valid+'  validated bacsed on required');
-				console.log(this.remember_me+' CHK Value');
-				//this.error_trigger += 1;
-				/*let temp2 = this.$refs.email_address.validate();
-				let temp2_pass = this.$refs.password.validate();
-				if(!temp2){
-					this.email_address.error = '';
-				}
-				
-				setTimeout(() => {
-					
-					if(temp2){
-						//this.email_address.error = 'Email already exists.';
+					let email_valid = this.$refs.email_address.validate();
+					let password_valid = this.$refs.password.validate();
+
+					if(email_valid === true && password_valid === true){
+
+						console.log(this.email_address.value);
+						console.log(this.password.value);
+
+					}else{
+						this.btn_disabled = false;
 					}
-				}, 1000);
-				console.log(this.email_address.value+" VAL ==");
-				console.log(this.password.value+" VAL pass ==");
-				console.log(temp2+" TEMP2 ==");
-				console.log(temp2_pass+" TEMP2 pass ==");*/
-				//console.log(this.email_address);
-				/*
-				setTimeout(() => {
-					console.log(this.email_address);
-				}, 100);*/
-				//this.submit = true;
-				//console.log(this.email_address.valid);
+				}
+
+				
+
+
+
+			
 				
 				
 				

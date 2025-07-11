@@ -1,8 +1,8 @@
 <template>
 	<div class="form-group">
-		<button class="flex flex-col items-center w-full bg-deskmint-original-dark hover:hover:bg-deskmint-original-dark-plus shadow-lg p-[8px] px-[30px]  m-auto active:scale-[0.97] text-white rounded-[5px] cursor-pointer transition-all duration-300" :disabled="disabled" @click="emitSubmit">
-			<span v-if="!disabled" class="flex gap-1 items-center"><component :is="icon" :size="17"></component>&nbsp;Login</span>
-			<IconRotateClockwise2 v-if="disabled" class="animate-spin" :size="30"></IconRotateClockwise2>
+		<button class="flex flex-col items-center p-[8px] px-[30px] m-auto text-white rounded-[5px] transition-all duration-300" :class="{'w-full' : local_full_width, 'active:scale-[0.97]': !local_disabled, 'bg-deskmint-original-dark': !local_disabled, 'hover:hover:bg-deskmint-original-dark-plus': !local_disabled, 'shadow-lg': !local_disabled, 'cursor-pointer': !local_disabled, 'opacity-80' :local_disabled,'dark:opacity-100': local_disabled, 'bg-deskmint-original-light': local_disabled}" :disabled="local_disabled" @click="emitSubmit">
+			<span v-if="!local_disabled" class="flex gap-1 items-center"><component :is="icon" :size="17"></component>&nbsp;Login</span>
+			<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="26"></IconRotateClockwise2>
 		</button>
 	</div>
 </template>
@@ -14,11 +14,13 @@
 <script lang="ts">
 
 	export interface InputButtonIntarface{
-		icon:string,
-		disabled:boolean
+		local_disabled:boolean,
+		local_full_width:boolean
 	}
 
-	import { IconRotateClockwise2, IconSend } from '@tabler/icons-vue';
+	import common from '../../helpers/common';
+
+	import { IconRotateClockwise2, IconSend, IconLogin2 } from '@tabler/icons-vue';
 
 	import { defineComponent } from 'vue';
 
@@ -26,23 +28,44 @@
 
 		name : 'InputButton',
 
-		props : ['full_width'],
+		props : ['full_width', 'disabled', 'icon'],
 
 		data() : InputButtonIntarface {
 			return {
-				icon : '',
-				disabled: false
+				local_disabled: false,
+				local_full_width: true
 			};
 		},
 
 		components: {
 			IconRotateClockwise2,
-			IconSend
+			IconSend,
+			IconLogin2
+		},
+
+		watch: {
+			disabled() : void{
+				this.setDisabled();
+			}
 		},
 
 		methods: {
 			emitSubmit() : void{
 				this.$emit('submit', true);
+			},
+			setDisabled() : void{
+				
+				if(common.isset(this.disabled)){
+					this.local_disabled = this.disabled;
+				}
+			}
+		},
+
+		mounted(){
+			this.setDisabled();
+
+			if(common.isset(this.full_width)){
+				this.local_full_width = this.full_width;
 			}
 		}
 

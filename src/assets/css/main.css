@@ -60,7 +60,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	--color-deskmint-green: #0FA557;
 	--color-deskmint-green-dark: #039F4E;
 	/*--color-deskmint-green-light: RGBA(136,255,193, 1);*/
-	--color-deskmint-green-light: RGBA(22,119,46, 0.15);
+	--color-deskmint-green-light: RGBA(22,119,46, 0.25);
 	
 	--color-input-border:color-mix(in sRGB, #2f2b3d 22%, #fff);
 	--color-input-border-hover: #6cb57d;
