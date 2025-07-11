@@ -2,7 +2,7 @@
 		<div class="container-fluid" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">	
 			<div class="big-content">
 				<aside class="relative">
-					<div class="sidebar" @mouseenter="hover_sidebar = true" @mouseleave="hover_sidebar = false" :class="{'closed':!sidebar_full, 'phone': phone_show}">
+					<div class="sidebar" @mouseenter="hover_sidebar = true" @mouseleave="hover_sidebar = false" :class="{'closed':!sidebar_full,'phone': phone_show}">
 						<div class="sidebar-logo-area">
 							<div class="flex items-center">
 								<a v-show="(((sidebar_full) || (hover_sidebar && !is_mobile)) && current_theme_name == 'light')" href="javascript:;"><img src="./../assets/images/deskmit-logo.svg" class="logo" alt=""></a>
@@ -422,7 +422,7 @@ export default defineComponent({
 						menu_text: 'Dashboard',
 						has_submenu : true,
 						show_submenu : false,
-						is_active: false,
+						is_active: true,
 						submenu: [
 							{
 								path: '/',

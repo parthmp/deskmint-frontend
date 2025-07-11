@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label for="email">Email Address</label>
-		<input type="email" v-model="input_value" class="form-control" id="email" @input="EmitModel" :class="{'red-input-order': highlight_error}">
+		<input type="email" placeholder="Email Address" v-model="input_value" class="form-control" id="email" @input="EmitModel" :class="{'red-input-order': highlight_error}">
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid email address</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>

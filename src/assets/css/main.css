@@ -36,7 +36,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	--color-deskmint-green-light: RGBA(22,119,46, 0.15);
 	
 	--color-input-border:color-mix(in sRGB, #2f2b3d 22%, #fff);
-	--color-input-border-hover: #939BC3;
+	--color-input-border-hover: #6cb57d;
 	--color-url-color:#007D1E;
 
 	--shadow-four-side: 0px 0px 15px #e7e7e7;
@@ -45,6 +45,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	--color-background-card: #ffffff;
 	--color-hover: #EBEBEB;
 	--shadow-lg: 0 0px 15px rgba(0, 0, 0, 0.20);
+	--shadow-clg: 0 0px 7px rgba(0, 0, 0, 0.25);
 	--color-deskmint-original:#007B3B;
 	--color-deskmint-original-dark:#006832;
 	--color-deskmint-original-dark-plus:#005328;
@@ -63,17 +64,19 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
   * {
     @variant dark {
 		--color-default-text-iv: #444050;
-		--color-default-text:#cfcde4;
+		--color-default-text:#b5bfb7;
 		--shadow-four-side: 0px 0px 15px #000;
 		--color-background-1: #2f3349;
-		--color-background-2: #25293C;
+		/*--color-background-2: #11170E;*/
+		--color-background-2: #121B16;
 		--color-hover: #3D435B;
-		--color-background-card: #2F3349;
+		--color-background-card: #1e2723;
 		--shadow-lg: 0 0px 25px rgba(0, 0, 0, 1);
 		--color-deskmint-green-light: RGBA(3,159,78, 0.15);
 		--color-url-color:#20c547;
 		--color-neutral-border: #464D72;
-		--color-input-border: #5E647D;
+		--color-input-border: #556e63;
+		--color-input-border-hover: #BBDDC3;
 		
     }
 	
@@ -137,7 +140,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply bg-background-2 block h-full lg:min-h-[1000px] lg:min-h-[1200px] 2xl:min-h-[1400px] grow transition-all;
 }
 .sidebar{
-	@apply fixed lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-100%] lg:translate-x-0 transition-all duration-200 z-20 bg-background-2;
+	@apply fixed lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-100%] lg:translate-x-0 transition-all  duration-200 z-20 bg-background-2;
 
 	
 }
@@ -252,10 +255,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply text-center  w-full;
 }
 .main-section{
-	@apply mt-[80px] pl-[25px] pr-[23px];
+	@apply mt-[80px] pl-[10px] pr-[23px];
 }
 .card{
-	@apply bg-background-card rounded-lg shadow-[0px_0px_10px_deskmint-background-2] p-[25px];
+	@apply bg-background-card rounded-lg shadow-clg p-[25px];
 }
 .fix-collapsed-icon{
 	@apply pl-[13.5px]!;
