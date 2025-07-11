@@ -34,7 +34,7 @@
 						
 	
 						<div class="form-group">
-							<!--<vue-turnstile :site-key="turnstile_key" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>-->
+							<vue-turnstile :site-key="turnstile_key" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>
 						</div>
 						<div class="flex flex-row items-center mt-[5px]!">
 							<a href="" class="underline">Forgot Password?</a>
