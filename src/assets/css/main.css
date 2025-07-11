@@ -45,7 +45,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	--color-background-card: #ffffff;
 	--color-hover: #EBEBEB;
 	--shadow-lg: 0 0px 15px rgba(0, 0, 0, 0.20);
-	--shadow-clg: 0 0px 7px rgba(0, 0, 0, 0.25);
+	--shadow-clg: 0 .125rem .50rem rgba(0,0,0,.075);
 	--color-deskmint-original:#007B3B;
 	--color-deskmint-original-dark:#006832;
 	--color-deskmint-original-dark-plus:#005328;
@@ -77,6 +77,8 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 		--color-neutral-border: #464D72;
 		--color-input-border: #556e63;
 		--color-input-border-hover: #BBDDC3;
+
+		--shadow-clg: 0 0px 7px rgba(0, 0, 0, 0.20);
 		
     }
 	
