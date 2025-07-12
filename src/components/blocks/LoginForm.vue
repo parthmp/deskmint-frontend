@@ -85,6 +85,7 @@ p{
 	
 	
 	import { defineComponent } from 'vue';
+	import axios from 'axios';
 
 	export interface myData{
 		email_address: any,
@@ -133,9 +134,12 @@ p{
 			theme_name(): string { return useThemeOptions().get_theme; }
 		},
 		watch:{
-			/*"email_address.value"() : void{
+			"email_address.value"() : void{
 				this.$refs.email_address.validate();
-			}*/
+			},
+			"password.value"() : void{
+				this.$refs.password.validate();
+			}
 		},
 		methods : {
 			/*onFieldInput(meta:any) {
@@ -172,7 +176,7 @@ p{
 					this.btn_disabled = false;
 					toastEvents.emit('toast', {
 						type:'error',
-						message: 'Please check the captcha checkbox'
+						message: 'Make sure the captcha checkbox is checked'
 					});
 				}else{
 
@@ -183,6 +187,67 @@ p{
 
 						console.log(this.email_address.value);
 						console.log(this.password.value);
+						let that = this;
+
+
+						
+						
+
+
+/*
+axios.get('http://localhost:8000/sanctum/csrf-cookie').then((res) => {
+	var token = decodeURIComponent(common.getCookie('XSRF-TOKEN')); 
+	alert(token);
+  axios.post('http://localhost:8000/api/some/thing', {
+    email_address: 'test@example.com',
+    password: 'dummy'
+  },{
+	headers: {
+      'X-XSRF-TOKEN': token,
+      'Accept': 'application/json',
+    }
+  }).then((res2) => {
+	console.log('✅ Success:', res2.data);
+  });
+}).then(res => {
+	
+  
+}).catch(err => {
+  console.error('❌ Failed:', err.response?.status, err.response?.data);
+});*/
+
+						console.log(constants.CSRF_URL);
+						console.log(constants.APIURL);
+						axios.defaults.withCredentials = true;
+						axios.get(constants.CSRF_URL).then(response => {
+
+							var token = decodeURIComponent(common.getCookie('XSRF-TOKEN')); 
+							
+							axios.post(constants.APIURL+'some/thing', {
+									email_address: that.email_address.value,
+									password: that.password.value,
+									turnstile_token: that.turnstile_token
+								}, {
+									headers: {
+										'X-XSRF-TOKEN': token,
+										'Accept': 'application/json',
+									}
+							}).then(function(response){
+								console.log('response start');
+								console.log(response);
+								console.log('response end');
+								that.btn_disabled = false;
+							}).catch(function(error){
+								console.log('error start');
+								console.log(error);
+								console.log('error end');
+								that.btn_disabled = false;
+							});
+
+						}).then(function(){
+							
+						});
+			
 
 					}else{
 						this.btn_disabled = false;

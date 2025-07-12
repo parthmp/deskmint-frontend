@@ -51,5 +51,14 @@ export default {
 		if (component.parentForm) {
 			component.parentForm.removeEventListener('submit', component.parentForm.submitHandler, true);
 		}
+	},
+
+	getCookie(name:string) : any{
+		const value = `; ${document.cookie}`;
+		const parts = value.split(`; ${name}=`);
+		if (parts.length === 2) {
+			return decodeURIComponent(parts.pop().split(';').shift());
+		}
+		return null;
 	}
 }
