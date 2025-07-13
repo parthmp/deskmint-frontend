@@ -57,14 +57,20 @@ export default {
 		}
 	},
 
-	isValidURL(url:string) : boolean {
+	isValidURL(url:string, allow_http:boolean) : boolean {
 
-		if(!url.startsWith('http://') && !url.startsWith('https://')){
-			return false;
+		if (allow_http === true) {
+			if (!url.startsWith('http://') && !url.startsWith('https://')) {
+				return false;
+			}
+		} else {
+			if (!url.startsWith('https://')) {
+				return false;
+			}
 		}
 		
 		
-		var res = url.match(/^https?:\/\/(www\.)?([-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}|localhost)(:[0-9]{1,5})?\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/);
+		var res = url.match(/^https?:\/\/(www\.)?([-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}|localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(:[0-9]{1,5})?\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/);
 		return (res !== null);
 
 	},

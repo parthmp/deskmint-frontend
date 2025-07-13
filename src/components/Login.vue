@@ -2,7 +2,6 @@
 	<section class="main-content">
 		<login-form v-if="!show_api_box"></login-form>
 		<ApiURL v-if="show_api_box" @base_url_set="handle_show"></ApiURL>
-		<!--<p>base url: {{ burl }}</p>-->
 	</section>
 </template>
 

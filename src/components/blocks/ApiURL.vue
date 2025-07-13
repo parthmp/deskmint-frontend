@@ -20,12 +20,12 @@
 					
 					<h3>Welcome to DeskMint! 👋</h3>
 					<p>Please enter backend URL to connect to the API</p>
-					<p class="text-red-400!">Warning: DO NOT run API over http://, you must run API over https://</p>
+					<p class="text-red-400!">Note: You must run API over https://</p>
 					<br>
 
 					<form @submit.prevent="saveApiURL" class="form">
 						
-						<InputURL :required="true" ref="inputurl" v-model="input_url"></InputURL>
+						<InputURL :required="true" ref="inputurl" v-model="input_url" :allow_http="true"></InputURL>
 						
 						<input-button :disabled="btn_disabled" :icon="'IconLink'" btn_text="Set URL"></input-button>
 						
@@ -113,19 +113,23 @@ p{
 				this.btn_disabled = true;
 				let valid_url = this.$refs.inputurl.validate();
 				
-				if(true){
+				if(valid_url){
 					let entered_url = common.removeTrailingSlash(this.input_url);
 					entered_url = entered_url+'/';
 					
 					axios.post(entered_url+constants.APIURL_POSTFIX+'handshake', {
 						handshake: true
 					}).then((response) => {
-						if(response.data.required_client_version === constants.BUILD){
+						
+						if(response.data.required_client_version+'' === constants.BUILD+''){
 
 							common.setBaseUrl(entered_url);
 							this.btn_disabled = false;
 							this.$emit('base_url_set', false);
-
+							toastEvents.emit('toast', {
+								type: 'success',
+								message: 'API URL has set successfully'
+							});
 						}else{
 							this.btn_disabled = false;
 							toastEvents.emit('toast', {
@@ -135,9 +139,10 @@ p{
 						}
 					}).catch((error) => {
 						this.btn_disabled = false;
+						
 						toastEvents.emit('toast', {
 							type: 'error',
-							message: JSON.stringify(error)
+							message: 'Unable to connect, please check server configuration, URLs and SSL support'
 						});
 					});
 					

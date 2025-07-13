@@ -2,7 +2,7 @@
 	<div class="form-group">
 		<label for="url">URL</label>
 		<input type="text" placeholder="Enter URL" v-model="input_value" class="form-control" id="url" @input="EmitModel" :class="{'red-input-order': highlight_error}">
-		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid URL with http:// or https://</span>
+		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid URL with <span v-if="local_allow_http">http:// or https://</span><span v-if="!local_allow_http">https://</span></span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
@@ -14,7 +14,8 @@
 		input_required: boolean,
 		is_valid: boolean,
 		local_error: string,
-		show_errors: boolean
+		show_errors: boolean,
+		local_allow_http:boolean
 	}
 
 	import common from '../../helpers/common';
@@ -34,6 +35,9 @@
 			},
 			error : {
 				type :String
+			},
+			allow_http:{
+				type:Boolean
 			}
 		},
 
@@ -43,7 +47,8 @@
 				input_required: false,
 				is_valid : true,
 				local_error : '',
-				show_errors: false
+				show_errors: false,
+				local_allow_http: true
 			};
 		},
 
@@ -78,7 +83,7 @@
 					
 					this.input_value = common.stripTags(common.sanitize(this.input_value));
 					
-					if(common.isValidURL(this.input_value) === true){
+					if(common.isValidURL(this.input_value, this.local_allow_http) === true){
 						this.is_valid = true;
 					}else{
 						this.is_valid = false;
@@ -122,6 +127,12 @@
 			this.local_error = '';
 			if(common.isset(this.error)){
 				this.local_error = this.error || '';
+			}
+
+			if(common.isset(this.allow_http)){
+				console.log('allow+http=='+this.allow_http);
+				this.local_allow_http = this.allow_http;
+				console.log('allow+http local=='+this.local_allow_http);
 			}
 		}
 
