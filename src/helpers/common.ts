@@ -1,3 +1,7 @@
+import { Preferences } from "@capacitor/preferences";
+import { Capacitor } from '@capacitor/core';
+import { constants } from "../constants";
+
 export default {
 	sanitize(value: any): string {
 		if (typeof value === 'undefined') {
@@ -53,12 +57,51 @@ export default {
 		}
 	},
 
-	getCookie(name:string) : any{
-		const value = `; ${document.cookie}`;
-		const parts = value.split(`; ${name}=`);
-		if (parts.length === 2) {
-			return decodeURIComponent(parts.pop().split(';').shift());
+	isValidURL(url:string) : boolean {
+
+		if(!url.startsWith('http://') && !url.startsWith('https://')){
+			return false;
 		}
-		return null;
+		
+		
+		var res = url.match(/^https?:\/\/(www\.)?([-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}|localhost)(:[0-9]{1,5})?\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/);
+		return (res !== null);
+
+	},
+
+	fetchBaseUrl(fun:any) : void{
+
+		if(constants.SAME_BASE_URL_FOR_PHONES === true){
+			fun(constants.BASEURL);
+		}else{
+
+			if(Capacitor.getPlatform() === 'web'){
+
+				fun(constants.BASEURL);
+
+			}else if(Capacitor.getPlatform() === 'android'){
+
+				Preferences.get({ key : 'base_url' }).then((base_url_value) => {
+					fun(this.stripTags(this.sanitize(base_url_value.value)));
+				});
+
+			}
+
+		}
+
+		
+		
+	},
+
+	setBaseUrl(base_url:string) : void{
+		Preferences.set({
+			key: 'base_url',
+			value: base_url
+		});
+	},
+
+	removeTrailingSlash(str:string) : string {
+    	return str.replace(/\/+$/, '');
 	}
+
 }

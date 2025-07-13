@@ -1,7 +1,7 @@
 <template>
 	
 	<div class="container mx-auto! pl-[10px]! pr-[10px]!">
-		<br>
+		
 		<br>
 		<a href="javascript:;" @click="setCurrentTheme" class="absolute right-3 top-3">
 			<icon-sun v-if="theme_name === 'light'" :size="32"></icon-sun>
@@ -82,6 +82,8 @@ p{
 
 	import { constants } from '../../constants';
 	import common from '../../helpers/common';
+
+	import { Preferences } from '@capacitor/preferences';
 	
 	
 	import { defineComponent } from 'vue';
@@ -95,7 +97,10 @@ p{
 		remember_me:boolean,
 		submit:boolean,
 		custom_error: string,
-		btn_disabled: boolean
+		btn_disabled: boolean,
+		pref_test_value: string,
+		set_clicks:number,
+		get_clicks:number
 	}
 
 	export default defineComponent({
@@ -127,7 +132,10 @@ p{
 				remember_me: false,
 				submit: false,
 				custom_error: '',
-				btn_disabled : false
+				btn_disabled : false,
+				pref_test_value : '',
+				set_clicks: 0,
+				get_clicks: 0
 			}
 		},
 		computed: {
@@ -155,6 +163,27 @@ p{
     		}
 			,*/
 
+			async setPref() : void{
+				console.log('fired');
+				this.set_clicks++;
+				Preferences.set({
+					key: 'base_url',
+					value: 'google4.com'
+				});
+			},
+
+			getPref() : void{
+				
+				
+				this.get_clicks++;
+    this.pref_test_value = 'this should not show';
+    
+    Preferences.get({ key: 'base_url' }).then(({ value }) => {
+        // Use arrow function to keep 'this'
+        this.pref_test_value = value;
+    });
+								
+			},
 			
 
 			is_email(email_add:string) : boolean{
