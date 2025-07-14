@@ -1,6 +1,6 @@
 import { Preferences } from "@capacitor/preferences";
 import { Capacitor } from '@capacitor/core';
-import { constants } from "../constants";
+import { env } from "../env";
 
 export default {
 	sanitize(value: any): string {
@@ -77,13 +77,13 @@ export default {
 
 	fetchBaseUrl(fun:any) : void{
 
-		if(constants.SAME_BASE_URL_FOR_PHONES === true){
-			fun(constants.BASEURL);
+		if(env.SAME_BASE_URL_FOR_PHONES === true){
+			fun(env.BASEURL);
 		}else{
 
 			if(Capacitor.getPlatform() === 'web'){
 
-				fun(constants.BASEURL);
+				fun(env.BASEURL);
 
 			}else if(Capacitor.getPlatform() === 'android'){
 

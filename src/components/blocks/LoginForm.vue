@@ -80,7 +80,7 @@ p{
 
 	import VueTurnstile from 'vue-turnstile';
 
-	import { constants } from '../../constants';
+	import { env } from '../../env';
 	import common from '../../helpers/common';
 
 	import { Preferences } from '@capacitor/preferences';
@@ -128,7 +128,7 @@ p{
 				},
 				
 				turnstile_token:'',
-				turnstile_key: constants.TURNSTILE_KEY,
+				turnstile_key: env.TURNSTILE_KEY,
 				remember_me: false,
 				submit: false,
 				custom_error: '',
@@ -245,14 +245,13 @@ axios.get('http://localhost:8000/sanctum/csrf-cookie').then((res) => {
   console.error('❌ Failed:', err.response?.status, err.response?.data);
 });*/
 
-						console.log(constants.CSRF_URL);
-						console.log(constants.APIURL);
+						
 						axios.defaults.withCredentials = true;
-						axios.get(constants.CSRF_URL).then(response => {
+						axios.get(env.CSRF_URL).then(response => {
 
 							var token = decodeURIComponent(common.getCookie('XSRF-TOKEN')); 
 							
-							axios.post(constants.APIURL+'some/thing', {
+							axios.post(env.APIURL+'some/thing', {
 									email_address: that.email_address.value,
 									password: that.password.value,
 									turnstile_token: that.turnstile_token

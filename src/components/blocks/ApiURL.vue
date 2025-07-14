@@ -117,11 +117,11 @@ p{
 					let entered_url = common.removeTrailingSlash(this.input_url);
 					entered_url = entered_url+'/';
 					
-					axios.post(entered_url+constants.APIURL_POSTFIX+'handshake', {
+					axios.post(entered_url+env.APIURL_POSTFIX+'handshake', {
 						handshake: true
 					}).then((response) => {
 						
-						if(response.data.required_client_version+'' === constants.BUILD+''){
+						if(response.data.required_client_version+'' === env.BUILD+''){
 
 							common.setBaseUrl(entered_url);
 							this.btn_disabled = false;
