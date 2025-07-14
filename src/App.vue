@@ -12,6 +12,10 @@
 	import { useToast } from 'vue-toastification';
 	import { toastEvents } from './events/toastEvents';
 
+	import { Capacitor } from '@capacitor/core';
+	import { PushNotifications } from '@capacitor/push-notifications';
+	import { Preferences } from '@capacitor/preferences';
+
 	export default{
 		name : 'App',
 		components : {
@@ -27,6 +31,26 @@
 				this.toast[payload.type](payload.message, {
 					toastClassName: "my-custom-toast-class"
 				});
+			},
+
+			getFCMToken : function(){
+				
+				if(Capacitor.getPlatform() !== 'web'){
+
+					PushNotifications.requestPermissions().then(result => {
+						if (result.receive === 'granted') {
+							PushNotifications.register();
+						}
+					});
+					
+					PushNotifications.addListener('registration', (token) => {
+						Preferences.set({ key: 'android_token', value: token.value });
+					});
+					
+				}else{
+					Preferences.set({ key: 'android_token', value: 'web' });
+				}
+
 			}
 		},
 		watch : {
@@ -39,13 +63,13 @@
 		},
 		created(){
 			toastEvents.on('toast', this.handleToast);
+			this.getFCMToken();
 		},
 		beforeUnmount(){
 			toastEvents.off('toast', this.handleToast);
 		},
 		mounted : function(){
 			
-
 		}
 
 	}

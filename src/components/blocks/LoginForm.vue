@@ -7,7 +7,8 @@
 			<icon-sun v-if="theme_name === 'light'" :size="32"></icon-sun>
 			<icon-moon v-if="theme_name === 'dark'" :size="32"></icon-moon>
 		</a>
-	
+		<br>
+		<br>
 		<div class="grid grid-cols-12 mt-[15px]!">
 			<div class="col-span-12 lg:col-span-4"></div>
 			<div class="col-span-12 lg:col-span-4">
@@ -37,9 +38,7 @@
 							</label>
 							
 						</div>
-						<input-button :disabled="btn_disabled" :icon="'IconLogin2'"></input-button>
-						
-						
+						<input-button :disabled="btn_disabled" :icon="'IconLogin2'" btn_text="Login"></input-button>
 					</form>
 					
 					
