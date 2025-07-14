@@ -61,7 +61,7 @@ p{
 	import InputButton from '../inputs/InputButton.vue';
 	
 	import axios from 'axios';
-	import { constants } from '../../constants';
+	import { env } from '../../env';
 	import common from '../../helpers/common';
 
 	import { toastEvents } from '../../events/toastEvents';

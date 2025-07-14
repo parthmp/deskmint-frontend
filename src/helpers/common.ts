@@ -75,37 +75,6 @@ export default {
 
 	},
 
-	fetchBaseUrl(fun:any) : void{
-
-		if(env.SAME_BASE_URL_FOR_PHONES === true){
-			fun(env.BASEURL);
-		}else{
-
-			if(Capacitor.getPlatform() === 'web'){
-
-				fun(env.BASEURL);
-
-			}else if(Capacitor.getPlatform() === 'android'){
-
-				Preferences.get({ key : 'base_url' }).then((base_url_value) => {
-					fun(this.stripTags(this.sanitize(base_url_value.value)));
-				});
-
-			}
-
-		}
-
-		
-		
-	},
-
-	setBaseUrl(base_url:string) : void{
-		Preferences.set({
-			key: 'base_url',
-			value: base_url
-		});
-	},
-
 	removeTrailingSlash(str:string) : string {
     	return str.replace(/\/+$/, '');
 	}
