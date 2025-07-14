@@ -1,6 +1,6 @@
 <template>
   <div :data-theme="theme">
-	
+	<p>Device ID: {{ device_id }}</p>
     <router-view></router-view>
   </div>
 </template>
@@ -16,6 +16,9 @@
 	import { PushNotifications } from '@capacitor/push-notifications';
 	import { Preferences } from '@capacitor/preferences';
 
+	import { Device } from '@capacitor/device';
+
+
 	export default{
 		name : 'App',
 		components : {
@@ -23,7 +26,8 @@
 		},
 		data: function(){
 			return {
-				toast:useToast()
+				toast:useToast(),
+				device_id: ''
 			}
 		},
 		methods : {
@@ -68,8 +72,11 @@
 		beforeUnmount(){
 			toastEvents.off('toast', this.handleToast);
 		},
-		mounted : function(){
-			
+		mounted : async function(){
+			 const info = await JSON.stringify(Device.getInfo());
+			 this.device_id = (await Device.getId()).identifier;
+
+  			console.log(info);
 		}
 
 	}
