@@ -163,7 +163,7 @@ p{
 
 				
 				console.log('submitted');
-				this.btn_disabled = true;
+				//this.btn_disabled = true;
 				
 				if(this.turnstile_token === ''){
 					this.btn_disabled = false;
@@ -181,17 +181,48 @@ p{
 						console.log(this.email_address.value);
 						console.log(this.password.value);
 						
-						axios.post(env.API_URL+'login2', {
-							email_address : this.email_address,
-							password: this.password,
-							turnstile_token: this.turnstile_token
-						}).then((response) => {
-							console.log(response.data);
-							console.log(response.data.test);
-						}).catch((error) => {
-							this.$refs.turnstile.reset();
-							this.turnstile_token = '';
-							this.btn_disabled = false;
+						common.getDeviceId((device:any) => {
+
+							axios.post(env.API_URL+'login', {
+								email_address : this.email_address.value,
+								password: this.password.value,
+								turnstile_token: this.turnstile_token,
+								device: device.identifier
+							}).then((response) => {
+								
+								console.log(response);
+								
+
+							}).catch((error) => {
+								console.log(error);
+								this.$refs.turnstile.reset();
+								this.turnstile_token = '';
+								this.btn_disabled = false;
+								let error_message = 'Unknown error';
+
+								if(error.response){
+									
+									let status = error.response.status;
+									
+									if(status === 422){
+										error_message = error.response.data.message;
+									}
+								}else{
+
+									error_message = 'Unable to connect to the server';
+
+								}
+								
+
+								toastEvents.emit('toast', {
+									type:'error',
+									message: error_message
+								});
+							});
+
+						
+
+
 						});
 			
 

@@ -2,6 +2,8 @@ import { Preferences } from "@capacitor/preferences";
 import { Capacitor } from '@capacitor/core';
 import { env } from "../env";
 
+import { Device } from '@capacitor/device';
+
 export default {
 	sanitize(value: any): string {
 		if (typeof value === 'undefined') {
@@ -77,6 +79,10 @@ export default {
 
 	removeTrailingSlash(str:string) : string {
     	return str.replace(/\/+$/, '');
+	},
+
+	getDeviceId(fun:any): void{
+		Device.getId().then(fun);
 	}
 
 }
