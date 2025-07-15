@@ -169,9 +169,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply bg-background-2 block min-h-[100vh]! grow transition-all;
 }
 .sidebar{
-	@apply fixed lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-100%] lg:translate-x-0 transition-all  duration-200 z-20 bg-background-2;
-
-	
+	@apply fixed lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-110%] min-w-[68%] lg:min-w-[initial] lg:translate-x-0 transition-all  duration-300 z-20 bg-background-2;
 }
 .sidebar.closed{
 	@apply lg:fixed h-[100vh] lg:w-[var(--sidebar-close-width)];

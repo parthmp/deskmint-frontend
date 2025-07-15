@@ -284,10 +284,10 @@
 					<br>
 					<br>
 					<br>
-					<footer class="global-footer">
-						<p class="font-medium!">DeskMint is a source available software</p>
-						<p class="flex items-center justify-center font-medium!">Made with&nbsp;<IconHeartFilled class="text-red-500" :size="22"></IconHeartFilled>&nbsp;by&nbsp;<a href="https://parthparmar.dev" target="_blank" class="underline">Parth Parmar</a></p>
-					</footer>
+					<Footer></Footer>
+					<br>
+					<br>
+					<br>
 				</main>
 			</div>
 		</div>
@@ -334,10 +334,12 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconHeartFilled } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
+
+import Footer from './blocks/Footer.vue';
 
 export interface MenuSubItem {
 	path: string;
@@ -394,8 +396,8 @@ export default defineComponent({
 		IconUser:IconUser,
 		IconSettings:IconSettings,
 		IconLogout:IconLogout,
-		IconHeartFilled:IconHeartFilled,
-		IconDashboard:IconDashboard
+		IconDashboard:IconDashboard,
+		Footer:Footer
 	},
 	data() : PanelData{
 		return {

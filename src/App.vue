@@ -1,6 +1,5 @@
 <template>
   <div :data-theme="theme">
-	<p>Device ID: {{ device_id }}</p>
     <router-view></router-view>
   </div>
 </template>

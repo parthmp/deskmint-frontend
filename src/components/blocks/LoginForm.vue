@@ -27,25 +27,20 @@
 						<input-email v-model="email_address.value" :required="true" :error="email_address.error" ref="email_address"></input-email>
 						<input-password v-model="password.value" :required="true" :error="password.error" ref="password"></input-password>
 						<div class="form-group">
-							<vue-turnstile :site-key="turnstile_key" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>
+							<vue-turnstile :site-key="turnstile_key" ref="turnstile" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>
 						</div>
 						<div class="flex flex-row items-center mt-[5px]!">
 							<a href="" class="underline">Forgot Password?</a>
-							<label for="remember_me" class="grow">
-								<span class="float-end">
-									<input-checkbox ref="remember_me" v-model="remember_me"></input-checkbox>
-								</span>
-							</label>
-							
 						</div>
 						<input-button :disabled="btn_disabled" :icon="'IconLogin2'" btn_text="Login"></input-button>
 					</form>
-					
 					
 				</div>
 			</div>
 			<div class="col-span-12 lg:col-span-4"></div>
 		</div>
+		<br>
+		<Footer></Footer>
 	</div>
 
 	
@@ -83,6 +78,8 @@ p{
 	import common from '../../helpers/common';
 
 	import { Preferences } from '@capacitor/preferences';
+
+	import Footer from './Footer.vue';
 	
 	
 	import { defineComponent } from 'vue';
@@ -111,7 +108,8 @@ p{
 			InputButton,
 			InputPassword,
 			VueTurnstile,
-			InputCheckbox
+			InputCheckbox,
+			Footer
 		},
 		data():myData
 		{
@@ -149,41 +147,6 @@ p{
 			}
 		},
 		methods : {
-			/*onFieldInput(meta:any) {
-				
-				if(meta.valid){
-					console.log('validted');
-					this.custom_error = 'your email is valid';
-				}else{
-					console.log('bad');
-					this.custom_error = 'your email is NOT valid';
-				}
-      
-    		}
-			,*/
-
-			async setPref() : void{
-				console.log('fired');
-				this.set_clicks++;
-				Preferences.set({
-					key: 'base_url',
-					value: 'google4.com'
-				});
-			},
-
-			getPref() : void{
-				
-				
-				this.get_clicks++;
-    this.pref_test_value = 'this should not show';
-    
-    Preferences.get({ key: 'base_url' }).then(({ value }) => {
-        // Use arrow function to keep 'this'
-        this.pref_test_value = value;
-    });
-								
-			},
-			
 
 			is_email(email_add:string) : boolean{
 				return common.is_email(email_add);
@@ -197,6 +160,8 @@ p{
 			},
 
 			login() : void{
+
+				
 				console.log('submitted');
 				this.btn_disabled = true;
 				
@@ -215,64 +180,18 @@ p{
 
 						console.log(this.email_address.value);
 						console.log(this.password.value);
-						let that = this;
-
-
 						
-						
-
-
-/*
-axios.get('http://localhost:8000/sanctum/csrf-cookie').then((res) => {
-	var token = decodeURIComponent(common.getCookie('XSRF-TOKEN')); 
-	alert(token);
-  axios.post('http://localhost:8000/api/some/thing', {
-    email_address: 'test@example.com',
-    password: 'dummy'
-  },{
-	headers: {
-      'X-XSRF-TOKEN': token,
-      'Accept': 'application/json',
-    }
-  }).then((res2) => {
-	console.log('✅ Success:', res2.data);
-  });
-}).then(res => {
-	
-  
-}).catch(err => {
-  console.error('❌ Failed:', err.response?.status, err.response?.data);
-});*/
-
-						
-						axios.defaults.withCredentials = true;
-						axios.get(env.CSRF_URL).then(response => {
-
-							var token = decodeURIComponent(common.getCookie('XSRF-TOKEN')); 
-							
-							axios.post(env.APIURL+'some/thing', {
-									email_address: that.email_address.value,
-									password: that.password.value,
-									turnstile_token: that.turnstile_token
-								}, {
-									headers: {
-										'X-XSRF-TOKEN': token,
-										'Accept': 'application/json',
-									}
-							}).then(function(response){
-								console.log('response start');
-								console.log(response);
-								console.log('response end');
-								that.btn_disabled = false;
-							}).catch(function(error){
-								console.log('error start');
-								console.log(error);
-								console.log('error end');
-								that.btn_disabled = false;
-							});
-
-						}).then(function(){
-							
+						axios.post(env.API_URL+'login2', {
+							email_address : this.email_address,
+							password: this.password,
+							turnstile_token: this.turnstile_token
+						}).then((response) => {
+							console.log(response.data);
+							console.log(response.data.test);
+						}).catch((error) => {
+							this.$refs.turnstile.reset();
+							this.turnstile_token = '';
+							this.btn_disabled = false;
 						});
 			
 
