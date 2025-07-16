@@ -1,7 +1,7 @@
 <template>
 	<section class="main-content">
 		<login-form v-if="!show_two_factor_auth" @two_factor_auth_event="handle2FA"></login-form>
-		<two-factor-auth v-if="show_two_factor_auth" @load_login_form="show_two_factor_auth = false"></two-factor-auth>
+		<two-factor-auth v-if="show_two_factor_auth" @load_login_form="show_two_factor_auth = false" :token="tfa_token"></two-factor-auth>
 	</section>
 </template>
 
@@ -30,7 +30,6 @@
 			handle2FA(obj:any) : void{
 				this.show_two_factor_auth = true;
 				this.tfa_token = obj.token;
-				console.log(obj);
 			}
 		},
 		mounted : function(){

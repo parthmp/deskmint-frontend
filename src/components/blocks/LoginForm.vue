@@ -181,7 +181,6 @@ p{
 								device: device.identifier
 							}).then((response) => {
 								this.btn_disabled = false;
-								console.log(response);
 								
 								if(response.data.tfa === true){
 									
