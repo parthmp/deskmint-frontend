@@ -3,10 +3,7 @@
 	<div class="container mx-auto! pl-[10px]! pr-[10px]!">
 		
 		<br>
-		<a href="javascript:;" @click="setCurrentTheme" class="absolute right-3 top-3">
-			<icon-sun v-if="theme_name === 'light'" :size="32"></icon-sun>
-			<icon-moon v-if="theme_name === 'dark'" :size="32"></icon-moon>
-		</a>
+		<theme-changer></theme-changer>
 		<br>
 		<br>
 		<div class="grid grid-cols-12 mt-[15px]!">
@@ -62,7 +59,7 @@ p{
 
 <script lang="ts">
 
-	import { IconSun, IconMoon } from '@tabler/icons-vue';
+	
 	import { useThemeOptions } from '../../stores/theme';
 	
 	import { toastEvents } from '../../events/toastEvents';
@@ -77,7 +74,7 @@ p{
 	import { env } from '../../env';
 	import common from '../../helpers/common';
 
-	import { Preferences } from '@capacitor/preferences';
+	import ThemeChanger from '../UI/ThemeChanger.vue';
 
 	import Footer from './Footer.vue';
 	
@@ -102,13 +99,12 @@ p{
 	export default defineComponent({
 		name : 'Login',
 		components : {
-			IconSun,
-			IconMoon,
 			InputEmail,
 			InputButton,
 			InputPassword,
 			VueTurnstile,
 			InputCheckbox,
+			ThemeChanger,
 			Footer
 		},
 		data():myData
@@ -135,9 +131,6 @@ p{
 				get_clicks: 0
 			}
 		},
-		computed: {
-			theme_name(): string { return useThemeOptions().get_theme; }
-		},
 		watch:{
 			"email_address.value"() : void{
 				this.$refs.email_address.validate();
@@ -146,24 +139,22 @@ p{
 				this.$refs.password.validate();
 			}
 		},
+		computed: {
+			theme_name() : string{
+				return useThemeOptions().get_theme;
+			}
+		},
 		methods : {
 
 			is_email(email_add:string) : boolean{
 				return common.is_email(email_add);
 			},
 
-			setCurrentTheme() : void{
-
-				const theme = useThemeOptions();
-   			 	theme.set_theme(this.theme_name === 'light' ? 'dark' : 'light');
-				
-			},
-
 			login() : void{
 
 				
 				console.log('submitted');
-				//this.btn_disabled = true;
+				this.btn_disabled = true;
 				
 				if(this.turnstile_token === ''){
 					this.btn_disabled = false;
@@ -189,12 +180,24 @@ p{
 								turnstile_token: this.turnstile_token,
 								device: device.identifier
 							}).then((response) => {
-								
+								this.btn_disabled = false;
 								console.log(response);
 								
+								if(response.data.tfa === true){
+									
+									/* process for 2fa */
+									toastEvents.emit('toast', {
+										type:'success',
+										message: response.data.message
+									});
+									this.$emit('two_factor_auth_event', response.data);
+
+								}else{
+									alert('no');
+								}
 
 							}).catch((error) => {
-								console.log(error);
+								
 								this.$refs.turnstile.reset();
 								this.turnstile_token = '';
 								this.btn_disabled = false;

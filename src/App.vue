@@ -72,8 +72,8 @@
 			toastEvents.off('toast', this.handleToast);
 		},
 		mounted : async function(){
-			 const info = await JSON.stringify(Device.getInfo());
-			 this.device_id = (await Device.getId()).identifier;
+			const info = await JSON.stringify(Device.getInfo());
+			this.device_id = (await Device.getId()).identifier;
 
   			console.log(info);
 		}

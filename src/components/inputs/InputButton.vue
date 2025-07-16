@@ -20,7 +20,7 @@
 
 	import common from '../../helpers/common';
 
-	import { IconRotateClockwise2, IconSend, IconLogin2, IconLink } from '@tabler/icons-vue';
+	import { IconRotateClockwise2, IconSend, IconLogin2, IconLink, IconCaretLeft, IconRepeat } from '@tabler/icons-vue';
 
 	import { defineComponent } from 'vue';
 
@@ -41,7 +41,9 @@
 			IconRotateClockwise2,
 			IconSend,
 			IconLink,
-			IconLogin2
+			IconLogin2,
+			IconCaretLeft,
+			IconRepeat
 		},
 
 		watch: {

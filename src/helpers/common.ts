@@ -83,6 +83,10 @@ export default {
 
 	getDeviceId(fun:any): void{
 		Device.getId().then(fun);
+	},
+
+	random_number() : number{
+		return Math.floor((Math.random() * 100) + 1);
 	}
 
 }
