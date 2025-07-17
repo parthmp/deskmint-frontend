@@ -53,6 +53,8 @@
 	import common from '../../helpers/common';
 	import { toastEvents } from '../../events/toastEvents';
 
+	import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+
 	export interface TwoFactorAuthInterFace{
 		btn_disabled:boolean,
 		entered_otp: object,
@@ -121,7 +123,14 @@
 						}).then((response) => {
 							
 							this.btn_disabled = false;
-							console.log(response);
+							
+							let key = 'access_token';
+							let value = response.data.token;
+							SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));
+
+							key = 'refresh_token';
+							value = response.data.refresh_token;
+							SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));
 
 						}).catch((error) => {
 							this.btn_disabled = false;

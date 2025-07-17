@@ -82,6 +82,8 @@ p{
 	import { defineComponent } from 'vue';
 	import axios from 'axios';
 
+	import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+
 	export interface myData{
 		email_address: any,
 		password: any,
@@ -192,7 +194,15 @@ p{
 									this.$emit('two_factor_auth_event', response.data);
 
 								}else{
-									console.log(response);
+
+									let key = 'access_token';
+									let value = response.data.token;
+									SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));
+
+									key = 'refresh_token';
+									value = response.data.refresh_token;
+									SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));
+									
 								}
 
 							}).catch((error) => {

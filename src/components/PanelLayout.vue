@@ -339,6 +339,8 @@ import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, Icon
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
 
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+
 import Footer from './blocks/Footer.vue';
 
 export interface MenuSubItem {
@@ -652,6 +654,31 @@ export default defineComponent({
 		}else{
 			this.system_theme_name = 'light'
 		}
+
+		setInterval(() => {
+			
+			let key = 'access_token';
+			SecureStoragePlugin.get({ key })
+			.then((value) => {
+				console.log(value);
+			})
+			.catch((error) => {
+				console.log('Item with specified key does not exist.');
+			});
+
+			key = 'refresh_token';
+			SecureStoragePlugin.get({ key })
+			.then((value) => {
+				console.log(value);
+			})
+			.catch((error) => {
+				console.log('Item with specified key does not exist.');
+			});
+
+		}, 1500);
+
+		
+		
 	},
 	beforeUnmount() {
 		document.removeEventListener('click', this.handleOutsideClick);
