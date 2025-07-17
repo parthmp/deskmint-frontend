@@ -192,7 +192,7 @@ p{
 									this.$emit('two_factor_auth_event', response.data);
 
 								}else{
-									alert('no');
+									console.log(response);
 								}
 
 							}).catch((error) => {

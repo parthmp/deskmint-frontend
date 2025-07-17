@@ -121,12 +121,7 @@
 						}).then((response) => {
 							
 							this.btn_disabled = false;
-							
-							
-							toastEvents.emit('toast', {
-								type: 'success',
-								message: response.data.message
-							});
+							console.log(response);
 
 						}).catch((error) => {
 							this.btn_disabled = false;
