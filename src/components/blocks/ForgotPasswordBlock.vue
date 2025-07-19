@@ -115,7 +115,7 @@
 								this.btn_disabled = false;
 								this.$refs.turnstile.reset();
 								this.turnstile_token = '';
-								
+								this.$emit('show_forgot_password', false);
 								toastEvents.emit('toast', {
 									type:'success',
 									message: response.data.message
