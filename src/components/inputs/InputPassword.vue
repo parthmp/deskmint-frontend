@@ -1,8 +1,8 @@
 <template>
 	<div class="form-group">
-		<label for="password">Password</label>
+		<label :for="password_id">{{ local_label }}</label>
 		<div class="relative">
-			<input :type="input_type" placeholder="Password" v-model="input_value" class="form-control" @input="EmitModel" id="password" :class="{'red-input-order':highlight_error}">
+			<input :type="input_type" placeholder="Password" v-model="input_value" class="form-control" @input="EmitModel" :id="password_id" :class="{'red-input-order':highlight_error}">
 			
 			<span class="absolute right-2 top-[20%]">
 				<icon-eye v-if="input_type == 'text'" @click="input_type = 'password'" class="cursor-pointer"></icon-eye>
@@ -23,7 +23,8 @@
 		input_required: boolean,
 		is_valid: boolean,
 		local_error: string,
-		show_errors: boolean
+		show_errors: boolean,
+		local_label: string
 	}
 
 	import common from '../../helpers/common';
@@ -45,6 +46,9 @@
 			},
 			error : {
 				type :String
+			},
+			label: {
+				type:String
 			}
 		},
 
@@ -55,7 +59,9 @@
 				input_required: false,
 				is_valid : true,
 				local_error : '',
-				show_errors: false
+				show_errors: false,
+				local_label: 'Password',
+
 			};
 		},
 
@@ -78,6 +84,10 @@
 		computed : {
 			highlight_error() : boolean{
 				return ((!this.is_valid && this.local_error === '' && this.show_errors) || (this.local_error !== '' && this.show_errors));
+			},
+			password_id() : string{
+				let rand_number = Math.floor(Math.random() * 50) + 1;
+				return 'password_'+rand_number;
 			}
 		},
 
@@ -127,6 +137,10 @@
 			this.local_error = '';
 			if(common.isset(this.error)){
 				this.local_error = this.error || '';
+			}
+
+			if(common.isset(this.label)){
+				this.local_label = this.label+'';
 			}
 		}
 

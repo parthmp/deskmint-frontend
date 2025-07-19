@@ -27,7 +27,7 @@
 							<vue-turnstile :site-key="turnstile_key" ref="turnstile" :key="theme_name" :theme="theme_name" v-model="turnstile_token" size="flexible"></vue-turnstile>
 						</div>
 						<div class="flex flex-row items-center mt-[5px]!">
-							<a href="" class="underline">Forgot Password?</a>
+							<router-link to="/forgot-password" class="underline">Forgot Password?</router-link>
 						</div>
 						<input-button :disabled="btn_disabled" :icon="'IconLogin2'" btn_text="Login"></input-button>
 					</form>
@@ -155,7 +155,7 @@ p{
 			login() : void{
 
 				
-				console.log('submitted');
+				
 				this.btn_disabled = true;
 				
 				if(this.turnstile_token === ''){
@@ -170,9 +170,6 @@ p{
 					let password_valid = this.$refs.password.validate();
 
 					if(email_valid === true && password_valid === true){
-
-						console.log(this.email_address.value);
-						console.log(this.password.value);
 						
 						common.getDeviceId((device:any) => {
 
