@@ -150,6 +150,7 @@
 						});
 
 					}else{
+						this.btn_disabled = false;
 						toastEvents.emit('toast', {
 							type:'error',
 							message: 'Invalid email entered'
