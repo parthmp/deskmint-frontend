@@ -55,6 +55,8 @@
 
 	import ApplicationLogo from '../UI/ApplicationLogo.vue';
 
+	import LoginService from '../../services/LoginService';
+
 	export interface TwoFactorAuthInterFace{
 		btn_disabled:boolean,
 		entered_otp: object,
@@ -127,11 +129,16 @@
 							
 							let key = 'access_token';
 							let value = response.data.token;
-							SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));
+							SecureStoragePlugin.set({ key, value });
 
 							key = 'refresh_token';
 							value = response.data.refresh_token;
-							SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));
+							SecureStoragePlugin.set({ key, value });
+
+							/* show add company form if no company exists */
+							LoginService.ifUserHasCompanyAdded((response:any) => {
+								console.log(response);
+							});
 
 						}).catch((error) => {
 							this.btn_disabled = false;
