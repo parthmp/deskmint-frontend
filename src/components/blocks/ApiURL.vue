@@ -12,10 +12,7 @@
 			<div class="col-span-12 lg:col-span-4"></div>
 			<div class="col-span-12 lg:col-span-4">
 				<div class="card p-12!">
-					<div class="deskmint-logo flex justify-center">
-						<img v-if="theme_name=='light'" src="./../../assets/images/deskmit-logo.svg" alt="">
-						<img v-if="theme_name=='dark'" src="./../../assets/images/deskmit-logo-white.svg" alt="">
-					</div>
+					<application-logo></application-logo>
 					<br>
 					
 					<h3>Welcome to DeskMint! 👋</h3>
@@ -55,6 +52,8 @@ p{
 	import { defineComponent } from 'vue';
 	import { useThemeOptions } from '../../stores/theme';
 
+	import ApplicationLogo from '../UI/ApplicationLogo.vue';
+
 	import { IconSun, IconMoon } from '@tabler/icons-vue';
 
 	import InputURL from '../inputs/InputURL.vue';
@@ -86,7 +85,8 @@ p{
 			IconSun,
 			IconMoon,
 			InputButton,
-			InputURL
+			InputURL,
+			ApplicationLogo
 		},
 
 		computed : {

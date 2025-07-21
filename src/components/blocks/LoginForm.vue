@@ -10,10 +10,9 @@
 			<div class="col-span-12 lg:col-span-4"></div>
 			<div class="col-span-12 lg:col-span-4">
 				<div class="card p-12!">
-					<div class="deskmint-logo flex justify-center">
-						<img v-if="theme_name=='light'" src="./../../assets/images/deskmit-logo.svg" alt="">
-						<img v-if="theme_name=='dark'" src="./../../assets/images/deskmit-logo-white.svg" alt="">
-					</div>
+					
+					<application-logo></application-logo>
+
 					<br>
 					
 					<h3>Welcome to DeskMint! 👋</h3>
@@ -84,6 +83,8 @@ p{
 
 	import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
+	import ApplicationLogo from '../UI/ApplicationLogo.vue';
+
 	export interface myData{
 		email_address: any,
 		password: any,
@@ -107,6 +108,7 @@ p{
 			VueTurnstile,
 			InputCheckbox,
 			ThemeChanger,
+			ApplicationLogo,
 			Footer
 		},
 		data():myData

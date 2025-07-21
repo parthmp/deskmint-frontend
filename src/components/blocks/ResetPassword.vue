@@ -9,11 +9,8 @@
 			<div class="col-span-12 lg:col-span-4"></div>
 			<div class="col-span-12 lg:col-span-4">
 				<div class="card p-12!">
-					<div class="deskmint-logo flex justify-center">
-						<img v-if="theme_name=='light'" src="./../../assets/images/deskmit-logo.svg" alt="">
-						<img v-if="theme_name=='dark'" src="./../../assets/images/deskmit-logo-white.svg" alt="">
-					</div>
-				
+					
+					<application-logo></application-logo>
 					
 					<br>
 					<p class="text-center">Please enter password reset code below from sent email and the new password to reset the password for your account.</p>
@@ -51,6 +48,7 @@
 	
 	import { toastEvents } from '../../events/toastEvents';
 	import common from '../../helpers/common';
+	import ApplicationLogo from '../UI/ApplicationLogo.vue';
 	import axios from 'axios';
 
 	export interface ForgotPasswordBlockInterface{
@@ -67,6 +65,7 @@
 			InputButton,
 			InputPassword,
 			InputText,
+			ApplicationLogo,
 			Footer
 		},
 		data() : ForgotPasswordBlockInterface{

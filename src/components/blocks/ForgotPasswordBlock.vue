@@ -9,11 +9,8 @@
 			<div class="col-span-12 lg:col-span-4"></div>
 			<div class="col-span-12 lg:col-span-4">
 				<div class="card p-12!">
-					<div class="deskmint-logo flex justify-center">
-						<img v-if="theme_name=='light'" src="./../../assets/images/deskmit-logo.svg" alt="">
-						<img v-if="theme_name=='dark'" src="./../../assets/images/deskmit-logo-white.svg" alt="">
-					</div>
-				
+					
+					<application-logo></application-logo>
 					
 					<br>
 					<p class="text-center">Please enter the email address below to reset the password.</p>
@@ -46,6 +43,7 @@
 	import InputButton from '../inputs/InputButton.vue';
 	import InputEmail from '../inputs/InputEmail.vue';
 	import Footer from './Footer.vue';
+	import ApplicationLogo from '../UI/ApplicationLogo.vue';
 
 	import { env } from '../../env';
 	import VueTurnstile from 'vue-turnstile';
@@ -67,6 +65,7 @@
 			InputButton,
 			InputEmail,
 			VueTurnstile,
+			ApplicationLogo,
 			Footer
 		},
 		data() : ForgotPasswordBlockInterface{

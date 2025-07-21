@@ -10,10 +10,8 @@
 			<div class="col-span-12 lg:col-span-4"></div>
 			<div class="col-span-12 lg:col-span-4">
 				<div class="card p-12!">
-					<div class="deskmint-logo flex justify-center">
-						<img v-if="theme_name=='light'" src="./../../assets/images/deskmit-logo.svg" alt="">
-						<img v-if="theme_name=='dark'" src="./../../assets/images/deskmit-logo-white.svg" alt="">
-					</div>
+					
+					<application-logo></application-logo>
 				
 					<input-button :disabled="false" :icon="'IconCaretLeft'" @submit="loadLoginForm" btn_text="Back to Login"></input-button>
 					<br>
@@ -55,6 +53,8 @@
 
 	import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
+	import ApplicationLogo from '../UI/ApplicationLogo.vue';
+
 	export interface TwoFactorAuthInterFace{
 		btn_disabled:boolean,
 		entered_otp: object,
@@ -68,6 +68,7 @@
 			ThemeChanger,
 			InputButton,
 			Footer,
+			ApplicationLogo,
 			InputNumber
 		},
 		data(): TwoFactorAuthInterFace {
