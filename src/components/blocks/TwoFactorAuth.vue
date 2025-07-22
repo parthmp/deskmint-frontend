@@ -51,11 +51,13 @@
 	import common from '../../helpers/common';
 	import { toastEvents } from '../../events/toastEvents';
 
-	import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
-
+	
 	import ApplicationLogo from '../UI/ApplicationLogo.vue';
 
 	import LoginService from '../../services/LoginService';
+
+	import { setAccessToken, setRefreshToken } from './../../services/TokenService';
+	import { getCompanyId, setCompanyId } from '../../services/CompanyService';
 
 	export interface TwoFactorAuthInterFace{
 		btn_disabled:boolean,
@@ -126,7 +128,7 @@
 						}).then((response) => {
 							
 							this.btn_disabled = false;
-							
+							/*
 							let key = 'access_token';
 							let value = response.data.token;
 							SecureStoragePlugin.set({ key, value });
@@ -134,11 +136,40 @@
 							key = 'refresh_token';
 							value = response.data.refresh_token;
 							SecureStoragePlugin.set({ key, value });
+							*/
+							(async () => {
+							try {
+									await setAccessToken(response.data.token);
+									await setRefreshToken(response.data.refresh_token);
 
-							/* show add company form if no company exists */
-							LoginService.ifUserHasCompanyAdded((response:any) => {
-								console.log(response);
-							});
+									toastEvents.emit('toast', {
+										type: 'success',
+										message: 'Login successful'
+									});
+
+									LoginService.ifUserHasCompanyAdded((response: any) => {
+										if(response.data.company_exists === true){
+
+											
+
+											/* set default company */
+											setCompanyId(response.data.company_id).then(() => {
+												this.$router.push('/panel');
+											});
+											
+
+										}else{
+											this.$router.push('/add-company');
+										}
+									});
+
+								} catch (e) {
+									console.error('Token storage failed:', e);
+								}
+							})();
+							
+
+							
 
 						}).catch((error) => {
 							this.btn_disabled = false;

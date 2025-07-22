@@ -342,6 +342,7 @@ import { defineComponent } from 'vue';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 import Footer from './blocks/Footer.vue';
+import api from '../helpers/api';
 
 export interface MenuSubItem {
 	path: string;
@@ -655,28 +656,12 @@ export default defineComponent({
 			this.system_theme_name = 'light'
 		}
 
-		setInterval(() => {
-			
-			let key = 'access_token';
-			SecureStoragePlugin.get({ key })
-			.then((value) => {
-				console.log(value);
-			})
-			.catch((error) => {
-				console.log('Item with specified key does not exist.');
-			});
+		/*
+		api.post('/test-endpoint', {
+			'some' : 1
+		})*/
 
-			key = 'refresh_token';
-			SecureStoragePlugin.get({ key })
-			.then((value) => {
-				console.log(value);
-			})
-			.catch((error) => {
-				console.log('Item with specified key does not exist.');
-			});
-
-		}, 1500);
-
+		
 		
 		
 	},

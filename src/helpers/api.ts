@@ -6,8 +6,11 @@ import {
   setRefreshToken,
 } from './../services/TokenService';
 
+import { getCompanyId } from '../services/CompanyService';
+
 import common from './common';
 import { env } from '../env';
+import { toastEvents } from '../events/toastEvents';
 
 const getDeviceId = () =>
   new Promise((resolve) => {
@@ -26,6 +29,7 @@ api.interceptors.request.use(async (config) => {
   const accessToken = await getAccessToken();
   const refreshToken = await getRefreshToken();
   const deviceId = await getDeviceId();
+  const companyId = await getCompanyId();
 
   if (accessToken) {
     config.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -41,6 +45,13 @@ api.interceptors.request.use(async (config) => {
 
     config.data.refresh_token = refreshToken;
     config.data.device_id = deviceId;
+
+	if(common.isset(companyId)){
+		if(companyId !== ''){
+			config.data.company_id = companyId;
+		}
+	}
+
   }
 
   return config;
@@ -58,10 +69,44 @@ api.interceptors.response.use(
     if (data?.refresh_token) {
       await setRefreshToken(data.refresh_token);
     }
+	if(common.isset(response.data.message)){
+
+		if(response.data.message !== ''){
+
+			toastEvents.emit('toast', {
+				type:'success',
+				message: response.data.message
+			});
+
+		}
+
+	}
 
     return response;
   },
   (error) => {
+	
+	let error_message = 'Unknown error';
+
+	if(error.response){
+		
+		let status = error.response.status;
+		
+		if(status !== 500){
+			error_message = error.response.data.message;
+		}
+
+	}else{
+
+		error_message = 'Unable to connect to the server';
+
+	}
+
+	toastEvents.emit('toast', {
+		type:'error',
+		message: error_message
+	});
+
     return Promise.reject(error);
   }
 );

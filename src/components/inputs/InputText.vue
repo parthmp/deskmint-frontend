@@ -88,7 +88,7 @@
 				
 				if(this.input_required === true){
 					
-					this.input_value = common.stripTags(common.sanitize(this.input_value));
+					this.input_value = this.sanitizeInput(this.input_value);
 					
 					if(this.input_value !== ''){
 						this.is_valid = true;
@@ -112,7 +112,7 @@
 				this.$emit('update:modelValue', this.input_value);
 			},
 			sanitizeInput(in_string:string) : string{
-				return common.stripTags(common.sanitize(in_string));
+				return common.stripTags(in_string);
 			}
 		},
 

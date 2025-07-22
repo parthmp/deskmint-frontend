@@ -81,9 +81,10 @@ p{
 	import { defineComponent } from 'vue';
 	import axios from 'axios';
 
-	import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
-
 	import ApplicationLogo from '../UI/ApplicationLogo.vue';
+	import { setAccessToken, setRefreshToken } from '../../services/TokenService';
+	import LoginService from '../../services/LoginService';
+	import { setCompanyId } from '../../services/CompanyService';
 
 	export interface myData{
 		email_address: any,
@@ -193,14 +194,45 @@ p{
 									this.$emit('two_factor_auth_event', response.data);
 
 								}else{
-
+									/*
 									let key = 'access_token';
 									let value = response.data.token;
 									SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));
 
 									key = 'refresh_token';
 									value = response.data.refresh_token;
-									SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));
+									SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));*/
+
+									(async () => {
+									try {
+											await setAccessToken(response.data.token);
+											await setRefreshToken(response.data.refresh_token);
+
+											toastEvents.emit('toast', {
+												type: 'success',
+												message: 'Login successful'
+											});
+
+											LoginService.ifUserHasCompanyAdded((response: any) => {
+												if(response.data.company_exists === true){
+
+													
+
+													/* set default company */
+													setCompanyId(response.data.company_id).then(() => {
+														this.$router.push('/panel');
+													});
+													
+
+												}else{
+													this.$router.push('/add-company');
+												}
+											});
+
+										} catch (e) {
+											console.error('Token storage failed:', e);
+										}
+									})();
 									
 								}
 

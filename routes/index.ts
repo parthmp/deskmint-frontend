@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router';
 import PanelLayout from './../src/components/PanelLayout.vue';
 import Login from './../src/components/Login.vue';
 import ForgotPassword from '../src/components/ForgotPassword.vue';
+import ManageCompanies from '../src/components/ManageCompanies.vue';
 
 const routes = [
 	{
@@ -13,6 +14,10 @@ const routes = [
 		component: ForgotPassword,	
 	},
 	{
+		path: '/add-company',
+		component: ManageCompanies,	
+	},
+	{
 		path: '/panel',
 		component: PanelLayout,	
 	}
@@ -20,6 +25,6 @@ const routes = [
 ]
 const router = createRouter({
 	history: createWebHistory(),
-	routes, //same --- > routes:routes
+	routes,
 })
 export default router
