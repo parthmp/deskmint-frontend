@@ -343,6 +343,7 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 import Footer from './blocks/Footer.vue';
 import api from '../helpers/api';
+import TokenRedirections from '../mixins/TokenRedirections';
 
 export interface MenuSubItem {
 	path: string;
@@ -508,6 +509,7 @@ export default defineComponent({
 			return useThemeOptions().get_theme;
 		}
 	},
+	mixins: [TokenRedirections],
 	methods:{
 		updateSidebar() : void{
 			/* for touch devices */
@@ -656,10 +658,15 @@ export default defineComponent({
 			this.system_theme_name = 'light'
 		}
 
+
+
 		/*
-		api.post('/test-endpoint', {
-			'some' : 1
-		})*/
+		setTimeout(() => {
+			api.post('/test-endpoint', {
+				'some' : 1
+			});
+		}, 10000);*/
+		
 
 		
 		

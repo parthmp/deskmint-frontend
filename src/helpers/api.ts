@@ -4,7 +4,10 @@ import {
   getRefreshToken,
   setAccessToken,
   setRefreshToken,
+  removeAccessToken,
+  removeRefreshToken
 } from './../services/TokenService';
+import router from '../../routes';
 
 import { getCompanyId } from '../services/CompanyService';
 
@@ -87,10 +90,16 @@ api.interceptors.response.use(
   (error) => {
 	
 	let error_message = 'Unknown error';
-
+	
 	if(error.response){
 		
 		let status = error.response.status;
+
+		if(status === 401){
+			removeAccessToken();
+			removeRefreshToken();
+			router.push('/');
+		}
 		
 		if(status !== 500){
 			error_message = error.response.data.message;

@@ -33,3 +33,20 @@ export const setRefreshToken = async (token:string) => {
     console.error('Failed to set refresh_token:', e);
   }
 };
+
+export const removeAccessToken = async () => {
+  try {
+    const result = await SecureStoragePlugin.remove({ key: 'access_token' });
+    return result.value;
+  } catch (e) {
+    return null;
+  }
+};
+
+export const removeRefreshToken = async () => {
+  try {
+    const result = await SecureStoragePlugin.remove({ key: 'refresh_token' });
+  } catch (e) {
+    return null;
+  }
+};
