@@ -130,9 +130,9 @@
 			}
 
 			if(common.isset(this.allow_http)){
-				console.log('allow+http=='+this.allow_http);
+				
 				this.local_allow_http = this.allow_http;
-				console.log('allow+http local=='+this.local_allow_http);
+				
 			}
 		}
 

@@ -1,4 +1,5 @@
-import { createApp } from 'vue'
+import { createApp } from 'vue';
+import axios from 'axios';
 import './assets/css/main.css';
 import App from './App.vue'
 import router from './../routes/index';
@@ -8,6 +9,8 @@ import "vue-toastification/dist/index.css";
 import { createPinia } from 'pinia';
 import mitt from "mitt";
 
+axios.defaults.headers.common['Accept'] = 'application/json';
+axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 const emitter = mitt();
 

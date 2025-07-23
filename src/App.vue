@@ -75,7 +75,6 @@
 			const info = await JSON.stringify(Device.getInfo());
 			this.device_id = (await Device.getId()).identifier;
 
-  			console.log(info);
 		}
 
 	}
