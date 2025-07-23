@@ -177,43 +177,30 @@
 
 								<div class="lg:relative">
 									
-									<a href="javascript:;" class="notifications_launcher relative" @click="show_notifications_menu = !show_notifications_menu"><IconBell></IconBell>
-										<span class="red-pill-notification-alert"></span>
+									<a href="javascript:;" class="notifications_launcher relative" @click="showNotificationsMenu"><IconBell></IconBell>
+										<span v-if="show_notification_pill_alert" class="red-pill-notification-alert"></span>
 									</a>
 									<div v-show="show_notifications_menu" class="notifications-area styled-scrollbar">
-										
-										<div class="notification">
-											<a href="javascript:;" class="flex gap-3">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere</p>
-												<IconX class="grow" :size="36"></IconX>
-											</a>
-										</div>
-										<hr>
+										<span v-for="(notification, key) in notifications" :key="key">
+											<div class="notification">
+												<a href="javascript:;" class="flex gap-2">
+													<p class="grow">{{ notification.notification_text }}</p>
+													<a href="javascript:;" @click="removeNotification(key)" class="notifications-close grow flex justify-end m-0! p-0!"><IconX :size="22"></IconX></a>
+												</a>
+											</div>
+											<hr>
+										</span>
 
-										<div class="notification">
-											<a href="javascript:;" class="flex gap-3">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere</p>
-												<IconX class="grow" :size="36"></IconX>
-											</a>
-										</div>
-										<hr>
-
-										<div class="notification">
-											<a href="javascript:;" class="flex gap-3">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere</p>
-												<IconX class="grow" :size="36"></IconX>
-											</a>
-										</div>
-										<hr>
-
-										<div class="notification">
-											<a href="javascript:;" class="flex gap-3">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere</p>
-												<IconX class="grow" :size="36"></IconX>
-											</a>
-										</div>
-										<hr>
-										
+										<span v-if="notifications.length === 0">
+											<div class="notification">
+												<a href="javascript:;" class="flex gap-2">
+													<p class="grow">No new notifications</p>
+													
+												</a>
+											</div>
+											<hr>
+										</span>
+									
 										
 										
 									</div>
@@ -347,40 +334,42 @@ import api from '../helpers/api';
 import RedirectToLoginForNoTokens from '../mixins/RedirectToLoginForNoTokens';
 
 export interface MenuSubItem {
-	path: string;
-	icon: string;
-	icon_size: number;
-	menu_text: string;
-	is_active: boolean;
+	path: string,
+	icon: string,
+	icon_size: number,
+	menu_text: string,
+	is_active: boolean
 }
 
 export interface MenuItem {
-	path: string;
-	icon: string;
-	icon_size: number;
-	menu_text: string;
-	has_submenu: boolean;
-	show_submenu: boolean;
-	is_active: boolean;
-	submenu: MenuSubItem[];
+	path: string,
+	icon: string,
+	icon_size: number,
+	menu_text: string,
+	has_submenu: boolean,
+	show_submenu: boolean,
+	is_active: boolean,
+	submenu: MenuSubItem[]
 }
 
 export interface PanelData {
-	sidebar_full: boolean;
-	phone_show: boolean;
-	touchStartX: number;
-	touchStartY: number;
-	minSwipeDistance: number;
-	is_mobile: boolean;
-	hover_sidebar: boolean;
-	show_theme_menu: boolean;
-	show_shortcuts_menu: boolean;
-	show_notifications_menu: boolean;
-	show_profile_menu: boolean;
-	system_theme_name: string;
-	theme_icon: string;
-	phone_breakpoint: number;
-	menu_items: MenuItem[];
+	sidebar_full: boolean,
+	phone_show: boolean,
+	touchStartX: number,
+	touchStartY: number,
+	minSwipeDistance: number,
+	is_mobile: boolean,
+	hover_sidebar: boolean,
+	show_theme_menu: boolean,
+	show_shortcuts_menu: boolean,
+	show_notifications_menu: boolean,
+	show_profile_menu: boolean,
+	system_theme_name: string,
+	theme_icon: string,
+	phone_breakpoint: number,
+	menu_items: MenuItem[],
+	notifications: any,
+	show_notification_pill_alert: boolean
 }
 export default defineComponent({
 
@@ -500,7 +489,39 @@ export default defineComponent({
 							}
 						]
 					}
-				]
+				],
+
+				notifications: [
+					{
+						path: '/',
+						notification_text: 'this is a test notification 1'
+					},
+					{
+						path: '/',
+						notification_text: 'this is a test notification 2'
+					},
+					{
+						path: '/',
+						notification_text: 'this is a test notification 3'
+					},
+					{
+						path: '/',
+						notification_text: 'this is a test notification 4'
+					},
+					{
+						path: '/',
+						notification_text: 'this is a test notification 5'
+					},
+					{
+						path: '/',
+						notification_text: 'this is a test notification 6'
+					},
+					{
+						path: '/',
+						notification_text: 'this is a test notification 7'
+					}
+				],
+				show_notification_pill_alert: true
 			
 
 		}
@@ -570,8 +591,9 @@ export default defineComponent({
 			}
 
 			const notifications_launcher = e.target.closest('a[class="notifications_launcher relative"]');
+			const notifications_closer = e.target.closest('a[class="notifications-close grow flex justify-end m-0! p-0!"]');
 				
-			if (!notifications_launcher) {
+			if (!notifications_launcher && !notifications_closer) {
 				this.show_notifications_menu = false;
 			}
 
@@ -638,6 +660,17 @@ export default defineComponent({
 			}
 			
 			
+		},
+
+		removeNotification(index:number) : void{
+
+			this.notifications.splice(index, 1);
+
+		},
+
+		showNotificationsMenu() : void{
+			this.show_notifications_menu = !this.show_notifications_menu;
+			this.show_notification_pill_alert = false;
 		}
 		
 	},
