@@ -343,7 +343,8 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 import Footer from './blocks/Footer.vue';
 import api from '../helpers/api';
-import TokenRedirections from '../mixins/TokenRedirections';
+
+import RedirectToLoginForNoTokens from '../mixins/RedirectToLoginForNoTokens';
 
 export interface MenuSubItem {
 	path: string;
@@ -509,7 +510,7 @@ export default defineComponent({
 			return useThemeOptions().get_theme;
 		}
 	},
-	mixins: [TokenRedirections],
+	mixins: [RedirectToLoginForNoTokens],
 	methods:{
 		updateSidebar() : void{
 			/* for touch devices */

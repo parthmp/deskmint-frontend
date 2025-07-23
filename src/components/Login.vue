@@ -11,14 +11,12 @@
 
 	import TwoFactorAuth from './blocks/TwoFactorAuth.vue';
 
-	import { getAccessToken, getRefreshToken } from '../services/TokenService';
-
-	import TokenRedirections from '../mixins/TokenRedirections';
+	
+	import RedirectToPanelForTokens from '../mixins/RedirectToPanelForTokens';
 
 	
 	import { defineComponent } from 'vue';
-	import common from '../helpers/common';
-
+	
 	export default defineComponent({
 		name : 'Login',
 		components : {
@@ -37,7 +35,7 @@
 				this.tfa_token = obj.token;
 			}
 		},
-		mixins: [TokenRedirections],
+		mixins: [RedirectToPanelForTokens],
 		mounted : function(){
 
 			this.tfa_token = '';

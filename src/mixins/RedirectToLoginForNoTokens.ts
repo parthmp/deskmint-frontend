@@ -9,13 +9,13 @@ export default {
         this.$el.nodeType === 1 &&
         document.body.contains(this.$el)
       ) {
-        redirectUsersBasedOnTokens.call(this);
+        redirectUsersToLogin.call(this);
       }
     });
   }
 };
 
-function redirectUsersBasedOnTokens() {
+function redirectUsersToLogin() {
 
 	getAccessToken().then((value) => {
 		if(!common.isset(value) || value === null || value === ''){
@@ -26,22 +26,6 @@ function redirectUsersBasedOnTokens() {
 	getRefreshToken().then((value) => {
 		if(!common.isset(value) || value === null || value === ''){
 			this.$router.push('/');
-		}
-	});
-
-	getAccessToken().then((value) => {
-		if(common.isset(value)){
-			if(value !== '' && value !== null){
-				this.$router.push('/panel');
-			}
-		}
-	});
-
-	getRefreshToken().then((value) => {
-		if(common.isset(value)){
-			if(value !== '' && value !== null){
-				this.$router.push('/panel');
-			}
 		}
 	});
 }

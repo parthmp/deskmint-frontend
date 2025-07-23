@@ -11,7 +11,7 @@
 	import ForgotPasswordBlock from './blocks/ForgotPasswordBlock.vue';
 	import ResetPassword from './blocks/ResetPassword.vue';
 
-	import TokenRedirections from '../mixins/TokenRedirections';
+	import RedirectToPanelForTokens from '../mixins/RedirectToPanelForTokens';
 	
 	import { defineComponent } from 'vue';
 
@@ -26,7 +26,7 @@
 				show_forgot_password: true
 			}
 		},
-		mixins: [TokenRedirections],
+		mixins: [RedirectToPanelForTokens],
 		methods : {
 			handleForgotPassEvent(showme:boolean): void{
 				this.show_forgot_password = showme;

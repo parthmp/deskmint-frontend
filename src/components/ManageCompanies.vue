@@ -13,6 +13,8 @@
 	
 	import { defineComponent } from 'vue';
 
+	import RedirectToLoginForNoTokens from '../mixins/RedirectToLoginForNoTokens';
+
 	export default defineComponent({
 		name : 'ManageCompanies',
 		components : {
@@ -24,6 +26,7 @@
 				
 			}
 		},
+		mixins: [RedirectToLoginForNoTokens],
 		methods : {
 			
 		},
