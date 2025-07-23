@@ -101,7 +101,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 		--shadow-lg: 0 0px 25px rgba(0, 0, 0, 1);
 		--color-deskmint-green-light: RGBA(3,159,78, 0.15);
 		--color-url-color:#20c547;
-		--color-neutral-border: #464D72;
+		--color-neutral-border: #2F4732;
 		--color-input-border: #556e63;
 		--color-input-border-hover: #BBDDC3;
 
@@ -208,7 +208,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
   @apply bg-deskmint-green text-white;
 }
 
-.sidebar-menu-items ul li .active-menu-link {
+.sidebar-menu-items ul li .active-menu-link{
   @apply bg-gradient-to-r from-deskmint-green-dark to-deskmint-green text-white! shadow-lg;
 }
 
@@ -221,10 +221,8 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 .barcard ul li a{
 	@apply p-[14px] pt-[7px] pb-[7px] mt-[5px] rounded-lg text-default-text transition-all duration-300;
 }
-.barcard ul li a:hover{
-	@apply bg-hover;
-}
-.active_theme_tab{
+
+.active_theme_tab, .barcard ul li a:hover{
 	@apply bg-deskmint-green-light! text-deskmint-green!;
 }
 .barcard-shortcut{
@@ -234,10 +232,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply flex flex-col items-center shadow-lg p-[25px] rounded-lg transition-all duration-300;
 }
 .shortcut-card:hover, .profile-item:hover{
-	@apply shadow-none bg-hover dark:text-default-text;
+	@apply shadow-none bg-deskmint-green-light! text-deskmint-green!;
 }
 .shortcut-card:hover p{
-	@apply dark:text-default-text;
+	@apply text-deskmint-green!;
 }
 .shortcut-card a{
 	@apply ml-[15px];
@@ -258,10 +256,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply text-[14px]!;
 }
 .notification:hover{
-	@apply bg-hover;
+	@apply bg-deskmint-green-light! text-deskmint-green!;
 }
 .notification:hover p{
-	@apply dark:text-default-text!;
+	@apply text-deskmint-green!;
 }
 .notifications-area hr,.profile-area hr{
 	@apply border-y-gray-background dark:border-default-text-iv;

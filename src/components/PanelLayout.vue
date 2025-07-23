@@ -661,12 +661,12 @@ export default defineComponent({
 
 
 
-		
+		/*
 		setTimeout(() => {
 			api.post('/test-endpoint', {
 				'some' : 1
 			});
-		}, 5);
+		}, 5);*/
 		
 
 		
