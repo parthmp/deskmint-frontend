@@ -65,7 +65,7 @@
 >
 
 						
-						<div class="flex items-center mr-[19px]! ml-[10px]!">
+						<div class="flex items-center mr-[5px] lg:mr-[15px]! ml-[10px]!">
 							<div class=""><a href="javascript:;" class="lg:hidden" @click="phone_show = !phone_show"><IconAlignLeft :size="30"></IconAlignLeft></a></div>
 							<div class="grow self-end flex items-center justify-end gap-6">
 								
@@ -183,10 +183,14 @@
 									<div v-show="show_notifications_menu" class="notifications-area styled-scrollbar">
 										<span v-for="(notification, key) in notifications" :key="key">
 											<div class="notification">
-												<a href="javascript:;" class="flex gap-2">
-													<p class="grow">{{ notification.notification_text }}</p>
-													<a href="javascript:;" @click="removeNotification(key)" class="notifications-close grow flex justify-end m-0! p-0!"><IconX :size="22"></IconX></a>
-												</a>
+												<div class="flex gap-2">
+													<router-link :to="notification.path" class="grow">
+														<p>{{ notification.notification_text }}</p>
+													</router-link>
+													<a href="javascript:;" ref="notifications-close" class="justify-end rounded-sm" @click.stop.prevent="removeNotification(key)">
+														<IconX :size="22"></IconX>
+													</a>
+												</div>
 											</div>
 											<hr>
 										</span>
@@ -236,36 +240,9 @@
 					</div>
 					<section class="main-section">
 						
+						<router-view></router-view>
 						
-						<div class="grid grid-cols-12 gap-6">
-							<div class="col-span-12 lg:col-span-6 xl:col-span-4">
-								<div class="card">
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
-
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
-
-								</div>
-							</div>
-
-							<div class="col-span-12 lg:col-span-6 xl:col-span-4">
-								<div class="card">
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
-
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
-
-								</div>
-							</div>
-
-							<div class="col-span-12 lg:col-span-12 xl:col-span-4">
-								<div class="card">
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
-
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas at neque posuere, feugiat nunc sit amet, porttitor mi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam eget blandit dolor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer lobortis in est ac scelerisque. Etiam varius pharetra lorem, fringilla laoreet nisl ornare hendrerit. Morbi sodales lorem sed auctor bibendum. Phasellus ornare facilisis risus nec pretium. Morbi tincidunt pulvinar ornare. Sed consequat metus justo, id condimentum lectus aliquam a. Donec velit massa, fermentum a felis in, imperdiet aliquam nisi. Pellentesque iaculis finibus est, sit amet ultrices dolor. Maecenas lorem arcu, commodo vel risus vitae, vestibulum lobortis urna. In sit amet augue vitae augue varius semper et dictum ante. Curabitur sed nibh augue. Nullam fringilla interdum urna, in porta dui mollis in.</p>
-
-								</div>
-							</div>
-							
-						</div>
+						
 					</section>
 					
 					<br>
@@ -321,7 +298,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -332,25 +309,9 @@ import Footer from './blocks/Footer.vue';
 import api from '../helpers/api';
 
 import RedirectToLoginForNoTokens from '../mixins/RedirectToLoginForNoTokens';
+import common from '../helpers/common';
 
-export interface MenuSubItem {
-	path: string,
-	icon: string,
-	icon_size: number,
-	menu_text: string,
-	is_active: boolean
-}
 
-export interface MenuItem {
-	path: string,
-	icon: string,
-	icon_size: number,
-	menu_text: string,
-	has_submenu: boolean,
-	show_submenu: boolean,
-	is_active: boolean,
-	submenu: MenuSubItem[]
-}
 
 export interface PanelData {
 	sidebar_full: boolean,
@@ -367,7 +328,7 @@ export interface PanelData {
 	system_theme_name: string,
 	theme_icon: string,
 	phone_breakpoint: number,
-	menu_items: MenuItem[],
+	menu_items: any,
 	notifications: any,
 	show_notification_pill_alert: boolean
 }
@@ -391,7 +352,8 @@ export default defineComponent({
 		IconSettings:IconSettings,
 		IconLogout:IconLogout,
 		IconDashboard:IconDashboard,
-		Footer:Footer
+		Footer:Footer,
+		IconUsersGroup:IconUsersGroup
 	},
 	data() : PanelData{
 		return {
@@ -412,35 +374,27 @@ export default defineComponent({
 			phone_breakpoint: 1024,
 			menu_items : [
 					{
-						path: '/',
+						path: '/panel',
 						icon: 'IconDashboard',
 						icon_size: 22,
 						menu_text: 'Dashboard',
-						has_submenu : true,
+						has_submenu : false,
 						show_submenu : false,
 						is_active: true,
-						submenu: [
-							{
-								path: '/',
-								icon: 'IconCircle',
-								icon_size: 18,
-								menu_text: 'Dashboard',
-								is_active: false,
-							}
-						]
+						submenu : []
 					},
 					{
-						path: '/',
-						icon: 'IconDashboard',
+						path: '/clients',
+						icon: 'IconUsersGroup',
 						icon_size: 22,
-						menu_text: 'Dashboard ABC',
+						menu_text: 'Clients',
 						has_submenu : false,
 						show_submenu : false,
 						is_active: false,
 						submenu: []
 					},
 					{
-						path: '/',
+						path: '',
 						icon: 'IconDashboard',
 						icon_size: 22,
 						menu_text: 'Dashboard 2',
@@ -463,38 +417,13 @@ export default defineComponent({
 								menu_text: 'Dashboard sub'
 							}
 						]
-					},
-					{
-						path: '/',
-						icon: 'IconDashboard',
-						icon_size: 22,
-						menu_text: 'Dashboard 3',
-						has_submenu : true,
-						show_submenu : false,
-						is_active: false,
-						submenu: [
-							{
-								path: '/',
-								icon: 'IconDashboard',
-								icon_size: 22,
-								is_active: false,
-								menu_text: 'Dashboard 5'
-							},
-							{
-								path: '/',
-								icon: 'IconDashboard',
-								icon_size: 22,
-								is_active: false,
-								menu_text: 'Dashboard sub 5'
-							}
-						]
 					}
 				],
 
 				notifications: [
 					{
 						path: '/',
-						notification_text: 'this is a test notification 1'
+						notification_text: 'this is a test notification 1 this is a test notification 1 this is a test notification 1 this is a test notification 1'
 					},
 					{
 						path: '/',
@@ -591,8 +520,8 @@ export default defineComponent({
 			}
 
 			const notifications_launcher = e.target.closest('a[class="notifications_launcher relative"]');
-			const notifications_closer = e.target.closest('a[class="notifications-close grow flex justify-end m-0! p-0!"]');
-				
+			const notifications_closer = e.target.closest('[ref="notifications-close"]');
+			
 			if (!notifications_launcher && !notifications_closer) {
 				this.show_notifications_menu = false;
 			}
@@ -692,7 +621,7 @@ export default defineComponent({
 			this.system_theme_name = 'light'
 		}
 
-
+		this.menu_items = common.updateMenuActiveState(this.menu_items, window.location.href);
 
 		/*
 		setTimeout(() => {

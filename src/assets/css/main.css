@@ -201,7 +201,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply  m-[14px];
 }
 .sidebar-menu-items ul li a {
-  @apply p-[10px] rounded-lg mt-[10px] font-semibold transition-colors duration-300;
+  @apply p-[10px] rounded-lg mt-[10px] transition-colors duration-300;
 }
 
 .sidebar-menu-items ul li a:hover {
@@ -280,7 +280,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply text-center  w-full;
 }
 .main-section{
-	@apply mt-[80px] pl-[10px] pr-[23px];
+	@apply mt-[60px] pl-[10px] pr-[10px] lg:pr-[21px];
 }
 .card{
 	@apply bg-background-card rounded-lg shadow-clg p-[25px];

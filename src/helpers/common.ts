@@ -87,6 +87,54 @@ export default {
 
 	random_number() : number{
 		return Math.floor((Math.random() * 100) + 1);
+	},
+
+	getFirstSection(url:string) : any {
+		try {
+			const urlObj = new URL(url);
+			const pathSegments = urlObj.pathname.split('/').filter(segment => segment !== '');
+			return pathSegments[0] || null;
+		} catch (error) {
+			return null;
+		}
+	},
+
+	updateMenuActiveState(menuItems:any, currentUrl:string){
+
+		const currentSection = this.getFirstSection(currentUrl);
+		
+		return menuItems.map(item => {
+			// Reset all active states first
+			let updatedItem = { ...item, is_active: false };
+			
+			// Check if main menu item matches
+			if (item.path && this.getFirstSection(`http://dummy.com${item.path}`) === currentSection) {
+				updatedItem.is_active = true;
+			}
+			
+			// Check submenu items if they exist
+			if (item.has_submenu && item.submenu.length > 0) {
+			let hasActiveSubmenu = false;
+			
+			updatedItem.submenu = item.submenu.map(subItem => {
+				let updatedSubItem = { ...subItem, is_active: false };
+				
+				if (subItem.path && this.getFirstSection(`http://dummy.com${subItem.path}`) === currentSection) {
+					updatedSubItem.is_active = true;
+					hasActiveSubmenu = true;
+				}
+				
+				return updatedSubItem;
+			});
+			
+			// If any submenu item is active, make parent active too
+			if (hasActiveSubmenu) {
+				updatedItem.is_active = true;
+			}
+			}
+			
+			return updatedItem;
+		});
 	}
 
 }
