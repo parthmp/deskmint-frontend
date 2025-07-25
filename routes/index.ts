@@ -6,6 +6,7 @@ import ManageCompanies from '../src/components/ManageCompanies.vue';
 
 import Dashboard from '../src/components/Dashboard.vue';
 import Clients from '../src/components/Clients.vue';
+import Admins from '../src/components/Admins.vue';
 
 const routes = [
 	{
@@ -31,6 +32,10 @@ const routes = [
 			{
 				path: '/clients',
 				component: Clients,	
+			},
+			{
+				path:'/admins',
+				component: Admins
 			}
 		]
 	}

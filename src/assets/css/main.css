@@ -212,9 +212,6 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
   @apply bg-gradient-to-r from-deskmint-green-dark to-deskmint-green text-white! shadow-lg;
 }
 
-.submenu{
-	@apply mb-[20px];
-}
 .barcard{
 	@apply absolute top-16 lg:top-12 left-0 w-full lg:left-[initial] lg:w-[initial] lg:right-0 bg-background-card text-gray-text px-[5px] pb-[5px] rounded-lg shadow-lg z-10;
 }

@@ -22,7 +22,7 @@
 							
 							<div class="sidebar-menu-items">
 								<ul class="main-menu-list">
-									<li v-for="(menu_item, i) in menu_items" :key="i">
+									<li v-for="(menu_item, i) in menu_items" :key="i" :class="{'bg-background-card':(menu_item.has_submenu && menu_item.show_submenu && menu_item.submenu.length > 0), 'rounded-lg': menu_item.has_submenu}">
 										<router-link :to="menu_item.path" class="block" @click="resetMenuItems(i)" :class="{'active-menu-link': menu_item.is_active, 'fix-collapsed-icon': (hover_sidebar == false && sidebar_full == false)}">
 											<span class="flex items-center">
 												<component v-if="sidebar_full || hover_sidebar" :is="menu_item.icon" :size="menu_item.icon_size"></component>
@@ -39,11 +39,11 @@
 										<transition name="slide">
 											<ul v-if="(hover_sidebar || sidebar_full)" v-show="menu_item.show_submenu && menu_item.submenu.length > 0" class="submenu">
 												
-												<li v-for="(menu_sub_item, z) in menu_item.submenu" :key="z">
-													<router-link :to="menu_sub_item.path" class="block" :class="{'active-menu-link': menu_sub_item.is_active}"  @click="setSubActiveItem(i, z)">
+												<li v-for="(menu_sub_item, z) in menu_item.submenu" :key="z" class="">
+													<router-link :to="menu_sub_item.path" class="block text-deskmint-original-light" :class="{'active-menu-link': menu_sub_item.is_active}"  @click="setSubActiveItem(i, z)">
 														<span class="flex items-center">
 															<component :is="menu_sub_item.icon" :size="menu_sub_item.icon_size"></component>
-															<span class="menu-item-text">&nbsp;&nbsp;Dashboard</span>
+															<span class="menu-item-text">&nbsp;&nbsp;{{ menu_sub_item.menu_text }}</span>
 														</span>
 													</router-link>
 												</li>
@@ -298,7 +298,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -353,7 +353,10 @@ export default defineComponent({
 		IconLogout:IconLogout,
 		IconDashboard:IconDashboard,
 		Footer:Footer,
-		IconUsersGroup:IconUsersGroup
+		IconUsersGroup:IconUsersGroup,
+		IconUserShield:IconUserShield,
+		IconSquarePlus2:IconSquarePlus2,
+		IconCircleDotted:IconCircleDotted
 	},
 	data() : PanelData{
 		return {
@@ -395,28 +398,31 @@ export default defineComponent({
 					},
 					{
 						path: '',
-						icon: 'IconDashboard',
+						icon: 'IconSquarePlus2',
 						icon_size: 22,
-						menu_text: 'Dashboard 2',
+						menu_text: 'Custom Fields',
 						has_submenu : true,
 						show_submenu : false,
 						is_active: false,
 						submenu: [
 							{
-								path: '/',
-								icon: 'IconDashboard',
+								path: '/custom-fields/clients',
+								icon: 'IconCircleDotted',
 								icon_size: 22,
 								is_active: false,
-								menu_text: 'Dashboard'
-							},
-							{
-								path: '/',
-								icon: 'IconDashboard',
-								icon_size: 22,
-								is_active: false,
-								menu_text: 'Dashboard sub'
+								menu_text: 'CF - Clients'
 							}
 						]
+					},
+					{
+						path: '/admins',
+						icon: 'IconUserShield',
+						icon_size: 22,
+						menu_text: 'Admins',
+						has_submenu : false,
+						show_submenu : false,
+						is_active: false,
+						submenu: []
 					}
 				],
 
