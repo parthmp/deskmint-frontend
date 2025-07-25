@@ -1,6 +1,6 @@
 <template>
 	<section class="main-content">
-		<p>Dashboard</p>
+		<div class="card">Dashboard</div>
 	</section>
 </template>
 
@@ -12,13 +12,12 @@
 	import { defineComponent } from 'vue';
 	
 	export default defineComponent({
-		name : 'Clients',
+		name : 'Dashboard',
 		components : {
 		},
 		data: function(){
 			return {
-				show_two_factor_auth: false,
-				tfa_token : ''
+
 			}
 		},
 		methods : {

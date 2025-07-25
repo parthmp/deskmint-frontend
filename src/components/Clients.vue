@@ -1,6 +1,14 @@
 <template>
 	<section class="main-content">
-		<p>Clients page</p>
+	
+		<div class="card">
+			<h1 class="text-2xl!">Clients</h1>
+
+			<br>
+			<p>test</p>
+
+		</div>
+		
 	</section>
 </template>
 
@@ -17,8 +25,7 @@
 		},
 		data: function(){
 			return {
-				show_two_factor_auth: false,
-				tfa_token : ''
+
 			}
 		},
 		methods : {
