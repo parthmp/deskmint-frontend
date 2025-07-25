@@ -163,13 +163,13 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply max-w-full lg:max-w-1/2;
 }
 .big-content{
-	@apply flex relative transition-all;
+	@apply relative transition-all;
 }
 .main-content{
-	@apply bg-background-2 block min-h-[100vh]! grow transition-all;
+	@apply bg-background-2 block min-h-[100vh]! transition-all;
 }
 .sidebar{
-	@apply fixed lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-110%] min-w-[68%] lg:min-w-[initial] lg:translate-x-0 transition-all  duration-300 z-20 bg-background-2;
+	@apply fixed top-0 lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-110%] min-w-[68%] lg:min-w-[initial] lg:translate-x-0 transition-all  duration-300 z-20 bg-background-2;
 }
 .sidebar.closed{
 	@apply lg:fixed h-[100vh] lg:w-[var(--sidebar-close-width)];
@@ -277,7 +277,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply text-center  w-full;
 }
 .main-section{
-	@apply mt-[60px] pl-[10px] pr-[10px] lg:pr-[21px];
+	@apply mt-[56px] pl-[10px] pr-[10px] lg:pr-[21px];
 }
 .card{
 	@apply bg-background-card rounded-lg shadow-clg p-[25px];
@@ -328,4 +328,3 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 .checkbox-wrapper .checkbox {
 	@apply block w-[inherit] h-[inherit] border-2 border-solid border-input-border rounded-[5px] shadow-none transition-all duration-300;
 }
-

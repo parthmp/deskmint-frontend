@@ -1,17 +1,22 @@
 <template>
 	<section class="main-content">
-	
-		<div class="card">
-			<h1 class="text-2xl!">Admins</h1>
-
-			<br>
-			<p>test</p>
-
-		</div>
-		
-	</section>
+    <div class="card">
+        <h1 class="text-2xl!">Admins</h1>
+        <br>
+        
+        <div class="overflow-x-auto w-full">
+            
+        </div>
+    </div>
+	<br>
+	<div class="card">
+		Test card
+	</div>
+</section>
 </template>
+<style scoped>
 
+</style>
 <script lang="ts">
 
 
