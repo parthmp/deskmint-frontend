@@ -3,7 +3,7 @@
     <div class="card">
         <h1 class="text-2xl!">Admins</h1>
         <br>
-        <data-table :data="table_data" @deleted_row="handleDeleted"></data-table>
+        <data-table :data="table_data" :per_page="per_page" @deleted_row="handleDeleted"></data-table>
         
     </div>
 	<br>
@@ -31,6 +31,7 @@
 		},
 		data: function(){
 			return {
+				per_page: 10,
 				table_data: {
 					columns : [
 						{

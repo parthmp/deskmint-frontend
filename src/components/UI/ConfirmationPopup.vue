@@ -1,26 +1,39 @@
 <template>
-	<div class="absolute top-0 left-0 w-[100%]! bg-background-2-tra z-40" v-show="show_popup" :class="{'h-[100vh]':local_blocker}" @click.self="selfClick">
-		<div class="delete-popup outline-2 outline-deskmint-green-light bg-background-2" :class="{'top-40':!local_blocker, 'top-2/10':local_blocker}">
-			<IconX class="float-end cursor-pointer" @click="closePopup(false)" :size="22"></IconX>
-			<div class="clear-both"></div>
-			<h1>{{ local_confirm_text }}</h1>
-			<br>
-			<div class="grid grid-cols-2 gap-5">
-				<input-button btn_text="Yes" :full_width="true" icon="IconCheck" style_type="success" @click="closePopup(true)"></input-button>
-				<input-button btn_text="No" :full_width="true" icon="IconX" style_type="error" @click="closePopup(false)" :remove_margin="true"></input-button>
+	<transition name="fade-scale">
+		<div class="absolute top-0 left-0 w-[100%]! bg-background-2-tra z-40" v-show="show_popup" :class="{'h-[100vh]':local_blocker}" @click.self="selfClick">
+			<div class="delete-popup bg-background-2" :class="{'top-40':!local_blocker, 'top-2/10':local_blocker}">
+				<IconX class="float-end cursor-pointer" @click="closePopup(false)" :size="22"></IconX>
+				<div class="clear-both"></div>
+				<h1>{{ local_confirm_text }}</h1>
+				<br>
+				<div class="grid grid-cols-2 gap-5">
+					<input-button btn_text="Yes" :full_width="true" icon="IconCheck" style_type="success" @click="closePopup(true)"></input-button>
+					<input-button btn_text="No" :full_width="true" icon="IconX" style_type="error" @click="closePopup(false)" :remove_margin="true"></input-button>
+				</div>
 			</div>
 		</div>
-	</div>
+	</transition>
 </template>
 <style scoped>
 	@reference "tailwindcss/theme";
 	.delete-popup{
-		@apply fixed left-1/2 top-2/8 -translate-x-1/2 -translate-y-1/2 p-[25px] rounded-lg shadow-lg ;
+		@apply fixed left-1/2 top-2/8 w-[90%] lg:w-[initial] -translate-x-1/2 -translate-y-1/2 p-[25px] rounded-lg shadow-lg ;
 	}
 	.delete-popup h1{
 		@apply text-2xl text-center;
 	}
-	
+	.fade-scale-enter-active,
+	.fade-scale-leave-active {
+		@apply transition-all duration-300 ease-out;
+	}
+	.fade-scale-enter-from,
+	.fade-scale-leave-to {
+		@apply opacity-0 scale-90;
+	}
+	.fade-scale-enter-to,
+	.fade-scale-leave-from {
+		@apply opacity-100 scale-100;
+	}
 </style>
 <script lang="ts">
 	

@@ -1,48 +1,57 @@
 <template>
 
-	<div class="table-container">
-		<table class="table">
-			<tr class="cursor-pointer">
-				<th v-for="(column, ci) in local_table_data.columns" :key="ci" @click="sortColumns(column, ci)">
-					
-					<!--<IconChevronDown v-if="sort_column !== column.label || sort_direction === 'asc'" class="inline-block" :size="18"></IconChevronDown>
-    				<IconChevronUp v-if="sort_column === column.label && sort_direction === 'desc'" class="inline-block" :size="18"></IconChevronUp>-->
-					<span class="inline-block">
-						<span class="flex flex-row items-center">
-							<span>{{ column.text }}</span>
-							<span class="flex flex-col ml-[10px]!">
-								<IconTriangleFilled v-if="column.sort_visibility !== '' && column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleFilled>
-								<IconTriangle v-if="column.sort_visibility === '' || column.sort_visibility === 'desc'" class="inline-block" :size="8"></IconTriangle>
-								<IconTriangleInverted v-if="column.sort_visibility === '' || column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleInverted>
-								<IconTriangleInvertedFilled v-if="column.sort_visibility !== '' && column.sort_visibility === 'desc'" class="inline-block" :size="8"></IconTriangleInvertedFilled>
+	<div>
+		<input-dropdown :options="dropdown_options" v-model="per_page"></input-dropdown>
+		<br>
+		<div class="table-container">
+			<table class="table">
+				<tr class="cursor-pointer">
+					<th v-for="(column, ci) in local_table_data.columns" :key="ci" @click="sortColumns(column, ci)">
+						<span class="inline-block">
+							<span class="flex flex-row items-center">
+								<span>{{ column.text }}</span>
+								<span class="flex flex-col ml-[10px]!">
+									<IconTriangleFilled v-if="column.sort_visibility !== '' && column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleFilled>
+									<IconTriangle v-if="column.sort_visibility === '' || column.sort_visibility === 'desc'" class="inline-block" :size="8"></IconTriangle>
+									<IconTriangleInverted v-if="column.sort_visibility === '' || column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleInverted>
+									<IconTriangleInvertedFilled v-if="column.sort_visibility !== '' && column.sort_visibility === 'desc'" class="inline-block" :size="8"></IconTriangleInvertedFilled>
+								</span>
 							</span>
 						</span>
-					</span>
+						
+					</th>
+				</tr>
+				<tr v-for="(row, ri) in local_table_data.rows" :key="ri">
 					
-				</th>
-			</tr>
-			<tr v-for="(row, ri) in local_table_data.rows" :key="ri">
-				
-				<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
-					<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
-						<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22"></IconEdit>&nbsp;
-						<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22" @click="handleDelete(ri)"></IconTrash>
-					</span>
-					<span v-if="!Array.isArray(row[column2.label])">
-						<span v-if="typeof row[column2.label] === 'object'">
-							<span v-if="row[column2.label].type === 'label'">
-								<span class="bg-deskmint-green-light pl-[10px]! pr-[10px]! pt-[2px]! pb-[2px]! rounded-2xl">{{ row[column2.label].text }}</span>
-							</span>
+					<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
+						<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
+							<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22"></IconEdit>&nbsp;
+							<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22" @click="handleDelete(ri)"></IconTrash>
 						</span>
-						<span v-else>{{ row[column2.label] }}</span>
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<th v-for="(column, ci) in local_table_data.columns" :key="ci">{{ column.text }}</th>
-			</tr>
-		</table>
-		<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="show_popup" :blocker="true" :scrollable="false" :close_outside="true" @closed="handleDeletePopup"></confirmation-popup>
+						<span v-if="!Array.isArray(row[column2.label])">
+							<span v-if="typeof row[column2.label] === 'object'">
+								<span v-if="row[column2.label].type === 'label'">
+									<span class="bg-deskmint-green-light pl-[10px]! pr-[10px]! pt-[2px]! pb-[2px]! rounded-2xl">{{ row[column2.label].text }}</span>
+								</span>
+							</span>
+							<span v-else>{{ row[column2.label] }}</span>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<th v-for="(column, ci) in local_table_data.columns" :key="ci">{{ column.text }}</th>
+				</tr>
+			</table>
+			<ul class="flex gap-2">
+				<li><a href="javascript:;">1</a></li>
+				<li><a href="javascript:;">2</a></li>
+				<li><a href="javascript:;">3</a></li>
+				<li><a href="javascript:;">4</a></li>
+				<li><a href="javascript:;">5</a></li>
+				<li><a href="javascript:;">></a></li>
+			</ul>
+			<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="show_popup" :blocker="true" :scrollable="false" :close_outside="false" @closed="handleDeletePopup"></confirmation-popup>
+		</div>
 	</div>
 	
 
@@ -61,6 +70,8 @@
 	import InputButton from '../inputs/InputButton.vue';
 
 	import ConfirmationPopup from './ConfirmationPopup.vue';
+	import InputDropdown from '../inputs/InputDropdown.vue';
+	import { env } from '../../env.example';
 
 
 	export interface DataTableInterface{
@@ -69,7 +80,9 @@
         sort_direction: string,
 		last_index: number,
 		to_be_deleted: number,
-		show_popup:boolean
+		show_popup:boolean,
+		dropdown_options: any,
+		per_page:number
 	}
 	
 	export default defineComponent({
@@ -82,6 +95,7 @@
 			IconTriangle,
 			InputButton,
 			ConfirmationPopup,
+			InputDropdown,
 			IconTrash
 		},
 		props : {
@@ -94,7 +108,17 @@
         		sort_direction: 'asc',
 				last_index: -1,
 				to_be_deleted: -1,
-				show_popup: false
+				show_popup: false,
+				dropdown_options: [
+					5, 10, 15, 35, 50, 100
+				],
+				per_page: env.DEFAULT_TABLE_ROWS
+			}
+		},
+		watch: {
+			per_page() : void{
+				console.log('changed');
+				console.log(this.per_page);
 			}
 		},
 		methods : {
