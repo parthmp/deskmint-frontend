@@ -1,6 +1,6 @@
 <template>
 	<div class="absolute top-0 left-0 w-[100%]! bg-background-2-tra z-40" v-show="show_popup" :class="{'h-[100vh]':local_blocker}" @click.self="selfClick">
-		<div class="delete-popup outline-2 outline-deskmint-green-light bg-background-2  left-1/2 lg:-translate-x-1/2" :class="{'top-40':!local_blocker, 'top-2/10':local_blocker}">
+		<div class="delete-popup outline-2 outline-deskmint-green-light bg-background-2" :class="{'top-40':!local_blocker, 'top-2/10':local_blocker}">
 			<IconX class="float-end cursor-pointer" @click="closePopup(false)" :size="22"></IconX>
 			<div class="clear-both"></div>
 			<h1>{{ local_confirm_text }}</h1>
@@ -15,7 +15,7 @@
 <style scoped>
 	@reference "tailwindcss/theme";
 	.delete-popup{
-		@apply sticky w-[95%] m-[25px] lg:w-[25%] p-[25px] rounded-lg shadow-lg ;
+		@apply fixed left-1/2 top-2/8 -translate-x-1/2 -translate-y-1/2 p-[25px] rounded-lg shadow-lg ;
 	}
 	.delete-popup h1{
 		@apply text-2xl text-center;
