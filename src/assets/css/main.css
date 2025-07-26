@@ -335,7 +335,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply min-w-full text-sm text-left whitespace-nowrap ;
 }
 .table th, .table td{
-	@apply text-left p-[13px] border-t-1 bottom-1 top-0 border-solid border-deskmint-green-light;
+	@apply text-left p-[10px] border-t-1 bottom-1 top-0 border-solid border-deskmint-green-light;
 }
 .table tr:first-child, .table tr:last-child{
 	@apply bg-deskmint-green-dark text-white rounded-lg font-medium;

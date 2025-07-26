@@ -117,6 +117,7 @@ export default {
 			let hasActiveSubmenu = false;
 			
 			updatedItem.submenu = item.submenu.map(subItem => {
+
 				let updatedSubItem = { ...subItem, is_active: false };
 				
 				if (subItem.path && this.getFirstSection(`http://dummy.com${subItem.path}`) === currentSection) {
@@ -135,6 +136,17 @@ export default {
 			
 			return updatedItem;
 		});
+	},
+	
+	isObjectEmpty(obj:object) : boolean{
+		for (const prop in obj) {
+			if (Object.hasOwn(obj, prop)) {
+			return false;
+			}
+		}
+
+		return true;
 	}
+
 
 }

@@ -46,6 +46,10 @@
 							text:	'Last name'
 						},
 						{
+							label: 	'status',
+							text:	'Status'
+						},
+						{
 							label: 	'date',
 							text:	'Date'
 						},
@@ -57,8 +61,12 @@
 					rows: [
 						{
 							index: 1,
-							first_name: 'Jack',
+							first_name: 'Jack1',
 							last_name: 'Sparrow',
+							status: {
+								type:'label',
+								text: 'active'
+							},
 							date: '1950-05-25',
 							actions: ['edit', 'delete']
 						},
@@ -66,6 +74,10 @@
 							index: 2,
 							first_name: 'Jack2',
 							last_name: 'Sparrow',
+							status: {
+								type:'label',
+								text: 'active'
+							},
 							date:'1950-05-26',
 							actions: ['edit', 'delete']
 						},
@@ -73,6 +85,10 @@
 							index: 3,
 							first_name: 'Jack3',
 							last_name: 'Sparrow5',
+							status: {
+								type:'label',
+								text: 'Inactive'
+							},
 							date: '1950-05-27',
 							actions: ['edit', 'delete']
 						},
@@ -80,6 +96,10 @@
 							index: 4,
 							first_name: 'Jack4',
 							last_name: 'Sparrow',
+							status: {
+								type:'label',
+								text: 'active'
+							},
 							date: '1950-05-27',
 							actions: ['edit', 'delete']
 						}
