@@ -26,7 +26,7 @@
 				<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
 					<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
 						<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22"></IconEdit>&nbsp;
-						<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22"></IconTrash>
+						<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22" @click="handleDelete(ri)"></IconTrash>
 					</span>
 					<span v-if="!Array.isArray(row[column2.label])">
 						<span v-if="typeof row[column2.label] === 'object'">
@@ -42,10 +42,13 @@
 				<th v-for="(column, ci) in local_table_data.columns" :key="ci">{{ column.text }}</th>
 			</tr>
 		</table>
+		<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="show_popup" :blocker="true" :scrollable="false" :close_outside="true" @closed="handleDeletePopup"></confirmation-popup>
 	</div>
+	
+
 </template>
 <style scoped>
-
+	
 </style>
 <script lang="ts">
 
@@ -55,12 +58,18 @@
 	import { defineComponent } from 'vue';
 	import common from '../../helpers/common';
 
+	import InputButton from '../inputs/InputButton.vue';
+
+	import ConfirmationPopup from './ConfirmationPopup.vue';
+
 
 	export interface DataTableInterface{
 		local_table_data : object,
 		sort_column: string,
         sort_direction: string,
-		last_index: number
+		last_index: number,
+		to_be_deleted: number,
+		show_popup:boolean
 	}
 	
 	export default defineComponent({
@@ -71,6 +80,8 @@
 			IconTriangleFilled,
 			IconEdit,
 			IconTriangle,
+			InputButton,
+			ConfirmationPopup,
 			IconTrash
 		},
 		props : {
@@ -81,7 +92,9 @@
 				local_table_data : {},
 				sort_column: '',
         		sort_direction: 'asc',
-				last_index: -1
+				last_index: -1,
+				to_be_deleted: -1,
+				show_popup: false
 			}
 		},
 		methods : {
@@ -128,7 +141,25 @@
 				});
 
 				this.last_index = index;
+			},
+
+			handleDelete(row_index:number) : void{
+				this.to_be_deleted = row_index;
+				this.show_popup = true;
+			},
+
+			handleDeletePopup(obj:object) : void{
+
+				if(this.to_be_deleted > -1){
+					if(obj.closed && obj.value){
+						let removed = this.local_table_data.rows[this.to_be_deleted];
+						this.local_table_data.rows.splice(this.to_be_deleted, 1);
+						this.$emit('deleted_row', removed);
+					}
+				}
+
 			}
+
 		},
 		
 		mounted : function(){

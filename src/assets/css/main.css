@@ -69,6 +69,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	--shadow-four-side: 0px 0px 15px #e7e7e7;
 	--color-background-1: #ffffff;
 	--color-background-2: #F6FFEF;
+	--color-background-2-tra: RGBA(245, 255, 239, 0.5);
 	--color-background-card: #ffffff;
 	--color-hover: #EBEBEB;
 	--shadow-lg: 0 0px 15px rgba(0, 0, 0, 0.20);
@@ -96,6 +97,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 		--color-background-1: #2f3349;
 		/*--color-background-2: #11170E;*/
 		--color-background-2: #121B16;
+		--color-background-2-tra: RGBA(18, 27, 22, 0.7);
 		--color-hover: #3D435B;
 		--color-background-card: #1e2723;
 		--shadow-lg: 0 0px 25px rgba(0, 0, 0, 1);
@@ -163,7 +165,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply max-w-full lg:max-w-1/2;
 }
 .big-content{
-	@apply relative transition-all;
+	@apply transition-all;
 }
 .main-content{
 	@apply bg-background-2 block min-h-[100vh]! transition-all;

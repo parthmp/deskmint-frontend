@@ -3,7 +3,7 @@
     <div class="card">
         <h1 class="text-2xl!">Admins</h1>
         <br>
-        <data-table :data="table_data"></data-table>
+        <data-table :data="table_data" @deleted_row="handleDeleted"></data-table>
         
     </div>
 	<br>
@@ -108,11 +108,28 @@
 			}
 		},
 		methods : {
-			
+			handleDeleted(removed:object) : void{
+				console.log('===');
+				console.log(removed);
+				console.log('===');
+				/* handle axios here */
+			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
 		mounted : function(){
-			
+			/*setInterval(() => {
+				this.table_data.rows.push({
+							index: 4,
+							first_name: 'Jack4 ==',
+							last_name: 'Sparrow',
+							status: {
+								type:'label',
+								text: 'active'
+							},
+							date: '1950-05-27',
+							actions: ['edit', 'delete']
+						});
+			}, 200);*/
 		}
 
 	});
