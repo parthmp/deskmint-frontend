@@ -108,7 +108,8 @@
 		searched_term:string,
 		original_rows:any,
 		total_pages : number,
-		current_page:number
+		current_page:number,
+		filtered_rows:Array<object>
 	}
 	
 	export default defineComponent({
@@ -147,7 +148,8 @@
 				searched_term:'',
 				original_rows: {},
 				total_pages: 1,
-				current_page:1
+				current_page:1,
+				filtered_rows: []
 			}
 		},
 		computed : {
@@ -180,47 +182,42 @@
 				console.log(this.total_pages);
 			},
 			searched_term(): void{
-				
-				if (!this.searched_term) {
-					this.local_table_data.rows = this.original_rows;
+
+				if(!this.searched_term){
+					this.filtered_rows = this.original_rows;
 				}else{
 					const search_term_temp = this.searched_term.toLowerCase();
-					this.local_table_data.rows = this.original_rows.filter(row => {
+					this.filtered_rows = this.original_rows.filter(row => {
 
 						let found = false;
 
 						for(let z = 0; z < this.local_table_data.columns.length; z++){
 
 							let column = this.local_table_data.columns[z];
-							if (column.label === 'actions' || column.label === 'index'){
+							if(column.label === 'actions' || column.label === 'index'){
 								continue;
 							}
 
 							let cell = row[column.label];
-
+							
 							if (typeof cell === 'object' && cell?.text){
 								if (cell.text.toLowerCase().includes(search_term_temp)) {
-								found = true;
-								break;
+									found = true;
+									break;
 								}
 							}else if(cell?.toString().toLowerCase().includes(search_term_temp)){
 								found = true;
 								break;
 							}
 						}
-
 						return found;
-
 					});
-					
 				}
-				
 				
 				this.current_page = 1;
 				if(this.paginate) {
 					this.generatePages();
 				}
-				
 			}
 		},
 		methods : {
@@ -299,30 +296,20 @@
 
 			generatePages() : void{
 
-				/* refactor this later on */
-				if(this.searched_term === ''){
-					let pages = (this.original_rows.length / this.per_page);
-					this.total_pages = Math.ceil(pages);
-					
-					if (this.current_page > this.total_pages) {
-						this.current_page = this.total_pages;
-					}
-					
-					const startIndex = (this.current_page - 1) * this.per_page;
-					const endIndex = startIndex + this.per_page;
-					this.local_table_data.rows = this.original_rows.slice(startIndex, endIndex);
-				}else{
-					let pages = (this.local_table_data.rows.length / this.per_page);
-					this.total_pages = Math.ceil(pages);
-					
-					if (this.current_page > this.total_pages) {
-						this.current_page = this.total_pages;
-					}
-					
-					const startIndex = (this.current_page - 1) * this.per_page;
-					const endIndex = startIndex + this.per_page;
-					this.local_table_data.rows = this.local_table_data.rows.slice(startIndex, endIndex);
+				const data_to_paginate = this.searched_term === '' ? this.original_rows : this.filtered_rows;
+    
+				let pages = (data_to_paginate.length / this.per_page);
+				this.total_pages = Math.ceil(pages);
+				
+				if (this.current_page > this.total_pages) {
+					this.current_page = this.total_pages;
 				}
+				
+				const startIndex = (this.current_page - 1) * this.per_page;
+				const endIndex = startIndex + this.per_page;
+				
+				// Always slice from the correct dataset
+				this.local_table_data.rows = data_to_paginate.slice(startIndex, endIndex);
 				
 
 			},
@@ -342,14 +329,15 @@
 
 			if(!common.isObjectEmpty(this.local_table_data)){
 				if(common.isset(this.local_table_data.columns)){
-
 					for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
 						this.local_table_data.columns[z]['sort_visibility'] = '';
 					}
-
 				}
 			}
+			
 			this.original_rows = this.local_table_data.rows;
+			this.filtered_rows = this.original_rows; // Initialize filtered_rows
+			
 			if(this.paginate){
 				this.generatePages();
 			}
