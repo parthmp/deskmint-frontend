@@ -21,8 +21,7 @@
 
 <script lang="ts">
 export interface InputSearchInterface {
-	search_value: string;
-	use_default_x: boolean;
+	search_value: string
 }
 
 import common from '../../helpers/common';
@@ -47,8 +46,7 @@ export default defineComponent({
 	
 	data(): InputSearchInterface {
 		return {
-			search_value: this.modelValue || '',
-			use_default_x: this.use_default_x
+			search_value: this.modelValue || ''
 		};
 	},
 

@@ -2,7 +2,7 @@
 
 	<div>
 		<div class="grid grid-cols-1 lg:grid-cols-12 items-center">
-			<div class="lg:col-span-9 mb-[15px]! lg:mb-[0px]!"><input-dropdown :options="dropdown_options" v-model="per_page"></input-dropdown></div>
+			<div class="lg:col-span-9 mb-[15px]! lg:mb-[0px]!"><input-dropdown v-if="paginate" :options="dropdown_options" v-model="per_page"></input-dropdown></div>
 			<div class="lg:col-span-3"><input-search v-model="searched_term"></input-search></div>
 		</div>
 		<br>
@@ -29,7 +29,7 @@
 					<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
 						<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
 							<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22"></IconEdit>&nbsp;
-							<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22" @click="handleDelete(ri)"></IconTrash>
+							<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22" @click="handleDelete(row.id)"></IconTrash>
 						</span>
 						<span v-if="!Array.isArray(row[column2.label])">
 							<span v-if="typeof row[column2.label] === 'object'">
@@ -42,16 +42,33 @@
 					</td>
 				</tr>
 				<tr>
+					<td v-if="local_table_data.rows.length === 0" :colspan="local_table_data.columns.length" class="text-center!">
+						No data in the table
+					</td>
+				</tr>
+				<tr>
 					<th v-for="(column, ci) in local_table_data.columns" :key="ci">{{ column.text }}</th>
 				</tr>
 			</table>
-			<ul class="flex gap-2">
-				<li><a href="javascript:;">1</a></li>
-				<li><a href="javascript:;">2</a></li>
-				<li><a href="javascript:;">3</a></li>
-				<li><a href="javascript:;">4</a></li>
-				<li><a href="javascript:;">5</a></li>
-				<li><a href="javascript:;">></a></li>
+			<p v-if="paginate">Total pages: {{ total_pages }} | Current Page: {{ current_page }}</p>
+			<ul v-if="paginate" class="flex gap-2">
+			<li v-if="current_page > 1">
+				<a href="javascript:;" @click="setCurrentPage(current_page - 1)">‹</a>
+			</li>
+			
+			<li v-for="page in visiblePages" :key="page">
+				<a 
+				href="javascript:;" 
+				@click="setCurrentPage(page)"
+				:class="{ 'active': page === current_page }"
+				>
+				{{ page }}
+				</a>
+			</li>
+			
+			<li v-if="current_page < total_pages">
+				<a href="javascript:;" @click="setCurrentPage(current_page + 1)">›</a>
+			</li>
 			</ul>
 			<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="show_popup" :blocker="true" :scrollable="false" :close_outside="false" @closed="handleDeletePopup"></confirmation-popup>
 		</div>
@@ -84,11 +101,14 @@
 		sort_column: string,
         sort_direction: string,
 		last_index: number,
-		to_be_deleted: number,
+		to_be_deleted_row_id: number,
 		show_popup:boolean,
 		dropdown_options: any,
 		per_page:number,
-		searched_term:string
+		searched_term:string,
+		original_rows:any,
+		total_pages : number,
+		current_page:number
 	}
 	
 	export default defineComponent({
@@ -106,27 +126,101 @@
 			IconTrash
 		},
 		props : {
-			data: Object
+			data: Object,
+			paginate:Boolean
 		},
 		data(): DataTableInterface{
 			return {
-				local_table_data : {},
+				local_table_data : {
+					columns: [],
+					rows : []
+				},
 				sort_column: '',
         		sort_direction: 'asc',
 				last_index: -1,
-				to_be_deleted: -1,
+				to_be_deleted_row_id: -1,
 				show_popup: false,
 				dropdown_options: [
-					5, 10, 15, 35, 50, 100
+					2, 5, 10, 15, 35, 50, 100
 				],
 				per_page: env.DEFAULT_TABLE_ROWS,
-				searched_term:''
+				searched_term:'',
+				original_rows: {},
+				total_pages: 1,
+				current_page:1
+			}
+		},
+		computed : {
+			visiblePages(): Array<number>{
+
+				const pages = [];
+				const max_visible = 5;
+				let start = Math.max(1, this.current_page - Math.floor(max_visible / 2));
+				let end = Math.min(this.total_pages, start + max_visible - 1);
+				
+				if(end - start + 1 < max_visible) {
+					start = Math.max(1, end - max_visible + 1);
+				}
+				
+				for(let i = start; i <= end; i++) {
+					pages.push(i);
+				}
+				
+				return pages;
 			}
 		},
 		watch: {
 			per_page() : void{
-				console.log('changed');
 				console.log(this.per_page);
+				this.local_table_data.rows = this.original_rows;
+				this.current_page = 1;
+				if(this.paginate){
+					this.generatePages();
+				}
+				console.log(this.total_pages);
+			},
+			searched_term(): void{
+				
+				if (!this.searched_term) {
+					this.local_table_data.rows = this.original_rows;
+				}else{
+					const search_term_temp = this.searched_term.toLowerCase();
+					this.local_table_data.rows = this.original_rows.filter(row => {
+
+						let found = false;
+
+						for(let z = 0; z < this.local_table_data.columns.length; z++){
+
+							let column = this.local_table_data.columns[z];
+							if (column.label === 'actions' || column.label === 'index'){
+								continue;
+							}
+
+							let cell = row[column.label];
+
+							if (typeof cell === 'object' && cell?.text){
+								if (cell.text.toLowerCase().includes(search_term_temp)) {
+								found = true;
+								break;
+								}
+							}else if(cell?.toString().toLowerCase().includes(search_term_temp)){
+								found = true;
+								break;
+							}
+						}
+
+						return found;
+
+					});
+					
+				}
+				
+				
+				this.current_page = 1;
+				if(this.paginate) {
+					this.generatePages();
+				}
+				
 			}
 		},
 		methods : {
@@ -175,21 +269,67 @@
 				this.last_index = index;
 			},
 
-			handleDelete(row_index:number) : void{
-				this.to_be_deleted = row_index;
+			handleDelete(row_id:number) : void{
+				this.to_be_deleted_row_id = row_id;
 				this.show_popup = true;
 			},
 
 			handleDeletePopup(obj:object) : void{
-
-				if(this.to_be_deleted > -1){
+				
+				if(this.to_be_deleted_row_id > -1){
+					
 					if(obj.closed && obj.value){
-						let removed = this.local_table_data.rows[this.to_be_deleted];
-						this.local_table_data.rows.splice(this.to_be_deleted, 1);
-						this.$emit('deleted_row', removed);
+						
+						const index = this.local_table_data.rows.findIndex(row => row.id === this.to_be_deleted_row_id);
+						
+						if(index !== -1){
+							this.local_table_data.rows.splice(index, 1);
+						}
+						const original_rows_index = this.original_rows.findIndex(row => row.id === this.to_be_deleted_row_id);
+						if(original_rows_index !== -1){
+							this.original_rows.splice(original_rows_index, 1);
+						}
+						this.generatePages();
+						this.$emit('deleted_row_id', this.to_be_deleted_row_id);
+						
 					}
 				}
 
+			},
+
+			generatePages() : void{
+
+				/* refactor this later on */
+				if(this.searched_term === ''){
+					let pages = (this.original_rows.length / this.per_page);
+					this.total_pages = Math.ceil(pages);
+					
+					if (this.current_page > this.total_pages) {
+						this.current_page = this.total_pages;
+					}
+					
+					const startIndex = (this.current_page - 1) * this.per_page;
+					const endIndex = startIndex + this.per_page;
+					this.local_table_data.rows = this.original_rows.slice(startIndex, endIndex);
+				}else{
+					let pages = (this.local_table_data.rows.length / this.per_page);
+					this.total_pages = Math.ceil(pages);
+					
+					if (this.current_page > this.total_pages) {
+						this.current_page = this.total_pages;
+					}
+					
+					const startIndex = (this.current_page - 1) * this.per_page;
+					const endIndex = startIndex + this.per_page;
+					this.local_table_data.rows = this.local_table_data.rows.slice(startIndex, endIndex);
+				}
+				
+
+			},
+
+			setCurrentPage(page_number:number) : void{
+				this.current_page = page_number;
+				this.generatePages();
 			}
 
 		},
@@ -209,6 +349,15 @@
 
 				}
 			}
+			this.original_rows = this.local_table_data.rows;
+			if(this.paginate){
+				this.generatePages();
+			}
+			
+			/*
+			setInterval(() => {
+				this.generatePagination();
+			}, 2000);*/
 
 		}
 
