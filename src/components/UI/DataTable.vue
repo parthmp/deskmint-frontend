@@ -228,19 +228,19 @@
 				}
 
 				this.sort_column = column.label;
-				
 				this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc';
-				
 				column.sort_visibility = this.sort_direction;
 
-				this.local_table_data.rows.sort((a, b) => {
+				const datasetToSort = this.searched_term === '' ? this.original_rows : this.filtered_rows;
+				
+				datasetToSort.sort((a, b) => {
 
 					let valueA = '';
 					let valueB = '';
 
 					if(typeof a[column.label] === 'object'){
 						valueA = a[column.label].text;
-					}else{
+					} else {
 						valueA = a[column.label];
 					}
 
@@ -255,13 +255,19 @@
 						valueB = valueB.toLowerCase();
 					}
 					
-					if (this.sort_direction === 'asc') {
+					if(this.sort_direction === 'asc'){
 						return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-					} else {
+					}else{
 						return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
 					}
 
 				});
+
+				if(this.paginate){
+					this.generatePages();
+				}else{
+					this.local_table_data.rows = datasetToSort;
+				}
 
 				this.last_index = index;
 			},
@@ -308,10 +314,8 @@
 				const startIndex = (this.current_page - 1) * this.per_page;
 				const endIndex = startIndex + this.per_page;
 				
-				// Always slice from the correct dataset
 				this.local_table_data.rows = data_to_paginate.slice(startIndex, endIndex);
 				
-
 			},
 
 			setCurrentPage(page_number:number) : void{
