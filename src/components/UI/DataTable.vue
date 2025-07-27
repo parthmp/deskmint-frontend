@@ -1,7 +1,10 @@
 <template>
 
 	<div>
-		<input-dropdown :options="dropdown_options" v-model="per_page"></input-dropdown>
+		<div class="grid grid-cols-1 lg:grid-cols-12 items-center">
+			<div class="lg:col-span-9 mb-[15px]! lg:mb-[0px]!"><input-dropdown :options="dropdown_options" v-model="per_page"></input-dropdown></div>
+			<div class="lg:col-span-3"><input-search v-model="searched_term"></input-search></div>
+		</div>
 		<br>
 		<div class="table-container">
 			<table class="table">
@@ -71,6 +74,8 @@
 
 	import ConfirmationPopup from './ConfirmationPopup.vue';
 	import InputDropdown from '../inputs/InputDropdown.vue';
+	import InputSearch from '../inputs/InputSearch.vue';
+
 	import { env } from '../../env.example';
 
 
@@ -82,7 +87,8 @@
 		to_be_deleted: number,
 		show_popup:boolean,
 		dropdown_options: any,
-		per_page:number
+		per_page:number,
+		searched_term:string
 	}
 	
 	export default defineComponent({
@@ -96,6 +102,7 @@
 			InputButton,
 			ConfirmationPopup,
 			InputDropdown,
+			InputSearch,
 			IconTrash
 		},
 		props : {
@@ -112,7 +119,8 @@
 				dropdown_options: [
 					5, 10, 15, 35, 50, 100
 				],
-				per_page: env.DEFAULT_TABLE_ROWS
+				per_page: env.DEFAULT_TABLE_ROWS,
+				searched_term:''
 			}
 		},
 		watch: {

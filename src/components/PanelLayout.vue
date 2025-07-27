@@ -1,7 +1,7 @@
 <template>
 		<div class="container-fluid" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">	
 			<div class="big-content">
-				<aside class="relative">
+				<aside>
 					<div class="sidebar" @mouseenter="hover_sidebar = true" @mouseleave="hover_sidebar = false" :class="{'closed':!sidebar_full,'phone': phone_show}">
 						<div class="sidebar-logo-area">
 							<div class="flex items-center">
