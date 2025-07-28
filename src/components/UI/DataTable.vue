@@ -2,9 +2,14 @@
 
 	<div>
 		<div class="grid grid-cols-1 lg:grid-cols-12 items-center">
-			<div class="lg:col-span-4 mb-[15px]! lg:mb-[0px]!"><input-dropdown v-if="paginate" :options="dropdown_options" v-model="per_page"></input-dropdown></div>
-			<div class="lg:col-span-4 mb-[15px]! lg:mb-[0px]!" v-if="checkbox_actions?.length > 0"><input-dropdown v-if="paginate" :options="checkbox_actions" v-model="checkbox_actions_dropdown" @changed="handleCheckboxActions"></input-dropdown></div>
-			<div class="lg:col-span-3"><input-search v-model="searched_term"></input-search></div>
+			<div class="lg:col-span-9">
+				<div class="lg:flex lg:gap-2 lg:items-center">
+					<div class=""><input-dropdown v-if="paginate" :options="dropdown_options" v-model="per_page"></input-dropdown></div>
+					<div class="mt-[10px] lg:mt-[0px]" v-if="checkbox_actions?.length > 0"><input-dropdown v-if="paginate" :options="checkbox_actions" v-model="checkbox_actions_dropdown" @changed="handleCheckboxActions"></input-dropdown></div>
+				</div>
+			</div>
+			
+			<div class="lg:col-span-3 mt-[25px]! lg:mt-[0px]!"><input-search v-model="searched_term"></input-search></div>
 		</div>
 		<br>
 		<div class="table-container">
@@ -64,34 +69,48 @@
 				</tfoot>
 			</table>
 
-			<p v-if="paginate">Total pages: {{ total_pages }} | Current Page: {{ current_page }}</p>
-			<ul v-if="paginate" class="flex gap-2">
-				<li v-if="current_page > 1">
-					<a href="javascript:;" @click="setCurrentPage(current_page - 1)">‹</a>
-				</li>
-				
-				<li v-for="page in visiblePages" :key="page">
-					<a href="javascript:;" @click="setCurrentPage(page)" :class="{ 'active': page === current_page }">{{ page }}</a>
-				</li>
-				
-				<li v-if="current_page < total_pages">
-					<a href="javascript:;" @click="setCurrentPage(current_page + 1)">›</a>
-				</li>
-			</ul>
+			
+			
 			<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="show_popup" :blocker="true" :scrollable="false" :close_outside="false" @closed="handleDeletePopup"></confirmation-popup>
 		</div>
+		<div class="mt-[15px]! block lg:flex lg:items-center lg:gap-5">
+
+				<p v-if="paginate" class="text-center mb-[15px]! lg:mb-[0px]!">Total pages: {{ total_pages }} | Current Page: {{ current_page }}</p>
+				<span class="lg:grow">
+					<ul v-if="paginate" class="flex gap-2 lg:justify-end justify-center">
+						<li v-if="current_page > 1">
+							<a href="javascript:;" class="block px-[5px]! lg:px-[10px]! py-[8.5px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-deskmint-original-dark-plus hover:text-white!" @click="setCurrentPage(current_page - 1)">
+								<IconChevronLeft :size="24"></IconChevronLeft>
+							</a>
+						</li>
+						
+						<li v-for="page in visiblePages" :key="page">
+							<a href="javascript:;" class="block px-[14px]! lg:px-[18px]! py-[8px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-transparent" @click="setCurrentPage(page)" :class="{'page-active': page === current_page, 'bg-deskmint-original-dark-plus': page === current_page}">{{ page }}</a>
+						</li>
+						
+						<li v-if="current_page < total_pages">
+							<a href="javascript:;" class="block px-[5px]! lg:px-[10px]! py-[8.5px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-deskmint-original-dark-plus hover:text-white!" @click="setCurrentPage(current_page + 1)">
+								<IconChevronRight :size="24"></IconChevronRight>
+							</a>
+						</li>
+					</ul>
+				</span>
+			</div>
 	</div>
 	
 
 </template>
 <style scoped>
-	
+	@reference "tailwindcss/theme";
+	.page-active{
+		@apply bg-transparent hover:text-[initial]!;
+	}
 </style>
 <script lang="ts">
 
 
 	
-	import { IconTriangleInvertedFilled, IconTriangleInverted, IconTriangleFilled, IconEdit, IconTrash, IconTriangle } from '@tabler/icons-vue';
+	import { IconTriangleInvertedFilled, IconTriangleInverted, IconTriangleFilled, IconEdit, IconTrash, IconTriangle, IconChevronLeft, IconChevronRight } from '@tabler/icons-vue';
 	import { defineComponent } from 'vue';
 	import common from '../../helpers/common';
 
@@ -139,6 +158,8 @@
 			InputDropdown,
 			InputSearch,
 			InputCheckbox,
+			IconChevronLeft,
+			IconChevronRight,
 			IconTrash
 		},
 		props : {
@@ -447,7 +468,7 @@
 				const url = window.URL.createObjectURL(blob);
 				const a = document.createElement('a');
 				a.href = url;
-				a.download = 'exported_data.csv';
+				a.download = `export_${new Date().toISOString()}.csv`;
 				a.click();
 				window.URL.revokeObjectURL(url);
 				
