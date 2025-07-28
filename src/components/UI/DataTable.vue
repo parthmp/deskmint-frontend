@@ -9,53 +9,59 @@
 		<br>
 		<div class="table-container">
 			<table class="table">
-				<tr class="cursor-pointer">
-					<th v-if="checkbox_actions?.length > 0">
-						<input-checkbox v-model="check_page_rows"></input-checkbox>
-					</th>
-					<th v-for="(column, ci) in local_table_data.columns" :key="ci" @click="sortColumns(column, ci)">
-						<span class="inline-block">
-							<span class="flex flex-row items-center">
-								<span>{{ column.text }}</span>
-								<span class="flex flex-col ml-[10px]!">
-									<IconTriangleFilled v-if="column.sort_visibility !== '' && column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleFilled>
-									<IconTriangle v-if="column.sort_visibility === '' || column.sort_visibility === 'desc'" class="inline-block" :size="8"></IconTriangle>
-									<IconTriangleInverted v-if="column.sort_visibility === '' || column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleInverted>
-									<IconTriangleInvertedFilled v-if="column.sort_visibility !== '' && column.sort_visibility === 'desc'" class="inline-block" :size="8"></IconTriangleInvertedFilled>
+				<thead>
+					<tr class="cursor-pointer">
+						<th v-if="checkbox_actions?.length > 0">
+							<input-checkbox v-model="check_page_rows"></input-checkbox>
+						</th>
+						<th v-for="(column, ci) in local_table_data.columns" :key="ci" @click="sortColumns(column, ci)">
+							<span class="inline-block">
+								<span class="flex flex-row items-center">
+									<span>{{ column.text }}</span>
+									<span class="flex flex-col ml-[10px]!">
+										<IconTriangleFilled v-if="column.sort_visibility !== '' && column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleFilled>
+										<IconTriangle v-if="column.sort_visibility === '' || column.sort_visibility === 'desc'" class="inline-block" :size="8"></IconTriangle>
+										<IconTriangleInverted v-if="column.sort_visibility === '' || column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleInverted>
+										<IconTriangleInvertedFilled v-if="column.sort_visibility !== '' && column.sort_visibility === 'desc'" class="inline-block" :size="8"></IconTriangleInvertedFilled>
+									</span>
 								</span>
 							</span>
-						</span>
-						
-					</th>
-				</tr>
-				<tr v-for="(row, ri) in local_table_data.rows" :key="ri">
-					<td v-if="checkbox_actions?.length > 0"><input-checkbox v-model="row.selected"></input-checkbox></td>
-					<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
-						<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
-							<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22"></IconEdit>&nbsp;
-							<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22" @click="handleDelete(row.id)"></IconTrash>
-						</span>
-						<span v-if="!Array.isArray(row[column2.label])">
-							<span v-if="typeof row[column2.label] === 'object'">
-								<span v-if="row[column2.label].type === 'label'">
-									<span class="bg-deskmint-green-light pl-[10px]! pr-[10px]! pt-[2px]! pb-[2px]! rounded-2xl">{{ row[column2.label].text }}</span>
-								</span>
+							
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(row, ri) in local_table_data.rows" :key="ri">
+						<td v-if="checkbox_actions?.length > 0"><input-checkbox v-model="row.selected"></input-checkbox></td>
+						<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
+							<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
+								<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22"></IconEdit>&nbsp;
+								<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22" @click="handleDelete(row.id)"></IconTrash>
 							</span>
-							<span v-else>{{ row[column2.label] }}</span>
-						</span>
-					</td>
-				</tr>
-				<tr>
-					<td v-if="local_table_data.rows.length === 0" :colspan="local_table_data.columns.length" class="text-center!">
-						No data in the table
-					</td>
-				</tr>
-				<tr>
-					<th v-if="checkbox_actions?.length > 0">
-						<input-checkbox v-model="check_page_rows"></input-checkbox>
-					</th>
-					<th v-for="(column, ci) in local_table_data.columns" :key="ci">{{ column.text }}</th>
-				</tr>
+							<span v-if="!Array.isArray(row[column2.label])">
+								<span v-if="typeof row[column2.label] === 'object'">
+									<span v-if="row[column2.label].type === 'label'">
+										<span class="bg-deskmint-green-light pl-[10px]! pr-[10px]! pt-[2px]! pb-[2px]! rounded-2xl">{{ row[column2.label].text }}</span>
+									</span>
+								</span>
+								<span v-else>{{ row[column2.label] }}</span>
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td v-if="local_table_data.rows.length === 0" :colspan="local_table_data.columns.length" class="text-center!">
+							No data in the table
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th v-if="checkbox_actions?.length > 0">
+							<input-checkbox v-model="check_page_rows"></input-checkbox>
+						</th>
+						<th v-for="(column, ci) in local_table_data.columns" :key="ci">{{ column.text }}</th>
+					</tr>
+				</tfoot>
 			</table>
 
 			<p v-if="paginate">Total pages: {{ total_pages }} | Current Page: {{ current_page }}</p>
@@ -95,14 +101,14 @@
 	import InputDropdown from '../inputs/InputDropdown.vue';
 	import InputSearch from '../inputs/InputSearch.vue';
 	import InputCheckbox from '../inputs/InputCheckbox.vue';
-
 	import { env } from '../../env';
+	import { toastEvents } from '../../events/toastEvents';
 
 
 	export interface DataTableInterface{
 		local_table_data : object,
 		sort_column: string,
-        sort_direction: string,
+    	sort_direction: string,
 		last_index: number,
 		to_be_deleted_row_id: number,
 		show_popup:boolean,
@@ -369,7 +375,7 @@
 			},
 
 			handleCheckboxActions(checkbox_action:string) : void{
-				
+				this.resetCheckboxDropdown();
 				let b_checkbox_action = checkbox_action.toLowerCase();
 
 				this.to_be_handled_rows_multiple = this.local_table_data.rows.filter((row) => {
@@ -380,10 +386,19 @@
 				});
 				
 				if(b_checkbox_action === 'delete'){
-					this.show_popup = true;
-					this.handle_delete_multiple = true;
-				}else if(b_checkbox_action === 'export xlsx'){
-
+					
+					if(this.to_be_handled_rows_multiple.length === 0){
+						toastEvents.emit('toast', {
+							type: 'error',
+							message: 'Please select rows to delete'
+						});
+					}else{
+						this.show_popup = true;
+						this.handle_delete_multiple = true;
+					}
+					
+				}else if(b_checkbox_action === 'export csv'){
+					this.exportToCSV(this.to_be_handled_rows_multiple);
 				}
 			},
 
@@ -394,6 +409,55 @@
 				this.local_table_data.rows.forEach((row) => {
 					row.selected = status;
 				});
+			},
+
+			exportToCSV(selected_rows:any) {
+
+				if(selected_rows.length === 0) {
+					toastEvents.emit('toast', {
+						type: 'error',
+						message: 'Please select rows to export'
+					});
+					this.resetCheckboxDropdown();
+					return;
+				}
+				
+				const headers = this.local_table_data.columns
+					.filter(column => column.label !== 'actions')
+					.map(column => column.text);
+				
+				
+				const csvRows = selected_rows.map(row => {
+					return this.local_table_data.columns
+						.filter(column => column.label !== 'actions')
+						.map(column => {
+							let value = row[column.label];
+							if(typeof value === 'object' && value?.text) {
+								value = value.text;
+							}
+							return value && value.toString().includes(',') ? `"${value.toString().replace(/"/g, '""')}"` : value;
+						});
+				});
+				
+				
+				const csvContent = [headers, ...csvRows].map(row => row.join(',')).join('\n');
+				
+				
+				const blob = new Blob([csvContent], { type: 'text/csv' });
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = 'exported_data.csv';
+				a.click();
+				window.URL.revokeObjectURL(url);
+				
+				this.checkCheckboxesForCurrentPage(false);
+
+
+			},
+
+			resetCheckboxDropdown() : void{
+				this.checkbox_actions_dropdown = 'Choose Option';
 			}
 
 		},
