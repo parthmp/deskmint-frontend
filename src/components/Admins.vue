@@ -3,7 +3,7 @@
     <div class="card">
         <h1 class="text-2xl!">Admins</h1>
         <br>
-        <data-table :data="table_data" :per_page="per_page" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false"></data-table>
+        <data-table :data="table_data" :per_page="per_page" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :total_pages="5" :static="false" url_slug="admins"></data-table>
         
     </div>
 	<br>
@@ -23,6 +23,7 @@
 	import { defineComponent } from 'vue';
 
 	import DataTable from './UI/DataTable.vue';
+	import common from '../helpers/common';
 	
 	export default defineComponent({
 		name : 'Admins',
@@ -239,7 +240,7 @@
 							},
 							date: '1950-05-27',
 							actions: ['edit', 'delete']
-						},
+						}/*,
 						{
 							id: 16,
 							index: 16,
@@ -251,9 +252,15 @@
 							},
 							date: '1950-05-27',
 							actions: ['edit', 'delete']
-						}
+						}*/
 					]
 				}
+			}
+		},
+		mixins: [RedirectToLoginForNoTokens],
+		watch: {
+			"$route.params.id"(newVal, oldVal): void{
+				this.handleAPI(newVal);
 			}
 		},
 		methods : {
@@ -261,15 +268,48 @@
 				console.log('===');
 				console.log(row_id);
 				console.log('===');
-				/* handle axios here */
+				/* handle axios here for single deletes */
 			},
 			handleMultipleDelete(ids:any) : void{
 				console.log('FIRED');
 				console.log(ids);
 				console.log('===');
+				/* handle axios here for multiple deletes */
+			},
+			handleAPI(newVal:string) : void{
+				try {
+
+					let decoded = atob(newVal);
+					let json = JSON.parse(decoded);
+					console.log('API CALL START');
+					console.log(json);
+					console.log('API CALL END');
+					/* handle axios here for fetching data */
+
+					if(json.searched_term === 'searched'){
+						this.table_data.rows.push({
+							id: 400,
+							index: 400,
+							first_name: 'searched tony',
+							last_name: 'Statk',
+							status: {
+								type:'label',
+								text: 'active'
+							},
+							date: '1950-05-27',
+							actions: ['edit', 'delete']
+						});
+			
+					}
+
+				}catch(error){
+
+					this.$router.push('/admins');
+					
+				}
 			}
+
 		},
-		mixins: [RedirectToLoginForNoTokens],
 		mounted : function(){
 			/*setInterval(() => {
 				this.table_data.rows.push({
@@ -284,6 +324,17 @@
 							actions: ['edit', 'delete']
 						});
 			}, 200);*/
+
+			
+			if(common.isset(this.$route.params.id)){
+				this.handleAPI(this.$route.params.id);
+			}else{
+				this.handleAPI(btoa(JSON.stringify({
+					per_page: this.per_page,
+					current_page: 1
+				})));
+			}
+			
 		}
 
 	});

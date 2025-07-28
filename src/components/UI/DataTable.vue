@@ -3,9 +3,9 @@
 	<div>
 		<div class="grid grid-cols-1 lg:grid-cols-12 items-center">
 			<div class="lg:col-span-9">
-				<div class="lg:flex lg:gap-2 lg:items-center">
-					<div class=""><input-dropdown v-if="paginate" :options="dropdown_options" v-model="local_per_page"></input-dropdown></div>
-					<div class="mt-[10px] lg:mt-[0px]" v-if="checkbox_actions?.length > 0"><input-dropdown v-if="paginate" :options="checkbox_actions" v-model="checkbox_actions_dropdown" @changed="handleCheckboxActions"></input-dropdown></div>
+				<div class="lg:flex lg:gap-0 lg:items-center">
+					<div class="mr-[15px]" v-if="paginate"><input-dropdown :options="dropdown_options" v-model="local_per_page"></input-dropdown></div>
+					<div class="mt-[10px] lg:mt-[0px]" v-if="checkbox_actions?.length > 0"><input-dropdown :options="checkbox_actions" v-model="checkbox_actions_dropdown" @changed="handleCheckboxActions"></input-dropdown></div>
 				</div>
 			</div>
 			
@@ -40,7 +40,7 @@
 						<td v-if="checkbox_actions?.length > 0"><input-checkbox v-model="row.selected"></input-checkbox></td>
 						<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
 							<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
-								<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22"></IconEdit>&nbsp;
+								<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22" @click="handleEdit(row.id)"></IconEdit>&nbsp;
 								<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22" @click="handleDelete(row.id)"></IconTrash>
 							</span>
 							<span v-if="!Array.isArray(row[column2.label])">
@@ -75,7 +75,7 @@
 		</div>
 		<div class="mt-[15px]! block lg:flex lg:items-center lg:gap-5">
 
-				<p v-if="paginate" class="text-center mb-[15px]! lg:mb-[0px]!">Total pages: {{ total_pages }} | Current Page: {{ current_page }}</p>
+				<p v-if="paginate" class="text-center mb-[15px]! lg:mb-[0px]!">Total pages: {{ local_total_pages }} | Current Page: {{ current_page }}</p>
 				<span class="lg:grow">
 					<ul v-if="paginate" class="flex gap-2 lg:justify-end justify-center">
 						<li v-if="current_page > 1">
@@ -88,7 +88,7 @@
 							<a href="javascript:;" class="block px-[14px]! lg:px-[18px]! py-[8px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-transparent" @click="setCurrentPage(page)" :class="{'page-active': page === current_page, 'bg-deskmint-original-dark-plus': page === current_page}">{{ page }}</a>
 						</li>
 						
-						<li v-if="current_page < total_pages">
+						<li v-if="current_page < local_total_pages">
 							<a href="javascript:;" class="block px-[5px]! lg:px-[10px]! py-[8.5px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-deskmint-original-dark-plus hover:text-white!" @click="setCurrentPage(current_page + 1)">
 								<IconChevronRight :size="24"></IconChevronRight>
 							</a>
@@ -135,14 +135,17 @@
 		local_per_page:number,
 		searched_term:string,
 		original_rows:any,
-		total_pages : number,
+		local_total_pages : number,
 		current_page:number,
 		filtered_rows:Array<object>,
 		local_checkbox_actions: Array<string>,
 		checkbox_actions_dropdown: string,
 		check_page_rows:boolean,
 		handle_delete_multiple:boolean,
-		to_be_handled_rows_multiple: Array<number>
+		to_be_handled_rows_multiple: Array<number>,
+		local_static : boolean,
+		metadata:object,
+		temp_sorted_column:object
 	}
 	
 	export default defineComponent({
@@ -167,7 +170,9 @@
 			paginate:Boolean,
 			checkbox_actions: Array<string>,
 			static:Boolean,
-			per_page:Number
+			per_page:Number,
+			total_pages:Number,
+			url_slug: String
 		},
 		data(): DataTableInterface{
 			return {
@@ -186,14 +191,22 @@
 				local_per_page: env.DEFAULT_TABLE_ROWS,
 				searched_term:'',
 				original_rows: {},
-				total_pages: 1,
+				local_total_pages: 1,
 				current_page:1,
 				filtered_rows: [],
 				local_checkbox_actions : [],
 				checkbox_actions_dropdown: 'Choose Option',
 				check_page_rows: false,
 				handle_delete_multiple: false,
-				to_be_handled_rows_multiple: []
+				to_be_handled_rows_multiple: [],
+				local_static: true,
+				metadata: {
+					per_page: null,
+					searched_term: null,
+					current_page: null,
+					sorted_column: null
+				},
+				temp_sorted_column: {}
 			}
 		},
 		computed : {
@@ -202,7 +215,7 @@
 				const pages = [];
 				const max_visible = 5;
 				let start = Math.max(1, this.current_page - Math.floor(max_visible / 2));
-				let end = Math.min(this.total_pages, start + max_visible - 1);
+				let end = Math.min(this.local_total_pages, start + max_visible - 1);
 				
 				if(end - start + 1 < max_visible) {
 					start = Math.max(1, end - max_visible + 1);
@@ -217,52 +230,89 @@
 		},
 		watch: {
 			local_per_page() : void{
-				console.log(this.local_per_page);
-				this.local_table_data.rows = this.original_rows;
 				this.current_page = 1;
+				this.resetColumnSort();
+				if(this.local_static === true){
+
+					this.local_table_data.rows = this.original_rows;
+					
+
+				}else{
+
+					let json_response = btoa(JSON.stringify({
+						type: 'per_page',
+						per_page : this.local_per_page,
+						searched_term : this.searched_term
+					}));
+					this.$router.push('/'+this.url_slug+'/page/'+json_response);
+					
+				}
+				
 				if(this.paginate){
 					this.checkCheckboxesForCurrentPage(false);
 					this.generatePages();
 				}
-				console.log(this.total_pages);
+				
+				
+			},
+			total_pages() : void{
+				if(this.local_static === false){
+					this.local_total_pages = this.total_pages;
+				}
 			},
 			searched_term(): void{
 				this.checkCheckboxesForCurrentPage(false);
-				if(!this.searched_term){
-					this.filtered_rows = this.original_rows;
-				}else{
-					const search_term_temp = this.searched_term.toLowerCase();
-					this.filtered_rows = this.original_rows.filter(row => {
+				this.resetColumnSort();
+				if(this.local_static === true){
 
-						let found = false;
+					if(!this.searched_term){
+						this.filtered_rows = this.original_rows;
+					}else{
+						const search_term_temp = this.searched_term.toLowerCase();
+						this.filtered_rows = this.original_rows.filter(row => {
 
-						for(let z = 0; z < this.local_table_data.columns.length; z++){
+							let found = false;
 
-							let column = this.local_table_data.columns[z];
-							if(column.label === 'actions' || column.label === 'index'){
-								continue;
-							}
+							for(let z = 0; z < this.local_table_data.columns.length; z++){
 
-							let cell = row[column.label];
-							
-							if (typeof cell === 'object' && cell?.text){
-								if (cell.text.toLowerCase().includes(search_term_temp)) {
+								let column = this.local_table_data.columns[z];
+								if(column.label === 'actions' || column.label === 'index'){
+									continue;
+								}
+
+								let cell = row[column.label];
+								
+								if (typeof cell === 'object' && cell?.text){
+									if (cell.text.toLowerCase().includes(search_term_temp)) {
+										found = true;
+										break;
+									}
+								}else if(cell?.toString().toLowerCase().includes(search_term_temp)){
 									found = true;
 									break;
 								}
-							}else if(cell?.toString().toLowerCase().includes(search_term_temp)){
-								found = true;
-								break;
 							}
-						}
-						return found;
-					});
+							return found;
+						});
+					}
+
+					
+
+				}else{
+					
+					let json_response = btoa(JSON.stringify({
+						type: 'search',
+						per_page : this.local_per_page,
+						searched_term : this.searched_term
+					}));
+					this.$router.push('/'+this.url_slug+'/page/'+json_response);
 				}
 				
 				this.current_page = 1;
 				if(this.paginate) {
 					this.generatePages();
 				}
+				
 			},
 			check_page_rows(check_checkboxes:boolean) : void{
 				this.checkCheckboxesForCurrentPage(check_checkboxes);
@@ -278,46 +328,64 @@
 				this.sort_column = column.label;
 				this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc';
 				column.sort_visibility = this.sort_direction;
+				this.temp_sorted_column = column;
+				if(this.local_static === true){
 
-				const datasetToSort = this.searched_term === '' ? this.original_rows : this.filtered_rows;
+					const datasetToSort = this.searched_term === '' ? this.original_rows : this.filtered_rows;
 				
-				datasetToSort.sort((a, b) => {
+					datasetToSort.sort((a, b) => {
 
-					let valueA = '';
-					let valueB = '';
+						let valueA = '';
+						let valueB = '';
 
-					if(typeof a[column.label] === 'object'){
-						valueA = a[column.label].text;
-					} else {
-						valueA = a[column.label];
-					}
+						if(typeof a[column.label] === 'object'){
+							valueA = a[column.label].text;
+						} else {
+							valueA = a[column.label];
+						}
 
-					if(typeof b[column.label] === 'object'){
-						valueB = b[column.label].text;
+						if(typeof b[column.label] === 'object'){
+							valueB = b[column.label].text;
+						}else{
+							valueB = b[column.label];
+						}
+
+						if (typeof valueA === 'string') {
+							valueA = valueA.toLowerCase();
+							valueB = valueB.toLowerCase();
+						}
+						
+						if(this.sort_direction === 'asc'){
+							return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+						}else{
+							return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+						}
+
+					});
+
+					if(this.paginate){
+						this.generatePages();
 					}else{
-						valueB = b[column.label];
+						this.local_table_data.rows = datasetToSort;
 					}
 
-					if (typeof valueA === 'string') {
-						valueA = valueA.toLowerCase();
-						valueB = valueB.toLowerCase();
-					}
 					
-					if(this.sort_direction === 'asc'){
-						return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-					}else{
-						return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
-					}
 
-				});
-
-				if(this.paginate){
-					this.generatePages();
 				}else{
-					this.local_table_data.rows = datasetToSort;
+
+					let json_response = btoa(JSON.stringify({
+						type: 'sort',
+						per_page : this.local_per_page,
+						sorted_column: column,
+						searched_term : this.searched_term
+					}));
+
+					this.$router.push('/'+this.url_slug+'/page/'+json_response);
+					this.current_page = 1;
 				}
 
 				this.last_index = index;
+				
 			},
 
 			handleDelete(row_id:number) : void{
@@ -375,25 +443,44 @@
 
 			generatePages() : void{
 
-				const data_to_paginate = this.searched_term === '' ? this.original_rows : this.filtered_rows;
+				if(this.local_static === true){
+
+					const data_to_paginate = this.searched_term === '' ? this.original_rows : this.filtered_rows;
     
-				let pages = (data_to_paginate.length / this.local_per_page);
-				this.total_pages = Math.ceil(pages);
-				
-				if (this.current_page > this.total_pages) {
-					this.current_page = this.total_pages;
+					let pages = (data_to_paginate.length / this.local_per_page);
+					this.local_total_pages = Math.ceil(pages);
+					
+					if (this.current_page > this.local_total_pages) {
+						this.current_page = this.local_total_pages;
+					}
+					
+					const startIndex = (this.current_page - 1) * this.local_per_page;
+					const endIndex = startIndex + this.local_per_page;
+					
+					this.local_table_data.rows = data_to_paginate.slice(startIndex, endIndex);
+
 				}
+
 				
-				const startIndex = (this.current_page - 1) * this.local_per_page;
-				const endIndex = startIndex + this.local_per_page;
-				
-				this.local_table_data.rows = data_to_paginate.slice(startIndex, endIndex);
 				
 			},
 
 			setCurrentPage(page_number:number) : void{
 				this.current_page = page_number;
+				
 				this.checkCheckboxesForCurrentPage(false);
+				if(this.local_static === false){
+					
+					let json_response = btoa(JSON.stringify({
+						type: 'page',
+						page_number:this.current_page,
+						per_page : this.local_per_page,
+						searched_term : this.searched_term,
+						sorted_column: this.temp_sorted_column
+					}));
+					this.$router.push('/'+this.url_slug+'/page/'+json_response);
+				}
+				
 				this.generatePages();
 			},
 
@@ -421,7 +508,16 @@
 					}
 					
 				}else if(b_checkbox_action === 'export csv'){
-					this.exportToCSV(this.to_be_handled_rows_multiple);
+					
+					if(this.to_be_handled_rows_multiple.length === 0){
+						toastEvents.emit('toast', {
+							type: 'error',
+							message: 'Please select rows to export'
+						});
+						this.resetCheckboxDropdown();
+					}else{
+						this.exportToCSV(this.to_be_handled_rows_multiple);
+					}
 				}
 			},
 
@@ -435,15 +531,6 @@
 			},
 
 			exportToCSV(selected_rows:any) {
-
-				if(selected_rows.length === 0) {
-					toastEvents.emit('toast', {
-						type: 'error',
-						message: 'Please select rows to export'
-					});
-					this.resetCheckboxDropdown();
-					return;
-				}
 				
 				const headers = this.local_table_data.columns
 					.filter(column => column.label !== 'actions')
@@ -481,6 +568,84 @@
 
 			resetCheckboxDropdown() : void{
 				this.checkbox_actions_dropdown = 'Choose Option';
+			},
+
+			handleEdit(row_id:number) : void{
+				this.$router.push('/'+this.url_slug+'/edit/'+row_id);
+			},
+
+			setFields(newVal:string) : void{
+				try {
+
+					let decoded = atob(newVal);
+					let json = JSON.parse(decoded);
+					
+					this.resetMetdata();
+					this.metadata.per_page = json.per_page;
+					this.metadata.sorted_column = json.sorted_column;
+					this.metadata.searched_term = json.searched_term;
+					this.metadata.current_page = json.page_number;
+
+					this.hydrateFields();
+
+				}catch(error){
+
+					this.$router.push('/admins');
+					
+				}
+			},
+
+			resetMetdata() : void{
+				this.metadata.per_page = null;
+				this.metadata.searched_term = null;
+				this.metadata.sorted_column = null;
+				this.metadata.current_page = null;
+			},
+
+			hydrateFields() : void{
+				console.log(this.metadata);
+				if(common.isset(this.metadata)){
+					
+					if(common.isset(this.metadata.per_page)){
+						this.local_per_page = this.metadata.per_page;
+					}
+					
+					if(common.isset(this.metadata.searched_term)){
+						
+						this.searched_term = this.metadata.searched_term;
+						
+						console.log(this.searched_term);
+					}
+					if(common.isset(this.metadata.current_page)){
+						this.current_page = this.metadata.current_page;
+					}
+					if(common.isset(this.metadata.sorted_column)){
+						
+						this.setColumnSort(this.metadata.sorted_column.label, this.metadata.sorted_column.sort_visibility);
+
+					}
+					if(common.isset(this.metadata.page_number)){
+						this.current_page = this.metadata.page_number;
+					}
+					
+				}
+				
+			},
+			setColumnSort(column_label:string, visibility:string, reset:boolean) : void{
+				for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
+					if(this.local_table_data.columns[z].label === column_label){
+						this.local_table_data.columns[z].sort_visibility = visibility;
+						break;
+					}
+				}
+			},
+			resetColumnSort() : void{
+				for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
+					
+					this.local_table_data.columns[z].sort_visibility = '';
+						
+				}
+				this.temp_sorted_column = {};
 			}
 
 		},
@@ -518,11 +683,22 @@
 			if(common.isset(this.checkbox_actions)){
 				this.local_checkbox_actions = this.checkbox_actions || [];
 			}
+
+			if(common.isset(this.static)){
+				this.local_static = this.static;
+			}
+
+			if(common.isset(this.total_pages)){
+				if(this.local_static === false){
+					this.local_total_pages = this.total_pages;
+				}
+			}
 			
 			if(this.paginate){
 				this.generatePages();
 			}
-			
+
+			this.setFields(this.$route.params.id);
 			/*
 			setInterval(() => {
 				this.generatePagination();
