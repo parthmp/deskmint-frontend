@@ -17,7 +17,7 @@
 				<thead>
 					<tr class="cursor-pointer">
 						<th v-if="checkbox_actions?.length > 0">
-							<input-checkbox v-model="check_page_rows"></input-checkbox>
+							<input-checkbox v-model="check_page_rows" :border_white="true"></input-checkbox>
 						</th>
 						<th v-for="(column, ci) in local_table_data.columns" :key="ci" @click="sortColumns(column, ci)">
 							<span class="inline-block">
@@ -62,7 +62,7 @@
 				<tfoot>
 					<tr>
 						<th v-if="checkbox_actions?.length > 0">
-							<input-checkbox v-model="check_page_rows"></input-checkbox>
+							<input-checkbox v-model="check_page_rows" :border_white="true"></input-checkbox>
 						</th>
 						<th v-for="(column, ci) in local_table_data.columns" :key="ci">{{ column.text }}</th>
 					</tr>
