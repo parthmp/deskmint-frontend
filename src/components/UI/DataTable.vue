@@ -2,13 +2,17 @@
 
 	<div>
 		<div class="grid grid-cols-1 lg:grid-cols-12 items-center">
-			<div class="lg:col-span-9 mb-[15px]! lg:mb-[0px]!"><input-dropdown v-if="paginate" :options="dropdown_options" v-model="per_page"></input-dropdown></div>
+			<div class="lg:col-span-4 mb-[15px]! lg:mb-[0px]!"><input-dropdown v-if="paginate" :options="dropdown_options" v-model="per_page"></input-dropdown></div>
+			<div class="lg:col-span-4 mb-[15px]! lg:mb-[0px]!" v-if="checkbox_actions?.length > 0"><input-dropdown v-if="paginate" :options="checkbox_actions" v-model="checkbox_actions_dropdown" @changed="handleCheckboxActions"></input-dropdown></div>
 			<div class="lg:col-span-3"><input-search v-model="searched_term"></input-search></div>
 		</div>
 		<br>
 		<div class="table-container">
 			<table class="table">
 				<tr class="cursor-pointer">
+					<th v-if="checkbox_actions?.length > 0">
+						<input-checkbox v-model="check_page_rows"></input-checkbox>
+					</th>
 					<th v-for="(column, ci) in local_table_data.columns" :key="ci" @click="sortColumns(column, ci)">
 						<span class="inline-block">
 							<span class="flex flex-row items-center">
@@ -25,7 +29,7 @@
 					</th>
 				</tr>
 				<tr v-for="(row, ri) in local_table_data.rows" :key="ri">
-					
+					<td v-if="checkbox_actions?.length > 0"><input-checkbox v-model="row.selected"></input-checkbox></td>
 					<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
 						<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
 							<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22"></IconEdit>&nbsp;
@@ -47,28 +51,26 @@
 					</td>
 				</tr>
 				<tr>
+					<th v-if="checkbox_actions?.length > 0">
+						<input-checkbox v-model="check_page_rows"></input-checkbox>
+					</th>
 					<th v-for="(column, ci) in local_table_data.columns" :key="ci">{{ column.text }}</th>
 				</tr>
 			</table>
+
 			<p v-if="paginate">Total pages: {{ total_pages }} | Current Page: {{ current_page }}</p>
 			<ul v-if="paginate" class="flex gap-2">
-			<li v-if="current_page > 1">
-				<a href="javascript:;" @click="setCurrentPage(current_page - 1)">‹</a>
-			</li>
-			
-			<li v-for="page in visiblePages" :key="page">
-				<a 
-				href="javascript:;" 
-				@click="setCurrentPage(page)"
-				:class="{ 'active': page === current_page }"
-				>
-				{{ page }}
-				</a>
-			</li>
-			
-			<li v-if="current_page < total_pages">
-				<a href="javascript:;" @click="setCurrentPage(current_page + 1)">›</a>
-			</li>
+				<li v-if="current_page > 1">
+					<a href="javascript:;" @click="setCurrentPage(current_page - 1)">‹</a>
+				</li>
+				
+				<li v-for="page in visiblePages" :key="page">
+					<a href="javascript:;" @click="setCurrentPage(page)" :class="{ 'active': page === current_page }">{{ page }}</a>
+				</li>
+				
+				<li v-if="current_page < total_pages">
+					<a href="javascript:;" @click="setCurrentPage(current_page + 1)">›</a>
+				</li>
 			</ul>
 			<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="show_popup" :blocker="true" :scrollable="false" :close_outside="false" @closed="handleDeletePopup"></confirmation-popup>
 		</div>
@@ -92,8 +94,9 @@
 	import ConfirmationPopup from './ConfirmationPopup.vue';
 	import InputDropdown from '../inputs/InputDropdown.vue';
 	import InputSearch from '../inputs/InputSearch.vue';
+	import InputCheckbox from '../inputs/InputCheckbox.vue';
 
-	import { env } from '../../env.example';
+	import { env } from '../../env';
 
 
 	export interface DataTableInterface{
@@ -109,7 +112,12 @@
 		original_rows:any,
 		total_pages : number,
 		current_page:number,
-		filtered_rows:Array<object>
+		filtered_rows:Array<object>,
+		local_checkbox_actions: Array<string>,
+		checkbox_actions_dropdown: string,
+		check_page_rows:boolean,
+		handle_delete_multiple:boolean,
+		to_be_handled_rows_multiple: Array<number>
 	}
 	
 	export default defineComponent({
@@ -124,11 +132,13 @@
 			ConfirmationPopup,
 			InputDropdown,
 			InputSearch,
+			InputCheckbox,
 			IconTrash
 		},
 		props : {
 			data: Object,
-			paginate:Boolean
+			paginate:Boolean,
+			checkbox_actions: Array<string>
 		},
 		data(): DataTableInterface{
 			return {
@@ -149,7 +159,12 @@
 				original_rows: {},
 				total_pages: 1,
 				current_page:1,
-				filtered_rows: []
+				filtered_rows: [],
+				local_checkbox_actions : [],
+				checkbox_actions_dropdown: 'Choose Option',
+				check_page_rows: false,
+				handle_delete_multiple: false,
+				to_be_handled_rows_multiple: []
 			}
 		},
 		computed : {
@@ -177,12 +192,13 @@
 				this.local_table_data.rows = this.original_rows;
 				this.current_page = 1;
 				if(this.paginate){
+					this.checkCheckboxesForCurrentPage(false);
 					this.generatePages();
 				}
 				console.log(this.total_pages);
 			},
 			searched_term(): void{
-
+				this.checkCheckboxesForCurrentPage(false);
 				if(!this.searched_term){
 					this.filtered_rows = this.original_rows;
 				}else{
@@ -218,11 +234,14 @@
 				if(this.paginate) {
 					this.generatePages();
 				}
+			},
+			check_page_rows(check_checkboxes:boolean) : void{
+				this.checkCheckboxesForCurrentPage(check_checkboxes);
 			}
 		},
 		methods : {
 			sortColumns(column:object, index:number) : void{
-				
+				this.checkCheckboxesForCurrentPage(false);
 				if(this.last_index > -1){
 					this.local_table_data.columns[this.last_index].sort_visibility = '';
 				}
@@ -275,29 +294,54 @@
 			handleDelete(row_id:number) : void{
 				this.to_be_deleted_row_id = row_id;
 				this.show_popup = true;
+				this.handle_delete_multiple = false;
+				this.to_be_handled_rows_multiple = [];
+				this.checkCheckboxesForCurrentPage(false);
 			},
 
 			handleDeletePopup(obj:object) : void{
 				
-				if(this.to_be_deleted_row_id > -1){
+				if(this.to_be_deleted_row_id > -1 || (this.handle_delete_multiple && this.to_be_handled_rows_multiple.length > 0)){
 					
 					if(obj.closed && obj.value){
 						
-						const index = this.local_table_data.rows.findIndex(row => row.id === this.to_be_deleted_row_id);
+
+						if(this.handle_delete_multiple){
+							let temp_ids = [];
+							for(let z = 0 ; z < this.to_be_handled_rows_multiple.length ; z++){
+								temp_ids.push(this.to_be_handled_rows_multiple[z].id);
+								this.removeRowById(this.to_be_handled_rows_multiple[z].id);
+							}
+							
+							this.$emit('deleted_rows', temp_ids);
+							this.handle_delete_multiple = false;
+							this.to_be_handled_rows_multiple = [];
+
+						}else{
+
+							this.removeRowById(this.to_be_deleted_row_id);
+							this.generatePages();
+							this.$emit('deleted_row_id', this.to_be_deleted_row_id);
+
+						}
+
 						
-						if(index !== -1){
-							this.local_table_data.rows.splice(index, 1);
-						}
-						const original_rows_index = this.original_rows.findIndex(row => row.id === this.to_be_deleted_row_id);
-						if(original_rows_index !== -1){
-							this.original_rows.splice(original_rows_index, 1);
-						}
-						this.generatePages();
-						this.$emit('deleted_row_id', this.to_be_deleted_row_id);
 						
 					}
 				}
 
+			},
+
+			removeRowById(row_id:number) : void{
+				const index = this.local_table_data.rows.findIndex(row => row.id === row_id);
+						
+				if(index !== -1){
+					this.local_table_data.rows.splice(index, 1);
+				}
+				const original_rows_index = this.original_rows.findIndex(row => row.id === row_id);
+				if(original_rows_index !== -1){
+					this.original_rows.splice(original_rows_index, 1);
+				}
 			},
 
 			generatePages() : void{
@@ -320,7 +364,36 @@
 
 			setCurrentPage(page_number:number) : void{
 				this.current_page = page_number;
+				this.checkCheckboxesForCurrentPage(false);
 				this.generatePages();
+			},
+
+			handleCheckboxActions(checkbox_action:string) : void{
+				
+				let b_checkbox_action = checkbox_action.toLowerCase();
+
+				this.to_be_handled_rows_multiple = this.local_table_data.rows.filter((row) => {
+					if(row.selected){
+						return true;
+					}
+					return false;
+				});
+				
+				if(b_checkbox_action === 'delete'){
+					this.show_popup = true;
+					this.handle_delete_multiple = true;
+				}else if(b_checkbox_action === 'export xlsx'){
+
+				}
+			},
+
+			checkCheckboxesForCurrentPage(status:boolean): void{
+				if(status === false){
+					this.check_page_rows = false;
+				}
+				this.local_table_data.rows.forEach((row) => {
+					row.selected = status;
+				});
 			}
 
 		},
@@ -328,8 +401,17 @@
 		mounted : function(){
 			
 			if(common.isset(this.data)){
+
 				this.local_table_data = this.data || {};
+
+				if(common.isset(this.checkbox_actions)){
+					this.local_table_data.rows.forEach(row => {
+						row.selected = false;
+					});
+				}
+
 			}
+			
 
 			if(!common.isObjectEmpty(this.local_table_data)){
 				if(common.isset(this.local_table_data.columns)){
@@ -340,7 +422,11 @@
 			}
 			
 			this.original_rows = this.local_table_data.rows;
-			this.filtered_rows = this.original_rows; // Initialize filtered_rows
+			this.filtered_rows = this.original_rows;
+
+			if(common.isset(this.checkbox_actions)){
+				this.local_checkbox_actions = this.checkbox_actions || [];
+			}
 			
 			if(this.paginate){
 				this.generatePages();

@@ -3,6 +3,7 @@
 		<span class="flex items-center gap-2">
 			<div class="inline-flex items-center">
 				<label class="flex items-center cursor-pointer relative">
+					<br>
 					<input type="checkbox" class="peer h-5 w-5 cursor-pointer transition-all border-1 border-input-border hover:border-input-border-hover appearance-none rounded shadow  checked:bg-deskmint-green-dark checked:bg-deskmint-green-dark" id="checkbox" v-model="input_value" @input="EmitModel" :class="{'border-red-500!':!is_valid && show_errors}" />
 					<span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
@@ -11,7 +12,7 @@
 					</span>
 				</label>
 			</div> 
-			<label for="checkbox">Remember me</label>
+			<label v-if="show_text" for="checkbox">Remember me</label>
 		</span>
 	</span>
 </template>
@@ -43,6 +44,9 @@
 			},
 			error : {
 				type :String
+			},
+			show_text: {
+				type:Boolean
 			}
 		},
 
@@ -61,7 +65,9 @@
 		},
 
 		watch: {
-			
+			modelValue(newValue) {
+        		this.input_value = newValue;
+    		}
 		},
 
 		computed : {

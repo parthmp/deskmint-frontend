@@ -78,6 +78,7 @@
 			
 			updatePerPage(pp:number) : void{
 				this.$emit('update:modelValue', pp);
+				this.$emit('changed', pp);
 				this.show_menu = false;
 			},
 			sanitizeInput(in_string:string) : string{
