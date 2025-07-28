@@ -49,7 +49,7 @@
 				type:Boolean
 			},
 			border_white: {
-				type:String
+				type:Boolean
 			}
 		},
 

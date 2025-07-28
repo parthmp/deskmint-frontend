@@ -3,10 +3,10 @@
 		<label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
 		<div class="relative grow">
 			<div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-				<IconSearch class="ml-[10px] w-5 h-5 text-default-text"></IconSearch>
+				<IconSearch class="ml-[0px] w-5 h-5 text-default-text"></IconSearch>
 			</div>
 			
-			<input type="text" id="default-search" v-model="search_value" @input="updateValue" class="block w-full !pl-10 pr-12 py-3 border rounded-[5px]" placeholder="Search"/>
+			<input type="text" id="default-search" v-model="search_value" @input="updateValue" class="block w-full pl-10! py-3 border rounded-[5px]" placeholder="Search"/>
 
 			<button v-if="!use_default_x && search_value && search_value.length > 0" @click="clearSearch" type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-deskmint-green-dark transition-colors focus:outline-none">
 				<IconX class="w-5 h-5"></IconX>

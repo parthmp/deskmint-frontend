@@ -4,7 +4,7 @@
 		<div class="grid grid-cols-1 lg:grid-cols-12 items-center">
 			<div class="lg:col-span-9">
 				<div class="lg:flex lg:gap-2 lg:items-center">
-					<div class=""><input-dropdown v-if="paginate" :options="dropdown_options" v-model="per_page"></input-dropdown></div>
+					<div class=""><input-dropdown v-if="paginate" :options="dropdown_options" v-model="local_per_page"></input-dropdown></div>
 					<div class="mt-[10px] lg:mt-[0px]" v-if="checkbox_actions?.length > 0"><input-dropdown v-if="paginate" :options="checkbox_actions" v-model="checkbox_actions_dropdown" @changed="handleCheckboxActions"></input-dropdown></div>
 				</div>
 			</div>
@@ -132,7 +132,7 @@
 		to_be_deleted_row_id: number,
 		show_popup:boolean,
 		dropdown_options: any,
-		per_page:number,
+		local_per_page:number,
 		searched_term:string,
 		original_rows:any,
 		total_pages : number,
@@ -165,7 +165,9 @@
 		props : {
 			data: Object,
 			paginate:Boolean,
-			checkbox_actions: Array<string>
+			checkbox_actions: Array<string>,
+			static:Boolean,
+			per_page:Number
 		},
 		data(): DataTableInterface{
 			return {
@@ -181,7 +183,7 @@
 				dropdown_options: [
 					2, 5, 10, 15, 35, 50, 100
 				],
-				per_page: env.DEFAULT_TABLE_ROWS,
+				local_per_page: env.DEFAULT_TABLE_ROWS,
 				searched_term:'',
 				original_rows: {},
 				total_pages: 1,
@@ -214,8 +216,8 @@
 			}
 		},
 		watch: {
-			per_page() : void{
-				console.log(this.per_page);
+			local_per_page() : void{
+				console.log(this.local_per_page);
 				this.local_table_data.rows = this.original_rows;
 				this.current_page = 1;
 				if(this.paginate){
@@ -375,15 +377,15 @@
 
 				const data_to_paginate = this.searched_term === '' ? this.original_rows : this.filtered_rows;
     
-				let pages = (data_to_paginate.length / this.per_page);
+				let pages = (data_to_paginate.length / this.local_per_page);
 				this.total_pages = Math.ceil(pages);
 				
 				if (this.current_page > this.total_pages) {
 					this.current_page = this.total_pages;
 				}
 				
-				const startIndex = (this.current_page - 1) * this.per_page;
-				const endIndex = startIndex + this.per_page;
+				const startIndex = (this.current_page - 1) * this.local_per_page;
+				const endIndex = startIndex + this.local_per_page;
 				
 				this.local_table_data.rows = data_to_paginate.slice(startIndex, endIndex);
 				
@@ -495,6 +497,10 @@
 					});
 				}
 
+			}
+
+			if(common.isset(this.per_page)){
+				this.local_per_page = this.per_page || env.DEFAULT_TABLE_ROWS;
 			}
 			
 
