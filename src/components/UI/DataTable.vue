@@ -137,9 +137,7 @@ export interface DataTableInterface{
 	to_be_handled_rows_multiple: Array<number>,
 	local_static : boolean,
 	metadata:object,
-	temp_sorted_column:object,
-	is_initial_load:boolean,
-	skip_watchers:boolean
+	temp_sorted_column:object
 }
 
 export default defineComponent({
@@ -200,9 +198,7 @@ export default defineComponent({
 				current_page: null,
 				sorted_column: null
 			},
-			temp_sorted_column: {},
-			is_initial_load: true,
-			skip_watchers: false
+			temp_sorted_column: {}
 		}
 	},
 	computed : {
@@ -225,17 +221,17 @@ export default defineComponent({
 	},
 	watch: {
 		local_per_page() : void{
-			if(!this.skip_watchers && !this.is_initial_load){
-				this.current_page = 1;
-				this.resetColumnSort();
-			}
+			
+			this.current_page = 1;
+			this.resetColumnSort();
+			
 			
 			if(this.local_static === true){
 				this.local_table_data.rows = this.original_rows;
 			}else{
-				if(!this.skip_watchers) {
-					this.updateUrlState('per_page');
-				}
+				
+				this.sendData('per_page');
+				
 			}
 			
 			if(this.paginate){
@@ -247,17 +243,17 @@ export default defineComponent({
 		searched_term(): void{
 			this.checkCheckboxesForCurrentPage(false);
 			
-			if(!this.skip_watchers && !this.is_initial_load){
-				this.resetColumnSort();
-				this.current_page = 1;
-			}
+			
+			this.resetColumnSort();
+			this.current_page = 1;
+			
 			
 			if(this.local_static === true){
 				this.applySearch();
 			}else{
-				if(!this.skip_watchers) {
-					this.updateUrlState('search');
-				}
+				
+				this.sendData('search');
+				
 			}
 			
 			if(this.paginate) {
@@ -276,11 +272,7 @@ export default defineComponent({
 		}
 	},
 	methods : {
-		
-		// Restore the original v-model approach for search
-		// Remove this method since we'll go back to the watcher
-		
-		// Apply search filtering
+
 		applySearch(): void {
 			if(!this.searched_term){
 				this.filtered_rows = this.original_rows;
@@ -309,17 +301,18 @@ export default defineComponent({
 			}
 		},
 		
-		// Update URL state for non-static tables
-		updateUrlState(type: string): void {
+		
+		sendData(type: string): void {
+			
 			if(this.local_static === false) {
-				let json_response = btoa(JSON.stringify({
+				let json_response = {
 					type: type,
 					per_page: this.local_per_page,
 					searched_term: this.searched_term,
 					current_page: this.current_page,
 					sorted_column: this.temp_sorted_column
-				}));
-				this.$router.push('/' + this.url_slug + '/page/' + json_response);
+				};
+				this.$emit('handle_api', json_response);
 			}
 		},
 
@@ -375,10 +368,10 @@ export default defineComponent({
 				}
 			}else{
 				this.current_page = 1;
-				if(!this.skip_watchers) {
-					this.updateUrlState('sort');
-					this.current_page = 1;
-				}
+				
+				this.sendData('sort');
+				this.current_page = 1;
+				
 			}
 			
 			this.last_index = index;
@@ -451,7 +444,7 @@ export default defineComponent({
 			this.checkCheckboxesForCurrentPage(false);
 			
 			if(this.local_static === false){
-				this.updateUrlState('page');
+				this.sendData('page');
 			}
 			
 			this.generatePages();
@@ -538,62 +531,6 @@ export default defineComponent({
 			this.$router.push('/'+this.url_slug+'/edit/'+row_id);
 		},
 
-		setFields(newVal:string) : void{
-			try {
-				let decoded = atob(newVal);
-				let json = JSON.parse(decoded);
-				
-				this.resetMetdata();
-				this.metadata.per_page = json.per_page;
-				this.metadata.sorted_column = json.sorted_column;
-				this.metadata.searched_term = json.searched_term;
-				this.metadata.current_page = json.page_number || json.current_page;
-
-				this.hydrateFields();
-			}catch(error){
-				this.$router.push('/'+this.url_slug);
-			}
-		},
-
-		resetMetdata() : void{
-			this.metadata.per_page = null;
-			this.metadata.searched_term = null;
-			this.metadata.sorted_column = null;
-			this.metadata.current_page = null;
-		},
-
-		hydrateFields() : void{
-			if(common.isset(this.metadata)){
-				// Skip watchers during hydration
-				this.skip_watchers = true;
-				
-				if(common.isset(this.metadata.per_page)){
-					this.local_per_page = this.metadata.per_page;
-				}
-				
-				if(common.isset(this.metadata.searched_term)){
-					this.searched_term = this.metadata.searched_term;
-					if(this.local_static === true) {
-						this.applySearch();
-					}
-				}
-				
-				if(common.isset(this.metadata.sorted_column)){
-					this.temp_sorted_column = this.metadata.sorted_column;
-					this.setColumnSort(this.metadata.sorted_column.label, this.metadata.sorted_column.sort_visibility);
-				}
-				
-				if(common.isset(this.metadata.current_page)){
-					this.current_page = this.metadata.current_page;
-				}
-				
-				// Re-enable watchers
-				this.$nextTick(() => {
-					this.skip_watchers = false;
-				});
-			}
-		},
-		
 		setColumnSort(column_label:string, visibility:string) : void{
 			for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
 				if(this.local_table_data.columns[z].label === column_label){
@@ -656,18 +593,12 @@ export default defineComponent({
 			}
 		}
 
-		// Load state from URL
-		this.setFields(this.$route.params.id);
 		
 		// Generate pages after state is loaded
 		if(this.paginate){
 			this.generatePages();
 		}
 
-		// Mark initialization complete
-		this.$nextTick(() => {
-			this.is_initial_load = false;
-		});
 	}
 });
 </script>

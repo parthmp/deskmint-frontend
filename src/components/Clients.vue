@@ -281,9 +281,7 @@
 
 					let decoded = atob(newVal);
 					let json = JSON.parse(decoded);
-					console.log('API CALL START');
-					console.log(json);
-					console.log('API CALL END');
+					
 					/* handle axios here for fetching data */
 
 					if(json.searched_term === 'searched'){

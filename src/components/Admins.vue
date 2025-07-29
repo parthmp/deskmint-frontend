@@ -3,7 +3,7 @@
     <div class="card">
         <h1 class="text-2xl!">Admins</h1>
         <br>
-        <data-table :data="table_data" :per_page="per_page" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :total_pages="5" :static="false" url_slug="admins"></data-table>
+        <data-table :data="table_data" :per_page="per_page" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :total_pages="5" :static="false" url_slug="admins" @handle_api="handleAPI"></data-table>
         
     </div>
 	<br>
@@ -259,9 +259,7 @@
 		},
 		mixins: [RedirectToLoginForNoTokens],
 		watch: {
-			"$route.params.id"(newVal, oldVal): void{
-				this.handleAPI(newVal);
-			}
+			
 		},
 		methods : {
 			handleDeleted(row_id:object) : void{
@@ -276,37 +274,31 @@
 				console.log('===');
 				/* handle axios here for multiple deletes */
 			},
-			handleAPI(newVal:string) : void{
-				try {
+			handleAPI(json_object:object) : void{
+				
+				
+				console.log('API CALL START');
+				console.log(json_object);
+				console.log('API CALL END');
+				/* handle axios here for fetching data */
 
-					let decoded = atob(newVal);
-					let json = JSON.parse(decoded);
-					console.log('API CALL START');
-					console.log(json);
-					console.log('API CALL END');
-					/* handle axios here for fetching data */
+				/*
+					this.table_data.rows.push({
+						id: 400,
+						index: 400,
+						first_name: 'searched tony',
+						last_name: 'Statk',
+						status: {
+							type:'label',
+							text: 'active'
+						},
+						date: '1950-05-27',
+						actions: ['edit', 'delete']
+					});
+		
+				*/
 
-					if(json.searched_term === 'searched'){
-						this.table_data.rows.push({
-							id: 400,
-							index: 400,
-							first_name: 'searched tony',
-							last_name: 'Statk',
-							status: {
-								type:'label',
-								text: 'active'
-							},
-							date: '1950-05-27',
-							actions: ['edit', 'delete']
-						});
-			
-					}
-
-				}catch(error){
-
-					this.$router.push('/admins');
-					
-				}
+				
 			}
 
 		},
@@ -325,7 +317,7 @@
 						});
 			}, 200);*/
 
-			
+			/*
 			if(common.isset(this.$route.params.id)){
 				this.handleAPI(this.$route.params.id);
 			}else{
@@ -333,7 +325,7 @@
 					per_page: this.per_page,
 					current_page: 1
 				})));
-			}
+			}*/
 			
 		}
 

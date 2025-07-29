@@ -35,7 +35,7 @@ const routes = [
 			},
 			{
 				path:'/clients/page/:id',
-				component: Admins
+				component: Clients
 			},
 			{
 				path:'/admins',
