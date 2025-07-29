@@ -1,5 +1,4 @@
 <template>
-
 	<div>
 		<div class="grid grid-cols-1 lg:grid-cols-12 items-center">
 			<div class="lg:col-span-9">
@@ -9,7 +8,9 @@
 				</div>
 			</div>
 			
-			<div class="lg:col-span-3 mt-[25px]! lg:mt-[0px]!"><input-search v-model="searched_term"></input-search></div>
+			<div class="lg:col-span-3 mt-[25px]! lg:mt-[0px]!">
+				<input-search v-model="searched_term"></input-search>
+			</div>
 		</div>
 		<br>
 		<div class="table-container">
@@ -31,7 +32,6 @@
 									</span>
 								</span>
 							</span>
-							
 						</th>
 					</tr>
 				</thead>
@@ -68,644 +68,606 @@
 					</tr>
 				</tfoot>
 			</table>
-
-			
 			
 			<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="show_popup" :blocker="true" :scrollable="false" :close_outside="false" @closed="handleDeletePopup"></confirmation-popup>
 		</div>
 		<div class="mt-[15px]! block lg:flex lg:items-center lg:gap-5">
-
-				<p v-if="paginate" class="text-center mb-[15px]! lg:mb-[0px]!">Total pages: {{ local_total_pages }} | Current Page: {{ current_page }}</p>
-				<span class="lg:grow">
-					<ul v-if="paginate" class="flex gap-2 lg:justify-end justify-center">
-						<li v-if="current_page > 1">
-							<a href="javascript:;" class="block px-[5px]! lg:px-[10px]! py-[8.5px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-deskmint-original-dark-plus hover:text-white!" @click="setCurrentPage(current_page - 1)">
-								<IconChevronLeft :size="24"></IconChevronLeft>
-							</a>
-						</li>
-						
-						<li v-for="page in visiblePages" :key="page">
-							<a href="javascript:;" class="block px-[14px]! lg:px-[18px]! py-[8px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-transparent" @click="setCurrentPage(page)" :class="{'page-active': page === current_page, 'bg-deskmint-original-dark-plus': page === current_page}">{{ page }}</a>
-						</li>
-						
-						<li v-if="current_page < local_total_pages">
-							<a href="javascript:;" class="block px-[5px]! lg:px-[10px]! py-[8.5px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-deskmint-original-dark-plus hover:text-white!" @click="setCurrentPage(current_page + 1)">
-								<IconChevronRight :size="24"></IconChevronRight>
-							</a>
-						</li>
-					</ul>
-				</span>
-			</div>
+			<p v-if="paginate" class="text-center mb-[15px]! lg:mb-[0px]!">Total pages: {{ local_total_pages }} | Current Page: {{ current_page }}</p>
+			<span class="lg:grow">
+				<ul v-if="paginate" class="flex gap-2 lg:justify-end justify-center">
+					<li v-if="current_page > 1">
+						<a href="javascript:;" class="block px-[5px]! lg:px-[10px]! py-[8.5px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-deskmint-original-dark-plus hover:text-white!" @click="setCurrentPage(current_page - 1)">
+							<IconChevronLeft :size="24"></IconChevronLeft>
+						</a>
+					</li>
+					
+					<li v-for="page in visiblePages" :key="page">
+						<a href="javascript:;" class="block px-[14px]! lg:px-[18px]! py-[8px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-transparent" @click="setCurrentPage(page)" :class="{'page-active': page === current_page, 'bg-deskmint-original-dark-plus': page === current_page}">{{ page }}</a>
+					</li>
+					
+					<li v-if="current_page < local_total_pages">
+						<a href="javascript:;" class="block px-[5px]! lg:px-[10px]! py-[8.5px]! transition-all duration-300 rounded-lg bg-deskmint-green-light hover:bg-deskmint-original-dark-plus hover:text-white!" @click="setCurrentPage(current_page + 1)">
+							<IconChevronRight :size="24"></IconChevronRight>
+						</a>
+					</li>
+				</ul>
+			</span>
+		</div>
 	</div>
-	
-
 </template>
+
 <style scoped>
 	@reference "tailwindcss/theme";
 	.page-active{
 		@apply bg-transparent hover:text-[initial]!;
 	}
 </style>
+
 <script lang="ts">
+import { IconTriangleInvertedFilled, IconTriangleInverted, IconTriangleFilled, IconEdit, IconTrash, IconTriangle, IconChevronLeft, IconChevronRight } from '@tabler/icons-vue';
+import { defineComponent } from 'vue';
+import common from '../../helpers/common';
 
+import InputButton from '../inputs/InputButton.vue';
+import ConfirmationPopup from './ConfirmationPopup.vue';
+import InputDropdown from '../inputs/InputDropdown.vue';
+import InputSearch from '../inputs/InputSearch.vue';
+import InputCheckbox from '../inputs/InputCheckbox.vue';
+import { env } from '../../env';
+import { toastEvents } from '../../events/toastEvents';
 
-	
-	import { IconTriangleInvertedFilled, IconTriangleInverted, IconTriangleFilled, IconEdit, IconTrash, IconTriangle, IconChevronLeft, IconChevronRight } from '@tabler/icons-vue';
-	import { defineComponent } from 'vue';
-	import common from '../../helpers/common';
+export interface DataTableInterface{
+	local_table_data : object,
+	sort_column: string,
+	sort_direction: string,
+	last_index: number,
+	to_be_deleted_row_id: number,
+	show_popup:boolean,
+	dropdown_options: any,
+	local_per_page:number,
+	searched_term:string,
+	original_rows:any,
+	local_total_pages : number,
+	current_page:number,
+	filtered_rows:Array<object>,
+	local_checkbox_actions: Array<string>,
+	checkbox_actions_dropdown: string,
+	check_page_rows:boolean,
+	handle_delete_multiple:boolean,
+	to_be_handled_rows_multiple: Array<number>,
+	local_static : boolean,
+	metadata:object,
+	temp_sorted_column:object,
+	is_initial_load:boolean,
+	skip_watchers:boolean
+}
 
-	import InputButton from '../inputs/InputButton.vue';
-
-	import ConfirmationPopup from './ConfirmationPopup.vue';
-	import InputDropdown from '../inputs/InputDropdown.vue';
-	import InputSearch from '../inputs/InputSearch.vue';
-	import InputCheckbox from '../inputs/InputCheckbox.vue';
-	import { env } from '../../env';
-	import { toastEvents } from '../../events/toastEvents';
-
-
-	export interface DataTableInterface{
-		local_table_data : object,
-		sort_column: string,
-    	sort_direction: string,
-		last_index: number,
-		to_be_deleted_row_id: number,
-		show_popup:boolean,
-		dropdown_options: any,
-		local_per_page:number,
-		searched_term:string,
-		original_rows:any,
-		local_total_pages : number,
-		current_page:number,
-		filtered_rows:Array<object>,
-		local_checkbox_actions: Array<string>,
-		checkbox_actions_dropdown: string,
-		check_page_rows:boolean,
-		handle_delete_multiple:boolean,
-		to_be_handled_rows_multiple: Array<number>,
-		local_static : boolean,
-		metadata:object,
-		temp_sorted_column:object
-	}
-	
-	export default defineComponent({
-		name : 'DataTable',
-		components : {
-			IconTriangleInvertedFilled,
-			IconTriangleInverted,
-			IconTriangleFilled,
-			IconEdit,
-			IconTriangle,
-			InputButton,
-			ConfirmationPopup,
-			InputDropdown,
-			InputSearch,
-			InputCheckbox,
-			IconChevronLeft,
-			IconChevronRight,
-			IconTrash
-		},
-		props : {
-			data: Object,
-			paginate:Boolean,
-			checkbox_actions: Array<string>,
-			static:Boolean,
-			per_page:Number,
-			total_pages:Number,
-			url_slug: String
-		},
-		data(): DataTableInterface{
-			return {
-				local_table_data : {
-					columns: [],
-					rows : []
-				},
-				sort_column: '',
-        		sort_direction: 'asc',
-				last_index: -1,
-				to_be_deleted_row_id: -1,
-				show_popup: false,
-				dropdown_options: [
-					2, 5, 10, 15, 35, 50, 100
-				],
-				local_per_page: env.DEFAULT_TABLE_ROWS,
-				searched_term:'',
-				original_rows: {},
-				local_total_pages: 1,
-				current_page:1,
-				filtered_rows: [],
-				local_checkbox_actions : [],
-				checkbox_actions_dropdown: 'Choose Option',
-				check_page_rows: false,
-				handle_delete_multiple: false,
-				to_be_handled_rows_multiple: [],
-				local_static: true,
-				metadata: {
-					per_page: null,
-					searched_term: null,
-					current_page: null,
-					sorted_column: null
-				},
-				temp_sorted_column: {}
+export default defineComponent({
+	name : 'DataTable',
+	components : {
+		IconTriangleInvertedFilled,
+		IconTriangleInverted,
+		IconTriangleFilled,
+		IconEdit,
+		IconTriangle,
+		InputButton,
+		ConfirmationPopup,
+		InputDropdown,
+		InputSearch,
+		InputCheckbox,
+		IconChevronLeft,
+		IconChevronRight,
+		IconTrash
+	},
+	props : {
+		data: Object,
+		paginate:Boolean,
+		checkbox_actions: Array<string>,
+		static:Boolean,
+		per_page:Number,
+		total_pages:Number,
+		url_slug: String
+	},
+	data(): DataTableInterface{
+		return {
+			local_table_data : {
+				columns: [],
+				rows : []
+			},
+			sort_column: '',
+			sort_direction: 'asc',
+			last_index: -1,
+			to_be_deleted_row_id: -1,
+			show_popup: false,
+			dropdown_options: [
+				2, 5, 10, 15, 35, 50, 100
+			],
+			local_per_page: env.DEFAULT_TABLE_ROWS,
+			searched_term:'',
+			original_rows: {},
+			local_total_pages: 1,
+			current_page:1,
+			filtered_rows: [],
+			local_checkbox_actions : [],
+			checkbox_actions_dropdown: 'Choose Option',
+			check_page_rows: false,
+			handle_delete_multiple: false,
+			to_be_handled_rows_multiple: [],
+			local_static: true,
+			metadata: {
+				per_page: null,
+				searched_term: null,
+				current_page: null,
+				sorted_column: null
+			},
+			temp_sorted_column: {},
+			is_initial_load: true,
+			skip_watchers: false
+		}
+	},
+	computed : {
+		visiblePages(): Array<number>{
+			const pages = [];
+			const max_visible = 5;
+			let start = Math.max(1, this.current_page - Math.floor(max_visible / 2));
+			let end = Math.min(this.local_total_pages, start + max_visible - 1);
+			
+			if(end - start + 1 < max_visible) {
+				start = Math.max(1, end - max_visible + 1);
 			}
-		},
-		computed : {
-			visiblePages(): Array<number>{
-
-				const pages = [];
-				const max_visible = 5;
-				let start = Math.max(1, this.current_page - Math.floor(max_visible / 2));
-				let end = Math.min(this.local_total_pages, start + max_visible - 1);
-				
-				if(end - start + 1 < max_visible) {
-					start = Math.max(1, end - max_visible + 1);
-				}
-				
-				for(let i = start; i <= end; i++) {
-					pages.push(i);
-				}
-				
-				return pages;
+			
+			for(let i = start; i <= end; i++) {
+				pages.push(i);
 			}
-		},
-		watch: {
-			local_per_page() : void{
+			
+			return pages;
+		}
+	},
+	watch: {
+		local_per_page() : void{
+			if(!this.skip_watchers && !this.is_initial_load){
 				this.current_page = 1;
 				this.resetColumnSort();
-				if(this.local_static === true){
-
-					this.local_table_data.rows = this.original_rows;
-					
-
-				}else{
-
-					let json_response = btoa(JSON.stringify({
-						type: 'per_page',
-						per_page : this.local_per_page,
-						searched_term : this.searched_term
-					}));
-					this.$router.push('/'+this.url_slug+'/page/'+json_response);
-					
-				}
-				
-				if(this.paginate){
-					this.checkCheckboxesForCurrentPage(false);
-					this.generatePages();
-				}
-				
-				
-			},
-			total_pages() : void{
-				if(this.local_static === false){
-					this.local_total_pages = this.total_pages;
-				}
-			},
-			searched_term(): void{
-				this.checkCheckboxesForCurrentPage(false);
-				this.resetColumnSort();
-				if(this.local_static === true){
-
-					if(!this.searched_term){
-						this.filtered_rows = this.original_rows;
-					}else{
-						const search_term_temp = this.searched_term.toLowerCase();
-						this.filtered_rows = this.original_rows.filter(row => {
-
-							let found = false;
-
-							for(let z = 0; z < this.local_table_data.columns.length; z++){
-
-								let column = this.local_table_data.columns[z];
-								if(column.label === 'actions' || column.label === 'index'){
-									continue;
-								}
-
-								let cell = row[column.label];
-								
-								if (typeof cell === 'object' && cell?.text){
-									if (cell.text.toLowerCase().includes(search_term_temp)) {
-										found = true;
-										break;
-									}
-								}else if(cell?.toString().toLowerCase().includes(search_term_temp)){
-									found = true;
-									break;
-								}
-							}
-							return found;
-						});
-					}
-
-					
-
-				}else{
-					
-					let json_response = btoa(JSON.stringify({
-						type: 'search',
-						per_page : this.local_per_page,
-						searched_term : this.searched_term
-					}));
-					this.$router.push('/'+this.url_slug+'/page/'+json_response);
-				}
-				
-				this.current_page = 1;
-				if(this.paginate) {
-					this.generatePages();
-				}
-				
-			},
-			check_page_rows(check_checkboxes:boolean) : void{
-				this.checkCheckboxesForCurrentPage(check_checkboxes);
-			}
-		},
-		methods : {
-			sortColumns(column:object, index:number) : void{
-				this.checkCheckboxesForCurrentPage(false);
-				if(this.last_index > -1){
-					this.local_table_data.columns[this.last_index].sort_visibility = '';
-				}
-
-				this.sort_column = column.label;
-				this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc';
-				column.sort_visibility = this.sort_direction;
-				this.temp_sorted_column = column;
-				if(this.local_static === true){
-
-					const datasetToSort = this.searched_term === '' ? this.original_rows : this.filtered_rows;
-				
-					datasetToSort.sort((a, b) => {
-
-						let valueA = '';
-						let valueB = '';
-
-						if(typeof a[column.label] === 'object'){
-							valueA = a[column.label].text;
-						} else {
-							valueA = a[column.label];
-						}
-
-						if(typeof b[column.label] === 'object'){
-							valueB = b[column.label].text;
-						}else{
-							valueB = b[column.label];
-						}
-
-						if (typeof valueA === 'string') {
-							valueA = valueA.toLowerCase();
-							valueB = valueB.toLowerCase();
-						}
-						
-						if(this.sort_direction === 'asc'){
-							return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-						}else{
-							return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
-						}
-
-					});
-
-					if(this.paginate){
-						this.generatePages();
-					}else{
-						this.local_table_data.rows = datasetToSort;
-					}
-
-					
-
-				}else{
-
-					let json_response = btoa(JSON.stringify({
-						type: 'sort',
-						per_page : this.local_per_page,
-						sorted_column: column,
-						searched_term : this.searched_term
-					}));
-
-					this.$router.push('/'+this.url_slug+'/page/'+json_response);
-					this.current_page = 1;
-				}
-
-				this.last_index = index;
-				
-			},
-
-			handleDelete(row_id:number) : void{
-				this.to_be_deleted_row_id = row_id;
-				this.show_popup = true;
-				this.handle_delete_multiple = false;
-				this.to_be_handled_rows_multiple = [];
-				this.checkCheckboxesForCurrentPage(false);
-			},
-
-			handleDeletePopup(obj:object) : void{
-				
-				if(this.to_be_deleted_row_id > -1 || (this.handle_delete_multiple && this.to_be_handled_rows_multiple.length > 0)){
-					
-					if(obj.closed && obj.value){
-						
-
-						if(this.handle_delete_multiple){
-							let temp_ids = [];
-							for(let z = 0 ; z < this.to_be_handled_rows_multiple.length ; z++){
-								temp_ids.push(this.to_be_handled_rows_multiple[z].id);
-								this.removeRowById(this.to_be_handled_rows_multiple[z].id);
-							}
-							
-							this.$emit('deleted_rows', temp_ids);
-							this.handle_delete_multiple = false;
-							this.to_be_handled_rows_multiple = [];
-
-						}else{
-
-							this.removeRowById(this.to_be_deleted_row_id);
-							this.generatePages();
-							this.$emit('deleted_row_id', this.to_be_deleted_row_id);
-
-						}
-
-						
-						
-					}
-				}
-
-			},
-
-			removeRowById(row_id:number) : void{
-				const index = this.local_table_data.rows.findIndex(row => row.id === row_id);
-						
-				if(index !== -1){
-					this.local_table_data.rows.splice(index, 1);
-				}
-				const original_rows_index = this.original_rows.findIndex(row => row.id === row_id);
-				if(original_rows_index !== -1){
-					this.original_rows.splice(original_rows_index, 1);
-				}
-			},
-
-			generatePages() : void{
-
-				if(this.local_static === true){
-
-					const data_to_paginate = this.searched_term === '' ? this.original_rows : this.filtered_rows;
-    
-					let pages = (data_to_paginate.length / this.local_per_page);
-					this.local_total_pages = Math.ceil(pages);
-					
-					if (this.current_page > this.local_total_pages) {
-						this.current_page = this.local_total_pages;
-					}
-					
-					const startIndex = (this.current_page - 1) * this.local_per_page;
-					const endIndex = startIndex + this.local_per_page;
-					
-					this.local_table_data.rows = data_to_paginate.slice(startIndex, endIndex);
-
-				}
-
-				
-				
-			},
-
-			setCurrentPage(page_number:number) : void{
-				this.current_page = page_number;
-				
-				this.checkCheckboxesForCurrentPage(false);
-				if(this.local_static === false){
-					
-					let json_response = btoa(JSON.stringify({
-						type: 'page',
-						page_number:this.current_page,
-						per_page : this.local_per_page,
-						searched_term : this.searched_term,
-						sorted_column: this.temp_sorted_column
-					}));
-					this.$router.push('/'+this.url_slug+'/page/'+json_response);
-				}
-				
-				this.generatePages();
-			},
-
-			handleCheckboxActions(checkbox_action:string) : void{
-				this.resetCheckboxDropdown();
-				let b_checkbox_action = checkbox_action.toLowerCase();
-
-				this.to_be_handled_rows_multiple = this.local_table_data.rows.filter((row) => {
-					if(row.selected){
-						return true;
-					}
-					return false;
-				});
-				
-				if(b_checkbox_action === 'delete'){
-					
-					if(this.to_be_handled_rows_multiple.length === 0){
-						toastEvents.emit('toast', {
-							type: 'error',
-							message: 'Please select rows to delete'
-						});
-					}else{
-						this.show_popup = true;
-						this.handle_delete_multiple = true;
-					}
-					
-				}else if(b_checkbox_action === 'export csv'){
-					
-					if(this.to_be_handled_rows_multiple.length === 0){
-						toastEvents.emit('toast', {
-							type: 'error',
-							message: 'Please select rows to export'
-						});
-						this.resetCheckboxDropdown();
-					}else{
-						this.exportToCSV(this.to_be_handled_rows_multiple);
-					}
-				}
-			},
-
-			checkCheckboxesForCurrentPage(status:boolean): void{
-				if(status === false){
-					this.check_page_rows = false;
-				}
-				this.local_table_data.rows.forEach((row) => {
-					row.selected = status;
-				});
-			},
-
-			exportToCSV(selected_rows:any) {
-				
-				const headers = this.local_table_data.columns
-					.filter(column => column.label !== 'actions')
-					.map(column => column.text);
-				
-				
-				const csvRows = selected_rows.map(row => {
-					return this.local_table_data.columns
-						.filter(column => column.label !== 'actions')
-						.map(column => {
-							let value = row[column.label];
-							if(typeof value === 'object' && value?.text) {
-								value = value.text;
-							}
-							return value && value.toString().includes(',') ? `"${value.toString().replace(/"/g, '""')}"` : value;
-						});
-				});
-				
-				
-				const csvContent = [headers, ...csvRows].map(row => row.join(',')).join('\n');
-				
-				
-				const blob = new Blob([csvContent], { type: 'text/csv' });
-				const url = window.URL.createObjectURL(blob);
-				const a = document.createElement('a');
-				a.href = url;
-				a.download = `export_${new Date().toISOString()}.csv`;
-				a.click();
-				window.URL.revokeObjectURL(url);
-				
-				this.checkCheckboxesForCurrentPage(false);
-
-
-			},
-
-			resetCheckboxDropdown() : void{
-				this.checkbox_actions_dropdown = 'Choose Option';
-			},
-
-			handleEdit(row_id:number) : void{
-				this.$router.push('/'+this.url_slug+'/edit/'+row_id);
-			},
-
-			setFields(newVal:string) : void{
-				try {
-
-					let decoded = atob(newVal);
-					let json = JSON.parse(decoded);
-					
-					this.resetMetdata();
-					this.metadata.per_page = json.per_page;
-					this.metadata.sorted_column = json.sorted_column;
-					this.metadata.searched_term = json.searched_term;
-					this.metadata.current_page = json.page_number;
-
-					this.hydrateFields();
-
-				}catch(error){
-
-					this.$router.push('/admins');
-					
-				}
-			},
-
-			resetMetdata() : void{
-				this.metadata.per_page = null;
-				this.metadata.searched_term = null;
-				this.metadata.sorted_column = null;
-				this.metadata.current_page = null;
-			},
-
-			hydrateFields() : void{
-				console.log(this.metadata);
-				if(common.isset(this.metadata)){
-					
-					if(common.isset(this.metadata.per_page)){
-						this.local_per_page = this.metadata.per_page;
-					}
-					
-					if(common.isset(this.metadata.searched_term)){
-						
-						this.searched_term = this.metadata.searched_term;
-						
-						console.log(this.searched_term);
-					}
-					if(common.isset(this.metadata.current_page)){
-						this.current_page = this.metadata.current_page;
-					}
-					if(common.isset(this.metadata.sorted_column)){
-						
-						this.setColumnSort(this.metadata.sorted_column.label, this.metadata.sorted_column.sort_visibility);
-
-					}
-					if(common.isset(this.metadata.page_number)){
-						this.current_page = this.metadata.page_number;
-					}
-					
-				}
-				
-			},
-			setColumnSort(column_label:string, visibility:string, reset:boolean) : void{
-				for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
-					if(this.local_table_data.columns[z].label === column_label){
-						this.local_table_data.columns[z].sort_visibility = visibility;
-						break;
-					}
-				}
-			},
-			resetColumnSort() : void{
-				for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
-					
-					this.local_table_data.columns[z].sort_visibility = '';
-						
-				}
-				this.temp_sorted_column = {};
-			}
-
-		},
-		
-		mounted : function(){
-			
-			if(common.isset(this.data)){
-
-				this.local_table_data = this.data || {};
-
-				if(common.isset(this.checkbox_actions)){
-					this.local_table_data.rows.forEach(row => {
-						row.selected = false;
-					});
-				}
-
-			}
-
-			if(common.isset(this.per_page)){
-				this.local_per_page = this.per_page || env.DEFAULT_TABLE_ROWS;
 			}
 			
-
-			if(!common.isObjectEmpty(this.local_table_data)){
-				if(common.isset(this.local_table_data.columns)){
-					for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
-						this.local_table_data.columns[z]['sort_visibility'] = '';
-					}
-				}
-			}
-			
-			this.original_rows = this.local_table_data.rows;
-			this.filtered_rows = this.original_rows;
-
-			if(common.isset(this.checkbox_actions)){
-				this.local_checkbox_actions = this.checkbox_actions || [];
-			}
-
-			if(common.isset(this.static)){
-				this.local_static = this.static;
-			}
-
-			if(common.isset(this.total_pages)){
-				if(this.local_static === false){
-					this.local_total_pages = this.total_pages;
+			if(this.local_static === true){
+				this.local_table_data.rows = this.original_rows;
+			}else{
+				if(!this.skip_watchers) {
+					this.updateUrlState('per_page');
 				}
 			}
 			
 			if(this.paginate){
+				this.checkCheckboxesForCurrentPage(false);
 				this.generatePages();
 			}
+		},
+		
+		searched_term(): void{
+			this.checkCheckboxesForCurrentPage(false);
+			
+			if(!this.skip_watchers && !this.is_initial_load){
+				this.resetColumnSort();
+				this.current_page = 1;
+			}
+			
+			if(this.local_static === true){
+				this.applySearch();
+			}else{
+				if(!this.skip_watchers) {
+					this.updateUrlState('search');
+				}
+			}
+			
+			if(this.paginate) {
+				this.generatePages();
+			}
+		},
+		
+		total_pages() : void{
+			if(this.local_static === false){
+				this.local_total_pages = this.total_pages;
+			}
+		},
+		
+		check_page_rows(check_checkboxes:boolean) : void{
+			this.checkCheckboxesForCurrentPage(check_checkboxes);
+		}
+	},
+	methods : {
+		
+		// Restore the original v-model approach for search
+		// Remove this method since we'll go back to the watcher
+		
+		// Apply search filtering
+		applySearch(): void {
+			if(!this.searched_term){
+				this.filtered_rows = this.original_rows;
+			} else {
+				const search_term_temp = this.searched_term.toLowerCase();
+				this.filtered_rows = this.original_rows.filter(row => {
+					let found = false;
+					for(let z = 0; z < this.local_table_data.columns.length; z++){
+						let column = this.local_table_data.columns[z];
+						if(column.label === 'actions' || column.label === 'index'){
+							continue;
+						}
+						let cell = row[column.label];
+						if (typeof cell === 'object' && cell?.text){
+							if (cell.text.toLowerCase().includes(search_term_temp)) {
+								found = true;
+								break;
+							}
+						} else if(cell?.toString().toLowerCase().includes(search_term_temp)){
+							found = true;
+							break;
+						}
+					}
+					return found;
+				});
+			}
+		},
+		
+		// Update URL state for non-static tables
+		updateUrlState(type: string): void {
+			if(this.local_static === false) {
+				let json_response = btoa(JSON.stringify({
+					type: type,
+					per_page: this.local_per_page,
+					searched_term: this.searched_term,
+					current_page: this.current_page,
+					sorted_column: this.temp_sorted_column
+				}));
+				this.$router.push('/' + this.url_slug + '/page/' + json_response);
+			}
+		},
 
-			this.setFields(this.$route.params.id);
-			/*
-			setInterval(() => {
-				this.generatePagination();
-			}, 2000);*/
+		sortColumns(column:object, index:number) : void{
 
+			this.checkCheckboxesForCurrentPage(false);
+			this.resetColumnSort();
+			
+			if(this.last_index > -1){
+				this.local_table_data.columns[this.last_index].sort_visibility = '';
+			}
+
+			this.sort_column = column.label;
+			this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc';
+			column.sort_visibility = this.sort_direction;
+			this.temp_sorted_column = column;
+			
+			if(this.local_static === true){
+				const datasetToSort = this.searched_term === '' ? this.original_rows : this.filtered_rows;
+			
+				datasetToSort.sort((a, b) => {
+					let valueA = '';
+					let valueB = '';
+
+					if(typeof a[column.label] === 'object'){
+						valueA = a[column.label].text;
+					} else {
+						valueA = a[column.label];
+					}
+
+					if(typeof b[column.label] === 'object'){
+						valueB = b[column.label].text;
+					}else{
+						valueB = b[column.label];
+					}
+
+					if (typeof valueA === 'string') {
+						valueA = valueA.toLowerCase();
+						valueB = valueB.toLowerCase();
+					}
+					
+					if(this.sort_direction === 'asc'){
+						return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+					}else{
+						return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+					}
+				});
+
+				if(this.paginate){
+					this.generatePages();
+				}else{
+					this.local_table_data.rows = datasetToSort;
+				}
+			}else{
+				this.current_page = 1;
+				if(!this.skip_watchers) {
+					this.updateUrlState('sort');
+					this.current_page = 1;
+				}
+			}
+			
+			this.last_index = index;
+		},
+
+		handleDelete(row_id:number) : void{
+			this.to_be_deleted_row_id = row_id;
+			this.show_popup = true;
+			this.handle_delete_multiple = false;
+			this.to_be_handled_rows_multiple = [];
+			this.checkCheckboxesForCurrentPage(false);
+		},
+
+		handleDeletePopup(obj:object) : void{
+			if(this.to_be_deleted_row_id > -1 || (this.handle_delete_multiple && this.to_be_handled_rows_multiple.length > 0)){
+				if(obj.closed && obj.value){
+					if(this.handle_delete_multiple){
+						let temp_ids = [];
+						for(let z = 0 ; z < this.to_be_handled_rows_multiple.length ; z++){
+							temp_ids.push(this.to_be_handled_rows_multiple[z].id);
+							this.removeRowById(this.to_be_handled_rows_multiple[z].id);
+						}
+						
+						this.$emit('deleted_rows', temp_ids);
+						this.handle_delete_multiple = false;
+						this.to_be_handled_rows_multiple = [];
+					}else{
+						this.removeRowById(this.to_be_deleted_row_id);
+						this.generatePages();
+						this.$emit('deleted_row_id', this.to_be_deleted_row_id);
+					}
+				}
+			}
+		},
+
+		removeRowById(row_id:number) : void{
+			const index = this.local_table_data.rows.findIndex(row => row.id === row_id);
+			if(index !== -1){
+				this.local_table_data.rows.splice(index, 1);
+			}
+			const original_rows_index = this.original_rows.findIndex(row => row.id === row_id);
+			if(original_rows_index !== -1){
+				this.original_rows.splice(original_rows_index, 1);
+			}
+		},
+
+		generatePages() : void{
+			if(this.local_static === true){
+				const data_to_paginate = this.searched_term === '' ? this.original_rows : this.filtered_rows;
+				let pages = (data_to_paginate.length / this.local_per_page);
+				this.local_total_pages = Math.ceil(pages);
+				
+				if (this.current_page > this.local_total_pages && this.local_total_pages > 0) {
+					this.current_page = this.local_total_pages;
+				}
+				
+				if (this.current_page < 1) {
+					this.current_page = 1;
+				}
+				
+				const startIndex = (this.current_page - 1) * this.local_per_page;
+				const endIndex = startIndex + this.local_per_page;
+				
+				this.local_table_data.rows = data_to_paginate.slice(startIndex, endIndex);
+			}
+		},
+
+		setCurrentPage(page_number:number) : void{
+			this.current_page = page_number;
+			this.checkCheckboxesForCurrentPage(false);
+			
+			if(this.local_static === false){
+				this.updateUrlState('page');
+			}
+			
+			this.generatePages();
+		},
+
+		handleCheckboxActions(checkbox_action:string) : void{
+			this.resetCheckboxDropdown();
+			let b_checkbox_action = checkbox_action.toLowerCase();
+
+			this.to_be_handled_rows_multiple = this.local_table_data.rows.filter((row) => {
+				if(row.selected){
+					return true;
+				}
+				return false;
+			});
+			
+			if(b_checkbox_action === 'delete'){
+				if(this.to_be_handled_rows_multiple.length === 0){
+					toastEvents.emit('toast', {
+						type: 'error',
+						message: 'Please select rows to delete'
+					});
+				}else{
+					this.show_popup = true;
+					this.handle_delete_multiple = true;
+				}
+			}else if(b_checkbox_action === 'export csv'){
+				if(this.to_be_handled_rows_multiple.length === 0){
+					toastEvents.emit('toast', {
+						type: 'error',
+						message: 'Please select rows to export'
+					});
+					this.resetCheckboxDropdown();
+				}else{
+					this.exportToCSV(this.to_be_handled_rows_multiple);
+				}
+			}
+		},
+
+		checkCheckboxesForCurrentPage(status:boolean): void{
+			if(status === false){
+				this.check_page_rows = false;
+			}
+			this.local_table_data.rows.forEach((row) => {
+				row.selected = status;
+			});
+		},
+
+		exportToCSV(selected_rows:any) {
+			const headers = this.local_table_data.columns
+				.filter(column => column.label !== 'actions')
+				.map(column => column.text);
+			
+			const csvRows = selected_rows.map(row => {
+				return this.local_table_data.columns
+					.filter(column => column.label !== 'actions')
+					.map(column => {
+						let value = row[column.label];
+						if(typeof value === 'object' && value?.text) {
+							value = value.text;
+						}
+						return value && value.toString().includes(',') ? `"${value.toString().replace(/"/g, '""')}"` : value;
+					});
+			});
+			
+			const csvContent = [headers, ...csvRows].map(row => row.join(',')).join('\n');
+			
+			const blob = new Blob([csvContent], { type: 'text/csv' });
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `export_${new Date().toISOString()}.csv`;
+			a.click();
+			window.URL.revokeObjectURL(url);
+			
+			this.checkCheckboxesForCurrentPage(false);
+		},
+
+		resetCheckboxDropdown() : void{
+			this.checkbox_actions_dropdown = 'Choose Option';
+		},
+
+		handleEdit(row_id:number) : void{
+			this.$router.push('/'+this.url_slug+'/edit/'+row_id);
+		},
+
+		setFields(newVal:string) : void{
+			try {
+				let decoded = atob(newVal);
+				let json = JSON.parse(decoded);
+				
+				this.resetMetdata();
+				this.metadata.per_page = json.per_page;
+				this.metadata.sorted_column = json.sorted_column;
+				this.metadata.searched_term = json.searched_term;
+				this.metadata.current_page = json.page_number || json.current_page;
+
+				this.hydrateFields();
+			}catch(error){
+				this.$router.push('/'+this.url_slug);
+			}
+		},
+
+		resetMetdata() : void{
+			this.metadata.per_page = null;
+			this.metadata.searched_term = null;
+			this.metadata.sorted_column = null;
+			this.metadata.current_page = null;
+		},
+
+		hydrateFields() : void{
+			if(common.isset(this.metadata)){
+				// Skip watchers during hydration
+				this.skip_watchers = true;
+				
+				if(common.isset(this.metadata.per_page)){
+					this.local_per_page = this.metadata.per_page;
+				}
+				
+				if(common.isset(this.metadata.searched_term)){
+					this.searched_term = this.metadata.searched_term;
+					if(this.local_static === true) {
+						this.applySearch();
+					}
+				}
+				
+				if(common.isset(this.metadata.sorted_column)){
+					this.temp_sorted_column = this.metadata.sorted_column;
+					this.setColumnSort(this.metadata.sorted_column.label, this.metadata.sorted_column.sort_visibility);
+				}
+				
+				if(common.isset(this.metadata.current_page)){
+					this.current_page = this.metadata.current_page;
+				}
+				
+				// Re-enable watchers
+				this.$nextTick(() => {
+					this.skip_watchers = false;
+				});
+			}
+		},
+		
+		setColumnSort(column_label:string, visibility:string) : void{
+			for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
+				if(this.local_table_data.columns[z].label === column_label){
+					this.local_table_data.columns[z].sort_visibility = visibility;
+					if(visibility === 'asc'){
+						this.sort_direction = 'asc';
+					}else{
+						this.sort_direction = 'desc';
+					}
+					break;
+				}
+			}
+		},
+		
+		resetColumnSort() : void{
+			for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
+				this.local_table_data.columns[z].sort_visibility = '';
+			}
+			this.temp_sorted_column = {};
+		}
+	},
+	
+	mounted : function(){
+		if(common.isset(this.data)){
+			this.local_table_data = this.data || {};
+
+			if(common.isset(this.checkbox_actions)){
+				this.local_table_data.rows.forEach(row => {
+					row.selected = false;
+				});
+			}
 		}
 
-	});
+		if(common.isset(this.per_page)){
+			this.local_per_page = this.per_page || env.DEFAULT_TABLE_ROWS;
+		}
+		
+		if(!common.isObjectEmpty(this.local_table_data)){
+			if(common.isset(this.local_table_data.columns)){
+				for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
+					this.local_table_data.columns[z]['sort_visibility'] = '';
+				}
+			}
+		}
+		
+		this.original_rows = this.local_table_data.rows;
+		this.filtered_rows = this.original_rows;
 
+		if(common.isset(this.checkbox_actions)){
+			this.local_checkbox_actions = this.checkbox_actions || [];
+		}
+
+		if(common.isset(this.static)){
+			this.local_static = this.static;
+		}
+
+		if(common.isset(this.total_pages)){
+			if(this.local_static === false){
+				this.local_total_pages = this.total_pages;
+			}
+		}
+
+		// Load state from URL
+		this.setFields(this.$route.params.id);
+		
+		// Generate pages after state is loaded
+		if(this.paginate){
+			this.generatePages();
+		}
+
+		// Mark initialization complete
+		this.$nextTick(() => {
+			this.is_initial_load = false;
+		});
+	}
+});
 </script>

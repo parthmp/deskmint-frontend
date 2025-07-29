@@ -34,6 +34,10 @@ const routes = [
 				component: Clients,	
 			},
 			{
+				path:'/clients/page/:id',
+				component: Admins
+			},
+			{
 				path:'/admins',
 				component: Admins
 			},
