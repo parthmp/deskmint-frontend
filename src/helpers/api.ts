@@ -1,124 +1,138 @@
 import axios from 'axios';
 import {
-  getAccessToken,
-  getRefreshToken,
-  setAccessToken,
-  setRefreshToken,
-  removeAccessToken,
-  removeRefreshToken
+	getAccessToken,
+	getRefreshToken,
+	setAccessToken,
+	setRefreshToken,
+	removeAccessToken,
+	removeRefreshToken
 } from './../services/TokenService';
+
 import router from '../../routes';
-
 import { getCompanyId } from '../services/CompanyService';
-
 import common from './common';
 import { env } from '../env';
 import { toastEvents } from '../events/toastEvents';
 
 const getDeviceId = () =>
-  new Promise((resolve) => {
-    common.getDeviceId((id:any) => resolve(id.identifier));
-  });
+	new Promise((resolve) => {
+	common.getDeviceId((id:any) => resolve(id.identifier));
+});
 
 const api = axios.create({
-  baseURL: env.API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-	'Accept': 'application/json'
-  },
+	baseURL: env.API_URL,
+	headers: {
+		'Content-Type': 'application/json',
+		'Accept': 'application/json'
+	},
 });
 
 api.interceptors.request.use(async (config) => {
 
-  const accessToken = await getAccessToken();
-  const refreshToken = await getRefreshToken();
-  const deviceId = await getDeviceId();
-  const companyId = await getCompanyId();
+	const accessToken = await getAccessToken();
+	const refreshToken = await getRefreshToken();
+	const deviceId = await getDeviceId();
+	const companyId = await getCompanyId();
 
-  if (accessToken) {
-    config.headers['Authorization'] = `Bearer ${accessToken}`;
-  }
-
-  if (
-    config.method !== 'get' &&
-    config.headers['Content-Type'] === 'application/json'
-  ) {
-    if (typeof config.data !== 'object' || config.data === null) {
-      config.data = {};
-    }
-
-    config.data.refresh_token = refreshToken;
-    config.data.device_id = deviceId;
-
-	if(common.isset(companyId)){
-		if(companyId !== ''){
-			config.data.company_id = companyId;
-		}
+	if (accessToken) {
+		config.headers['Authorization'] = `Bearer ${accessToken}`;
 	}
 
-  }
-
-  return config;
-});
-
-
-api.interceptors.response.use(
-  async (response) => {
-    const data = response.data;
-
-    if (data?.access_token) {
-      await setAccessToken(data.access_token);
-    }
-
-    if (data?.refresh_token) {
-      await setRefreshToken(data.refresh_token);
-    }
-	if(common.isset(response.data.message)){
-
-		if(response.data.message !== ''){
-
-			toastEvents.emit('toast', {
-				type:'success',
-				message: response.data.message
-			});
-
+	if (config.method === 'get') {
+		
+		if (!config.params) {
+			config.params = {};
 		}
 
-	}
+		config.params.refresh_token = refreshToken;
+		config.params.device_id = deviceId;
 
-    return response;
-  },
-  (error) => {
-	
-	let error_message = 'Unknown error';
-	
-	if(error.response){
-		
-		let status = error.response.status;
-
-		if(status === 401){
-			removeAccessToken();
-			removeRefreshToken();
-			router.push('/');
-		}
-		
-		if(status !== 500){
-			error_message = error.response.data.message;
+		if (common.isset(companyId) && companyId !== '') {
+			config.params.company_id = companyId;
 		}
 
 	}else{
 
-		error_message = 'Unable to connect to the server';
+		if(typeof config.data !== 'object' || config.data === null){
+			config.data = {};
+		}
 
+		config.data.refresh_token = refreshToken;
+		config.data.device_id = deviceId;
+
+		if(common.isset(companyId)){
+			if(companyId !== ''){
+				config.data.company_id = companyId;
+			}
+		}
+		
 	}
 
-	toastEvents.emit('toast', {
-		type:'error',
-		message: error_message
-	});
+	return config;
 
-    return Promise.reject(error);
-  }
+});
+
+
+api.interceptors.response.use(
+	async (response) => {
+
+		const data = response.data;
+
+		if(data?.access_token){
+			await setAccessToken(data.access_token);
+		}
+
+		if(data?.refresh_token){
+			await setRefreshToken(data.refresh_token);
+		}
+		if(common.isset(response.data.message)){
+
+			if(response.data.message !== ''){
+
+				toastEvents.emit('toast', {
+					type:'success',
+					message: response.data.message
+				});
+
+			}
+
+		}
+
+		return response;
+		
+	},
+	(error) => {
+
+		let error_message = 'Unknown error';
+
+		if(error.response){
+			
+			let status = error.response.status;
+
+			if(status === 401){
+				removeAccessToken();
+				removeRefreshToken();
+				router.push('/');
+			}
+			
+			if(status !== 500){
+				error_message = error.response.data.message;
+			}
+
+		}else{
+
+			error_message = 'Unable to connect to the server';
+
+		}
+
+		toastEvents.emit('toast', {
+			type:'error',
+			message: error_message
+		});
+
+		return Promise.reject(error);
+		
+	}
 );
 
 

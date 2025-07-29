@@ -3,7 +3,7 @@
     <div class="card">
         <h1 class="text-2xl!">Admins</h1>
         <br>
-        <data-table :data="table_data" :per_page="per_page" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :total_pages="5" :static="false" url_slug="admins" @handle_api="handleAPI"></data-table>
+        <data-table :data="table_data" :per_page="per_page" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="true" url_slug="admins"></data-table>
         
     </div>
 	<br>
@@ -24,6 +24,7 @@
 
 	import DataTable from './UI/DataTable.vue';
 	import common from '../helpers/common';
+	import api from '../helpers/api';
 	
 	export default defineComponent({
 		name : 'Admins',
@@ -274,59 +275,20 @@
 				console.log('===');
 				/* handle axios here for multiple deletes */
 			},
-			handleAPI(json_object:object) : void{
+			fetchAdmins() : void{
 				
+				api.get('manage-admins').then((response) => {
+					console.log(response);
+				})
 				
-				console.log('API CALL START');
-				console.log(json_object);
-				console.log('API CALL END');
-				/* handle axios here for fetching data */
-
-				/*
-					this.table_data.rows.push({
-						id: 400,
-						index: 400,
-						first_name: 'searched tony',
-						last_name: 'Statk',
-						status: {
-							type:'label',
-							text: 'active'
-						},
-						date: '1950-05-27',
-						actions: ['edit', 'delete']
-					});
-		
-				*/
-
 				
 			}
 
 		},
 		mounted : function(){
-			/*setInterval(() => {
-				this.table_data.rows.push({
-							index: 4,
-							first_name: 'Jack4 ==',
-							last_name: 'Sparrow',
-							status: {
-								type:'label',
-								text: 'active'
-							},
-							date: '1950-05-27',
-							actions: ['edit', 'delete']
-						});
-			}, 200);*/
-
-			/*
-			if(common.isset(this.$route.params.id)){
-				this.handleAPI(this.$route.params.id);
-			}else{
-				this.handleAPI(btoa(JSON.stringify({
-					per_page: this.per_page,
-					current_page: 1
-				})));
-			}*/
 			
+			this.fetchAdmins();
+
 		}
 
 	});
