@@ -40,8 +40,8 @@
 						<td v-if="checkbox_actions?.length > 0"><input-checkbox v-model="row.selected"></input-checkbox></td>
 						<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
 							<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
-								<IconEdit class="inline-block cursor-pointer" v-if="action === 'edit'" :size="22" @click="handleEdit(row.id)"></IconEdit>&nbsp;
-								<IconTrash class="inline-block text-red-500 cursor-pointer" v-if="action === 'delete'" :size="22" @click="handleDelete(row.id)"></IconTrash>
+								<a href="javascript:;" class="transition-all duration-300 inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg bg-blue-500 hover:bg-blue-600 text-white!" v-if="action === 'edit'" @click="handleEdit(row.id)"><IconEdit class="inline-block" :size="20"></IconEdit></a>
+								<a href="javascript:;" class="transition-all duration-300 ml-[10px] inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg bg-red-500 hover:bg-red-600 text-white!" v-if="action === 'delete'" @click="handleDelete(row.id)"><IconTrash :size="22"></IconTrash></a>
 							</span>
 							<span v-if="!Array.isArray(row[column2.label])">
 								<span v-if="typeof row[column2.label] === 'object'">

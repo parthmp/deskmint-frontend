@@ -1,6 +1,6 @@
 <template>
 	<transition name="fade-scale">
-		<div class="absolute top-0 left-0 w-[100%]! bg-background-2-tra z-40" v-show="show_popup" :class="{'h-[100vh]':local_blocker}" @click.self="selfClick">
+		<div class="fixed inset-0 bg-background-2-tra z-40" v-show="show_popup" :class="{'h-[100vh]':local_blocker}" @click.self="selfClick">
 			<div class="delete-popup bg-background-2" :class="{'top-40':!local_blocker, 'top-2/10':local_blocker}">
 				<IconX class="float-end cursor-pointer" @click="closePopup(false)" :size="22"></IconX>
 				<div class="clear-both"></div>
