@@ -2,12 +2,32 @@
 	<section class="main-content">
     <div class="card">
         <h1 class="text-2xl!">Admins</h1>
-		
+
+			<div class="table-skeleton">
+				<div class="h-[50px] w-[150px] animate-pulse float-end">
+					<div class="h-[38px] bg-deskmint-green-dark rounded-lg dark:bg-deskmint-green-dark w-full mb-2"></div>
+				</div>
+				<div class="clear-both"></div>
+				<div class="h-[50px] w-[350px] animate-pulse float-end">
+					<div class="h-[38px] bg-deskmint-green-dark rounded-lg dark:bg-deskmint-green-dark w-full mb-2"></div>
+				</div>
+				<div class="clear-both"></div>
+				<div role="status" class="w-full animate-pulse">
+					<br>
+					<div class="h-[38px] bg-deskmint-green-dark rounded-lg dark:bg-deskmint-green-dark w-full mb-2"></div>
+					<div v-for="z in 10" :key="z" class="h-[38px] bg-deskmint-green-light rounded-lg dark:bg-deskmint-green-light w-full mb-2"></div>
+					<div class="h-[38px] bg-deskmint-green-dark rounded-lg dark:bg-deskmint-green-dark w-full mb-2"></div>
+				</div>
+			</div>
+
+
+
 			<input-button class="lg:float-end" btn_text="Add New" url="/admins/create" icon="IconPlus"></input-button>
 			<div class="clear-both"></div>
 			
 		
         <br>
+		
         <data-table :data="table_data" :per_page="per_page" :key="table_data_key" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="true" url_slug="admins" :row_actions="['edit', 'delete']"></data-table>
         
     </div>

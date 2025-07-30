@@ -54,8 +54,8 @@
 						</td>
 					</tr>
 					<tr>
-						<td v-if="local_table_data.rows.length === 0" :colspan="local_table_data.columns.length" class="text-center!">
-							No data in the table
+						<td v-if="local_table_data.rows.length === 0" :colspan="local_table_data.columns.length+5" class="text-center!">
+							No data available in the table
 						</td>
 					</tr>
 				</tbody>
