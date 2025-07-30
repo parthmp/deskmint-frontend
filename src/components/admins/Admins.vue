@@ -3,7 +3,7 @@
     <div class="card">
         <h1 class="text-2xl!">Admins</h1>
 		
-			<input-button class="lg:float-end" btn_text="Add New" icon="IconPlus" @submit="showCreateAdminPage"></input-button>
+			<input-button class="lg:float-end" btn_text="Add New" url="/admins/create" icon="IconPlus"></input-button>
 			<div class="clear-both"></div>
 			
 		
@@ -23,14 +23,14 @@
 <script lang="ts">
 
 
-	import RedirectToLoginForNoTokens from '../mixins/RedirectToLoginForNoTokens';
+	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
 	
 	import { defineComponent } from 'vue';
 
-	import DataTable from './UI/DataTable.vue';
-	import InputButton from './inputs/InputButton.vue';
-	import common from '../helpers/common';
-	import api from '../helpers/api';
+	import DataTable from '../UI/DataTable.vue';
+	import InputButton from '../inputs/InputButton.vue';
+	import common from '../../helpers/common';
+	import api from '../../helpers/api';
 	
 	export default defineComponent({
 		name : 'Admins',
@@ -41,6 +41,7 @@
 		data: function(){
 			return {
 				per_page: 15,
+				disabled: false,
 				table_data: {
 					columns : [
 						{
@@ -289,9 +290,12 @@
 			},
 			fetchAdmins() : void{
 				
-				/*api.get('manage-admins').then((response) => {
-					console.log(response);
-				});*/
+				api.get('manage-admins').then((response:any) => {
+					this.table_data = response;
+				}).catch((errors) => {
+
+				});
+				
 				
 				
 			}

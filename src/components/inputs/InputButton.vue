@@ -4,7 +4,10 @@
 			<span v-if="!local_disabled" class="flex gap-1 items-center">
 				<component :is="icon" :size="17"></component>&nbsp;{{ btn_text }}
 			</span>
-			<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="26"></IconRotateClockwise2>
+			<span v-if="local_disabled" class="flex gap-1 items-center">
+				<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="17"></IconRotateClockwise2>&nbsp;{{ btn_text }}
+			</span>
+			
 		</component>
 	</div>
 </template>
@@ -38,7 +41,7 @@
 
 		name : 'InputButton',
 
-		props : ['full_width', 'disabled', 'icon', 'btn_text', "style_type", "remove_margin", "url"],
+		props : ['full_width', 'disabled', 'icon', 'btn_text', "style_type", "remove_margin", "url", "max_height", "min_width"],
 
 		data() : InputButtonIntarface {
 			return {
@@ -86,15 +89,17 @@
 		computed: {
 
 			componentType() {
-				return this.url ? 'router-link' : 'button'
+				return this.url ? 'router-link' : 'button';
 			},
 
 			buttonClasses(){
 
-				const base_classes = 'p-[8px] px-[20px] m-auto text-white rounded-[5px] transition-all duration-300 w-full'
+				const base_classes = 'p-[8px] px-[20px] m-auto text-white rounded-[5px] transition-all duration-300 w-full';
 				
 				const conditional_classes = {
-						
+					'max-h-[41px]' : this.max_height,
+					'min-w-[140px]':this.min_width,
+
 					'lg:w-full': this.local_full_width,
 					'lg:w-fit': !this.local_full_width,
 					
@@ -127,7 +132,7 @@
 					'disabled_url': this.url && this.local_disabled,
 					'text-white!': this.url
 
-				}
+				};
 
 				return [base_classes, conditional_classes];
 

@@ -6,7 +6,8 @@ import ManageCompanies from '../src/components/ManageCompanies.vue';
 
 import Dashboard from '../src/components/Dashboard.vue';
 import Clients from '../src/components/Clients.vue';
-import Admins from '../src/components/Admins.vue';
+import Admins from '../src/components/admins/Admins.vue';
+import AdminCreate from '../src/components/admins/AdminCreate.vue';
 
 const routes = [
 	{
@@ -42,8 +43,8 @@ const routes = [
 				component: Admins
 			},
 			{
-				path:'/admins/page/:id',
-				component: Admins
+				path:'/admins/create',
+				component: AdminCreate
 			}
 		]
 	}
