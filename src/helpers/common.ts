@@ -146,6 +146,22 @@ export default {
 		}
 
 		return true;
+	},
+
+	formatDate(dateString:string) : string{
+
+		if(!dateString){
+			return '-';
+		}
+ 
+		const cleanDate = dateString.replace('T', ' ').split('.')[0]
+		const [datePart, timePart] = cleanDate.split(' ')
+		const [year, month, day] = datePart.split('-')
+		
+		const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+		
+		return `${day}-${months[parseInt(month) - 1]}-${year} ${timePart}`;
+		
 	}
 
 

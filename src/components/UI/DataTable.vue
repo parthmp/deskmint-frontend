@@ -39,7 +39,7 @@
 					<tr v-for="(row, ri) in local_table_data.rows" :key="ri">
 						<td v-if="checkbox_actions?.length > 0"><input-checkbox v-model="row.selected"></input-checkbox></td>
 						<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
-							<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
+							<span v-if="column2.label === 'actions'" v-for="action in row_actions" :key="action">
 								<router-link :to="'/'+url_slug+'/edit/'+row.id" class="transition-all duration-300 inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg bg-blue-500 hover:bg-blue-600 text-white!" v-if="action === 'edit'"><IconEdit class="inline-block" :size="20"></IconEdit></router-link>
 								<a href="javascript:;" class="transition-all duration-300 ml-[10px] inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg bg-red-500 hover:bg-red-600 text-white!" v-if="action === 'delete'" @click="handleDelete(row.id)"><IconTrash :size="22"></IconTrash></a>
 							</span>
@@ -164,7 +164,8 @@ export default defineComponent({
 		static:Boolean,
 		per_page:Number,
 		total_pages:Number,
-		url_slug: String
+		url_slug: String,
+		row_actions: Array<string>
 	},
 	data(): DataTableInterface{
 		return {
@@ -420,7 +421,9 @@ export default defineComponent({
 
 		generatePages() : void{
 			if(this.local_static === true){
+				
 				const data_to_paginate = this.searched_term === '' ? this.original_rows : this.filtered_rows;
+				
 				let pages = (data_to_paginate.length / this.local_per_page);
 				this.local_total_pages = Math.ceil(pages);
 				
@@ -448,6 +451,7 @@ export default defineComponent({
 			}
 			
 			this.generatePages();
+
 		},
 
 		handleCheckboxActions(checkbox_action:string) : void{
@@ -554,12 +558,17 @@ export default defineComponent({
 	},
 	
 	mounted : function(){
-		if(common.isset(this.data)){
-			this.local_table_data = this.data || {};
 
-			if(common.isset(this.checkbox_actions)){
+		if(common.isset(this.data)){
+
+			this.local_table_data = this.data || {};
+			
+			if(common.isset(this.checkbox_actions) && common.isset(this.local_table_data.rows)){
 				this.local_table_data.rows.forEach(row => {
 					row.selected = false;
+					if(common.isset(row.created_at)){
+						row.created_at = common.formatDate(row.created_at);
+					}
 				});
 			}
 		}
