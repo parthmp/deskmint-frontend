@@ -1,44 +1,27 @@
 <template>
 	<section class="main-content">
-    <div class="card">
-        <h1 class="text-2xl!">Admins</h1>
+		<div class="card">
+			<h1 class="text-2xl! mb-[25px] lg:mb-[0px]">Admins</h1>
 
-			<div class="table-skeleton">
-				<div class="h-[50px] w-[150px] animate-pulse float-end">
-					<div class="h-[38px] bg-deskmint-green-dark rounded-lg dark:bg-deskmint-green-dark w-full mb-2"></div>
-				</div>
-				<div class="clear-both"></div>
-				<div class="h-[50px] w-[350px] animate-pulse float-end">
-					<div class="h-[38px] bg-deskmint-green-dark rounded-lg dark:bg-deskmint-green-dark w-full mb-2"></div>
-				</div>
-				<div class="clear-both"></div>
-				<div role="status" class="w-full animate-pulse">
+			<transition name="fade-scale">
+				<skeleton-table v-if="data_loading" :rows="15"></skeleton-table>
+			</transition>
+
+			<transition name="fade-scale">
+				<span v-if="!data_loading" class="">
+					<input-button class="lg:float-end" btn_text="Add New" url="/admins/create" icon="IconPlus"></input-button>
+					<div class="clear-both"></div>
 					<br>
-					<div class="h-[38px] bg-deskmint-green-dark rounded-lg dark:bg-deskmint-green-dark w-full mb-2"></div>
-					<div v-for="z in 10" :key="z" class="h-[38px] bg-deskmint-green-light rounded-lg dark:bg-deskmint-green-light w-full mb-2"></div>
-					<div class="h-[38px] bg-deskmint-green-dark rounded-lg dark:bg-deskmint-green-dark w-full mb-2"></div>
-				</div>
-			</div>
-
-
-
-			<input-button class="lg:float-end" btn_text="Add New" url="/admins/create" icon="IconPlus"></input-button>
-			<div class="clear-both"></div>
+					
+					<data-table :data="table_data" :per_page="per_page" :key="table_data_key" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="true" url_slug="admins" :row_actions="['edit', 'delete']"></data-table>
+				</span>
+			</transition>
 			
-		
-        <br>
-		
-        <data-table :data="table_data" :per_page="per_page" :key="table_data_key" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="true" url_slug="admins" :row_actions="['edit', 'delete']"></data-table>
-        
-    </div>
-	<br>
-	<div class="card">
-		Test card
-	</div>
-</section>
+		</div>
+	</section>
 </template>
 <style scoped>
-
+	
 </style>
 <script lang="ts">
 
@@ -48,17 +31,27 @@
 	import { defineComponent } from 'vue';
 
 	import DataTable from '../UI/DataTable.vue';
+	import SkeletonTable from '../skeletons/SkeletonTable.vue';
+
 	import InputButton from '../inputs/InputButton.vue';
 	import common from '../../helpers/common';
 	import api from '../../helpers/api';
+
+	export interface AdminsInterface{
+		per_page:number,
+		disabled:boolean,
+		table_data: object,
+		data_loading:boolean
+	}
 	
 	export default defineComponent({
 		name : 'Admins',
 		components : {
 			DataTable,
-			InputButton
+			InputButton,
+			SkeletonTable
 		},
-		data: function(){
+		data(): AdminsInterface{
 			return {
 				per_page: 15,
 				disabled: false,
@@ -66,7 +59,7 @@
 					columns : [],
 					rows: []
 				},
-				table_data_key: 1
+				data_loading: true
 					
 			}
 		},
@@ -96,8 +89,7 @@
 				
 				api.get('manage-admins').then((response:any) => {
 					this.table_data = response.data;
-					this.table_data_key = 2;
-					console.log(response);
+					this.data_loading = false;
 				}).catch((errors) => {
 					
 				});

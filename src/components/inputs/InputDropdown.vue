@@ -23,18 +23,6 @@
 	.dropdown_ul li{
 		@apply transition-all duration-300;
 	}
-	.fade-scale-enter-active,
-	.fade-scale-leave-active {
-		@apply transition-all duration-300 ease-out;
-	}
-	.fade-scale-enter-from,
-	.fade-scale-leave-to {
-		@apply opacity-0 scale-90;
-	}
-	.fade-scale-enter-to,
-	.fade-scale-leave-from {
-		@apply opacity-100 scale-100;
-	}
 </style>
 
 <script lang="ts">
