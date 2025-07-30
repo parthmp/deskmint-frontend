@@ -2,6 +2,11 @@
 	<section class="main-content">
     <div class="card">
         <h1 class="text-2xl!">Admins</h1>
+		
+			<input-button class="lg:float-end" btn_text="Add New" icon="IconPlus" @submit="showCreateAdminPage"></input-button>
+			<div class="clear-both"></div>
+			
+		
         <br>
         <data-table :data="table_data" :per_page="per_page" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="true" url_slug="admins"></data-table>
         
@@ -23,13 +28,15 @@
 	import { defineComponent } from 'vue';
 
 	import DataTable from './UI/DataTable.vue';
+	import InputButton from './inputs/InputButton.vue';
 	import common from '../helpers/common';
 	import api from '../helpers/api';
 	
 	export default defineComponent({
 		name : 'Admins',
 		components : {
-			DataTable
+			DataTable,
+			InputButton
 		},
 		data: function(){
 			return {
@@ -263,6 +270,11 @@
 			
 		},
 		methods : {
+
+			showCreateAdminPage() : void{
+				console.log('clicked!');
+			},
+
 			handleDeleted(row_id:object) : void{
 				console.log('===');
 				console.log(row_id);
@@ -277,9 +289,9 @@
 			},
 			fetchAdmins() : void{
 				
-				api.get('manage-admins').then((response) => {
+				/*api.get('manage-admins').then((response) => {
 					console.log(response);
-				})
+				});*/
 				
 				
 			}

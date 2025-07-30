@@ -1,35 +1,22 @@
 <template>
-	<div class="form-group" :class="{'mt-0!':local_remove_margin}">
-		<button class="p-[8px] px-[30px] m-auto text-white rounded-[5px] transition-all duration-300" :class="
-			{
-				'w-full' : local_full_width,
-				'w-fit':!local_full_width,
-				'active:scale-[0.92]': !local_disabled,
-				'bg-deskmint-original-dark': !local_disabled && local_style_type === 'success',
-				'hover:hover:bg-deskmint-original-dark-plus': !local_disabled && local_style_type === 'success',
-				'bg-red-600': !local_disabled && local_style_type === 'error',
-				'bg-blue-800': !local_disabled && local_style_type === 'info',
-				'hover:hover:bg-deskmint-original-dark-plus': !local_disabled && local_style_type === 'success',
-				'hover:hover:bg-red-700': !local_disabled && local_style_type === 'error',
-				'hover:hover:bg-blue-900': !local_disabled && local_style_type === 'info',
-				'shadow-lg': !local_disabled,
-				'cursor-pointer': !local_disabled,
-				'opacity-80' :local_disabled,
-				'dark:opacity-100': local_disabled,
-				'bg-deskmint-original-light': local_disabled,
-				'flex':local_full_width,
-				'flex-col':local_full_width,
-				'items-center':local_full_width
-			}
-			" :disabled="local_disabled" @click="emitSubmit">
-			<span v-if="!local_disabled" class="flex gap-1 items-center"><component :is="icon" :size="17"></component>&nbsp;{{ btn_text }}</span>
+	<div class="form-group" :class="{'mt-0!': local_remove_margin}">
+		<component :is="url ? 'router-link' : 'button'" :to="url" :disabled="local_disabled" :class="buttonClasses" @click="emitSubmit(url)">
+			<span v-if="!local_disabled" class="flex gap-1 items-center">
+				<component :is="icon" :size="17"></component>&nbsp;{{ btn_text }}
+			</span>
 			<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="26"></IconRotateClockwise2>
-		</button>
+		</component>
 	</div>
 </template>
 
-<style>
 
+<style scoped>
+.disabled_url {
+    pointer-events: none;
+    color: #999;
+    cursor: not-allowed;
+    text-decoration: none;
+}
 </style>
 
 <script lang="ts">
@@ -43,7 +30,7 @@
 
 	import common from '../../helpers/common';
 
-	import { IconRotateClockwise2, IconSend, IconLogin2, IconLink, IconCaretLeft, IconRepeat, IconKey, IconCaretRight, IconCheck, IconX } from '@tabler/icons-vue';
+	import { IconRotateClockwise2, IconSend, IconLogin2, IconLink, IconCaretLeft, IconRepeat, IconKey, IconCaretRight, IconCheck, IconX, IconPlus } from '@tabler/icons-vue';
 
 	import { defineComponent } from 'vue';
 
@@ -51,7 +38,7 @@
 
 		name : 'InputButton',
 
-		props : ['full_width', 'disabled', 'icon', 'btn_text', "style_type", "remove_margin"],
+		props : ['full_width', 'disabled', 'icon', 'btn_text', "style_type", "remove_margin", "url"],
 
 		data() : InputButtonIntarface {
 			return {
@@ -72,6 +59,7 @@
 			IconKey,
 			IconCheck,
 			IconX,
+			IconPlus,
 			IconRepeat
 		},
 
@@ -82,14 +70,67 @@
 		},
 
 		methods: {
-			emitSubmit() : void{
-				this.$emit('submit', true);
+			emitSubmit(url:any) : void{
+				if(!common.isset(url)){
+					this.$emit('submit', true);
+				}
 			},
 			setDisabled() : void{
 				
 				if(common.isset(this.disabled)){
 					this.local_disabled = this.disabled;
 				}
+			}
+		},
+
+		computed: {
+
+			componentType() {
+				return this.url ? 'router-link' : 'button'
+			},
+
+			buttonClasses(){
+
+				const base_classes = 'p-[8px] px-[20px] m-auto text-white rounded-[5px] transition-all duration-300 w-full'
+				
+				const conditional_classes = {
+						
+					'lg:w-full': this.local_full_width,
+					'lg:w-fit': !this.local_full_width,
+					
+					
+					'active:scale-[0.92]': !this.local_disabled,
+					'shadow-lg': !this.local_disabled,
+					'cursor-pointer': !this.local_disabled,
+					
+					
+					'bg-deskmint-original-dark': !this.local_disabled && this.local_style_type === 'success',
+					'bg-red-600': !this.local_disabled && this.local_style_type === 'error',
+					'bg-blue-800': !this.local_disabled && this.local_style_type === 'info',
+					
+					
+					'hover:hover:bg-deskmint-original-dark-plus': !this.local_disabled && this.local_style_type === 'success',
+					'hover:hover:bg-red-700': !this.local_disabled && this.local_style_type === 'error',
+					'hover:hover:bg-blue-900': !this.local_disabled && this.local_style_type === 'info',
+					
+					
+					'opacity-80': this.local_disabled,
+					'dark:opacity-100': this.local_disabled,
+					'bg-deskmint-original-light': this.local_disabled,
+					
+					
+					'flex': this.local_full_width,
+					'flex-col': this.local_full_width,
+					'items-center': this.local_full_width,
+					
+					
+					'disabled_url': this.url && this.local_disabled,
+					'text-white!': this.url
+
+				}
+
+				return [base_classes, conditional_classes];
+
 			}
 		},
 

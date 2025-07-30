@@ -3,7 +3,7 @@
 		<div class="grid grid-cols-1 lg:grid-cols-12 items-center">
 			<div class="lg:col-span-9">
 				<div class="lg:flex lg:gap-0 lg:items-center">
-					<div class="mr-[15px]" v-if="paginate"><input-dropdown :options="dropdown_options" v-model="local_per_page"></input-dropdown></div>
+					<div class="lg:mr-[15px]" v-if="paginate"><input-dropdown :options="dropdown_options" v-model="local_per_page"></input-dropdown></div>
 					<div class="mt-[10px] lg:mt-[0px]" v-if="checkbox_actions?.length > 0"><input-dropdown :options="checkbox_actions" v-model="checkbox_actions_dropdown" @changed="handleCheckboxActions"></input-dropdown></div>
 				</div>
 			</div>
@@ -40,7 +40,7 @@
 						<td v-if="checkbox_actions?.length > 0"><input-checkbox v-model="row.selected"></input-checkbox></td>
 						<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
 							<span v-if="Array.isArray(row[column2.label])" v-for="action in row[column2.label]" :key="action">
-								<a href="javascript:;" class="transition-all duration-300 inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg bg-blue-500 hover:bg-blue-600 text-white!" v-if="action === 'edit'" @click="handleEdit(row.id)"><IconEdit class="inline-block" :size="20"></IconEdit></a>
+								<router-link :to="'/'+url_slug+'/edit/'+row.id" class="transition-all duration-300 inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg bg-blue-500 hover:bg-blue-600 text-white!" v-if="action === 'edit'"><IconEdit class="inline-block" :size="20"></IconEdit></router-link>
 								<a href="javascript:;" class="transition-all duration-300 ml-[10px] inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg bg-red-500 hover:bg-red-600 text-white!" v-if="action === 'delete'" @click="handleDelete(row.id)"><IconTrash :size="22"></IconTrash></a>
 							</span>
 							<span v-if="!Array.isArray(row[column2.label])">
