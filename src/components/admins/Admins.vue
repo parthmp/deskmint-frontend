@@ -32,6 +32,7 @@
 	import InputButton from '../inputs/InputButton.vue';
 	import common from '../../helpers/common';
 	import api from '../../helpers/api';
+	import { toastEvents } from '../../events/toastEvents';
 
 	export interface AdminsInterface{
 		per_page:number,
@@ -70,16 +71,15 @@
 			},
 
 			handleDeleted(row_id:object) : void{
-				console.log('===');
-				console.log(row_id);
-				console.log('===');
+			
 				/* handle axios here for single deletes */
+				this.deleteAdmins([row_id]);
 			},
 			handleMultipleDelete(ids:any) : void{
-				console.log('FIRED');
-				console.log(ids);
-				console.log('===');
+				
 				/* handle axios here for multiple deletes */
+				this.deleteAdmins(ids);
+				
 			},
 			fetchAdmins() : void{
 				
@@ -92,6 +92,18 @@
 				
 				
 				
+			},
+
+			deleteAdmins(ids:any) : void{
+
+				api.delete('manage-admins', {
+					data : {
+						ids : ids
+					}
+				}).catch((error) => {
+					this.fetchAdmins();
+				});
+
 			}
 
 		},

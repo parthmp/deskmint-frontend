@@ -270,6 +270,9 @@ export default defineComponent({
 		
 		check_page_rows(check_checkboxes:boolean) : void{
 			this.checkCheckboxesForCurrentPage(check_checkboxes);
+		},
+		data() : void{
+			this.local_table_data = this.data;
 		}
 	},
 	methods : {
