@@ -82,6 +82,8 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	--color-deskmint-sage-green: #FBFFF9;
 	/*--color-deskmint-cyan:#007651;*/
 	--color-deskmint-cyan:#118B65;
+	--color-deskmint-loading: #DBDADA;
+	
 	/*
 	--breakpoint-*: initial;
 	--breakpoint-sm: 768px;
@@ -103,8 +105,11 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
   
   /* Define the animation variable */
   --animate-gradient: gradient-shift 1s ease infinite;
+
+  
 	
 }
+
 @layer theme {
   * {
     @variant dark {
@@ -124,7 +129,8 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 		--color-input-border: #556e63;
 		--color-input-border-hover: #BBDDC3;
 		--color-deskmint-cyan-light: RGBA(0,186, 143,0.03);
-		--color-deskmint-sage-green: RGBA(60,210, 0,0.03);
+		--color-deskmint-sage-green: RGBA(60,210, 0, 0.03);
+		--color-deskmint-loading: RGBA(60,210, 0, 0.05);
 		--color-deskmint-cyan:#08563E;
 
 		--shadow-clg: 0 0px 7px rgba(0, 0, 0, 0.20);
@@ -170,7 +176,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 		@apply w-[275px];
 	}*/
 	
+
+	
 }
+
 .main-section a, footer a, form a{
 	@apply text-url-color;
 }
