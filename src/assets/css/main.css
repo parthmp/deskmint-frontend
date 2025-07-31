@@ -68,7 +68,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 
 	--shadow-four-side: 0px 0px 15px #e7e7e7;
 	--color-background-1: #ffffff;
-	--color-background-2: #F6FFEF;
+	--color-background-2: #F9FFF9;
 	--color-background-2-tra: RGBA(245, 255, 239, 0.5);
 	--color-background-card: #ffffff;
 	--color-hover: #EBEBEB;
@@ -78,6 +78,10 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	--color-deskmint-original-dark:#006832;
 	--color-deskmint-original-dark-plus:#005328;
 	--color-deskmint-original-light:#00823E;
+	--color-deskmint-cyan-light: #f0fdfa;
+	--color-deskmint-sage-green: #FBFFF9;
+	/*--color-deskmint-cyan:#007651;*/
+	--color-deskmint-cyan:#118B65;
 	/*
 	--breakpoint-*: initial;
 	--breakpoint-sm: 768px;
@@ -119,8 +123,12 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 		--color-neutral-border: #2F4732;
 		--color-input-border: #556e63;
 		--color-input-border-hover: #BBDDC3;
+		--color-deskmint-cyan-light: RGBA(0,186, 143,0.03);
+		--color-deskmint-sage-green: RGBA(60,210, 0,0.03);
+		--color-deskmint-cyan:#08563E;
 
 		--shadow-clg: 0 0px 7px rgba(0, 0, 0, 0.20);
+		
 		
     }
 	
@@ -181,7 +189,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply transition-all;
 }
 .main-content{
-	@apply bg-background-2 block min-h-[100vh]! transition-all;
+	@apply bg-background-2 block min-h-[100vh]! transition-all pt-[30px];
 }
 .sidebar{
 	@apply fixed top-0 lg:block h-[100vh] lg:w-[var(--sidebar-open-width)] translate-x-[-110%] min-w-[68%] lg:min-w-[initial] lg:translate-x-0 transition-all  duration-300 z-20 bg-background-2;
@@ -220,11 +228,11 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 }
 
 .sidebar-menu-items ul li a:hover {
-  @apply bg-deskmint-green text-white;
+  @apply bg-gradient-to-r to-deskmint-cyan from-deskmint-original-dark text-white;
 }
 
 .sidebar-menu-items ul li .active-menu-link{
-  @apply bg-gradient-to-r from-deskmint-green-dark to-deskmint-green text-white! shadow-lg;
+  @apply bg-gradient-to-r from-deskmint-cyan to-deskmint-original-dark text-white! shadow-lg;
 }
 
 .barcard{
@@ -292,7 +300,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 	@apply text-center  w-full;
 }
 .main-section{
-	@apply mt-[56px] pl-[10px] pr-[10px] lg:pr-[21px];
+	@apply pl-[10px] pr-[10px] lg:pr-[21px];
 }
 .card{
 	@apply bg-background-card rounded-lg shadow-clg p-[25px];
@@ -346,15 +354,89 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 .table-container{
 	@apply overflow-x-auto w-full rounded-lg;
 }
+/*
 .table{
 	@apply min-w-full text-sm text-left whitespace-nowrap ;
 }
+
 .table th, .table td{
 	@apply text-left p-[10px] border-t-1 bottom-1 top-0 border-solid border-deskmint-green-light;
 }
 .table thead tr:first-child, .table tfoot tr:last-child{
 	@apply bg-deskmint-green-dark text-white rounded-lg font-medium;
+}*/
+/**/
+.table{
+	@apply min-w-full w-full border-separate;
+	border-spacing: 0 7px;
 }
+.table thead tr:first-child, .table tfoot tr:last-child{
+	@apply bg-deskmint-cyan text-gray-100 rounded-lg font-medium;
+}
+.table thead th, .table tfoot th{
+	@apply border-none p-[10px] text-left;
+}
+.table tbody tr:nth-child(even){
+	@apply mb-[10px] transition-all duration-300 shadow-sm rounded-lg bg-deskmint-cyan-light;
+}
+.table tbody tr:nth-child(odd){
+	@apply mb-[10px] transition-all duration-300 shadow-sm rounded-lg bg-deskmint-sage-green;
+	/*background: #059669;*/
+}
+.table tbody tr:hover{
+	@apply shadow-none;
+	background: transparent;
+}
+.table tbody th, .table tbody td{
+	@apply border-none pl-[10px] pt-[7px] pb-[7px];
+}
+.table tbody tr td:first-child, table thead tr th:first-child, table tfoot tr th:first-child{
+	@apply rounded-l-lg;
+}
+.table tbody tr td:last-child, table thead tr th:last-child, table tfoot tr th:last-child{
+	@apply rounded-r-lg;
+}
+/*
+.table-wrap {
+  overflow-x: scroll; }
+
+.table {
+  min-width: 1000px !important;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 5px; }
+  .table thead th, .table tfoot th {
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    color: #fff; }
+  .table tbody tr {
+    margin-bottom: 10px;
+  
+background: #e7e7e7;
+}
+  .table tbody tr:hover{
+	background: transparent;
+  }
+  .table tbody th, .table tbody td {
+    border: none;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 14px;
+     }
+  .table tbody td .close span {
+    font-size: 12px;
+    color: #dc3545; }
+	.table tbody tr td:first-child, table thead tr th:first-child, table tfoot tr th:first-child {
+		
+		border-radius: 15px 0px 0px 15px;
+	}
+	.table tbody tr td:last-child, table thead tr th:last-child, table tfoot tr th:last-child {
+		border-radius: 0px 15px 15px 0px;
+	}*/
+/**/
+
 .fade-scale-enter-active,.fade-scale-leave-active {
 	@apply transition-all duration-300 ease-out;
 }

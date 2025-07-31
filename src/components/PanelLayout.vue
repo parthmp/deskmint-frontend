@@ -245,8 +245,7 @@
 						
 					</section>
 					
-					<br>
-					<br>
+					
 					<br>
 					<Footer></Footer>
 					<br>

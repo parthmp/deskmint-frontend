@@ -3,19 +3,15 @@
 		<div class="card">
 			<h1 class="text-2xl! mb-[25px] lg:mb-[0px]">Admins</h1>
 
-			<transition name="fade-scale">
-				<skeleton-table v-if="data_loading" :rows="15"></skeleton-table>
-			</transition>
-
-			<transition name="fade-scale">
-				<span v-if="!data_loading" class="">
-					<input-button class="lg:float-end" btn_text="Add New" url="/admins/create" icon="IconPlus"></input-button>
-					<div class="clear-both"></div>
-					<br>
-					
-					<data-table :data="table_data" :per_page="per_page" :key="table_data_key" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="true" url_slug="admins" :row_actions="['edit', 'delete']"></data-table>
-				</span>
-			</transition>
+			
+			<skeleton-table v-if="data_loading" :rows="15"></skeleton-table>
+		
+			<span v-if="!data_loading" class="">
+				<input-button class="lg:float-end" btn_text="Add New" url="/admins/create" icon="IconPlus"></input-button>
+				<div class="clear-both"></div>
+				<br>
+				<data-table :data="table_data" :per_page="per_page" :key="table_data_key" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="true" url_slug="admins" :row_actions="['edit', 'delete']"></data-table>
+			</span>
 			
 		</div>
 	</section>

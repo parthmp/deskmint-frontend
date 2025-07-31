@@ -109,14 +109,20 @@
 					'cursor-pointer': !this.local_disabled,
 					
 					
-					'bg-deskmint-original-dark': !this.local_disabled && this.local_style_type === 'success',
+					'bg-gradient-to-r': !this.local_disabled && this.local_style_type === 'success',
+					'from-deskmint-cyan': !this.local_disabled && this.local_style_type === 'success',
+					'to-deskmint-original-dark': !this.local_disabled && this.local_style_type === 'success',
 					'bg-red-600': !this.local_disabled && this.local_style_type === 'error',
 					'bg-blue-800': !this.local_disabled && this.local_style_type === 'info',
 					
 					
-					'hover:hover:bg-deskmint-original-dark-plus': !this.local_disabled && this.local_style_type === 'success',
-					'hover:hover:bg-red-700': !this.local_disabled && this.local_style_type === 'error',
-					'hover:hover:bg-blue-900': !this.local_disabled && this.local_style_type === 'info',
+					'hover:bg-gradient-to-l': !this.local_disabled && this.local_style_type === 'success',
+					'hover:from-deskmint-original-dark-plus': !this.local_disabled && this.local_style_type === 'success',
+					'hover:to-deskmint-original-dark-plus': !this.local_disabled && this.local_style_type === 'success',
+					'hover:shadow-none': !this.local_disabled && this.local_style_type === 'success',
+					
+					'hover:bg-red-700': !this.local_disabled && this.local_style_type === 'error',
+					'hover:bg-blue-900': !this.local_disabled && this.local_style_type === 'info',
 					
 					
 					'opacity-80': this.local_disabled,
