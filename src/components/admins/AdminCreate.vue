@@ -1,7 +1,7 @@
 <template>
 	<section class="main-content">
     <div class="card">
-        <h1 class="text-2xl!">Create admin</h1>
+        <h1 class="text-2xl!">Create Admin</h1>
 		
 			<input-button class="lg:float-start" btn_text="Back" url="/admins" icon="IconCaretLeft"></input-button>
 			<div class="clear-both"></div>
@@ -63,7 +63,7 @@ import api from '../../helpers/api';
 	}
 	
 	export default defineComponent({
-		name : 'Admins',
+		name : 'AdminCreate',
 		components : {
 			InputButton,
 			InputEmail,

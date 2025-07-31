@@ -78,6 +78,12 @@
 					this.local_error = this.error || '';
 				}
 			
+			},
+			required() : void{
+				
+				this.input_required = this.required;
+				this.startMe();
+				this.validate();
 			}
 		},
 
@@ -116,32 +122,35 @@
 			},
 			EmitModel(e:any) : void{	
 				this.$emit('update:modelValue', this.input_value);
+			},
+			startMe() : void{
+				if(common.isset(this.required)){
+					this.input_required = this.required;
+				}else{
+					this.input_required = false;
+				}
+
+				if(this.input_required === false){
+					this.is_valid = true;
+				}else{
+					this.is_valid = false;
+					
+				}
+				this.input_value = this.modelValue || '';
+				
+				this.local_error = '';
+				if(common.isset(this.error)){
+					this.local_error = this.error || '';
+				}
+
+				if(common.isset(this.label)){
+					this.local_label = this.label+'';
+				}
 			}
 		},
 
 		mounted(){
-			if(common.isset(this.required)){
-				this.input_required = this.required;
-			}else{
-				this.input_required = false;
-			}
-
-			if(this.input_required === false){
-				this.is_valid = true;
-			}else{
-				this.is_valid = false;
-				
-			}
-			this.input_value = this.modelValue || '';
-			
-			this.local_error = '';
-			if(common.isset(this.error)){
-				this.local_error = this.error || '';
-			}
-
-			if(common.isset(this.label)){
-				this.local_label = this.label+'';
-			}
+			this.startMe();
 		}
 
 	});

@@ -8,6 +8,7 @@ import Dashboard from '../src/components/Dashboard.vue';
 import Clients from '../src/components/Clients.vue';
 import Admins from '../src/components/admins/Admins.vue';
 import AdminCreate from '../src/components/admins/AdminCreate.vue';
+import AdminEdit from '../src/components/admins/AdminEdit.vue';
 
 const routes = [
 	{
@@ -45,6 +46,10 @@ const routes = [
 			{
 				path:'/admins/create',
 				component: AdminCreate
+			},
+			{
+				path:'/admins/edit/:id',
+				component: AdminEdit
 			}
 		]
 	}
