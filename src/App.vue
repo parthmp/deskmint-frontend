@@ -54,6 +54,13 @@
 					Preferences.set({ key: 'android_token', value: 'web' });
 				}
 
+			},
+			updateTheme(event): void{
+				if(event.matches === true){
+					useThemeOptions().set_theme('dark');
+				}else{
+					useThemeOptions().set_theme('light');
+				}
 			}
 		},
 		watch : {
@@ -75,6 +82,16 @@
 			const info = await JSON.stringify(Device.getInfo());
 			this.device_id = (await Device.getId()).identifier;
 
+			const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+			mediaQuery.addEventListener('change', this.updateTheme);
+			
+			if(mediaQuery.matches === true && this.theme === null){
+				useThemeOptions().set_theme('dark');
+			}else if(mediaQuery.matches === false && this.theme === null){
+				useThemeOptions().set_theme('light');
+			}
+			
+			
 		}
 
 	}
