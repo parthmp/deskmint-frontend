@@ -11,6 +11,7 @@ import AdminCreate from '../src/components/admins/AdminCreate.vue';
 import AdminEdit from '../src/components/admins/AdminEdit.vue';
 
 import ClientsCustomFields from '../src/components/custom_fields/Clients/ClientsCustomFields.vue';
+import ClientsCustomFieldsCreate from '../src/components/custom_fields/Clients/ClientsCustomFieldsCreate.vue';
 
 const routes = [
 	{
@@ -44,6 +45,10 @@ const routes = [
 			{
 				path:'/custom-fields/clients',
 				component: ClientsCustomFields
+			},
+			{
+				path:'/custom-fields/clients/create',
+				component: ClientsCustomFieldsCreate
 			},
 			{
 				path:'/admins',

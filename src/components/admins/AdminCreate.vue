@@ -1,41 +1,41 @@
 <template>
 	<section class="main-content">
-    <div class="card">
-        <h1 class="text-2xl!">Create Admin</h1>
-		
-			<input-button class="lg:float-start" btn_text="Back" url="/admins" icon="IconCaretLeft"></input-button>
-			<div class="clear-both"></div>
+		<div class="card">
+			<h1 class="text-2xl!">Create Admin</h1>
 			
-		
-        <br>
-        
-		<form @submit.prevent="createAdmin" class="form">
-
-			<div class="grid grid-cols-12 gap-5">
-				<div class="col-span-12 lg:col-span-6">
-					<input-text :required="true" label="Enter name" prop_placeholder="Enter name" v-model="name.value" :error="name.error" ref="name"></input-text>
-				</div>
-				<div class="col-span-12 lg:col-span-6">
-					<input-email :required="true" v-model="email" ref="email"></input-email>
-				</div>
-			</div>
+				<input-button class="lg:float-start" btn_text="Back" url="/admins" icon="IconCaretLeft"></input-button>
+				<div class="clear-both"></div>
+				
 			
-			<div class="grid grid-cols-12 gap-5 mt-[20px]">
-				<div class="col-span-12 lg:col-span-6">
-					<input-password :required="true" v-model="password" ref="password"></input-password>
-				</div>
-				<div class="col-span-12 lg:col-span-6">
-					<input-password :required="true" v-model="confirm_password" ref="confirm_password" label="Confirm Password"></input-password>
-				</div>
-			</div>
+			<br>
+			
+			<form @submit.prevent="createAdmin" class="form">
 
-			<input-button btn_text="Save" :disabled="btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
-			<div class="clear-both"></div>
+				<div class="grid grid-cols-12 gap-5">
+					<div class="col-span-12 lg:col-span-6">
+						<input-text :required="true" label="Enter name" prop_placeholder="Enter name" v-model="name.value" :error="name.error" ref="name"></input-text>
+					</div>
+					<div class="col-span-12 lg:col-span-6">
+						<input-email :required="true" v-model="email" ref="email"></input-email>
+					</div>
+				</div>
+				
+				<div class="grid grid-cols-12 gap-5 mt-[20px]">
+					<div class="col-span-12 lg:col-span-6">
+						<input-password :required="true" v-model="password" ref="password"></input-password>
+					</div>
+					<div class="col-span-12 lg:col-span-6">
+						<input-password :required="true" v-model="confirm_password" ref="confirm_password" label="Confirm Password"></input-password>
+					</div>
+				</div>
 
-		</form>
-        
-    </div>
-</section>
+				<input-button btn_text="Save" :disabled="btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
+				<div class="clear-both"></div>
+
+			</form>
+			
+		</div>
+	</section>
 </template>
 <style scoped>
 
@@ -51,8 +51,8 @@
 	import InputPassword from '../inputs/InputPassword.vue';
 	
 	import { defineComponent } from 'vue';
-import { toastEvents } from '../../events/toastEvents';
-import api from '../../helpers/api';
+	import { toastEvents } from '../../events/toastEvents';
+	import api from '../../helpers/api';
 	
 	export interface AdminCreateInterface{
 		name:object,
