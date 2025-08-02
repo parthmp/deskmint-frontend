@@ -23,7 +23,7 @@
 							<div class="sidebar-menu-items">
 								<ul class="main-menu-list">
 									<li v-for="(menu_item, i) in menu_items" :key="i" :class="{'bg-background-card':(menu_item.has_submenu && menu_item.show_submenu && menu_item.submenu.length > 0), 'rounded-lg': menu_item.has_submenu}">
-										<router-link :to="menu_item.path" class="block" @click="resetMenuItems(i)" :class="{'active-menu-link': menu_item.is_active, 'fix-collapsed-icon': (hover_sidebar == false && sidebar_full == false)}">
+										<router-link :to="menu_item.path" class="block" @click="resetMenuItems(i, menu_item.submenu.length)" :class="{'active-menu-link': menu_item.is_active, 'fix-collapsed-icon': (hover_sidebar == false && sidebar_full == false)}">
 											<span class="flex items-center">
 												<component v-if="sidebar_full || hover_sidebar" :is="menu_item.icon" :size="menu_item.icon_size"></component>
 												<component v-if="!sidebar_full && !hover_sidebar" :is="menu_item.icon" :size="28"></component>
@@ -542,7 +542,7 @@ export default defineComponent({
 			this.is_mobile = window.innerWidth < this.phone_breakpoint;
 		},
 
-		resetMenuItems(index:number, mtype = '') : void{
+		resetMenuItems(index:number, phone_sub = 0,mtype = '') : void{
 			
 			
 			for(let z = 0 ; z < this.menu_items.length ; z++){
@@ -557,11 +557,13 @@ export default defineComponent({
 
 			}
 
-			if(mtype == ''){
+			if(mtype === ''){
 				this.setActiveMenu(index);
 			}
 			
-			
+			if(this.is_mobile && phone_sub <= 0){
+				this.phone_show = false;
+			}
 			
 		},
 		
@@ -572,7 +574,7 @@ export default defineComponent({
 
 		setSubActiveItem(i:number, z:number) : void {
 
-			this.resetMenuItems(i, 'sub');
+			this.resetMenuItems(i, 0, 'sub');
 
 			this.menu_items[i].submenu[z].is_active = true;
 
