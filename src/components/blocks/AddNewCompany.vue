@@ -58,7 +58,7 @@ p{
 
 	import { toastEvents } from '../../events/toastEvents';
 	import LoginService from '../../services/LoginService';
-	import { setCompanyId } from '../../services/CompanyService';
+	import { setCompanyId } from '../../services/TokenService';
 	import api from '../../helpers/api';
 	
 	

@@ -5,11 +5,11 @@ import {
 	setAccessToken,
 	setRefreshToken,
 	removeAccessToken,
-	removeRefreshToken
+	removeRefreshToken,
+	getCompanyId
 } from './../services/TokenService';
 
 import router from '../../routes';
-import { getCompanyId } from '../services/CompanyService';
 import common from './common';
 import { env } from '../env';
 import { toastEvents } from '../events/toastEvents';
@@ -46,8 +46,9 @@ api.interceptors.request.use(async (config) => {
 
 		config.params.refresh_token = refreshToken;
 		config.params.device_id = deviceId;
-
+		
 		if (common.isset(companyId) && companyId !== '') {
+			
 			config.params.company_id = companyId;
 		}
 

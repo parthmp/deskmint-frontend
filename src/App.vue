@@ -16,6 +16,9 @@
 	import { Preferences } from '@capacitor/preferences';
 
 	import { Device } from '@capacitor/device';
+	import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import { getCompanyId } from './services/TokenService';
+	
 
 
 	export default{
@@ -90,6 +93,7 @@
 			}else if(mediaQuery.matches === false && this.theme === null){
 				useThemeOptions().set_theme('light');
 			}
+
 			
 			
 		}

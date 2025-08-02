@@ -56,9 +56,8 @@
 
 	import LoginService from '../../services/LoginService';
 
-	import { setAccessToken, setRefreshToken } from './../../services/TokenService';
-	import { getCompanyId, setCompanyId } from '../../services/CompanyService';
-
+	import { setAccessToken, setRefreshToken, setCompanyId } from './../../services/TokenService';
+	
 	export interface TwoFactorAuthInterFace{
 		btn_disabled:boolean,
 		entered_otp: object,

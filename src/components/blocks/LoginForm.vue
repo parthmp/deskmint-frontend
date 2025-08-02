@@ -82,9 +82,9 @@ p{
 	import axios from 'axios';
 
 	import ApplicationLogo from '../UI/ApplicationLogo.vue';
-	import { setAccessToken, setRefreshToken } from '../../services/TokenService';
+	import { setAccessToken, setRefreshToken, setCompanyId } from '../../services/TokenService';
 	import LoginService from '../../services/LoginService';
-	import { setCompanyId } from '../../services/CompanyService';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 	export interface myData{
 		email_address: any,
@@ -215,14 +215,12 @@ p{
 
 											LoginService.ifUserHasCompanyAdded((response: any) => {
 												if(response.data.company_exists === true){
-
 													
-
+													
 													/* set default company */
-													setCompanyId(response.data.company_id).then(() => {
+													setCompanyId(response.data.company_id+'').then(() => {
 														this.$router.push('/panel');
 													});
-													
 
 												}else{
 													this.$router.push('/add-company');
