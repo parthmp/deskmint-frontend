@@ -14,9 +14,10 @@
 		</div>
 		<br>
 		<div class="table-container">
+			<!---<div v-if="dynamic_loading_status" class="h-[10px] bg-deskmint-cyan rounded-xs w-full mb-0 animate-[pulse_0.5s_ease-in-out_infinite] absolute top-0 bottom-0"></div>-->
 			<table class="table">
 				<thead>
-					<tr class="cursor-pointer">
+					<tr class="cursor-pointer" :class="{'animate-[pulse_0.5s_ease-in-out_infinite]':dynamic_loading_status, 'opacity-75': dynamic_loading_status}">
 						<th v-if="checkbox_actions?.length > 0">
 							<input-checkbox v-model="check_page_rows" :border_white="true"></input-checkbox>
 						</th>
@@ -60,7 +61,7 @@
 					</tr>
 				</tbody>
 				<tfoot>
-					<tr>
+					<tr :class="{'animate-[pulse_0.5s_ease-in-out_infinite]':dynamic_loading_status, 'opacity-75': dynamic_loading_status}">
 						<th v-if="checkbox_actions?.length > 0">
 							<input-checkbox v-model="check_page_rows" :border_white="true"></input-checkbox>
 						</th>
@@ -165,7 +166,8 @@ export default defineComponent({
 		per_page:Number,
 		total_pages:Number,
 		url_slug: String,
-		row_actions: Array<string>
+		row_actions: Array<string>,
+		dynamic_loading_status:Boolean
 	},
 	data(): DataTableInterface{
 		return {
@@ -199,7 +201,7 @@ export default defineComponent({
 				current_page: null,
 				sorted_column: null
 			},
-			temp_sorted_column: {}
+			temp_sorted_column: {},
 		}
 	},
 	computed : {

@@ -9,7 +9,7 @@
 				<input-button class="lg:float-end" btn_text="Add New" url="/custom-fields/manage-field-types/create" icon="IconPlus"></input-button>
 				<div class="clear-both"></div>
 				<br>
-				<data-table :data="table_data" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="custom-fields/manage-field-types" :row_actions="['edit', 'delete']" :total_pages="total_pages" @handle_api="handleAPI"></data-table>
+				<data-table :data="table_data" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="custom-fields/manage-field-types" :row_actions="['edit', 'delete']" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
 			</span>
 			
 		</div>
@@ -22,7 +22,8 @@
 		data_loading: boolean,
 		table_data: object,
 		per_page: number,
-		total_pages: number
+		total_pages: number,
+		dynamic_loading_status:boolean
 	}
 
 	import { defineComponent } from 'vue';
@@ -53,7 +54,8 @@
 					rows: []
 				},
 				total_pages : 1,
-				per_page: 15
+				per_page: 15,
+				dynamic_loading_status: false
 			}
 		},
 
@@ -63,8 +65,10 @@
 				
 				if(page_data === ''){
 					this.data_loading = true;
+				}else{
+					this.dynamic_loading_status = true;
 				}
-
+				
 				api.post('manage-field-types', {
 
 					page_data:JSON.stringify(page_data),
@@ -74,14 +78,18 @@
 
 					if(page_data === ''){
 						this.data_loading = false;
+					}else{
+						this.dynamic_loading_status = false;
 					}
-					
+
 					this.table_data = response.data.table_data;
 					this.total_pages = response.data.total_pages;
 
 				}).catch((error) => {
 					if(page_data === ''){
 						this.data_loading = false;
+					}else{
+						this.dynamic_loading_status = false;
 					}
 
 				});
