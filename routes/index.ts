@@ -10,8 +10,12 @@ import Admins from '../src/components/admins/Admins.vue';
 import AdminCreate from '../src/components/admins/AdminCreate.vue';
 import AdminEdit from '../src/components/admins/AdminEdit.vue';
 
+import ManageCustomFieldTypes from '../src/components/custom_fields/manage_types/ManageCustomFieldTypes.vue';
+import ManageCustomFieldTypesCreate from '../src/components/custom_fields/manage_types/ManageCustomFieldTypesCreate.vue';
+
 import ClientsCustomFields from '../src/components/custom_fields/Clients/ClientsCustomFields.vue';
 import ClientsCustomFieldsCreate from '../src/components/custom_fields/Clients/ClientsCustomFieldsCreate.vue';
+
 
 const routes = [
 	{
@@ -41,6 +45,14 @@ const routes = [
 			{
 				path:'/clients/page/:id',
 				component: Clients
+			},
+			{
+				path:'/custom-fields/manage-field-types',
+				component: ManageCustomFieldTypes
+			},
+			{
+				path:'/custom-fields/manage-field-types/create',
+				component: ManageCustomFieldTypesCreate
 			},
 			{
 				path:'/custom-fields/clients',

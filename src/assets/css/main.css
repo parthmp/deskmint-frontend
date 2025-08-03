@@ -321,14 +321,14 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 .form-group:not(:first-child){
 	@apply mt-[18px];
 }
-.form-group input{
+.form-group input, .form-group select{
 	@apply block w-full border-1 border-input-border rounded-sm transition-all duration-300 py-[6px] px-[13px] bg-transparent!;
 }
 
-.form-group input:hover{
+.form-group input:hover, .form-group select:hover{
 	@apply  border-input-border-hover;
 }
-.form-group input:focus{
+.form-group input:focus, .form-group select:focus{
 	@apply border-1 border-deskmint-green! outline-1 outline-deskmint-green shadow-lg;
 }
 .form-group label{
