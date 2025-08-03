@@ -272,7 +272,8 @@ export default defineComponent({
 			this.checkCheckboxesForCurrentPage(check_checkboxes);
 		},
 		data() : void{
-			this.local_table_data = this.data;
+			/*this.bootMeUp(false);*/
+			this.local_table_data.rows = this.data.rows;
 		}
 	},
 	methods : {
@@ -557,59 +558,72 @@ export default defineComponent({
 				this.local_table_data.columns[z].sort_visibility = '';
 			}
 			this.temp_sorted_column = {};
-		}
+		},
+
+		bootMeUp(omit = false) : void{
+			
+			if(common.isset(this.data)){
+
+					this.local_table_data = this.data || {};
+					
+					if(common.isset(this.checkbox_actions) && common.isset(this.local_table_data.rows)){
+						this.local_table_data.rows.forEach(row => {
+							row.selected = false;
+							if(common.isset(row.created_at)){
+								row.created_at = common.formatDate(row.created_at);
+							}
+						});
+					}
+				}
+
+				if(common.isset(this.per_page)){
+					this.local_per_page = this.per_page || env.DEFAULT_TABLE_ROWS;
+				}
+				
+				if(!omit){
+
+					if(!common.isObjectEmpty(this.local_table_data)){
+						if(common.isset(this.local_table_data.columns)){
+							for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
+								this.local_table_data.columns[z]['sort_visibility'] = '';
+							}
+						}
+					}
+
+				}
+				
+				
+				this.original_rows = this.local_table_data.rows;
+				this.filtered_rows = this.original_rows;
+
+				if(common.isset(this.checkbox_actions)){
+					this.local_checkbox_actions = this.checkbox_actions || [];
+				}
+
+				if(common.isset(this.static)){
+					this.local_static = this.static;
+				}
+
+				if(!omit){
+					if(common.isset(this.total_pages)){
+						if(this.local_static === false){
+							this.local_total_pages = this.total_pages;
+						}
+					}
+				}
+
+				
+				// Generate pages after state is loaded
+				if(this.paginate && !omit){
+					this.generatePages();
+				}
+
+			}
 	},
 	
 	mounted : function(){
 
-		if(common.isset(this.data)){
-
-			this.local_table_data = this.data || {};
-			
-			if(common.isset(this.checkbox_actions) && common.isset(this.local_table_data.rows)){
-				this.local_table_data.rows.forEach(row => {
-					row.selected = false;
-					if(common.isset(row.created_at)){
-						row.created_at = common.formatDate(row.created_at);
-					}
-				});
-			}
-		}
-
-		if(common.isset(this.per_page)){
-			this.local_per_page = this.per_page || env.DEFAULT_TABLE_ROWS;
-		}
-		
-		if(!common.isObjectEmpty(this.local_table_data)){
-			if(common.isset(this.local_table_data.columns)){
-				for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
-					this.local_table_data.columns[z]['sort_visibility'] = '';
-				}
-			}
-		}
-		
-		this.original_rows = this.local_table_data.rows;
-		this.filtered_rows = this.original_rows;
-
-		if(common.isset(this.checkbox_actions)){
-			this.local_checkbox_actions = this.checkbox_actions || [];
-		}
-
-		if(common.isset(this.static)){
-			this.local_static = this.static;
-		}
-
-		if(common.isset(this.total_pages)){
-			if(this.local_static === false){
-				this.local_total_pages = this.total_pages;
-			}
-		}
-
-		
-		// Generate pages after state is loaded
-		if(this.paginate){
-			this.generatePages();
-		}
+		this.bootMeUp();
 
 	}
 });

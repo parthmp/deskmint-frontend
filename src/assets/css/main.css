@@ -324,7 +324,9 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 .form-group input, .form-group select{
 	@apply block w-full border-1 border-input-border rounded-sm transition-all duration-300 py-[6px] px-[13px] bg-transparent!;
 }
-
+.form-group select{
+	@apply bg-background-card!;
+}
 .form-group input:hover, .form-group select:hover{
 	@apply  border-input-border-hover;
 }

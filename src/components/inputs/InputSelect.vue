@@ -3,7 +3,7 @@
 		<label :for="text_id">{{ local_label }}</label>
 		<select :id="text_id" v-model="input_value" @input="EmitModel" :class="{'red-input-order': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors))}">
 			<option v-if="local_placeholder !== ''" value="">{{ local_placeholder }}</option>
-			<option v-for="(option, z) in options" :key="z" :selected="option?.selected" :value="option.value+''">{{ option.text+'' }}</option>
+			<option v-for="(option, z) in options" :key="z" :value="option.value+''">{{ option.text+'' }}</option>
 		</select>
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">{{ local_label }} is a required field.</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
