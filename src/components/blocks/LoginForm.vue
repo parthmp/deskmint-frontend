@@ -84,7 +84,8 @@ p{
 	import ApplicationLogo from '../UI/ApplicationLogo.vue';
 	import { setAccessToken, setRefreshToken, setCompanyId } from '../../services/TokenService';
 	import LoginService from '../../services/LoginService';
-import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+	import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import api from '../../helpers/api';
 
 	export interface myData{
 		email_address: any,
@@ -213,7 +214,9 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 												message: 'Login successful'
 											});
 
-											LoginService.ifUserHasCompanyAdded((response: any) => {
+											api.post('check-company-exists', {
+												something: 'value'
+											}).then((response) => {
 												if(response.data.company_exists === true){
 													
 													
@@ -226,6 +229,8 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 													this.$router.push('/add-company');
 												}
 											});
+
+											
 
 										} catch (e) {
 											console.error('Token storage failed:', e);

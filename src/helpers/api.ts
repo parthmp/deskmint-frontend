@@ -38,17 +38,21 @@ api.interceptors.request.use(async (config) => {
 		config.headers['Authorization'] = `Bearer ${accessToken}`;
 	}
 
+	if(refreshToken){
+		config.headers['X-Refresh-Token'] = refreshToken;
+	}
+
+	if(deviceId){
+		config.headers['X-Device-Id'] = deviceId;
+	}
+
 	if (config.method === 'get') {
 		
 		if (!config.params) {
 			config.params = {};
 		}
 
-		config.params.refresh_token = refreshToken;
-		config.params.device_id = deviceId;
-		
 		if (common.isset(companyId) && companyId !== '') {
-			
 			config.params.company_id = companyId;
 		}
 
@@ -57,9 +61,6 @@ api.interceptors.request.use(async (config) => {
 		if(typeof config.data !== 'object' || config.data === null){
 			config.data = {};
 		}
-
-		config.data.refresh_token = refreshToken;
-		config.data.device_id = deviceId;
 
 		if(common.isset(companyId)){
 			if(companyId !== ''){

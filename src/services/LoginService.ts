@@ -8,12 +8,7 @@ export default{
 
 	ifUserHasCompanyAdded(fun:any) : void{
 
-		api.post('check-company-exists', {
-			something: 'value'
-		}).then(response => {
-			fun(response);
-		});
-
+		
 	}
 
 }

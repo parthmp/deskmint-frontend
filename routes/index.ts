@@ -12,6 +12,7 @@ import AdminEdit from '../src/components/admins/AdminEdit.vue';
 
 import ManageCustomFieldTypes from '../src/components/custom_fields/manage_types/ManageCustomFieldTypes.vue';
 import ManageCustomFieldTypesCreate from '../src/components/custom_fields/manage_types/ManageCustomFieldTypesCreate.vue';
+import ManageCustomFieldTypesEdit from '../src/components/custom_fields/manage_types/ManageCustomFieldTypesEdit.vue';
 
 import ClientsCustomFields from '../src/components/custom_fields/Clients/ClientsCustomFields.vue';
 import ClientsCustomFieldsCreate from '../src/components/custom_fields/Clients/ClientsCustomFieldsCreate.vue';
@@ -53,6 +54,10 @@ const routes = [
 			{
 				path:'/custom-fields/manage-field-types/create',
 				component: ManageCustomFieldTypesCreate
+			},
+			{
+				path:'/custom-fields/manage-field-types/edit/:id',
+				component: ManageCustomFieldTypesEdit
 			},
 			{
 				path:'/custom-fields/clients',
