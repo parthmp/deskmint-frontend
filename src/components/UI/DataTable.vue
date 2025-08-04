@@ -17,15 +17,15 @@
 			<!---<div v-if="dynamic_loading_status" class="h-[10px] bg-deskmint-cyan rounded-xs w-full mb-0 animate-[pulse_0.5s_ease-in-out_infinite] absolute top-0 bottom-0"></div>-->
 			<table class="table">
 				<thead>
-					<tr class="cursor-pointer" :class="{'animate-[pulse_0.5s_ease-in-out_infinite]':dynamic_loading_status, 'opacity-75': dynamic_loading_status}">
+					<tr :class="{'animate-[pulse_0.5s_ease-in-out_infinite]':dynamic_loading_status, 'opacity-75': dynamic_loading_status}">
 						<th v-if="checkbox_actions?.length > 0">
 							<input-checkbox v-model="check_page_rows" :border_white="true"></input-checkbox>
 						</th>
-						<th v-for="(column, ci) in local_table_data.columns" :key="ci" @click="sortColumns(column, ci)">
+						<th v-for="(column, ci) in local_table_data.columns" :key="ci" @click="sortColumns(column, ci)" :class="{'cursor-pointer':(column.label !== 'actions')}">
 							<span class="inline-block">
 								<span class="flex flex-row items-center">
 									<span>{{ column.text }}</span>
-									<span class="flex flex-col ml-[10px]!">
+									<span v-if="column.label !== 'actions'" class="flex flex-col ml-[10px]!">
 										<IconTriangleFilled v-if="column.sort_visibility !== '' && column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleFilled>
 										<IconTriangle v-if="column.sort_visibility === '' || column.sort_visibility === 'desc'" class="inline-block" :size="8"></IconTriangle>
 										<IconTriangleInverted v-if="column.sort_visibility === '' || column.sort_visibility === 'asc'" class="inline-block" :size="8"></IconTriangleInverted>
@@ -325,63 +325,69 @@ export default defineComponent({
 
 		sortColumns(column:object, index:number) : void{
 
-			this.checkCheckboxesForCurrentPage(false);
-			this.resetColumnSort();
-			
-			if(this.last_index > -1){
-				this.local_table_data.columns[this.last_index].sort_visibility = '';
-			}
+			if(column.label !== 'actions'){
 
-			this.sort_column = column.label;
-			this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc';
-			column.sort_visibility = this.sort_direction;
-			this.temp_sorted_column = column;
-			
-			if(this.local_static === true){
-				const datasetToSort = this.searched_term === '' ? this.original_rows : this.filtered_rows;
-			
-				datasetToSort.sort((a, b) => {
-					let valueA = '';
-					let valueB = '';
-
-					if(typeof a[column.label] === 'object'){
-						valueA = a[column.label].text;
-					} else {
-						valueA = a[column.label];
-					}
-
-					if(typeof b[column.label] === 'object'){
-						valueB = b[column.label].text;
-					}else{
-						valueB = b[column.label];
-					}
-
-					if (typeof valueA === 'string') {
-						valueA = valueA.toLowerCase();
-						valueB = valueB.toLowerCase();
-					}
-					
-					if(this.sort_direction === 'asc'){
-						return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-					}else{
-						return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
-					}
-				});
-
-				if(this.paginate){
-					this.generatePages();
-				}else{
-					this.local_table_data.rows = datasetToSort;
+				this.checkCheckboxesForCurrentPage(false);
+				this.resetColumnSort();
+				
+				if(this.last_index > -1){
+					this.local_table_data.columns[this.last_index].sort_visibility = '';
 				}
-			}else{
-				this.current_page = 1;
+
+				this.sort_column = column.label;
+				this.sort_direction = this.sort_direction === 'asc' ? 'desc' : 'asc';
+				column.sort_visibility = this.sort_direction;
+				this.temp_sorted_column = column;
 				
-				this.sendData('sort');
-				this.current_page = 1;
+				if(this.local_static === true){
+					const datasetToSort = this.searched_term === '' ? this.original_rows : this.filtered_rows;
 				
+					datasetToSort.sort((a, b) => {
+						let valueA = '';
+						let valueB = '';
+
+						if(typeof a[column.label] === 'object'){
+							valueA = a[column.label].text;
+						} else {
+							valueA = a[column.label];
+						}
+
+						if(typeof b[column.label] === 'object'){
+							valueB = b[column.label].text;
+						}else{
+							valueB = b[column.label];
+						}
+
+						if (typeof valueA === 'string') {
+							valueA = valueA.toLowerCase();
+							valueB = valueB.toLowerCase();
+						}
+						
+						if(this.sort_direction === 'asc'){
+							return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+						}else{
+							return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+						}
+					});
+
+					if(this.paginate){
+						this.generatePages();
+					}else{
+						this.local_table_data.rows = datasetToSort;
+					}
+				
+				}else{
+					this.current_page = 1;
+					
+					this.sendData('sort');
+					this.current_page = 1;
+					
+				}
+				this.last_index = index;
+
 			}
 			
-			this.last_index = index;
+			
 		},
 
 		handleDelete(row_id:number) : void{
