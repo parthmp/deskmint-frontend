@@ -69,10 +69,11 @@
 					this.dynamic_loading_status = true;
 				}
 				
-				api.post('manage-field-types', {
-
-					page_data:JSON.stringify(page_data),
-					default_per_page: env.DEFAULT_TABLE_ROWS
+				api.get('manage-field-types', {
+					params: {
+						...(page_data || {}),
+						default_per_page: env.DEFAULT_TABLE_ROWS
+					}
 
 				}).then((response) => {
 

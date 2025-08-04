@@ -13,7 +13,7 @@
 
 				<div class="lg:grid lg:grid-cols-12 lg:gap-5">
 					<div class="lg:col-span-6">
-						<input-select :options="options" label="Input type" :required="true" prop_placeholder="Select" v-model="input_type" ref="input_type"></input-select>
+						<input-select :options="options" label="Input type" :required="true" prop_placeholder="Select an option" v-model="input_type" ref="input_type"></input-select>
 					</div>
 					<div class="lg:col-span-6">
 						<input-text label="Input name" :required="true" v-model="input_name.value" :error="input_name.error" ref="input_name"></input-text>
