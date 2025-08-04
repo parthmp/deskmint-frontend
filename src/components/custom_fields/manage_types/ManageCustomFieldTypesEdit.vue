@@ -76,16 +76,22 @@
 
 		watch: {
 			input_type() : void{
-				this.$refs.input_type.validate();
+				if(!this.data_loading){
+					this.$refs.input_type.validate();
+				}
+				
 			},
 			"input_name.value"() : void{
 
-				let input_name_validated = this.$refs.input_name.validate();
+				if(!this.data_loading){
+				
+					let input_name_validated = this.$refs.input_name.validate();
 
-				if(input_name_validated){
-					this.input_name.error = '';
-				}else{
-					this.input_name.error = 'Please enter input name';
+					if(input_name_validated){
+						this.input_name.error = '';
+					}else{
+						this.input_name.error = 'Please enter input name';
+					}
 				}
 				
 			}
@@ -94,7 +100,7 @@
 		methods : {
 			createCustomFieldType() : void{
 				
-				/*
+				
 				let input_type_v = this.$refs.input_type.validate();
 				let input_name_v = this.$refs.input_name.validate();
 
@@ -109,17 +115,18 @@
 
 					this.btn_disabled = true;
 					
-					api.post('manage-field-types/create', {
+					api.patch('manage-field-types/'+this.$route.params.id, {
 						input_type:this.input_type,
 						input_name:this.input_name.value	
 					}).then((response) => {
-						this.btn_disabled = false;
 						this.$router.push('/custom-fields/manage-field-types');
 					}).catch((error) => {
+						
+					}).finally(() => {
 						this.btn_disabled = false;
 					});
 
-				}*/
+				}
 
 			},
 
@@ -127,15 +134,21 @@
 				this.data_loading = true;
 				api.get('manage-field-types/fetch-input-types').then((response) => {
 					this.options = response.data;
-					this.fetchCustomFieldTypeById();
+					api.get('manage-field-types/'+this.$route.params.id).then((response) => { 
+					
+						this.input_type = response.data.input_type;
+						this.input_name.value = response.data.input_name;
+						
+
+					}).catch((error) => { 
+						
+					}).finally((e) => {
+						this.data_loading = false;
+					});
+
+					
 				}).catch((error) => { this.data_loading = false; });
 			},
-
-			fetchCustomFieldTypeById() : void{
-
-				api.get('manage-field-types/'+this.$route.params.id).then((response) => { this.data_loading = false; }).catch((error) => { this.data_loading = false; });
-
-			}
 
 		},
 

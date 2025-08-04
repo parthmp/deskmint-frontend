@@ -99,12 +99,25 @@
 				this.fetchFieldTypes(e);
 			},
 
-			handleDeleted(e:any) : void{
-
+			handleDeleted(id:number) : void{
+				
+				this.deleteFields([id]);
 			},
 
-			handleMultipleDelete(e:any) : void{
+			handleMultipleDelete(ids:any) : void{
+				this.deleteFields(ids);
+			},
 
+			deleteFields(ids:any) : void{
+				api.delete('manage-field-types', {
+					data : {
+						ids : ids
+					}
+				}).catch((error) => {
+					
+				}).finally((e) => {
+					this.fetchFieldTypes();
+				});
 			}
 			
 		},
