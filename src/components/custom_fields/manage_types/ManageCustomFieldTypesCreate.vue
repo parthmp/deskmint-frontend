@@ -107,8 +107,8 @@
 				}else{
 
 					this.btn_disabled = true;
-
-					api.post('manage-field-types', {
+					
+					api.post('manage-field-types/create', {
 						input_type:this.input_type,
 						input_name:this.input_name.value	
 					}).then((response) => {
