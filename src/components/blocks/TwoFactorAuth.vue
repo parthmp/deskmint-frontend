@@ -54,9 +54,8 @@
 	
 	import ApplicationLogo from '../UI/ApplicationLogo.vue';
 
-	import LoginService from '../../services/LoginService';
-
 	import { setAccessToken, setRefreshToken, setCompanyId } from './../../services/TokenService';
+	import api from '../../helpers/api';
 	
 	export interface TwoFactorAuthInterFace{
 		btn_disabled:boolean,
@@ -146,22 +145,22 @@
 										message: 'Login successful'
 									});
 
-									LoginService.ifUserHasCompanyAdded((response: any) => {
+									api.post('check-company-exists', {
+										something: 'value'
+									}).then((response) => {
 										if(response.data.company_exists === true){
-
 											
-
+											
 											/* set default company */
-											setCompanyId(response.data.company_id).then(() => {
+											setCompanyId(response.data.company_id+'').then(() => {
 												this.$router.push('/panel');
 											});
-											
 
 										}else{
 											this.$router.push('/add-company');
 										}
 									});
-
+									
 								} catch (e) {
 									console.error('Token storage failed:', e);
 								}
