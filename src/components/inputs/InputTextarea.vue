@@ -1,19 +1,15 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<select :id="text_id" v-model="input_value" @change="emitChanged" @input="EmitModel" :class="{'red-input-order': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors))}">
-			<option v-if="local_placeholder !== ''" value="">{{ local_placeholder }}</option>
-			<option v-for="(option, z) in options" :key="z" :value="option.value+''">{{ option.text+'' }}</option>
-		</select>
-		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">{{ local_label }} is a required field.</span>
+		<textarea v-model="input_value" class="form-control" :id="text_id" @input="EmitModel" :class="{'red-input-order': (local_error !== '' && show_errors)}"></textarea>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
 
 <script lang="ts">
 
-	export interface InputSelectInterface{
-		input_value: any,
+	export interface InputEmailInterface{
+		input_value: string,
 		input_required: boolean,
 		is_valid: boolean,
 		local_error: string,
@@ -45,13 +41,10 @@
 			},
 			prop_placeholder: {
 				type:String
-			},
-			options:{
-				type:Array<Object>
 			}
 		},
 
-		data() : InputSelectInterface {
+		data() : InputEmailInterface {
 			return {
 				input_value: '',
 				input_required: false,
@@ -74,15 +67,13 @@
 					this.local_error = this.error || '';
 				}
 			
-			},
-			modelValue() : void{
-				//this.input_value = this.modelValue;
-				//console.log('INSIDE HERE--');
 			}
 		},
 
 		computed : {
-			
+			/*highlight_error() : boolean{
+				return ((!this.is_valid && this.local_error === '' && this.show_errors) || (this.local_error !== '' && this.show_errors));
+			},*/
 			text_id() : string{
 				let rand_number = Math.floor(Math.random() * 500) + 1;
 				return 'text_field_'+rand_number;
@@ -97,7 +88,7 @@
 				
 				if(this.input_required === true){
 					
-					this.input_value = this.sanitizeInput(this.input_value+'');
+					this.input_value = this.sanitizeInput(this.input_value);
 					
 					if(this.input_value !== ''){
 						this.is_valid = true;
@@ -109,8 +100,8 @@
 					this.is_valid = true;
 				}
 				
-				this.input_value = this.sanitizeInput(this.input_value+'');
-				this.$emit('update:modelValue', this.input_value+'');
+				this.input_value = this.sanitizeInput(this.input_value);
+				this.$emit('update:modelValue', this.input_value);
 				
 				this.$emit('is-valid', this.is_valid);
 				return this.is_valid;
@@ -122,16 +113,6 @@
 			},
 			sanitizeInput(in_string:string) : string{
 				return common.stripTags(in_string);
-			},
-
-			emitChanged(e:any) : void{
-
-				
-    			const selected_index = e.target.selectedIndex;
-				console.log(this.options[selected_index]);
-
-				//this.input_value = this.sanitizeInput(this.input_value);
-				//this.$emit('change', this.input_value);
 			}
 		},
 
