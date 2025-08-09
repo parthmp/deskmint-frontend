@@ -101,8 +101,8 @@
 				if(this.input_required === true){
 					
 					this.input_value = common.stripTags(common.sanitize(this.input_value));
-					
-					if(this.input_value !== '' && this.input_value !== null && typeof this.input_value !== 'undefined'){
+					let temp_value = this.input_value.trim();
+					if(temp_value !== '' && this.input_value !== null && typeof this.input_value !== 'undefined'){
 						this.is_valid = true;
 					}else{
 						this.is_valid = false;

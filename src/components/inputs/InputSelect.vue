@@ -28,7 +28,7 @@
 
 	export default defineComponent({
 
-		name : 'InputEmail',
+		name : 'InputSelect',
 
 		props : {
 			modelValue : {
@@ -76,15 +76,14 @@
 			
 			},
 			modelValue() : void{
-				//this.input_value = this.modelValue;
-				//console.log('INSIDE HERE--');
+				
 			}
 		},
 
 		computed : {
 			
 			text_id() : string{
-				let rand_number = Math.floor(Math.random() * 500) + 1;
+				let rand_number = common.random_number();
 				return 'text_field_'+rand_number;
 			}
 		},
@@ -92,14 +91,15 @@
 		methods: {
 			validate() : boolean{
 				
-				//this.show_errors = false;
+			
 				/* validate here */
 				
 				if(this.input_required === true){
 					
 					this.input_value = this.sanitizeInput(this.input_value+'');
+					let temp_value = this.input_value.trim();
 					
-					if(this.input_value !== ''){
+					if(temp_value !== ''){
 						this.is_valid = true;
 					}else{
 						this.is_valid = false;
@@ -125,13 +125,8 @@
 			},
 
 			emitChanged(e:any) : void{
-
-				
-    			const selected_index = e.target.selectedIndex;
-				console.log(this.options[selected_index]);
-
-				//this.input_value = this.sanitizeInput(this.input_value);
-				//this.$emit('change', this.input_value);
+    			let selected_index = e.target.selectedIndex;
+				this.$emit('changed', this.options[selected_index-1]);
 			}
 		},
 

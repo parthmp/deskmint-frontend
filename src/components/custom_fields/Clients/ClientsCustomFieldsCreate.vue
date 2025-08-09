@@ -14,39 +14,39 @@
 				
 				<div class="lg:grid lg:grid-cols-12 gap-5">
 					<div class="lg:col-span-4">
-						<input-select :options="input_fields_options" @change="changeEventFired" label="Input field" :required="true" prop_placeholder="Select" v-model="custom_field" ref="input_field"></input-select>
+						<input-select :options="input_fields_options" @changed="changeEventFired" label="Input field" :required="true" prop_placeholder="Select" v-model="custom_field" ref="custom_field"></input-select>
 					</div>
 					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
 						<input-text label="Label" :required="true" prop_placeholder="Enter label text" v-model="label.value" :error="label.error" ref="label"></input-text>
 					</div>
 					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-						<input-text label="Placeholder" prop_placeholder="Enter placeholder" :required="true" v-model="placeholder.value" :error="placeholder.error" ref="placeholder"></input-text>
+						<input-text label="Placeholder" prop_placeholder="Enter placeholder" :required="false" v-model="placeholder.value" :error="placeholder.error" ref="placeholder"></input-text>
 					</div>
 				</div>
 				
 				<div class="lg:grid lg:grid-cols-12 gap-5">
 					<div class="lg:col-span-4 mt-[20px]">
-						<input-select :options="required_options" label="Is required?" :required="false" prop_placeholder="Select" v-model="required_flag" ref="is_required"></input-select>
+						<input-select :options="required_options" label="Is required?" :required="true" prop_placeholder="Select" v-model="required_flag" ref="required_flag"></input-select>
 					</div>
 					<div class="lg:col-span-4 mt-[20px]">
 						<input-text label="Default value" :required="false" prop_placeholder="Default value" v-model="default_value.value" :error="default_value.error" ref="default_value"></input-text>
 					</div>
 					<div class="lg:col-span-4 mt-[20px]">
-						<input-select :options="show_on_index_options" label="Show on index?" :required="false" prop_placeholder="Select" v-model="show_on_index" ref="show_on_index"></input-select>
+						<input-select :options="show_on_index_options" label="Show on index?" :required="true" prop_placeholder="Select" v-model="show_on_index" ref="show_on_index"></input-select>
 					</div>
 				</div>
 			
 				<div class="lg:grid lg:grid-cols-12 gap-5">
 					<div class="lg:col-span-6 mt-[20px]">
-						<input-number field_name="Add Edit page order" :required="false" prop_placeholder="Select" v-model="add_edit_page_order" ref="add_edit_page_order"></input-number>
+						<input-number :min="0" :max="999999" field_name="Add Edit page order" :required="true" placeholder="Enter field order number" v-model="add_edit_page_order.value" :error="add_edit_page_order.error" ref="add_edit_page_order"></input-number>
 					</div>
 					<div class="lg:col-span-6 mt-[20px]">
-						<input-number field_name="Index page column order" :required="false" prop_placeholder="Select" v-model="column_order" ref="column_order"></input-number>
+						<input-number :min="0" :max="999999" field_name="Index page column order" :required="true" placeholder="Enter field order number" v-model="column_order.value" :error="column_order.error" ref="column_order"></input-number>
 					</div>
 				</div>
 				
-				<div class="mt-[20px]">
-					<input-textarea label="Add options seperated by comma" :required="false" v-model="select_options.value" :error="select_options.error" ref="select_options"></input-textarea>
+				<div class="mt-[20px]" v-show="show_options_textarea">
+					<input-textarea label="Add options seperated by comma" :required="show_options_textarea_required" v-model="select_options.value" :error="select_options.error" ref="select_options"></input-textarea>
 				</div>
 				<input-button btn_text="Save" :disabled="btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
 				<div class="clear-both"></div>
@@ -63,17 +63,19 @@
 		data_loading:boolean,
 		btn_disabled:boolean,
 		input_fields_options: Array<any>,
-		custom_field: number,
+		custom_field: string,
 		label:object,
 		placeholder:object,
-		required_flag:boolean,
+		required_flag:string,
 		required_options: Array<String>,
 		default_value: object,
 		show_on_index_options: Array<String>,
-		show_on_index: boolean,
+		show_on_index: string,
 		add_edit_page_order: any,
 		column_order: any
-		select_options: object
+		select_options: object,
+		show_options_textarea: boolean,
+		show_options_textarea_required: boolean
 	}
 
 	import { defineComponent } from 'vue';
@@ -85,6 +87,8 @@
 	import InputTextarea from '../../inputs/InputTextarea.vue';
 
 	import api from '../../../helpers/api';
+	import common from '../../../helpers/common';
+import { toastEvents } from '../../../events/toastEvents';
 	
 	export default defineComponent({
 
@@ -103,46 +107,156 @@
 				data_loading : false,
 				btn_disabled: false,
 				input_fields_options: [],
-				custom_field: 0,
+				custom_field: '',
 				label: {
 					value : '',
-					error: ''
+					error: 'Label is a required field'
 				},
 				placeholder: {
 					value: '',
 					error: ''
 				},
-				required_flag: false,
-				required_options: [],
+				required_flag: '',
+				required_options: [
+					{
+						value: 'true',
+						text: 'Yes'
+					},
+					{
+						value: 'false',
+						text: 'No'
+					}
+				],
 				default_value: {
 					value : '',
 					error: ''
 				},
-				show_on_index_options: [],
-				show_on_index: true,
-				add_edit_page_order: null,
-				column_order: null,
+				show_on_index_options: [
+					{
+						value: 'true',
+						text: 'Yes'
+					},
+					{
+						value: 'false',
+						text: 'No'
+					}
+				],
+				show_on_index: '',
+				add_edit_page_order: {
+					value: '0',
+					error: 'Please enter a valid number for add Edit page order'
+				},
+				column_order: {
+					value: '0',
+					error: 'Please enter a valid number for index page column order'
+				},
 				select_options: {
 					value: '',
-					error: ''
+					error: 'Please enter options seperated by comma'
+				},
+				show_options_textarea: false,
+				show_options_textarea_required: true
+			}
+		},
+
+		watch: {
+			custom_field() : void{
+				this.$refs.custom_field.validate();
+			},
+			"label.value"(): void{
+				if(this.label.value.trim() !== ''){
+					this.label.error = '';
+				}else{
+					this.label.error = 'Label is a required field'
 				}
+
+				this.$refs.label.validate();
+				
+			},
+			required_flag() : void{
+				this.$refs.required_flag.validate();
+			},
+			show_on_index() : void{
+				this.$refs.show_on_index.validate();
+			},
+			"add_edit_page_order.value"() : void{
+
+				if(this.add_edit_page_order.value !== ''){
+					this.add_edit_page_order.error = '';
+				}else{
+					this.add_edit_page_order.error = 'Please enter a valid number for add Edit page order';
+				}
+
+				this.$refs.add_edit_page_order.validate();
+			},
+			"column_order.value"() : void{
+
+				if(this.column_order.value !== ''){
+					this.column_order.error = '';
+				}else{
+					this.column_order.error = 'Please enter a valid number for index page column order';
+				}
+
+				this.$refs.column_order.validate();
+			},
+			"select_options.value"() : void{
+
+				if(this.select_options.value !== ''){
+					this.select_options.error = '';
+				}else{
+					this.select_options.error = 'Please enter options seperated by comma';
+				}
+
+				this.$refs.select_options.validate();
 			}
 		},
 
 		methods : {
 			createClientCustomField() : void{
 
+				let input_field_validated = this.$refs.custom_field.validate();
+				let label_validated = this.$refs.label.validate();
+				let is_required_validated = this.$refs.required_flag.validate();
+				let show_index_validated = this.$refs.show_on_index.validate();
+				let add_edit_page_order_validated = this.$refs.add_edit_page_order.validate();
+				let column_order_validated = this.$refs.column_order.validate();
+				let select_options_validated = this.$refs.select_options.validate();
+
+
+				if(input_field_validated && label_validated && is_required_validated && show_index_validated && add_edit_page_order_validated && column_order_validated && select_options_validated){
+
+					
+
+				}else{
+
+					toastEvents.emit('toast', {
+						type: 'error',
+						message: 'Please fill in highlighted fields'
+					});
+
+				}
+
+
+				
 			},
 
 			fetchFields() : void{
 				api.get('clients-custom-fields/fetch-field-types').then((response) => {
-					
 					this.input_fields_options = response.data;
 				}).catch((error) => {});
 			},
 
-			changeEventFired(val): void{
-				console.log(val);
+			changeEventFired(val:object): void{
+				
+				this.show_options_textarea = false;
+				this.show_options_textarea_required = false;
+				if(common.isset(val?.input_type)){
+					if(val?.input_type.toLowerCase() === 'select'){
+						this.show_options_textarea = true;
+						this.show_options_textarea_required = true;
+					}
+				}
+				
 			}
 
 		},

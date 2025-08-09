@@ -92,7 +92,7 @@
 				return ((!this.is_valid && this.local_error === '' && this.show_errors) || (this.local_error !== '' && this.show_errors));
 			},
 			password_id() : string{
-				let rand_number = Math.floor(Math.random() * 50) + 1;
+				let rand_number = common.random_number();
 				return 'password_'+rand_number;
 			}
 		},

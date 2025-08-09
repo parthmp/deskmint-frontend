@@ -75,7 +75,7 @@
 				return ((!this.is_valid && this.local_error === '' && this.show_errors) || (this.local_error !== '' && this.show_errors));
 			},*/
 			text_id() : string{
-				let rand_number = Math.floor(Math.random() * 500) + 1;
+				let rand_number = common.random_number();
 				return 'text_field_'+rand_number;
 			}
 		},
@@ -89,8 +89,10 @@
 				if(this.input_required === true){
 					
 					this.input_value = this.sanitizeInput(this.input_value);
-					
-					if(this.input_value !== ''){
+
+					let temp_value = this.input_value.trim();
+
+					if(temp_value !== ''){
 						this.is_valid = true;
 					}else{
 						this.is_valid = false;
@@ -129,7 +131,7 @@
 				this.is_valid = false;
 				
 			}
-			this.input_value = this.modelValue || '';
+			this.input_value = this.modelValue?.trim() || '';
 			
 			this.local_error = '';
 			if(common.isset(this.error)){

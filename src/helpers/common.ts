@@ -86,7 +86,7 @@ export default {
 	},
 
 	random_number() : number{
-		return Math.floor((Math.random() * 100) + 1);
+		return Math.floor((Math.random() * 900000) + 1);
 	},
 
 	getFirstSection(url:string) : any {
