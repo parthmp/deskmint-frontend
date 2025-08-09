@@ -181,7 +181,7 @@ import { toastEvents } from '../../../events/toastEvents';
 			},
 			"add_edit_page_order.value"() : void{
 
-				if(this.add_edit_page_order.value !== ''){
+				if(this.add_edit_page_order.value.trim() !== ''){
 					this.add_edit_page_order.error = '';
 				}else{
 					this.add_edit_page_order.error = 'Please enter a valid number for add Edit page order';
@@ -191,7 +191,7 @@ import { toastEvents } from '../../../events/toastEvents';
 			},
 			"column_order.value"() : void{
 
-				if(this.column_order.value !== ''){
+				if(this.column_order.value.trim() !== ''){
 					this.column_order.error = '';
 				}else{
 					this.column_order.error = 'Please enter a valid number for index page column order';
@@ -201,7 +201,7 @@ import { toastEvents } from '../../../events/toastEvents';
 			},
 			"select_options.value"() : void{
 
-				if(this.select_options.value !== ''){
+				if(this.select_options.value.trim() !== ''){
 					this.select_options.error = '';
 				}else{
 					this.select_options.error = 'Please enter options seperated by comma';
@@ -213,6 +213,8 @@ import { toastEvents } from '../../../events/toastEvents';
 
 		methods : {
 			createClientCustomField() : void{
+				
+				this.btn_disabled = true;
 
 				let input_field_validated = this.$refs.custom_field.validate();
 				let label_validated = this.$refs.label.validate();
@@ -225,10 +227,26 @@ import { toastEvents } from '../../../events/toastEvents';
 
 				if(input_field_validated && label_validated && is_required_validated && show_index_validated && add_edit_page_order_validated && column_order_validated && select_options_validated){
 
-					
+					api.post('clients-custom-fields', {
+						input_field: this.custom_field,
+						label:this.label.value,
+						placeholder: this.placeholder.value,
+						is_required: this.required_flag,
+						default_value: this.default_value.value,
+						show_on_index: this.show_on_index,
+						add_edit_page_order: this.add_edit_page_order.value,
+						column_order: this.column_order.value,
+						select_options: this.select_options.value
+					}).then((response) => {
+						this.btn_disabled = false;
+						this.$router.push('/custom-fields/clients');
+					}).catch((error) => {
+						this.btn_disabled = false;
+					});
 
 				}else{
 
+					this.btn_disabled = false;
 					toastEvents.emit('toast', {
 						type: 'error',
 						message: 'Please fill in highlighted fields'
