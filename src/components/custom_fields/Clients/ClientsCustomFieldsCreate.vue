@@ -3,13 +3,15 @@
 		<div class="card">
 			<h1 class="text-2xl!">Create Clients Custom Field</h1>
 			
-				<input-button class="lg:float-start" btn_text="Back" url="/custom-fields/clients" icon="IconCaretLeft"></input-button>
-				<div class="clear-both"></div>
+			<input-button class="lg:float-start" btn_text="Back" url="/custom-fields/clients" icon="IconCaretLeft"></input-button>
+			<div class="clear-both"></div>
 				
 			
 			<br>
+
+			<clients-custom-fields-create-skeleton v-if="data_loading"></clients-custom-fields-create-skeleton>
 			
-			<form @submit.prevent="createClientCustomField" class="form">
+			<form v-if="!data_loading" @submit.prevent="createClientCustomField" class="form">
 
 				
 				<div class="lg:grid lg:grid-cols-12 gap-5">
@@ -86,9 +88,11 @@
 	import InputNumber from '../../inputs/InputNumber.vue';
 	import InputTextarea from '../../inputs/InputTextarea.vue';
 
+	import ClientsCustomFieldsCreateSkeleton from '../../skeletons/ClientsCustomFieldsCreateSkeleton.vue';
+
 	import api from '../../../helpers/api';
 	import common from '../../../helpers/common';
-import { toastEvents } from '../../../events/toastEvents';
+	import { toastEvents } from '../../../events/toastEvents';
 	
 	export default defineComponent({
 
@@ -99,7 +103,8 @@ import { toastEvents } from '../../../events/toastEvents';
 			InputSelect,
 			InputText,
 			InputNumber,
-			InputTextarea
+			InputTextarea,
+			ClientsCustomFieldsCreateSkeleton
 		},
 
 		data() : ClientsCustomFieldsCreateInterface {
@@ -259,8 +264,10 @@ import { toastEvents } from '../../../events/toastEvents';
 			},
 
 			fetchFields() : void{
+				this.data_loading = true;
 				api.get('clients-custom-fields/fetch-field-types').then((response) => {
 					this.input_fields_options = response.data;
+					this.data_loading = false;
 				}).catch((error) => {});
 			},
 
