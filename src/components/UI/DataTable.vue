@@ -47,7 +47,8 @@
 							<span v-if="!Array.isArray(row[column2.label])">
 								<span v-if="typeof row[column2.label] === 'object'">
 									<span v-if="row[column2.label].type === 'label'">
-										<span class="bg-deskmint-green-light pl-[10px]! pr-[10px]! pt-[2px]! pb-[2px]! rounded-2xl">{{ row[column2.label].text }}</span>
+										<span v-if="row[column2.label].highlight === 'success'" class="bg-green-500/18 pl-[12px]! pr-[12px]! pt-[3px]! pb-[3px]! rounded-2xl text-sm text-green-950 dark:text-green-600">{{ row[column2.label].text }}</span>
+										<span v-if="row[column2.label].highlight === 'error'" class="bg-red-500/18 pl-[12px]! pr-[12px]! pt-[3px]! pb-[3px]! rounded-2xl text-sm text-red-950 dark:text-red-600">{{ row[column2.label].text }}</span>
 									</span>
 								</span>
 								<span v-else>{{ row[column2.label] }}</span>
@@ -276,6 +277,12 @@ export default defineComponent({
 		data() : void{
 			/*this.bootMeUp(false);*/
 			this.local_table_data.rows = this.data.rows;
+			this.local_table_data.rows.forEach(row => {
+				row.selected = false;
+				if(common.isset(row.created_at)){
+					row.created_at = common.formatDate(row.created_at);
+				}
+			});
 		}
 	},
 	methods : {
