@@ -16,6 +16,7 @@ import ManageCustomFieldTypesEdit from '../src/components/custom_fields/manage_t
 
 import ClientsCustomFields from '../src/components/custom_fields/Clients/ClientsCustomFields.vue';
 import ClientsCustomFieldsCreate from '../src/components/custom_fields/Clients/ClientsCustomFieldsCreate.vue';
+import ClientsCustomFieldsEdit from '../src/components/custom_fields/Clients/ClientsCustomFieldsEdit.vue';
 
 
 const routes = [
@@ -66,6 +67,10 @@ const routes = [
 			{
 				path:'/custom-fields/clients/create',
 				component: ClientsCustomFieldsCreate
+			},
+			{
+				path:'/custom-fields/clients/edit/:id',
+				component: ClientsCustomFieldsEdit
 			},
 			{
 				path:'/admins',
