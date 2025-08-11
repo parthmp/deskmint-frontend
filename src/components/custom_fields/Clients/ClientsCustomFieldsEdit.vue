@@ -289,7 +289,7 @@
 				this.select_options_validated = true;
 
 				if(common.isset(val?.input_type)){
-					if(val?.input_type.toLowerCase() === 'select'){
+					if(val?.input_type.toLowerCase() === 'select' || val?.input_type.toLowerCase() === 'multiselect'){
 						this.show_options_textarea = true;
 						this.show_options_textarea_required = true;
 					}
@@ -323,7 +323,7 @@
 					this.column_order.value = data.order_column_on_index_page+'';
 					this.show_options_textarea_required = false;
 					
-					if(data.custom_field_type.input_type === 'select'){
+					if(data.custom_field_type.input_type === 'select' || data.custom_field_type.input_type === 'multiselect'){
 						this.select_options.value = data.type_params;
 						this.show_options_textarea = true;
 						this.show_options_textarea_required = true;

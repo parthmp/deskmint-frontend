@@ -276,7 +276,7 @@
 				this.show_options_textarea = false;
 				this.show_options_textarea_required = false;
 				if(common.isset(val?.input_type)){
-					if(val?.input_type.toLowerCase() === 'select'){
+					if(val?.input_type.toLowerCase() === 'select' || val?.input_type.toLowerCase() === 'multiselect'){
 						this.show_options_textarea = true;
 						this.show_options_textarea_required = true;
 					}
