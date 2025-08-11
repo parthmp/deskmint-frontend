@@ -559,6 +559,10 @@ export default defineComponent({
 				if(this.menu_items[z].has_submenu == true){
 					for(let x = 0 ; x < this.menu_items[z].submenu.length ; x++){
 						this.menu_items[z].submenu[x].is_active = false;
+						if(index !== z){
+							this.menu_items[z].show_submenu = false;
+						}
+						
 					}
 				}
 

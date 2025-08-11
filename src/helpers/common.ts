@@ -101,37 +101,51 @@ export default {
 
 	updateMenuActiveState(menuItems:any, currentUrl:string){
 
-		const currentSection = this.getFirstSection(currentUrl);
+		//const currentSection = this.getFirstSection(currentUrl);
 		
 		return menuItems.map(item => {
 			// Reset all active states first
 			let updatedItem = { ...item, is_active: false };
 			
 			// Check if main menu item matches
-			if (item.path && this.getFirstSection(`http://dummy.com${item.path}`) === currentSection) {
-				updatedItem.is_active = true;
-			}
+			//if (item.path && this.getFirstSection(`http://dummy.com${item.path}`) === currentSection) {
+				//updatedItem.is_active = true;
+			//}
 			
 			// Check submenu items if they exist
 			if (item.has_submenu && item.submenu.length > 0) {
-			let hasActiveSubmenu = false;
-			
-			updatedItem.submenu = item.submenu.map(subItem => {
+				
+				let hasActiveSubmenu = false;
+					
+				updatedItem.submenu = item.submenu.map(subItem => {
 
-				let updatedSubItem = { ...subItem, is_active: false };
+					let updatedSubItem = { ...subItem, is_active: false };
+					let temp_url = subItem.path;
+					if(temp_url.startsWith('/')){
+						temp_url = temp_url.slice(1);
+					}
+
+					if (subItem.path && currentUrl.includes(env.FRONTEND_BASEURL+temp_url)) {
+						updatedSubItem.is_active = true;
+						hasActiveSubmenu = true;
+					}
+					
+					return updatedSubItem;
+				});
 				
-				if (subItem.path && this.getFirstSection(`http://dummy.com${subItem.path}`) === currentSection) {
-					updatedSubItem.is_active = true;
-					hasActiveSubmenu = true;
+				// If any submenu item is active, make parent active too
+				if(hasActiveSubmenu) {
+					updatedItem.show_submenu = true;
 				}
-				
-				return updatedSubItem;
-			});
-			
-			// If any submenu item is active, make parent active too
-			if (hasActiveSubmenu) {
-				updatedItem.is_active = true;
-			}
+
+			}else{
+				let temp_url = updatedItem.path;
+				if(temp_url.startsWith('/')){
+					temp_url = temp_url.slice(1);
+				}
+				if(updatedItem.path && currentUrl.includes(env.FRONTEND_BASEURL+temp_url)) {
+					updatedItem.is_active = true;
+				}
 			}
 			
 			return updatedItem;
