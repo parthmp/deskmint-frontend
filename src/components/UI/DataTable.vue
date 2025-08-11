@@ -276,6 +276,7 @@ export default defineComponent({
 		},
 		data() : void{
 			/*this.bootMeUp(false);*/
+			
 			this.local_table_data.rows = this.data.rows;
 			this.local_table_data.rows.forEach(row => {
 				row.selected = false;
@@ -570,12 +571,18 @@ export default defineComponent({
 		
 		resetColumnSort() : void{
 			for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
+				
 				this.local_table_data.columns[z].sort_visibility = '';
+				
+				
 			}
 			this.temp_sorted_column = {};
 		},
 
 		bootMeUp(omit = false) : void{
+			if(this.static === false){
+				this.sort_direction = 'desc';
+			}
 			
 			if(common.isset(this.data)){
 
@@ -600,7 +607,12 @@ export default defineComponent({
 					if(!common.isObjectEmpty(this.local_table_data)){
 						if(common.isset(this.local_table_data.columns)){
 							for(let z = 0 ; z < this.local_table_data.columns.length ; z++){
-								this.local_table_data.columns[z]['sort_visibility'] = '';
+								if(this.local_table_data.columns[z]['label'] !== 'id'){
+									this.local_table_data.columns[z]['sort_visibility'] = '';
+								}else{
+									
+									this.local_table_data.columns[z]['sort_visibility'] = 'desc';
+								}
 							}
 						}
 					}

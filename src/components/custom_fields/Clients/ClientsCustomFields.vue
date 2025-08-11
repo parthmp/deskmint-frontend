@@ -109,7 +109,7 @@
 			},
 
 			deleteFields(ids:any) : void{
-				api.delete('manage-field-types', {
+				api.delete('clients-custom-fields', {
 					data : {
 						ids : ids
 					}
