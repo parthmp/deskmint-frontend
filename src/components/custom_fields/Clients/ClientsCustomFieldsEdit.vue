@@ -240,10 +240,9 @@
 				let column_order_validated = this.$refs.column_order.validate();
 				let select_options_validated = this.$refs.select_options.validate();
 
-
 				if(input_field_validated && label_validated && is_required_validated && show_index_validated && add_edit_page_order_validated && column_order_validated && select_options_validated){
-
-					api.post('clients-custom-fields', {
+					
+					api.patch('clients-custom-fields/'+this.$route.params.id, {
 						input_field: this.custom_field,
 						label:this.label.value,
 						placeholder: this.placeholder.value,
@@ -286,6 +285,9 @@
 				
 				this.show_options_textarea = false;
 				this.show_options_textarea_required = false;
+
+				this.select_options_validated = true;
+
 				if(common.isset(val?.input_type)){
 					if(val?.input_type.toLowerCase() === 'select'){
 						this.show_options_textarea = true;
@@ -319,10 +321,12 @@
 
 					this.add_edit_page_order.value = data.order_on_add_edit_page+'';
 					this.column_order.value = data.order_column_on_index_page+'';
+					this.show_options_textarea_required = false;
 					
 					if(data.custom_field_type.input_type === 'select'){
-						this.show_options_textarea = true;
 						this.select_options.value = data.type_params;
+						this.show_options_textarea = true;
+						this.show_options_textarea_required = true;
 					}
 					
 				}).catch((error) => {
