@@ -10,7 +10,7 @@
 				<input-button class="lg:float-end" btn_text="Add New" url="/admins/create" icon="IconPlus"></input-button>
 				<div class="clear-both"></div>
 				<br>
-				<data-table :data="table_data" :per_page="per_page" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="true" url_slug="admins" :row_actions="['edit', 'delete']"></data-table>
+				<data-table :data="table_data" :show_search="false" :per_page="per_page" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="true" url_slug="admins" :row_actions="['edit', 'delete']"></data-table>
 			</span>
 			
 		</div>

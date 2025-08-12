@@ -9,7 +9,7 @@
 			</div>
 			
 			<div class="lg:col-span-3 mt-[25px]! lg:mt-[0px]!">
-				<input-search v-model="searched_term"></input-search>
+				<input-search v-if="show_search" v-model="searched_term"></input-search>
 			</div>
 		</div>
 		<br>
@@ -168,7 +168,8 @@ export default defineComponent({
 		total_pages:Number,
 		url_slug: String,
 		row_actions: Array<string>,
-		dynamic_loading_status:Boolean
+		dynamic_loading_status:Boolean,
+		show_search:Boolean
 	},
 	data(): DataTableInterface{
 		return {
