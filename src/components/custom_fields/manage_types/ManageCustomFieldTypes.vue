@@ -34,6 +34,8 @@
 
 	import SkeletonTable from '../../skeletons/SkeletonTable.vue';
 	import { env } from '../../../env';
+	import RedirectToLoginForNoTokens from '../../../mixins/RedirectToLoginForNoTokens';
+
 	
 	
 	export default defineComponent({
@@ -58,6 +60,8 @@
 				dynamic_loading_status: false
 			}
 		},
+
+		mixins: [RedirectToLoginForNoTokens],
 
 		methods : {
 

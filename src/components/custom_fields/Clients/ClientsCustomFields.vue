@@ -33,6 +33,8 @@
 	import SkeletonTable from '../../skeletons/SkeletonTable.vue';
 	import api from '../../../helpers/api';
 	import { env } from '../../../env';
+	import RedirectToLoginForNoTokens from '../../../mixins/RedirectToLoginForNoTokens';
+
 	
 	export default defineComponent({
 
@@ -57,7 +59,7 @@
 			}
 		},
 
-		
+		mixins: [RedirectToLoginForNoTokens],
 		methods : {
 
 			fetchClientFields(page_data = '') : void{

@@ -49,6 +49,7 @@
 
 	import ManageCustomFieldTypesCreateSkeleton from '../../skeletons/ManageCustomFieldTypesCreateSkeleton.vue';
 	import { toastEvents } from '../../../events/toastEvents';
+	import RedirectToLoginForNoTokens from '../../../mixins/RedirectToLoginForNoTokens';
 	
 	export default defineComponent({
 
@@ -73,6 +74,8 @@
 				}
 			}
 		},
+
+		mixins: [RedirectToLoginForNoTokens],
 
 		watch: {
 			input_type() : void{
