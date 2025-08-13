@@ -405,19 +405,20 @@ export default defineComponent({
 						is_active: false,
 						submenu: [
 							{
-								path: '/custom-fields/manage-field-types',
-								icon: 'IconCircleDotted',
-								icon_size: 22,
-								is_active: false,
-								menu_text: 'Field Types'
-							},
-							{
 								path: '/custom-fields/clients',
 								icon: 'IconCircleDotted',
 								icon_size: 22,
 								is_active: false,
 								menu_text: 'CF - Clients'
+							},
+							{
+								path: '/custom-fields/manage-field-types',
+								icon: 'IconCircleDotted',
+								icon_size: 22,
+								is_active: false,
+								menu_text: 'Field Types'
 							}
+							
 						]
 					},
 					{
