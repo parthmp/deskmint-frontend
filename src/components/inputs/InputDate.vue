@@ -1,11 +1,13 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<input type="text" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="text_id" @input="EmitModel" :class="{'red-input-order': (local_error !== '' && show_errors)}">
+		<vue-date-picker :id="text_id" :left="true" v-model="input_value" :enable-time-picker="false" format="dd-MMM-yyyy" position="left" @update:model-value="EmitModel" :class="{'red-input-order-div': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors))}"></vue-date-picker>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
+<style scoped>
 
+</style>
 <script lang="ts">
 
 	export interface InputDateInterface{
@@ -19,6 +21,9 @@
 	}
 
 	import common from '../../helpers/common';
+
+	import VueDatePicker from '@vuepic/vue-datepicker';
+	import '@vuepic/vue-datepicker/dist/main.css';
 
 	import { defineComponent } from 'vue';
 
@@ -57,7 +62,7 @@
 		},
 
 		components: {
-
+			VueDatePicker
 		},
 		watch: {
 			error() : void{
@@ -76,45 +81,45 @@
 			},*/
 			text_id() : string{
 				let rand_number = common.random_number();
-				return 'text_field_'+rand_number;
+				return 'date_field_'+rand_number;
 			}
 		},
 
 		methods: {
 			validate() : boolean{
 				
-				//this.show_errors = false;
-				/* validate here */
-				
 				if(this.input_required === true){
 					
-					this.input_value = this.sanitizeInput(this.input_value);
-
-					let temp_value = this.input_value.trim();
-
-					if(temp_value !== ''){
+					if(this.input_value instanceof Date && !isNaN(this.input_value.getTime())){
 						this.is_valid = true;
 					}else{
-						this.is_valid = false;
 						this.show_errors = true;
+						this.is_valid = false;
 					}
+
 				}else{
 					this.is_valid = true;
 				}
-				
-				this.input_value = this.sanitizeInput(this.input_value);
-				this.$emit('update:modelValue', this.input_value);
+			
+				if(this.input_value instanceof Date && !isNaN(this.input_value.getTime())){
+					let temp_value2 = this.input_value.toISOString();
+					this.$emit('update:modelValue', temp_value2);
+				}else{
+					this.$emit('update:modelValue', '');
+				}
 				
 				this.$emit('is-valid', this.is_valid);
 				return this.is_valid;
 				
 			},
 			EmitModel(e:any) : void{
-				this.input_value = this.sanitizeInput(e.target.value);
-				this.$emit('update:modelValue', this.input_value);
-			},
-			sanitizeInput(in_string:string) : string{
-				return common.stripTags(in_string);
+				if(e !== null && e !== ''){
+					let utc_date = e.toISOString();
+					this.$emit('update:modelValue', utc_date);
+				}else{
+					this.$emit('update:modelValue', '');
+				}
+				
 			}
 		},
 
