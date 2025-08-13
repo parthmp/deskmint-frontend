@@ -461,7 +461,7 @@ background: #e7e7e7;
 .dp__input_reg{
 	box-sizing: border-box !important;
 	line-height: normal !important;
-	@apply pl-[35px]! h-[38px];
+	@apply pl-[35px]! pt-[5px]! h-[38px];
 }
 .red-input-order-div .dp__input_reg{
 	@apply border-1! border-solid! outline-1! rounded-sm! border-red-500! outline-red-500 transition-all duration-0;
