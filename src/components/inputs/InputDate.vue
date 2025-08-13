@@ -8,7 +8,7 @@
 
 <script lang="ts">
 
-	export interface InputTextInterface{
+	export interface InputDateInterface{
 		input_value: string,
 		input_required: boolean,
 		is_valid: boolean,
@@ -24,7 +24,7 @@
 
 	export default defineComponent({
 
-		name : 'InputText',
+		name : 'InputDate',
 
 		props : {
 			modelValue : {
@@ -44,7 +44,7 @@
 			}
 		},
 
-		data() : InputTextInterface {
+		data() : InputDateInterface {
 			return {
 				input_value: '',
 				input_required: false,

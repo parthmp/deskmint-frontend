@@ -17,7 +17,7 @@
 
 <script lang="ts">
 
-	export interface InputEmailInterface{
+	export interface InputPasswordInterface{
 		input_value: string,
 		input_type: string,
 		input_required: boolean,
@@ -52,7 +52,7 @@
 			}
 		},
 
-		data() : InputEmailInterface {
+		data() : InputPasswordInterface {
 			return {
 				input_value: '',
 				input_type: 'password',

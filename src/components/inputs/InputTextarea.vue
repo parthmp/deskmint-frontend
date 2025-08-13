@@ -8,7 +8,7 @@
 
 <script lang="ts">
 
-	export interface InputEmailInterface{
+	export interface InputTextareaInterface{
 		input_value: string,
 		input_required: boolean,
 		is_valid: boolean,
@@ -24,7 +24,7 @@
 
 	export default defineComponent({
 
-		name : 'InputEmail',
+		name : 'InputTextarea',
 
 		props : {
 			modelValue : {
@@ -44,7 +44,7 @@
 			}
 		},
 
-		data() : InputEmailInterface {
+		data() : InputTextareaInterface {
 			return {
 				input_value: '',
 				input_required: false,

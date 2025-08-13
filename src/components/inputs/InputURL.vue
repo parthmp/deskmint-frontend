@@ -9,7 +9,7 @@
 
 <script lang="ts">
 
-	export interface InputEmailInterface{
+	export interface InputURLInterface{
 		input_value: string,
 		input_required: boolean,
 		is_valid: boolean,
@@ -41,7 +41,7 @@
 			}
 		},
 
-		data() : InputEmailInterface {
+		data() : InputURLInterface {
 			return {
 				input_value: '',
 				input_required: false,

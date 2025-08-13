@@ -28,7 +28,7 @@
 
 <script lang="ts">
 
-	export interface InputEmailInterface{
+	export interface InputDropdownInterface{
 		input_value: string,
 		show_menu:boolean
 	}
@@ -44,7 +44,7 @@
 
 		props : ['options', 'modelValue'],
 
-		data() : InputEmailInterface {
+		data() : InputDropdownInterface {
 			return {
 				input_value: '',
 				show_menu: false

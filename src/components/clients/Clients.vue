@@ -3,7 +3,14 @@
     <div class="card">
         <h1 class="text-2xl!">Clients</h1>
         <br>
-        
+        <skeleton-table v-if="data_loading" :rows="10"></skeleton-table>
+
+		<span v-if="!data_loading" class="">
+			<input-button class="lg:float-end" btn_text="Add New" url="/clients/create" icon="IconPlus"></input-button>
+			<div class="clear-both"></div>
+			<br>
+			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="custom-fields/clients" :row_actions="['edit', 'delete']" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
+		</span>
     </div>
 	
 </section>
@@ -14,20 +21,30 @@
 <script lang="ts">
 
 
-	import RedirectToLoginForNoTokens from '../mixins/RedirectToLoginForNoTokens';
+	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
 	
 	import { defineComponent } from 'vue';
 
-	import DataTable from './UI/DataTable.vue';
-	import common from '../helpers/common';
+	import InputButton from '../inputs/InputButton.vue';
+
+	import DataTable from '../UI/DataTable.vue';
+	import common from '../../helpers/common';
+
+	export interface ClientsInterface{
+		data_loading:boolean,
+		per_page:number,
+		table_data:object
+	}
 	
 	export default defineComponent({
 		name : 'Clients',
 		components : {
-			DataTable
+			DataTable,
+			InputButton
 		},
-		data: function(){
+		data(): ClientsInterface{
 			return {
+				data_loading : false,
 				per_page: 15,
 				table_data: {
 					columns : [],

@@ -19,7 +19,7 @@
 
 <script lang="ts">
 
-	export interface InputEmailInterface{
+	export interface InputCheckboxInterface{
 		input_value: boolean,
 		input_type: string,
 		input_required: boolean,
@@ -53,7 +53,7 @@
 			}
 		},
 
-		data() : InputEmailInterface {
+		data() : InputCheckboxInterface {
 			return {
 				input_value: false,
 				input_type: 'password',

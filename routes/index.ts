@@ -5,7 +5,6 @@ import ForgotPassword from '../src/components/ForgotPassword.vue';
 import ManageCompanies from '../src/components/ManageCompanies.vue';
 
 import Dashboard from '../src/components/Dashboard.vue';
-import Clients from '../src/components/Clients.vue';
 import Admins from '../src/components/admins/Admins.vue';
 import AdminCreate from '../src/components/admins/AdminCreate.vue';
 import AdminEdit from '../src/components/admins/AdminEdit.vue';
@@ -17,6 +16,9 @@ import ManageCustomFieldTypesEdit from '../src/components/custom_fields/manage_t
 import ClientsCustomFields from '../src/components/custom_fields/Clients/ClientsCustomFields.vue';
 import ClientsCustomFieldsCreate from '../src/components/custom_fields/Clients/ClientsCustomFieldsCreate.vue';
 import ClientsCustomFieldsEdit from '../src/components/custom_fields/Clients/ClientsCustomFieldsEdit.vue';
+
+import Clients from '../src/components/clients/Clients.vue';
+import ClientCreate from '../src/components/clients/ClientCreate.vue';
 
 
 const routes = [
@@ -39,14 +41,6 @@ const routes = [
 			{
 				path: '/panel',
 				component: Dashboard,	
-			},
-			{
-				path: '/clients',
-				component: Clients,	
-			},
-			{
-				path:'/clients/page/:id',
-				component: Clients
 			},
 			{
 				path:'/custom-fields/manage-field-types',
@@ -83,6 +77,14 @@ const routes = [
 			{
 				path:'/admins/edit/:id',
 				component: AdminEdit
+			},
+			{
+				path: '/clients',
+				component: Clients,	
+			},
+			{
+				path: '/clients/create',
+				component: ClientCreate,	
 			}
 		]
 	}
