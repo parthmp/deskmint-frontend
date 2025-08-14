@@ -9,7 +9,6 @@ const TURNSTILE_KEY = "";
 const BUILD = 'v1.0';
 const DEFAULT_TABLE_ROWS = 15;
 
-
 export const env = Object.freeze({
 	BASEURL:BASEURL,
 	FRONTEND_BASEURL:FRONTEND_BASEURL,

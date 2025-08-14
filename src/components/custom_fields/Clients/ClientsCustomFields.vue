@@ -9,7 +9,7 @@
 				<input-button class="lg:float-end" btn_text="Add New" url="/custom-fields/clients/create" icon="IconPlus"></input-button>
 				<div class="clear-both"></div>
 				<br>
-				<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="custom-fields/clients" :row_actions="['edit', 'delete']" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
+				<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="custom-fields/clients" :datetime_filter="true" :row_actions="['edit', 'delete']" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
 			</span>
 			
 		</div>
@@ -35,6 +35,7 @@
 	import api from '../../../helpers/api';
 	import { env } from '../../../env';
 	import RedirectToLoginForNoTokens from '../../../mixins/RedirectToLoginForNoTokens';
+	import common from '../../../helpers/common';
 
 	
 	export default defineComponent({
@@ -66,48 +67,41 @@
 
 		mixins: [RedirectToLoginForNoTokens],
 		methods : {
-			handleDatesSearch(callback:any) : void{
-				/* find dates format here */
-				callback();
-			},
+
 			fetchClientFields(page_data = '') : void{
-
-				this.handleDatesSearch(() => {
-					console.log(page_data);
-					if(page_data === ''){
-						this.data_loading = true;
-					}else{
-						this.dynamic_loading_status = true;
-					}
-					
-					api.get('clients-custom-fields', {
-						params: {
-							...(page_data || {}),
-							default_per_page: env.DEFAULT_TABLE_ROWS
-						}
-
-					}).then((response) => {
-
-						if(page_data === ''){
-							this.data_loading = false;
-						}else{
-							this.dynamic_loading_status = false;
-						}
-
-						this.table_data = response.data.table_data;
-						this.total_pages = response.data.total_pages;
-
-					}).catch((error) => {
-						if(page_data === ''){
-							this.data_loading = false;
-						}else{
-							this.dynamic_loading_status = false;
-						}
-
-					});
-				});
-
 				
+				if(page_data === ''){
+					this.data_loading = true;
+				}else{
+					this.dynamic_loading_status = true;
+				}
+				
+				api.get('clients-custom-fields', {
+					params: {
+						...(page_data || {}),
+						default_per_page: env.DEFAULT_TABLE_ROWS,
+						timezone: common.getBrowserTimezone()
+					}
+
+				}).then((response) => {
+
+					if(page_data === ''){
+						this.data_loading = false;
+					}else{
+						this.dynamic_loading_status = false;
+					}
+
+					this.table_data = response.data.table_data;
+					this.total_pages = response.data.total_pages;
+
+				}).catch((error) => {
+					if(page_data === ''){
+						this.data_loading = false;
+					}else{
+						this.dynamic_loading_status = false;
+					}
+
+				});
 			},
 
 			handleAPI(e:any) :void {

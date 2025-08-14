@@ -180,6 +180,10 @@ export default {
 
 		return `${day}-${month}-${year} ${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
 		
+	},
+
+	getBrowserTimezone() :string {
+		return Intl.DateTimeFormat().resolvedOptions().timeZone;
 	}
 
 

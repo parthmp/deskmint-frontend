@@ -1,14 +1,16 @@
 <template>
 	<div>
-		<div class="grid grid-cols-1 lg:grid-cols-12 items-center">
-			<div class="lg:col-span-9">
-				<div class="lg:flex lg:gap-0 lg:items-center">
+		<div class="grid grid-cols-1 lg:grid-cols-12 lg:gap-5 items-center">
+			<div :class="{'col-span-12 xl:col-span-4':datetime_filter, 'lg:col-span-8':!datetime_filter}" >
+				<div class="flex gap-5 xl:gap-0">
 					<div class="lg:mr-[15px]" v-if="paginate"><input-dropdown :options="dropdown_options" v-model="local_per_page"></input-dropdown></div>
-					<div class="mt-[10px] lg:mt-[0px]" v-if="checkbox_actions?.length > 0"><input-dropdown :options="checkbox_actions" v-model="checkbox_actions_dropdown" @changed="handleCheckboxActions"></input-dropdown></div>
+					<div class="mt-[10px] mt-[0px]!" v-if="checkbox_actions?.length > 0"><input-dropdown :options="checkbox_actions" v-model="checkbox_actions_dropdown" @changed="handleCheckboxActions"></input-dropdown></div>
 				</div>
 			</div>
-			
-			<div class="lg:col-span-3 mt-[25px]! lg:mt-[0px]!">
+			<div v-if="datetime_filter" class="col-span-12 xl:col-span-4 mt-[25px]! lg:mt-[0px]!">
+				<input-date-time mode="range" v-model="date_range" ref="date_range_datatable"></input-date-time>
+			</div>
+			<div class="col-span-12 xl:col-span-4 mt-[25px]! lg:mt-[0px]!">
 				<input-search v-if="show_search" v-model="searched_term"></input-search>
 			</div>
 		</div>
@@ -118,6 +120,8 @@ import InputCheckbox from '../inputs/InputCheckbox.vue';
 import { env } from '../../env';
 import { toastEvents } from '../../events/toastEvents';
 
+import InputDateTime from '../inputs/InputDateTime.vue';
+
 export interface DataTableInterface{
 	local_table_data : object,
 	sort_column: string,
@@ -139,7 +143,8 @@ export interface DataTableInterface{
 	to_be_handled_rows_multiple: Array<number>,
 	local_static : boolean,
 	metadata:object,
-	temp_sorted_column:object
+	temp_sorted_column:object,
+	date_range: Array<object>
 }
 
 export default defineComponent({
@@ -157,7 +162,8 @@ export default defineComponent({
 		InputCheckbox,
 		IconChevronLeft,
 		IconChevronRight,
-		IconTrash
+		IconTrash,
+		InputDateTime
 	},
 	props : {
 		data: Object,
@@ -169,7 +175,8 @@ export default defineComponent({
 		url_slug: String,
 		row_actions: Array<string>,
 		dynamic_loading_status:Boolean,
-		show_search:Boolean
+		show_search:Boolean,
+		datetime_filter: Boolean
 	},
 	data(): DataTableInterface{
 		return {
@@ -204,6 +211,7 @@ export default defineComponent({
 				sorted_column: null
 			},
 			temp_sorted_column: {},
+			date_range: []
 		}
 	},
 	computed : {
@@ -285,6 +293,11 @@ export default defineComponent({
 					row.created_at = common.formatDate(row.created_at);
 				}
 			});
+		},
+		date_range() : void{
+			if(this.local_static === false){
+				this.sendData('search');
+			}
 		}
 	},
 	methods : {
@@ -326,7 +339,8 @@ export default defineComponent({
 					per_page: this.local_per_page,
 					searched_term: this.searched_term,
 					current_page: this.current_page,
-					sorted_column: this.temp_sorted_column
+					sorted_column: this.temp_sorted_column,
+					date_range: this.date_range
 				};
 				this.$emit('handle_api', json_response);
 			}

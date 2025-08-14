@@ -7,7 +7,7 @@
        <form @submit.prevent="createClient" class="form">
 		<div class="grid grid-cols-12 gap-5">
 				<div class="col-span-12 lg:col-span-6">
-					<input-date-time label="Choose date" mode="date" :required="true" v-model="temp_date" :error="temp_error" ref="temp_date"></input-date-time>
+					<input-date-time label="Choose date" mode="date" :range="true" :required="true" v-model="temp_date" :error="temp_error" ref="temp_date"></input-date-time>
 				</div>
 				<div class="col-span-12 lg:col-span-6">
 					<input-text label="test" v-model="temp_date2" :required="true" :error="temp_error2" ref="temp_date2"></input-text>
@@ -65,7 +65,7 @@
 		per_page:number,
 		table_data:object,
 		fields: Array<object>,
-		temp_date: string,
+		temp_date: any,
 		temp_date2: string,
 		temp_error: string,
 		temp_error2: string
@@ -88,7 +88,7 @@
 					rows: []
 				},
 				fields: [],
-				temp_date: '2025-06-15T00:00:00Z',
+				temp_date: '',
 				temp_date2: '',
 				temp_error: 'Test here',
 				temp_error2: 'Test here'
