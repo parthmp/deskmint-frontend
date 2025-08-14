@@ -23,7 +23,8 @@
 		table_data: object,
 		total_pages: number,
 		per_page: number,
-		dynamic_loading_status: boolean
+		dynamic_loading_status: boolean,
+		dates_search: object
 	}
 
 	import { defineComponent } from 'vue';
@@ -55,46 +56,58 @@
 				},
 				total_pages : 1,
 				per_page: 15,
-				dynamic_loading_status: false
+				dynamic_loading_status: false,
+				dates_search : {
+					from_date: '',
+					to_date: ''
+				}
 			}
 		},
 
 		mixins: [RedirectToLoginForNoTokens],
 		methods : {
-
+			handleDatesSearch(callback:any) : void{
+				/* find dates format here */
+				callback();
+			},
 			fetchClientFields(page_data = '') : void{
-				
-				if(page_data === ''){
-					this.data_loading = true;
-				}else{
-					this.dynamic_loading_status = true;
-				}
-				
-				api.get('clients-custom-fields', {
-					params: {
-						...(page_data || {}),
-						default_per_page: env.DEFAULT_TABLE_ROWS
-					}
 
-				}).then((response) => {
-
+				this.handleDatesSearch(() => {
+					console.log(page_data);
 					if(page_data === ''){
-						this.data_loading = false;
+						this.data_loading = true;
 					}else{
-						this.dynamic_loading_status = false;
+						this.dynamic_loading_status = true;
 					}
+					
+					api.get('clients-custom-fields', {
+						params: {
+							...(page_data || {}),
+							default_per_page: env.DEFAULT_TABLE_ROWS
+						}
 
-					this.table_data = response.data.table_data;
-					this.total_pages = response.data.total_pages;
+					}).then((response) => {
 
-				}).catch((error) => {
-					if(page_data === ''){
-						this.data_loading = false;
-					}else{
-						this.dynamic_loading_status = false;
-					}
+						if(page_data === ''){
+							this.data_loading = false;
+						}else{
+							this.dynamic_loading_status = false;
+						}
 
+						this.table_data = response.data.table_data;
+						this.total_pages = response.data.total_pages;
+
+					}).catch((error) => {
+						if(page_data === ''){
+							this.data_loading = false;
+						}else{
+							this.dynamic_loading_status = false;
+						}
+
+					});
 				});
+
+				
 			},
 
 			handleAPI(e:any) :void {
