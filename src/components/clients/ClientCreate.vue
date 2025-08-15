@@ -3,7 +3,7 @@
     <div class="card">
         <h1 class="text-2xl!">Create a client</h1>
         <br>
-		
+		<input-telephone v-model="phone.value" :required="false" label="Enter phone number" :error="phone.error" :prop_placeholder="'Enter phone'" ref="phone_input"></input-telephone>
        <form @submit.prevent="createClient" class="form">
 		<div class="grid grid-cols-12 gap-5">
 				<div class="col-span-12 lg:col-span-6">
@@ -56,6 +56,7 @@
 	import InputNumber from '../inputs/InputNumber.vue';
 	import InputDateTime from '../inputs/InputDateTime.vue';
 	import InputButton from '../inputs/InputButton.vue';
+	import InputTelephone from '../inputs/InputTelephone.vue';
 	
 	import { defineComponent } from 'vue';
 
@@ -68,7 +69,8 @@
 		temp_date: any,
 		temp_date2: string,
 		temp_error: string,
-		temp_error2: string
+		temp_error2: string,
+		phone: object
 	}
 	
 	export default defineComponent({
@@ -76,7 +78,8 @@
 		components : {
 			InputDateTime,
 			InputButton,
-			InputText
+			InputText,
+			InputTelephone
 		},
 		data(): ClientCreateInterface{
 			return {
@@ -91,7 +94,11 @@
 				temp_date: '',
 				temp_date2: '',
 				temp_error: 'Test here',
-				temp_error2: 'Test here'
+				temp_error2: 'Test here',
+				phone: {
+					error: '',
+					value: '+91852545122'
+				}
 			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
@@ -104,6 +111,17 @@
 				}else{
 					this.temp_error = 'modified';
 				}
+			},
+
+			"phone.value"() : void{
+
+				let valid_phone = this.$refs.phone_input.validate();
+				if(!valid_phone){
+					this.phone.error = 'Enter valid phone number';
+				}else{
+					this.phone.error = '';
+				}
+
 			}
 		},
 		methods : {
