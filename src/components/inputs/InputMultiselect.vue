@@ -1,15 +1,18 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<input type="text" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="text_id" @input="EmitModel" :class="{'red-input-order': (local_error !== '' && show_errors)}">
+		<select multiple="true" :id="text_id" v-model="input_value" @change="EmitModel" class="styled-scrollbar" :class="{'red-input-order': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors))}">
+			<option v-for="(option, z) in options" :key="z" :value="option.value+''">{{ option.text+'' }}</option>
+		</select>
+		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">{{ local_label }} is a required field.</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
 
 <script lang="ts">
 
-	export interface InputTelephoneInterface{
-		input_value: string,
+	export interface InputMultiselectInterface{
+		input_value: any,
 		input_required: boolean,
 		is_valid: boolean,
 		local_error: string,
@@ -24,11 +27,11 @@
 
 	export default defineComponent({
 
-		name : 'InputTelephone',
+		name : 'InputMultiselect',
 
 		props : {
 			modelValue : {
-				type:String
+				type:Array
 			},
 			required : {
 				type:Boolean
@@ -39,14 +42,14 @@
 			label: {
 				type:String
 			},
-			prop_placeholder: {
-				type:String
+			options:{
+				type:Array<Object>
 			}
 		},
 
-		data() : InputTelephoneInterface {
+		data() : InputMultiselectInterface {
 			return {
-				input_value: '',
+				input_value: [],
 				input_required: false,
 				is_valid : true,
 				local_error : '',
@@ -71,9 +74,7 @@
 		},
 
 		computed : {
-			/*highlight_error() : boolean{
-				return ((!this.is_valid && this.local_error === '' && this.show_errors) || (this.local_error !== '' && this.show_errors));
-			},*/
+			
 			text_id() : string{
 				let rand_number = common.random_number();
 				return 'text_field_'+rand_number;
@@ -82,24 +83,25 @@
 
 		methods: {
 			validate() : boolean{
-				
-				if(this.input_required === true){
-					
-					this.input_value = this.sanitizeInput(this.input_value);
-					this.input_value = this.standardizePhoneNumber(this.input_value);
-					
-					let temp_value = this.input_value.trim();
+			
+				/* validate here */
 
-					if(temp_value !== '' && this.hasInvalidChars(temp_value) === false){
-						this.is_valid = true;
-					}else{
-						this.is_valid = false;
-						this.show_errors = true;
-					}
-
-				}else{
-
+				if(this.input_required === false){
 					this.is_valid = true;
+					return this.is_valid;
+				}
+
+				this.is_valid = false;
+				this.show_errors = true;
+
+				for(let z = 0 ; z < this.input_value.length ; z++){
+
+					let temp = this.sanitizeInput(this.input_value[z]).trim();
+					if(temp !== ''){
+						this.is_valid = true;
+						this.show_errors = false;
+						break;
+					}
 
 				}
 
@@ -107,19 +109,21 @@
 				
 			},
 			EmitModel(e:any) : void{
-				this.input_value = this.standardizePhoneNumber(this.sanitizeInput(e.target.value));
-				this.$emit('update:modelValue', this.input_value);
+				this.sanitizeMultiple((temp_input_value:any) => {
+					this.$emit('update:modelValue', temp_input_value);
+				});
 			},
 			sanitizeInput(in_string:string) : string{
 				return common.stripTags(in_string);
 			},
 
-			standardizePhoneNumber(phone_string:string) : string{
-				return phone_string.replace(/[^0-9+]/g, '');
-			},
-			hasInvalidChars(phone_string:string) : boolen {
-				return /[ a-zA-Z]/.test(phone_string);
+			sanitizeMultiple(callback:any) : void{
+				for(let z = 0 ; z < this.input_value.lenghth ; z++){
+					this.input_value[z] = this.sanitizeInput(this.input_value[z]);
+				}
+				callback(this.input_value);
 			}
+
 		},
 
 		mounted(){
@@ -135,7 +139,7 @@
 				this.is_valid = false;
 				
 			}
-			this.input_value = this.standardizePhoneNumber(this.modelValue?.trim()) || '';
+			this.input_value = this.modelValue || '';
 			
 			this.local_error = '';
 			if(common.isset(this.error)){
@@ -146,9 +150,6 @@
 				this.local_label = this.label+'';
 			}
 
-			if(common.isset(this.prop_placeholder)){
-				this.local_placeholder = this.prop_placeholder+'';
-			}
 		}
 
 	});

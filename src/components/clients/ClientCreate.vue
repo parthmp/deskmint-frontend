@@ -3,6 +3,10 @@
     <div class="card">
         <h1 class="text-2xl!">Create a client</h1>
         <br>
+        <br>
+		<input-multiselect :options="input_fields_options" label="multiselect example" :required="true" v-model="multiselect_temp.value" :error="multiselect_temp.error" ref="multiselect_test"></input-multiselect>
+        <br>
+        <br>
 		<input-telephone v-model="phone.value" :required="false" label="Enter phone number" :error="phone.error" :prop_placeholder="'Enter phone'" ref="phone_input"></input-telephone>
        <form @submit.prevent="createClient" class="form">
 		<div class="grid grid-cols-12 gap-5">
@@ -57,6 +61,7 @@
 	import InputDateTime from '../inputs/InputDateTime.vue';
 	import InputButton from '../inputs/InputButton.vue';
 	import InputTelephone from '../inputs/InputTelephone.vue';
+	import InputMultiselect from '../inputs/InputMultiselect.vue';
 	
 	import { defineComponent } from 'vue';
 
@@ -70,7 +75,9 @@
 		temp_date2: string,
 		temp_error: string,
 		temp_error2: string,
-		phone: object
+		phone: object,
+		input_fields_options: Array<object>,
+		multiselect_temp : any
 	}
 	
 	export default defineComponent({
@@ -79,7 +86,8 @@
 			InputDateTime,
 			InputButton,
 			InputText,
-			InputTelephone
+			InputTelephone,
+			InputMultiselect
 		},
 		data(): ClientCreateInterface{
 			return {
@@ -98,7 +106,62 @@
 				phone: {
 					error: '',
 					value: '+91852545122'
+				},
+				input_fields_options: [
+					{
+						value : 'temp',
+						text: 'display text 1'
+					},
+					{
+						value : 'temp 2',
+						text: 'display text 2'
+					},
+					{
+						value : 'temp 3',
+						text: 'display text 3'
+					},
+					{
+						value : 'temp',
+						text: 'display text 1'
+					},
+					{
+						value : 'temp 2',
+						text: 'display text 2'
+					},
+					{
+						value : 'temp 3',
+						text: 'display text 3'
+					},
+					{
+						value : 'temp',
+						text: 'display text 1'
+					},
+					{
+						value : 'temp 2',
+						text: 'display text 2'
+					},
+					{
+						value : 'temp 3',
+						text: 'display text 3'
+					},
+					{
+						value : 'temp',
+						text: 'display text 1'
+					},
+					{
+						value : 'temp 2',
+						text: 'display text 2'
+					},
+					{
+						value : 'temp 3',
+						text: 'display text 3'
+					}
+				],
+				multiselect_temp : {
+					value: [],
+					error: '',
 				}
+				
 			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
@@ -122,6 +185,18 @@
 					this.phone.error = '';
 				}
 
+			},
+
+			
+			"multiselect_temp.value"() : void{
+
+				let valid_phone = this.$refs.multiselect_test.validate();
+				if(!valid_phone){
+					this.multiselect_temp.error = 'Select the fields';
+				}else{
+					this.multiselect_temp.error = '';
+				}
+
 			}
 		},
 		methods : {
@@ -133,12 +208,19 @@
 				}).catch((error) => {});
 
 			},
-
 			createClient() : void{
 				let validdate = this.$refs.temp_date.validate();
-				console.log("=="+validdate+" START ==");
-				console.log(this.temp_date);
-				console.log("=="+validdate+" END ==");
+				console.log("==multiselect START ==");
+				console.log(this.multiselect_temp);
+				console.log("==multiselect END ==");
+
+				let valid_ms = this.$refs.multiselect_test.validate();
+				console.log(valid_ms);
+				if(!valid_ms){
+					this.multiselect_temp.error = 'Select the fields';
+				}else{
+					this.multiselect_temp.error = '';
+				}
 			}
 			
 		},
