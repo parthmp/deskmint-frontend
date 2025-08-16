@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
-		<label for="url">URL</label>
-		<input type="text" placeholder="Enter URL" v-model="input_value" class="form-control" id="url" @input="EmitModel" :class="{'red-input-order': highlight_error}">
+		<label for="url">{{ local_label }}</label>
+		<input type="text" :placeholder="local_placeholder" v-model="input_value" class="form-control" id="url" @input="EmitModel" :class="{'red-input-order': highlight_error}">
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid URL with <span v-if="local_allow_http">http:// or https://</span><span v-if="!local_allow_http">https://</span></span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
@@ -15,7 +15,9 @@
 		is_valid: boolean,
 		local_error: string,
 		show_errors: boolean,
-		local_allow_http:boolean
+		local_allow_http:boolean,
+		local_placeholder:string,
+		local_label:string
 	}
 
 	import common from '../../helpers/common';
@@ -38,6 +40,12 @@
 			},
 			allow_http:{
 				type:Boolean
+			},
+			prop_placeholder:{
+				type:String
+			},
+			label: {
+				type:String
 			}
 		},
 
@@ -48,7 +56,9 @@
 				is_valid : true,
 				local_error : '',
 				show_errors: false,
-				local_allow_http: true
+				local_allow_http: true,
+				local_placeholder : 'Enter URL',
+				local_label: 'URL'
 			};
 		},
 
@@ -133,6 +143,13 @@
 				
 				this.local_allow_http = this.allow_http;
 				
+			}
+			if(common.isset(this.prop_placeholder)){
+				this.local_placeholder = this.prop_placeholder;
+			}
+
+			if(common.isset(this.label)){
+				this.local_label = this.label;
 			}
 		}
 

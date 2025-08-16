@@ -1,13 +1,22 @@
 <template>
 	<div class="form-group" :class="{'mt-0!': local_remove_margin}">
 		<component :is="url ? 'router-link' : 'button'" :to="url" :disabled="local_disabled" :class="buttonClasses" @click="emitSubmit(url)">
-			<span v-if="!local_disabled" class="flex gap-1 items-center">
-				<component :is="icon" :size="17"></component>&nbsp;{{ btn_text }}
+			<span v-if="icon === 'IconCaretRight'">
+				<span v-if="!local_disabled" class="flex gap-1 items-center">
+					{{ btn_text }}&nbsp;<component :is="icon" :size="17"></component>
+				</span>
+				<span v-if="local_disabled" class="flex gap-1 items-center">
+					{{ btn_text }}&nbsp;<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="17"></IconRotateClockwise2>
+				</span>
 			</span>
-			<span v-if="local_disabled" class="flex gap-1 items-center">
-				<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="17"></IconRotateClockwise2>&nbsp;{{ btn_text }}
+			<span v-if="icon !== 'IconCaretRight'">
+				<span v-if="!local_disabled" class="flex gap-1 items-center">
+					<component :is="icon" :size="17"></component>&nbsp;{{ btn_text }}
+				</span>
+				<span v-if="local_disabled" class="flex gap-1 items-center">
+					<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="17"></IconRotateClockwise2>&nbsp;{{ btn_text }}
+				</span>
 			</span>
-			
 		</component>
 	</div>
 </template>

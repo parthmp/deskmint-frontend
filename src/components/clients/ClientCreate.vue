@@ -17,21 +17,43 @@
 			</div>-->
        <form @submit.prevent="createClient" class="form">
 				
-		<tabs :options="tab_options" :active_tab_index="active_tab_index">
-			<template #tab-0>
-				<div>Tab 1 Content</div>
-				<br>
-				<a href="javascript:;" @click="active_tab_index = 1">Set tab 2</a>
+		<tabs :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="true">
+			<template v-slot:tab-0>
+
+				<div class="lg:grid lg:grid-cols-12 gap-5">
+					<div class="lg:col-span-4">
+						<input-text :required="true" label="Enter first name" prop_placeholder="First name" v-model="client_first_name.value" :error="client_first_name.error" ref="name"></input-text>
+					</div>
+					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
+						<input-text :required="true" label="Enter last name" prop_placeholder="Last name" v-model="client_last_name.value" :error="client_last_name.error" ref="name"></input-text>
+					</div>
+					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
+						<input-text :required="false" label="GST/Tax number" prop_placeholder="GST/Tax number" v-model="client_tax_id.value" :error="client_tax_id.error" ref="name"></input-text>
+					</div>
+				</div>
+
+				<div class="lg:grid lg:grid-cols-12 gap-5">
+					<div class="lg:col-span-6 mt-[20px]">
+						<inputURL :required="false" label="Website" prop_placeholder="Enter website" v-model="client_first_name.value" :error="client_first_name.error" ref="name"></inputURL>
+					</div>
+					<div class="lg:col-span-6 mt-[20px]">
+						<input-telephone v-model="client_phone.value" :required="false" label="Enter phone number" :error="client_phone.error" :prop_placeholder="'Enter phone'" ref="phone_input"></input-telephone>
+					</div>
+				</div>
+
+				<input-button btn_text="Next" @click="active_tab_index = 1" icon="IconCaretRight" class="lg:float-end"></input-button>
+				<div class="clear-both"></div>
+
 			</template>
-			<template #tab-1>
+			<template v-slot:tab-1>
 				<div>Tab 2 Content</div>
 				<button @click="active_tab_index = 0">Set tab 1</button>
 			</template>
-			<template #tab-2>
+			<template v-slot:tab-2>
 				<div>Tab 3 Content</div>
 				<button @click="active_tab_index = 3">Set tab 4</button>
 			</template>
-			<template #tab-3>
+			<template v-slot:tab-3>
 				<div>Tab 4 Content</div>
 				<button @click="active_tab_index = 2">Set tab 3</button>
 			</template>
@@ -55,8 +77,7 @@
 				</div>
 			</div>
 		-->
-			<input-button btn_text="Save" :disabled="btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
-			<div class="clear-both"></div>
+			
 
 		</form>
     </div>
@@ -72,14 +93,10 @@
 	import api from '../../helpers/api';
 	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
 	import InputText from '../inputs/InputText.vue';
-	import InputTextarea from '../inputs/InputTextarea.vue';
-	import InputEmail from '../inputs/InputEmail.vue';
-	import InputSelect from '../inputs/InputSelect.vue';
-	import InputNumber from '../inputs/InputNumber.vue';
-	import InputDateTime from '../inputs/InputDateTime.vue';
 	import InputButton from '../inputs/InputButton.vue';
 	import InputTelephone from '../inputs/InputTelephone.vue';
-	import InputMultiselect from '../inputs/InputMultiselect.vue';
+	import InputURL from '../inputs/InputURL.vue';
+
 	import Tabs from '../UI/Tabs.vue';
 	
 	import { defineComponent } from 'vue';
@@ -90,25 +107,21 @@
 		per_page:number,
 		table_data:object,
 		fields: Array<object>,
-		temp_date: any,
-		temp_date2: string,
-		temp_error: string,
-		temp_error2: string,
-		phone: object,
-		input_fields_options: Array<object>,
-		multiselect_temp : any,
 		tab_options: Array<string>,
-		active_tab_index: number
+		active_tab_index: number,
+		client_first_name: object,
+		client_last_name: object,
+		client_tax_id: object,
+		client_phone: object,
 	}
 	
 	export default defineComponent({
 		name : 'ClientCreate',
 		components : {
-			InputDateTime,
 			InputButton,
 			InputText,
 			InputTelephone,
-			InputMultiselect,
+			InputURL,
 			Tabs
 		},
 		data(): ClientCreateInterface{
@@ -121,112 +134,32 @@
 					rows: []
 				},
 				fields: [],
-				temp_date: '',
-				temp_date2: '',
-				temp_error: 'Test here',
-				temp_error2: 'Test here',
-				phone: {
-					error: '',
-					value: '+91852545122'
-				},
-				tab_options: ['Tab 1', 'Tab 2', 'Tab 3', 'Tab 4'],
+				tab_options: ['Personal info', 'Contact info', 'Billing info', 'Custom fields', 'Settings'],
 				active_tab_index: 0,
-				input_fields_options: [
-					{
-						value : 'temp',
-						text: 'display text 1'
-					},
-					{
-						value : 'temp 2',
-						text: 'display text 2'
-					},
-					{
-						value : 'temp 3',
-						text: 'display text 3'
-					},
-					{
-						value : 'temp',
-						text: 'display text 1'
-					},
-					{
-						value : 'temp 2',
-						text: 'display text 2'
-					},
-					{
-						value : 'temp 3',
-						text: 'display text 3'
-					},
-					{
-						value : 'temp',
-						text: 'display text 1'
-					},
-					{
-						value : 'temp 2',
-						text: 'display text 2'
-					},
-					{
-						value : 'temp 3',
-						text: 'display text 3'
-					},
-					{
-						value : 'temp',
-						text: 'display text 1'
-					},
-					{
-						value : 'temp 2',
-						text: 'display text 2'
-					},
-					{
-						value : 'temp 3',
-						text: 'display text 3'
-					}
-				],
-				multiselect_temp : {
-					value: [],
-					error: '',
+				client_first_name : {
+					value: '',
+					error: 'First name is required'
+				},
+				client_last_name : {
+					value: '',
+					error: 'Last name is required'
+				},
+				client_tax_id : {
+					value: '',
+					error: 'Last name is required'
+				},
+				client_phone : {
+					value: '',
+					error: 'Phone number is required'
 				}
 				
 			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
 		watch: {
-			temp_date() : void{
-				let validdate = this.$refs.temp_date.validate();
-				console.log("=="+validdate+"==");
-				if(validdate){
-					this.temp_error = '';
-				}else{
-					this.temp_error = 'modified';
-				}
-			},
-
-			"phone.value"() : void{
-
-				let valid_phone = this.$refs.phone_input.validate();
-				if(!valid_phone){
-					this.phone.error = 'Enter valid phone number';
-				}else{
-					this.phone.error = '';
-				}
-
-			},
-
 			
-			"multiselect_temp.value"() : void{
-
-				let valid_phone = this.$refs.multiselect_test.validate();
-				if(!valid_phone){
-					this.multiselect_temp.error = 'Select the fields';
-				}else{
-					this.multiselect_temp.error = '';
-				}
-
-			}
 		},
 		methods : {
-			setTab(index:number) : void{
-				this.active_tab_index = index;
-			},
 			fetchClientAreaFields() : void{
 
 				api.get('manage-clients/fetch-clients-custom-fields').then((response) => {
@@ -235,18 +168,10 @@
 
 			},
 			createClient() : void{
-				let validdate = this.$refs.temp_date.validate();
-				console.log("==multiselect START ==");
-				console.log(this.multiselect_temp);
-				console.log("==multiselect END ==");
-
-				let valid_ms = this.$refs.multiselect_test.validate();
-				console.log(valid_ms);
-				if(!valid_ms){
-					this.multiselect_temp.error = 'Select the fields';
-				}else{
-					this.multiselect_temp.error = '';
-				}
+				
+			},
+			changeActiveTabValue(index:number) : void{
+				this.active_tab_index = index;
 			}
 			
 		},
