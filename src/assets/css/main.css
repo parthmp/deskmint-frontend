@@ -466,7 +466,9 @@ background: #e7e7e7;
 .red-input-order-div .dp__input_reg{
 	@apply border-1! border-solid! outline-1! rounded-sm! border-red-500! outline-red-500 transition-all duration-0;
 }
-
+.tab-active{
+	@apply bg-transparent border-1 border-solid border-deskmint-green-light lg:border-b-0;
+}
 .dp__theme_light{
     --dp-background-color: var(--color-background-2) !important;
     --dp-text-color: var(--color-default-text) !important;

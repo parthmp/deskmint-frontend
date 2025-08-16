@@ -3,21 +3,39 @@
     <div class="card">
         <h1 class="text-2xl!">Create a client</h1>
         <br>
-        <br>
+        <!--<br>
 		<input-multiselect :options="input_fields_options" label="multiselect example" :required="true" v-model="multiselect_temp.value" :error="multiselect_temp.error" ref="multiselect_test"></input-multiselect>
         <br>
         <br>
 		<input-telephone v-model="phone.value" :required="false" label="Enter phone number" :error="phone.error" :prop_placeholder="'Enter phone'" ref="phone_input"></input-telephone>
-       <form @submit.prevent="createClient" class="form">
-		<div class="grid grid-cols-12 gap-5">
-				<div class="col-span-12 lg:col-span-6">
+		<div class="col-span-12 lg:col-span-6">
 					<input-date-time label="Choose date" mode="date" :range="true" :required="true" v-model="temp_date" :error="temp_error" ref="temp_date"></input-date-time>
 				</div>
 				<div class="col-span-12 lg:col-span-6">
 					<input-text label="test" v-model="temp_date2" :required="true" :error="temp_error2" ref="temp_date2"></input-text>
 				</div>
-			</div>
-		
+			</div>-->
+       <form @submit.prevent="createClient" class="form">
+				
+		<tabs :options="tab_options" :active_tab_index="active_tab_index">
+			<template #tab-0>
+				<div>Tab 1 Content</div>
+				<br>
+				<a href="javascript:;" @click="active_tab_index = 1">Set tab 2</a>
+			</template>
+			<template #tab-1>
+				<div>Tab 2 Content</div>
+				<button @click="active_tab_index = 0">Set tab 1</button>
+			</template>
+			<template #tab-2>
+				<div>Tab 3 Content</div>
+				<button @click="active_tab_index = 3">Set tab 4</button>
+			</template>
+			<template #tab-3>
+				<div>Tab 4 Content</div>
+				<button @click="active_tab_index = 2">Set tab 3</button>
+			</template>
+		</tabs>
 		
 		<!--	<div class="grid grid-cols-12 gap-5">
 				<div class="col-span-12 lg:col-span-6">
@@ -46,7 +64,7 @@
 </section>
 </template>
 <style scoped>
-
+	
 </style>
 <script lang="ts">
 
@@ -62,6 +80,7 @@
 	import InputButton from '../inputs/InputButton.vue';
 	import InputTelephone from '../inputs/InputTelephone.vue';
 	import InputMultiselect from '../inputs/InputMultiselect.vue';
+	import Tabs from '../UI/Tabs.vue';
 	
 	import { defineComponent } from 'vue';
 
@@ -77,7 +96,9 @@
 		temp_error2: string,
 		phone: object,
 		input_fields_options: Array<object>,
-		multiselect_temp : any
+		multiselect_temp : any,
+		tab_options: Array<string>,
+		active_tab_index: number
 	}
 	
 	export default defineComponent({
@@ -87,7 +108,8 @@
 			InputButton,
 			InputText,
 			InputTelephone,
-			InputMultiselect
+			InputMultiselect,
+			Tabs
 		},
 		data(): ClientCreateInterface{
 			return {
@@ -107,6 +129,8 @@
 					error: '',
 					value: '+91852545122'
 				},
+				tab_options: ['Tab 1', 'Tab 2', 'Tab 3', 'Tab 4'],
+				active_tab_index: 0,
 				input_fields_options: [
 					{
 						value : 'temp',
@@ -200,7 +224,9 @@
 			}
 		},
 		methods : {
-			
+			setTab(index:number) : void{
+				this.active_tab_index = index;
+			},
 			fetchClientAreaFields() : void{
 
 				api.get('manage-clients/fetch-clients-custom-fields').then((response) => {
