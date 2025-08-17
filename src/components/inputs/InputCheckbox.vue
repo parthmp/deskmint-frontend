@@ -12,6 +12,7 @@
 					</span>
 				</label>
 			</div> 
+			<label v-if="label !== ''" for="checkbox">{{ label }}</label>
 			<label v-if="show_text" for="checkbox">Remember me</label>
 		</span>
 	</span>
@@ -50,6 +51,9 @@
 			},
 			border_white: {
 				type:Boolean
+			},
+			label: {
+				type:String
 			}
 		},
 
@@ -106,6 +110,7 @@
 					this.show_errors = false;
 				}
 				this.$emit('update:modelValue', this.input_value);
+				this.$emit('checked', this.input_value);
 			}
 		},
 

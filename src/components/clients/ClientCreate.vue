@@ -81,6 +81,7 @@
 
 			</template>
 			<template v-slot:tab-2>
+				<p class="text-xl!">Billing information</p>
 				<div class="lg:grid lg:grid-cols-12 gap-5">
 					<div class="lg:col-span-4 mt-[20px]">
 						<input-text :required="true" label="Street" prop_placeholder="Enter street" v-model="client_billing_info.street.value" :error="client_billing_info.street.error" ref="client_billing_info_street"></input-text>
@@ -89,7 +90,7 @@
 						<input-text :required="true" label="Apt / Suite" prop_placeholder="Enter apt / suite" v-model="client_billing_info.apt.value" :error="client_billing_info.apt.error" ref="client_billing_info_apt"></input-text>
 					</div>
 					<div class="lg:col-span-4 mt-[20px]">
-						<input-text :required="true" label="City" prop_placeholder="Enter city" v-model="client_billing_info.city.value" :error="client_billing_info.city.error" ref="client_billing_info_apt"></input-text>
+						<input-text :required="true" label="City" prop_placeholder="Enter city" v-model="client_billing_info.city.value" :error="client_billing_info.city.error" ref="client_billing_info_city"></input-text>
 					</div>
 				</div>
 				<div class="lg:grid lg:grid-cols-12 gap-5">
@@ -100,9 +101,38 @@
 						<input-text :required="true" label="Postal code" prop_placeholder="Enter postal code" v-model="client_billing_info.postal_code.value" :error="client_billing_info.postal_code.error" ref="client_billing_info_postal_code"></input-text>
 					</div>
 					<div class="lg:col-span-4 mt-[20px]">
-						<input-text :required="true" label="Country" prop_placeholder="Enter country" ref="client_billing_info_apt"></input-text>
+						<input-auto-complete label="Choose a country" :required="true" :error="client_billing_info.country.error" :options="countries" :prop_placeholder="'Type to select a country'" @selected="selectCountry" ref="client_billing_info_country"></input-auto-complete>
 					</div>
 				</div>
+				<br>
+				<input-checkbox label="Copy to shipping information" v-model="copy_to_shipping"></input-checkbox>
+				<br>
+				<span v-if="!copy_to_shipping">
+					<p class="text-xl!">Shipping information</p>
+					<div class="lg:grid lg:grid-cols-12 gap-5">
+						<div class="lg:col-span-4 mt-[20px]">
+							<input-text :required="true" label="Street" prop_placeholder="Enter street" v-model="client_shipping_info.street.value" :error="client_shipping_info.street.error" ref="client_shipping_info_street"></input-text>
+						</div>
+						<div class="lg:col-span-4 mt-[20px]">
+							<input-text :required="true" label="Apt / Suite" prop_placeholder="Enter apt / suite" v-model="client_shipping_info.apt.value" :error="client_shipping_info.apt.error" ref="client_shipping_info_apt"></input-text>
+						</div>
+						<div class="lg:col-span-4 mt-[20px]">
+							<input-text :required="true" label="City" prop_placeholder="Enter city" v-model="client_shipping_info.city.value" :error="client_shipping_info.city.error" ref="client_shipping_info_city"></input-text>
+						</div>
+					</div>
+					<div class="lg:grid lg:grid-cols-12 gap-5">
+						<div class="lg:col-span-4 mt-[20px]">
+							<input-text :required="true" label="State" prop_placeholder="Enter state" v-model="client_shipping_info.state.value" :error="client_shipping_info.state.error" ref="client_shipping_info_state"></input-text>
+						</div>
+						<div class="lg:col-span-4 mt-[20px]">
+							<input-text :required="true" label="Postal code" prop_placeholder="Enter postal code" v-model="client_shipping_info.postal_code.value" :error="client_shipping_info.postal_code.error" ref="client_shipping_info_postal_code"></input-text>
+						</div>
+						<div class="lg:col-span-4 mt-[20px]">
+							<input-auto-complete label="Choose a country" :required="true" :error="client_shipping_info.country.error" :options="countries" :prop_placeholder="'Type to select a country'" @selected="selectShippingCountry" ref="client_shipping_info_country"></input-auto-complete>
+						</div>
+					</div>
+				</span>
+				
 			</template>
 			<template v-slot:tab-3>
 				<div>Tab 4 Content</div>
@@ -149,6 +179,8 @@
 	import InputURL from '../inputs/InputURL.vue';
 	import InputEmail from '../inputs/InputEmail.vue';
 	import { IconTrash } from '@tabler/icons-vue';
+	import InputAutoComplete from '../inputs/InputAutoComplete.vue';
+	import InputCheckbox from '../inputs/InputCheckbox.vue';
 
 	import Tabs from '../UI/Tabs.vue';
 	
@@ -156,16 +188,15 @@
 
 	export interface ClientCreateInterface{
 		btn_disabled:boolean,
-		data_loading:boolean,
-		per_page:number,
-		table_data:object,
 		fields: Array<object>,
+		countries: Array<object>,
 		tab_options: Array<string>,
 		active_tab_index: number,
 		client_personal_info: object,
 		client_contact_info: Array<object>
 		client_billing_info: object,
 		client_shipping_info: object,
+		copy_to_shipping: boolean
 	}
 	
 	export default defineComponent({
@@ -177,18 +208,15 @@
 			InputURL,
 			Tabs,
 			InputEmail,
-			IconTrash
+			IconTrash,
+			InputAutoComplete,
+			InputCheckbox
 		},
 		data(): ClientCreateInterface{
 			return {
 				btn_disabled: false,
-				data_loading : false,
-				per_page: 15,
-				table_data: {
-					columns : [],
-					rows: []
-				},
 				fields: [],
+				countries: [],
 				tab_options: ['Personal info', 'Contact info', 'Billing & Shipping info', 'Custom fields', 'Settings'],
 				active_tab_index: 0,
 				client_personal_info: {
@@ -239,33 +267,13 @@
 						value : '',
 						error: ''
 					},
-					country_id : 0
+					country: {
+						value : '',
+						error: 'Please select a country'
+					}
 				},
-				client_shipping_info: {
-					
-					street: {
-						value : '',
-						error: ''
-					},
-					apt: {
-						value : '',
-						error: ''
-					},
-					city: {
-						value : '',
-						error: ''
-					},
-					state: {
-						value : '',
-						error: ''
-					},
-					postal_code: {
-						value : '',
-						error: ''
-					},
-					country_id : 0
-					
-				}
+				client_shipping_info: {},
+				copy_to_shipping: false
 				
 			}
 		},
@@ -310,12 +318,71 @@
 			},
 			removeContactInfoFields(index:number) : void{
 				this.client_contact_info.splice(index, 1);
+			},
+
+			fetchCountries() : void{
+				api.get('get-countries').then((response) => {
+					this.countries = response.data;
+				}).catch((error) => {});
+			},
+			selectCountry(country_object:object) : void{
+				this.$refs.client_billing_info_country.validate();
+				if(Object.keys(country_object).length === 0){
+					this.client_billing_info.country.value = '';
+				}else{
+					this.client_billing_info.country.value = country_object.value+'';
+				}
+				console.log(this.client_billing_info.country);
+
+			},
+
+			selectShippingCountry(country_object:object) : void{
+				this.$refs.client_shipping_info_country.validate();
+				if(Object.keys(country_object).length === 0){
+					this.client_shipping_info.country.value = '';
+				}else{
+					this.client_shipping_info.country.value = country_object.value+'';
+				}
+				console.log(this.client_shipping_info.country);
+			},
+
+			setShippingInfo(): void{
+				this.client_shipping_info = {
+					
+					street: {
+						value : '',
+						error: ''
+					},
+					apt: {
+						value : '',
+						error: ''
+					},
+					city: {
+						value : '',
+						error: ''
+					},
+					state: {
+						value : '',
+						error: ''
+					},
+					postal_code: {
+						value : '',
+						error: ''
+					},
+					country: {
+						value : '',
+						error: 'Please select a country'
+					}
+					
+				};
 			}
 			
 		},
 		mounted : function(){
 			this.addNewContactInfoFields();
 			this.fetchClientAreaFields();
+			this.fetchCountries();
+			this.setShippingInfo();
 
 		}
 
