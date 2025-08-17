@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
-		<label for="email">Email Address</label>
-		<input type="email" placeholder="Email Address" v-model="input_value" class="form-control" id="email" @input="EmitModel" :class="{'red-input-order': highlight_error}">
+		<label :for="email_id">Email Address</label>
+		<input type="email" placeholder="Email Address" v-model="input_value" class="form-control" :id="email_id" @input="EmitModel" :class="{'red-input-order': highlight_error}">
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid email address</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
@@ -65,6 +65,10 @@
 		computed : {
 			highlight_error() : boolean{
 				return ((!this.is_valid && this.local_error === '' && this.show_errors) || (this.local_error !== '' && this.show_errors));
+			},
+			email_id() : string{
+				let rand_number = common.random_number();
+				return 'email_field_'+rand_number;
 			}
 		},
 
