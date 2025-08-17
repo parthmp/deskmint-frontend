@@ -81,7 +81,28 @@
 
 			</template>
 			<template v-slot:tab-2>
-				test 123
+				<div class="lg:grid lg:grid-cols-12 gap-5">
+					<div class="lg:col-span-4 mt-[20px]">
+						<input-text :required="true" label="Street" prop_placeholder="Enter street" v-model="client_billing_info.street.value" :error="client_billing_info.street.error" ref="client_billing_info_street"></input-text>
+					</div>
+					<div class="lg:col-span-4 mt-[20px]">
+						<input-text :required="true" label="Apt / Suite" prop_placeholder="Enter apt / suite" v-model="client_billing_info.apt.value" :error="client_billing_info.apt.error" ref="client_billing_info_apt"></input-text>
+					</div>
+					<div class="lg:col-span-4 mt-[20px]">
+						<input-text :required="true" label="City" prop_placeholder="Enter city" v-model="client_billing_info.city.value" :error="client_billing_info.city.error" ref="client_billing_info_apt"></input-text>
+					</div>
+				</div>
+				<div class="lg:grid lg:grid-cols-12 gap-5">
+					<div class="lg:col-span-4 mt-[20px]">
+						<input-text :required="true" label="State" prop_placeholder="Enter state" v-model="client_billing_info.state.value" :error="client_billing_info.state.error" ref="client_billing_info_state"></input-text>
+					</div>
+					<div class="lg:col-span-4 mt-[20px]">
+						<input-text :required="true" label="Postal code" prop_placeholder="Enter postal code" v-model="client_billing_info.postal_code.value" :error="client_billing_info.postal_code.error" ref="client_billing_info_postal_code"></input-text>
+					</div>
+					<div class="lg:col-span-4 mt-[20px]">
+						<input-text :required="true" label="Country" prop_placeholder="Enter country" ref="client_billing_info_apt"></input-text>
+					</div>
+				</div>
 			</template>
 			<template v-slot:tab-3>
 				<div>Tab 4 Content</div>
@@ -143,6 +164,8 @@
 		active_tab_index: number,
 		client_personal_info: object,
 		client_contact_info: Array<object>
+		client_billing_info: object,
+		client_shipping_info: object,
 	}
 	
 	export default defineComponent({
@@ -194,7 +217,55 @@
 						error: 'Phone number is required'
 					}
 				},
-				client_contact_info : []
+				client_contact_info : [],
+				client_billing_info: {
+					street: {
+						value : '',
+						error: ''
+					},
+					apt: {
+						value : '',
+						error: ''
+					},
+					city: {
+						value : '',
+						error: ''
+					},
+					state: {
+						value : '',
+						error: ''
+					},
+					postal_code: {
+						value : '',
+						error: ''
+					},
+					country_id : 0
+				},
+				client_shipping_info: {
+					
+					street: {
+						value : '',
+						error: ''
+					},
+					apt: {
+						value : '',
+						error: ''
+					},
+					city: {
+						value : '',
+						error: ''
+					},
+					state: {
+						value : '',
+						error: ''
+					},
+					postal_code: {
+						value : '',
+						error: ''
+					},
+					country_id : 0
+					
+				}
 				
 			}
 		},
