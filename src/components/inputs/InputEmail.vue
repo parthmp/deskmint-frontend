@@ -1,6 +1,7 @@
 <template>
 	<div class="form-group">
-		<label :for="email_id">Email Address</label>
+		<label v-if="label" :for="email_id">{{ label }}</label>
+		<label v-else :for="email_id">Email Address</label>
 		<input type="email" placeholder="Email Address" v-model="input_value" class="form-control" :id="email_id" @input="EmitModel" :class="{'red-input-order': highlight_error}">
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid email address</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
@@ -14,7 +15,8 @@
 		input_required: boolean,
 		is_valid: boolean,
 		local_error: string,
-		show_errors: boolean
+		show_errors: boolean,
+		local_placeholder: string
 	}
 
 	import common from '../../helpers/common';
@@ -34,6 +36,12 @@
 			},
 			error : {
 				type :String
+			},
+			label: {
+				type:String
+			},
+			prop_placeholder: {
+				type:String
 			}
 		},
 
@@ -43,7 +51,8 @@
 				input_required: false,
 				is_valid : true,
 				local_error : '',
-				show_errors: false
+				show_errors: false,
+				local_placeholder: 'Email Address'
 			};
 		},
 
@@ -126,6 +135,9 @@
 			this.local_error = '';
 			if(common.isset(this.error)){
 				this.local_error = this.error || '';
+			}
+			if(common.isset(this.prop_placeholder)){
+				this.local_placeholder = this.prop_placeholder;
 			}
 		}
 

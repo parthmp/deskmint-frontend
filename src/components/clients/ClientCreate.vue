@@ -49,8 +49,7 @@
 			<template v-slot:tab-1>
 
 				<span v-for="(contact_info, key) in client_contact_info" :key="contact_info.id">
-					<a href="javascript:;" class="block mt-[20px]! float-end text-red-500!" @click="removeContactInfoFields(key)"><IconTrash></IconTrash></a>
-					<div class="clear-both"></div>
+					<a href="javascript:;" class="block mt-[20px]! mb-[10px] text-red-500!" @click="removeContactInfoFields(key)"><IconTrash></IconTrash></a>
 					<div class="lg:grid lg:grid-cols-12 gap-5">
 						<div class="lg:col-span-6">
 							<input-text :required="true" label="Enter first name" prop_placeholder="First name" v-model="contact_info.first_name.value" :error="contact_info.first_name.error" :ref="'client_contact_info_'+key+'_first_name'"></input-text>
@@ -83,13 +82,13 @@
 			<template v-slot:tab-2>
 				<p class="text-xl!">Billing information</p>
 				<div class="lg:grid lg:grid-cols-12 gap-5">
-					<div class="lg:col-span-4 mt-[20px]">
+					<div class="lg:col-span-4 mt-[5px]">
 						<input-text :required="true" label="Street" prop_placeholder="Enter street" v-model="client_billing_info.street.value" :error="client_billing_info.street.error" ref="client_billing_info_street"></input-text>
 					</div>
-					<div class="lg:col-span-4 mt-[20px]">
+					<div class="lg:col-span-4 mt-[5px]">
 						<input-text :required="true" label="Apt / Suite" prop_placeholder="Enter apt / suite" v-model="client_billing_info.apt.value" :error="client_billing_info.apt.error" ref="client_billing_info_apt"></input-text>
 					</div>
-					<div class="lg:col-span-4 mt-[20px]">
+					<div class="lg:col-span-4 mt-[5px]">
 						<input-text :required="true" label="City" prop_placeholder="Enter city" v-model="client_billing_info.city.value" :error="client_billing_info.city.error" ref="client_billing_info_city"></input-text>
 					</div>
 				</div>
@@ -110,13 +109,13 @@
 				<span v-if="!copy_to_shipping">
 					<p class="text-xl!">Shipping information</p>
 					<div class="lg:grid lg:grid-cols-12 gap-5">
-						<div class="lg:col-span-4 mt-[20px]">
+						<div class="lg:col-span-4 mt-[5px]">
 							<input-text :required="true" label="Street" prop_placeholder="Enter street" v-model="client_shipping_info.street.value" :error="client_shipping_info.street.error" ref="client_shipping_info_street"></input-text>
 						</div>
-						<div class="lg:col-span-4 mt-[20px]">
+						<div class="lg:col-span-4 mt-[5px]">
 							<input-text :required="true" label="Apt / Suite" prop_placeholder="Enter apt / suite" v-model="client_shipping_info.apt.value" :error="client_shipping_info.apt.error" ref="client_shipping_info_apt"></input-text>
 						</div>
-						<div class="lg:col-span-4 mt-[20px]">
+						<div class="lg:col-span-4 mt-[5px]">
 							<input-text :required="true" label="City" prop_placeholder="Enter city" v-model="client_shipping_info.city.value" :error="client_shipping_info.city.error" ref="client_shipping_info_city"></input-text>
 						</div>
 					</div>
@@ -132,10 +131,57 @@
 						</div>
 					</div>
 				</span>
-				
+				<input-button btn_text="Next" @click="active_tab_index = 1" icon="IconCaretRight" class="lg:float-end"></input-button>
+				<div class="clear-both"></div>
 			</template>
 			<template v-slot:tab-3>
 				<div>Tab 4 Content</div>
+				
+				<div class="lg:grid lg:grid-cols-12 gap-5">
+					<div v-for="(field, key) in custom_fields" :key="key" :class="{'lg:col-span-12' : (field.span === 12), 'lg:col-span-6' : (field.span === 6), 'lg:col-span-4' : (field.span === 4)}">
+						
+						<div v-if="field.custom_field_type.input_type === 'text'">
+							<input-text :required="field.required" :label="field.label" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" ref="name"></input-text>
+						</div>
+						<div v-if="field.custom_field_type.input_type === 'textarea'">
+							<input-textarea :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" ref="select_options"></input-textarea>
+						</div>
+						<div v-if="field.custom_field_type.input_type === 'email'">
+							<input-email :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" ref="select_options"></input-email>
+						</div>
+						<div v-if="field.custom_field_type.input_type === 'select'">
+							<input-select :label="field.label" :options="field.type_params" :prop_placeholder="field.placeholder" :required="field.required" v-model="field.value" :error="field.error" ref="select_options"></input-select>
+						</div>
+						<div v-if="field.custom_field_type.input_type === 'number'">
+							<input-number :field_name="field.label" :required="field.required" :placeholder="field.placeholder" v-model="field.value" :error="field.error" ref="select_options"></input-number>
+						</div>
+						<div v-if="field.custom_field_type.input_type === 'date'">
+							<input-date-time mode="date" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" ref="date_range_datatable"></input-date-time>
+						</div>
+
+						<div v-if="field.custom_field_type.input_type === 'time'">
+							<input-date-time mode="time" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" ref="date_range_datatable"></input-date-time>
+						</div>
+
+						<div v-if="field.custom_field_type.input_type === 'datetime'">
+							<input-date-time mode="datetime" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" ref="date_range_datatable"></input-date-time>
+						</div>
+
+						<div v-if="field.custom_field_type.input_type === 'telephone'">
+							<input-telephone mode="telephone" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" ref="date_range_datatable"></input-telephone>
+						</div>
+
+						<div v-if="field.custom_field_type.input_type === 'multiselect'">
+							<input-multiselect :label="field.label" :options="field.type_params" :required="field.required" v-model="field.value" :error="field.error" ref="select_options"></input-multiselect>
+						</div>
+						
+					</div>
+					
+				</div>
+
+			</template>
+			<template v-slot:tab-4>
+				<div>Settings</div>
 				<button @click="active_tab_index = 2">Set tab 3</button>
 			</template>
 		</tabs>
@@ -181,6 +227,11 @@
 	import { IconTrash } from '@tabler/icons-vue';
 	import InputAutoComplete from '../inputs/InputAutoComplete.vue';
 	import InputCheckbox from '../inputs/InputCheckbox.vue';
+	import InputTextarea from '../inputs/InputTextarea.vue';
+	import InputSelect from '../inputs/InputSelect.vue';
+	import InputNumber from '../inputs/InputNumber.vue';
+	import InputDateTime from '../inputs/InputDateTime.vue';
+	import InputMultiselect from '../inputs/InputMultiselect.vue';
 
 	import Tabs from '../UI/Tabs.vue';
 	
@@ -196,7 +247,8 @@
 		client_contact_info: Array<object>
 		client_billing_info: object,
 		client_shipping_info: object,
-		copy_to_shipping: boolean
+		copy_to_shipping: boolean,
+		custom_fields: Array<object>
 	}
 	
 	export default defineComponent({
@@ -210,7 +262,12 @@
 			InputEmail,
 			IconTrash,
 			InputAutoComplete,
-			InputCheckbox
+			InputCheckbox,
+			InputTextarea,
+			InputSelect,
+			InputNumber,
+			InputDateTime,
+			InputMultiselect
 		},
 		data(): ClientCreateInterface{
 			return {
@@ -218,7 +275,7 @@
 				fields: [],
 				countries: [],
 				tab_options: ['Personal info', 'Contact info', 'Billing & Shipping info', 'Custom fields', 'Settings'],
-				active_tab_index: 0,
+				active_tab_index: 3,
 				client_personal_info: {
 					first_name : {
 						value: '',
@@ -273,7 +330,8 @@
 					}
 				},
 				client_shipping_info: {},
-				copy_to_shipping: false
+				copy_to_shipping: false,
+				custom_fields: []
 				
 			}
 		},
@@ -285,7 +343,7 @@
 			fetchClientAreaFields() : void{
 
 				api.get('manage-clients/fetch-clients-custom-fields').then((response) => {
-					console.log(response);
+					this.custom_fields = response.data;
 				}).catch((error) => {});
 
 			},

@@ -37,7 +37,7 @@
 
 		name : 'InputDateTime',
 
-		props : ['modelValue', 'required', 'error', 'label', 'mode'],
+		props : ['modelValue', 'required', 'error', 'label', 'mode', 'prop_placeholder'],
 
 		data() : InputDateTimeInterface{
 			return {
@@ -255,7 +255,6 @@
 					
 				}else{
 					this.placeholder = 'Select date';
-					
 					if(common.isset(this.modelValue) && this.modelValue !== ''){
 						this.input_value = new Date(this.modelValue) || '';
 					}else{
@@ -276,6 +275,10 @@
 
 			if(common.isset(this.label)){
 				this.local_label = this.label+'';
+			}
+
+			if(common.isset(this.prop_placeholder)){
+				this.placeholder = this.prop_placeholder;
 			}
 
 			this.modding();
