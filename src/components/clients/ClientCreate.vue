@@ -136,7 +136,7 @@
 			</template>
 			<template v-slot:tab-3>
 				<div>Tab 4 Content</div>
-				
+				<!-- needs to handle refs on validation -->
 				<div class="lg:grid lg:grid-cols-12 gap-5">
 					<div v-for="(field, key) in custom_fields" :key="key" :class="{'lg:col-span-12' : (field.span === 12), 'lg:col-span-6' : (field.span === 6), 'lg:col-span-4' : (field.span === 4)}">
 						
@@ -182,28 +182,35 @@
 			</template>
 			<template v-slot:tab-4>
 				<div>Settings</div>
-				<button @click="active_tab_index = 2">Set tab 3</button>
+				<div class="lg:grid lg:grid-cols-12 gap-5">
+					<div class="lg:col-span-4 mt-[5px]">
+						<input-auto-complete label="Choose a currency" :required="true" v-model="client_settings.currency.value" :error="client_settings.currency.error" :options="currencies" :prop_placeholder="'Type to select a currency'" @selected="selectCurrency" ref="client_settings_currency"></input-auto-complete>
+					</div>
+					<div class="lg:col-span-4 mt-[5px]">
+						<input-select :options="payment_terms" v-model="client_settings.payment_terms.value" :error="client_settings.payment_terms.error" label="Payment terms"></input-select>
+					</div>
+					<div class="lg:col-span-4 mt-[5px]">
+						<input-select :options="payment_terms" v-model="client_settings.quote_valid.value" :error="client_settings.quote_valid.error" label="Quote valid till"></input-select>
+					</div>
+				</div>
+
+				<div class="lg:grid lg:grid-cols-12 gap-5">
+					<div class="lg:col-span-4 mt-[20px]">
+						<input-select :options="reminder_options" v-model="client_settings.send_reminder.value" :error="client_settings.send_reminder.error" label="Send reminders"></input-select>
+					</div>
+					<div class="lg:col-span-4 mt-[20px]">
+						<input-select :options="size_options" v-model="client_settings.size.value" :error="client_settings.size.error" label="Size"></input-select>
+					</div>
+					<div class="lg:col-span-4 mt-[20px]">
+						<input-select :options="industries" v-model="client_settings.industry.value" :error="client_settings.industry.error" label="Industry"></input-select>
+					</div>
+				</div>
+				
+				<!-- <input-select :options="input_fields_options" @changed="changeEventFired" label="Input field" :required="true" prop_placeholder="Select" v-model="custom_field" ref="custom_field"></input-select> -->
 			</template>
 		</tabs>
 		
-		<!--	<div class="grid grid-cols-12 gap-5">
-				<div class="col-span-12 lg:col-span-6">
-					<input-text :required="true" label="Enter name" prop_placeholder="Enter name" v-model="name.value" :error="name.error" ref="name"></input-text>
-				</div>
-				<div class="col-span-12 lg:col-span-6">
-					<input-email :required="true" v-model="email" ref="email"></input-email>
-				</div>
-			</div>
-			
-			<div class="grid grid-cols-12 gap-5 mt-[20px]">
-				<div class="col-span-12 lg:col-span-6">
-					<input-password :required="true" v-model="password" ref="password"></input-password>
-				</div>
-				<div class="col-span-12 lg:col-span-6">
-					<input-password :required="true" v-model="confirm_password" ref="confirm_password" label="Confirm Password"></input-password>
-				</div>
-			</div>
-		-->
+		
 			
 
 		</form>
@@ -248,7 +255,13 @@
 		client_billing_info: object,
 		client_shipping_info: object,
 		copy_to_shipping: boolean,
-		custom_fields: Array<object>
+		custom_fields: Array<object>,
+		client_settings:object,
+		currencies: Array<object>
+		reminder_options: Array<object>,
+		size_options: Array<object>,
+		industries: Array<object>,
+		payment_terms: Array<object>
 	}
 	
 	export default defineComponent({
@@ -275,7 +288,7 @@
 				fields: [],
 				countries: [],
 				tab_options: ['Personal info', 'Contact info', 'Billing & Shipping info', 'Custom fields', 'Settings'],
-				active_tab_index: 3,
+				active_tab_index: 4,
 				client_personal_info: {
 					first_name : {
 						value: '',
@@ -331,7 +344,110 @@
 				},
 				client_shipping_info: {},
 				copy_to_shipping: false,
-				custom_fields: []
+				custom_fields: [],
+				currencies: [],
+				payment_terms: [
+					{
+						value: '',
+						text: 'Select'
+					},
+					{
+						value: 'Due on receipt',
+						text: 'Due on receipt'
+					},
+					{
+						value: '7 Days',
+						text: '7 Days'
+					},
+					{
+						value: '14 Days',
+						text: '14 Days'
+					},
+					{
+						value: '30 Days',
+						text: '30 Days'
+					},
+					{
+						value: '60 Days',
+						text: '60 Days'
+					},
+					{
+						value: '90 Days',
+						text: '90 Days'
+					}
+					
+				],
+				reminder_options: [
+					{
+						value: '',
+						text: 'Select'
+					},
+					{
+						value: 'Yes',
+						text: 'Yes'
+					},
+					{
+						value: 'No',
+						text: 'No'
+					}
+				],
+				size_options: [
+					{
+						value: '',
+						text: 'Select'
+					},
+					{
+						value: '1 - 3',
+						text: '1 - 3'
+					},
+					{
+						value: '4 - 10',
+						text:  '4 - 10'
+					},
+					{
+						value: '11 - 50',
+						text:  '11 - 50'
+					},
+					{
+						value: '51 - 100',
+						text:  '51 - 100'
+					},
+					{
+						value: '101 - 500',
+						text:  '101 - 500'
+					},
+					{
+						value: '500+',
+						text:  '500+'
+					}
+				],
+				industries: [],
+				client_settings: {
+					currency : {
+						value : '',
+						error : ''
+					},
+					payment_terms: {
+						value : '',
+						error : ''
+					},
+					quote_valid: {
+						value : '',
+						error : ''
+					},
+					send_reminder: {
+						value : '',
+						error : ''
+					},
+					size: {
+						value : '',
+						error : ''
+					},
+					industry: {
+						value : '',
+						error : ''
+					}
+				}
 				
 			}
 		},
@@ -381,6 +497,26 @@
 			fetchCountries() : void{
 				api.get('get-countries').then((response) => {
 					this.countries = response.data;
+				}).catch((error) => {});
+			},
+			fetchCurrencies() : void{
+				api.get('get-currencies').then((response) => {
+					this.currencies = response.data;
+				}).catch((error) => {});
+			},
+			fetchIndustries() : void{
+				this.industries.unshift({
+					value: '',
+					text: 'Select'
+				});
+				api.get('get-industries').then((response) => {
+					this.industries = [];
+					this.industries = response.data;
+					this.industries.unshift({
+						value: '',
+						text: 'Select'
+					});
+					
 				}).catch((error) => {});
 			},
 			selectCountry(country_object:object) : void{
@@ -441,7 +577,8 @@
 			this.fetchClientAreaFields();
 			this.fetchCountries();
 			this.setShippingInfo();
-
+			this.fetchCurrencies();
+			this.fetchIndustries();
 		}
 
 	});
