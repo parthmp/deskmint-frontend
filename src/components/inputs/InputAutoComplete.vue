@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group relative">
 		<label :for="text_id">{{ local_label }}</label>
-		<input type="text" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="text_id" @input="filterOptions" :class="{'red-input-order': (local_error !== '' && show_errors)}" @keydown="handleKeydown">
+		<input type="text" :placeholder="local_placeholder" @focus="show_dropdown = true" v-model="input_value" class="form-control" :id="text_id" @input="filterOptions" :class="{'red-input-order': (local_error !== '' && show_errors)}" @keydown="handleKeydown">
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 		<div v-show="show_dropdown" class="autocomplete-area absolute bg-background-card w-full max-h-[300px] overflow-auto styled-scrollbar z-10">
 			<ul>
