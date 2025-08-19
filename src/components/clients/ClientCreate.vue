@@ -236,7 +236,7 @@
 	import { reactive, watch } from 'vue'
 
 	import { toastEvents } from '../../events/toastEvents';
-import common from '../../helpers/common';
+	import common from '../../helpers/common';
 
 	export interface ClientCreateInterface{
 		btn_disabled:boolean,
@@ -246,6 +246,7 @@ import common from '../../helpers/common';
 		active_tab_index: number,
 		client_personal_info: object,
 		client_contact_info: Array<object>
+		client_contact_info_validation_fields: Array<string>
 		client_billing_info: object,
 		client_shipping_info: object,
 		copy_to_shipping: boolean,
@@ -310,6 +311,11 @@ import common from '../../helpers/common';
 					}
 				},
 				client_contact_info : [],
+				client_contact_info_validation_fields : [
+					'first_name',
+					'last_name',
+					'email'
+				],
 				client_billing_info: {
 					street: {
 						value : '',
@@ -494,18 +500,12 @@ import common from '../../helpers/common';
 				this.client_contact_info.push(new_contact);
 				
 				let index = (this.client_contact_info.length-1);
-
-				let fields = [
-					'first_name',
-					'last_name',
-					'email'
-				];
-
-				fields.forEach(field_name => {
-					
+				
+				this.client_contact_info_validation_fields.forEach(field_name => {
+					const contact = new_contact;
 					this.$watch(
 					
-						() => this.client_contact_info[index][field_name].value,
+						() => contact[field_name].value,
 
 						(newVal) => {
 							let dynamic_ref = 'client_contact_info_'+index+'_'+field_name;
@@ -561,8 +561,7 @@ import common from '../../helpers/common';
 				}else{
 					this.client_billing_info.country.value = country_object.value+'';
 				}
-				console.log(this.client_billing_info.country);
-
+				
 			},
 
 			selectShippingCountry(country_object:object) : void{
@@ -572,7 +571,7 @@ import common from '../../helpers/common';
 				}else{
 					this.client_shipping_info.country.value = country_object.value+'';
 				}
-				console.log(this.client_shipping_info.country);
+				
 			},
 
 			setShippingInfo(): void{
@@ -612,7 +611,6 @@ import common from '../../helpers/common';
 
 				let tab1_is_valid = true;
 
-				
 				for(let key in this.client_personal_info){
 				
 					const ref_name = 'personal_info_'+key; 
@@ -641,7 +639,32 @@ import common from '../../helpers/common';
 					});
 				}else{
 
+					
+					let tab2_is_valid = true;
 
+					for(let z = 0 ; z < this.client_contact_info.length; z++){
+
+						this.client_contact_info_validation_fields.forEach((field_name) => {
+
+							let dynamic_ref = 'client_contact_info_'+z+'_'+field_name;
+							
+							if(!this.$refs[dynamic_ref][0].validate()){
+								tab2_is_valid = false;
+								this.client_contact_info[z][field_name].error = common.formatKey(field_name)+" is required";
+							}else{
+								this.client_contact_info[z][field_name].error = "";
+							}
+
+						});
+
+						
+
+					}
+
+
+					if(tab2_is_valid){
+						this.active_tab_index = 2;
+					}
 
 				}
 			}
