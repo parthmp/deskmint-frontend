@@ -460,6 +460,7 @@
 
 				api.get('manage-clients/fetch-clients-custom-fields').then((response) => {
 					this.custom_fields = response.data;
+					this.fetchCountries();
 				}).catch((error) => {});
 
 			},
@@ -497,11 +498,13 @@
 			fetchCountries() : void{
 				api.get('get-countries').then((response) => {
 					this.countries = response.data;
+					this.fetchCurrencies();
 				}).catch((error) => {});
 			},
 			fetchCurrencies() : void{
 				api.get('get-currencies').then((response) => {
 					this.currencies = response.data;
+					this.fetchIndustries();
 				}).catch((error) => {});
 			},
 			fetchIndustries() : void{
@@ -569,16 +572,17 @@
 					}
 					
 				};
-			}
+			},
+
+			selectCurrency(selected:any) : void{}
 			
 		},
 		mounted : function(){
 			this.addNewContactInfoFields();
 			this.fetchClientAreaFields();
-			this.fetchCountries();
+			
 			this.setShippingInfo();
-			this.fetchCurrencies();
-			this.fetchIndustries();
+			
 		}
 
 	});
