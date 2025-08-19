@@ -233,6 +233,10 @@
 	import Tabs from '../UI/Tabs.vue';
 
 	import { defineComponent } from 'vue';
+	import { reactive, watch } from 'vue'
+
+	import { toastEvents } from '../../events/toastEvents';
+import common from '../../helpers/common';
 
 	export interface ClientCreateInterface{
 		btn_disabled:boolean,
@@ -478,25 +482,46 @@
 				this.active_tab_index = index;
 			},
 			addNewContactInfoFields() : void{
-				this.client_contact_info.push({
+				
+				const new_contact = reactive({
 					id: Date.now(),
-					first_name : {
-						value: '',
-						error: 'First name is required'
-					},
-					last_name : {
-						value: '',
-						error: 'Last name is required'
-					},
-					email : {
-						value: '',
-						error: 'Phone number is required'
-					},
-					phone : {
-						value: '',
-						error: 'Phone number is required'
-					}
+					first_name: { value: "", error: "First name is required" },
+					last_name: { value: "", error: "Last name is required" },
+					email: { value: "", error: "Email is required" },
+					phone: { value: "", error: "" }
 				});
+
+				this.client_contact_info.push(new_contact);
+				
+				let index = (this.client_contact_info.length-1);
+
+				let fields = [
+					'first_name',
+					'last_name',
+					'email'
+				];
+
+				fields.forEach(field_name => {
+					
+					this.$watch(
+					
+						() => this.client_contact_info[index][field_name].value,
+
+						(newVal) => {
+							let dynamic_ref = 'client_contact_info_'+index+'_'+field_name;
+							this.$refs[dynamic_ref][0].validate();
+							if(!newVal){
+								this.client_contact_info[index][field_name].error = common.formatKey(field_name)+" is required";
+							}else{
+								this.client_contact_info[index][field_name].error = "";
+							}
+						}
+
+					);
+
+				});
+
+
 			},
 			removeContactInfoFields(index:number) : void{
 				this.client_contact_info.splice(index, 1);
@@ -607,7 +632,19 @@
 				}	
 
 			},
-			validateTab2() : void{}
+			validateTab2() : void{
+
+				if(this.client_contact_info.length === 0){
+					toastEvents.emit('toast', {
+						type: 'error',
+						message: 'Please enter at least one contact info'
+					});
+				}else{
+
+
+
+				}
+			}
 			
 		},
 		mounted : function(){
