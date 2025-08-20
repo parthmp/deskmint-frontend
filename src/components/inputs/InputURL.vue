@@ -91,9 +91,9 @@
 				
 				if(this.input_required === true){
 					
-					this.input_value = common.stripTags(common.sanitize(this.input_value));
+					this.input_value = common.stripTags(this.input_value);
 					
-					if(common.isValidURL(this.input_value, this.local_allow_http) === true){
+					if(common.isValidURL(this.input_value.trim(), this.local_allow_http) === true){
 						this.is_valid = true;
 					}else{
 						this.is_valid = false;
@@ -115,7 +115,7 @@
 				this.$emit('update:modelValue', this.input_value.toLocaleLowerCase());
 			},
 			sanitizeInput(in_string:string) : string{
-				return common.stripTags(common.sanitize(in_string));
+				return common.stripTags(in_string);
 			}
 		},
 

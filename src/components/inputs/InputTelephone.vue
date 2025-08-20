@@ -111,7 +111,7 @@
 				this.$emit('update:modelValue', this.input_value);
 			},
 			sanitizeInput(in_string:string) : string{
-				return common.stripTags(in_string);
+				return common.stripTags(common.sanitize(in_string));
 			},
 
 			standardizePhoneNumber(phone_string:string) : string{

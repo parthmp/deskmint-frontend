@@ -99,13 +99,11 @@
 					}else{
 						this.is_valid = false;
 						this.show_errors = true;
+						
 					}
 				}else{
 					this.is_valid = true;
 				}
-				
-				this.input_value = this.sanitizeInput(this.input_value);
-				this.$emit('update:modelValue', this.input_value);
 				
 				this.$emit('is-valid', this.is_valid);
 				return this.is_valid;

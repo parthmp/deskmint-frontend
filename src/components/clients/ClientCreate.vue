@@ -150,19 +150,19 @@
 									<input-number :field_name="field.label" :required="field.required" :placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-number>
 								</div>
 								<div v-if="field.custom_field_type.input_type === 'date'">
-									<input-date-time mode="date" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :ref="field.ref"></input-date-time>
+									<input-date-time mode="date" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
 								</div>
 
 								<div v-if="field.custom_field_type.input_type === 'time'">
-									<input-date-time mode="time" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :ref="field.ref"></input-date-time>
+									<input-date-time mode="time" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
 								</div>
 
 								<div v-if="field.custom_field_type.input_type === 'datetime'">
-									<input-date-time mode="datetime" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :ref="field.ref"></input-date-time>
+									<input-date-time mode="datetime" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
 								</div>
 
 								<div v-if="field.custom_field_type.input_type === 'telephone'">
-									<input-telephone mode="telephone" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :ref="field.ref"></input-telephone>
+									<input-telephone mode="telephone" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-telephone>
 								</div>
 
 								<div v-if="field.custom_field_type.input_type === 'multiselect'">
@@ -477,19 +477,27 @@
 				
 				api.get('manage-clients/fetch-clients-custom-fields').then((response) => {
 					this.custom_fields = response.data;
-
+					
 					/**/
 
 					this.custom_fields.forEach(field_name => {
-					
+						
 						this.$watch(
 						
 							() => field_name.value,
 
 							(newVal) => {
 								
+								let temp_new_value = newVal;
+								
+								if(temp_new_value !== null){
+									temp_new_value = temp_new_value.toString().trim();
+								}
+
 								this.$refs[field_name.ref][0].validate();
-								if(!newVal){
+								
+								if(!temp_new_value){
+									
 									field_name.error = common.formatKey(field_name.label)+" is required";
 								}else{
 									field_name.error = "";

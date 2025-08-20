@@ -96,8 +96,15 @@
 
 			validate() : boolean{
 
+				if(!this.input_required){
+					this.setValid();
+					this.$emit('is-valid', this.is_valid);
+					return this.is_valid;
+				}
+
 				if(this.input_value instanceof Date && !isNaN(this.input_value.getTime()) && (this.mode === 'date' || this.mode === 'datetime')){
 					this.is_valid = true;
+					
 				}else{
 					
 					if(this.mode === 'range'){
@@ -113,7 +120,7 @@
 						}
 
 					}else{
-
+						
 						if(this.mode === 'time' && this.isValidTimeFormat(this.input_value)){
 							this.setValid();
 						}else{
@@ -128,7 +135,7 @@
 				
 			},
 			EmitModel(e:any) : void{
-				
+
 				if(common.isset(e) && e !== null && e !== '' && (this.mode === 'date' || this.mode === 'datetime')){
 					let utc_date = e.toISOString();
 					this.$emit('update:modelValue', utc_date);
@@ -154,7 +161,7 @@
 						}
 						
 					}else{
-						this.$emit('update:modelValue', '');
+						this.$emit('update:modelValue', e);
 					}
 
 					
