@@ -170,9 +170,10 @@
 								</div>
 								
 							</div>
-							<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
-							<div class="clear-both"></div>
+							
 						</div>
+						<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
+						<div class="clear-both"></div>
 					</form>
 
 				</template>
@@ -183,24 +184,26 @@
 								<input-auto-complete label="Choose a currency" :required="true" v-model="client_settings.currency.value" :error="client_settings.currency.error" :options="currencies" :prop_placeholder="'Type to select a currency'" @selected="selectCurrency" ref="client_settings_currency"></input-auto-complete>
 							</div>
 							<div class="lg:col-span-4 mt-[5px]">
-								<input-select :options="payment_terms" v-model="client_settings.payment_terms.value" :error="client_settings.payment_terms.error" label="Payment terms"></input-select>
+								<input-select :options="payment_terms" :required="true" v-model="client_settings.payment_terms.value" :error="client_settings.payment_terms.error" label="Payment terms" ref="client_settings_payment_terms"></input-select>
 							</div>
 							<div class="lg:col-span-4 mt-[5px]">
-								<input-select :options="payment_terms" v-model="client_settings.quote_valid.value" :error="client_settings.quote_valid.error" label="Quote valid till"></input-select>
+								<input-select :options="payment_terms" :required="true" v-model="client_settings.quote_valid.value" :error="client_settings.quote_valid.error" label="Quote valid till" ref="client_settings_quote_valid"></input-select>
 							</div>
 						</div>
 
 						<div class="lg:grid lg:grid-cols-12 gap-5">
 							<div class="lg:col-span-4 mt-[20px]">
-								<input-select :options="reminder_options" v-model="client_settings.send_reminder.value" :error="client_settings.send_reminder.error" label="Send reminders"></input-select>
+								<input-select :options="reminder_options" :required="true" v-model="client_settings.send_reminder.value" :error="client_settings.send_reminder.error" label="Send reminders" ref="client_settings_send_reminder"></input-select>
 							</div>
 							<div class="lg:col-span-4 mt-[20px]">
-								<input-select :options="size_options" v-model="client_settings.size.value" :error="client_settings.size.error" label="Size"></input-select>
+								<input-select :options="size_options" :required="true" v-model="client_settings.size.value" :error="client_settings.size.error" label="Size" ref="client_settings_size"></input-select>
 							</div>
 							<div class="lg:col-span-4 mt-[20px]">
-								<input-select :options="industries" v-model="client_settings.industry.value" :error="client_settings.industry.error" label="Industry"></input-select>
+								<input-select :options="industries" :required="true" v-model="client_settings.industry.value" :error="client_settings.industry.error" label="Industry" ref="client_settings_industry"></input-select>
 							</div>
 						</div>
+						<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
+						<div class="clear-both"></div>
 					</form>
 				</template>
 			</tabs>
@@ -451,27 +454,27 @@
 				client_settings: {
 					currency : {
 						value : '',
-						error : ''
+						error : 'Please select a currency'
 					},
 					payment_terms: {
 						value : '',
-						error : ''
+						error : 'Please select a payment term'
 					},
 					quote_valid: {
 						value : '',
-						error : ''
+						error : 'Please select quote validity'
 					},
 					send_reminder: {
 						value : '',
-						error : ''
+						error : 'Send reminders is required field'
 					},
 					size: {
 						value : '',
-						error : ''
+						error : 'Size is required field'
 					},
 					industry: {
 						value : '',
-						error : ''
+						error : 'Industry is required field'
 					}
 				}
 				
@@ -536,6 +539,25 @@
 				if(!this.copy_to_shipping){
 					this.tab1FieldsValidations('client_shipping_info', 'client_shipping_info_country', 'country', 'Country is required');
 				}
+			},
+
+			"client_settings.currency.value"() : void{
+				this.tab1FieldsValidations('client_settings', 'client_settings_currency', 'currency', 'Please select a currency');
+			},
+			"client_settings.payment_terms.value"() : void{
+				this.tab1FieldsValidations('client_settings', 'client_settings_payment_terms', 'payment_terms', 'Please select a payment term');
+			},
+			"client_settings.quote_valid.value"() : void{
+				this.tab1FieldsValidations('client_settings', 'client_settings_quote_valid', 'quote_valid', 'Please select quote validity');
+			},
+			"client_settings.send_reminder.value"() : void{
+				this.tab1FieldsValidations('client_settings', 'client_settings_send_reminder', 'send_reminder', 'Send reminders is required field');
+			},
+			"client_settings.size.value"() : void{
+				this.tab1FieldsValidations('client_settings', 'client_settings_size', 'size', 'Size is required field');
+			},
+			"client_settings.industry.value"() : void{
+				this.tab1FieldsValidations('client_settings', 'client_settings_industry', 'industry', 'Industry is required field');
 			}
 		},
 		methods : {
@@ -718,7 +740,14 @@
 				};
 			},
 
-			selectCurrency(selected:any) : void{},
+			selectCurrency(selected_currency:any) : void{
+				this.$refs.client_settings_currency.validate();
+				if(Object.keys(selected_currency).length === 0){
+					this.client_settings.currency.value = '';
+				}else{
+					this.client_settings.currency.value = selected_currency.value+'';
+				}
+			},
 
 			validateTab1() : void{
 
@@ -834,6 +863,57 @@
 				
 				return valid_shipping_info;
 						
+			},
+
+			validateTab4() : void{
+
+				let valid_tab_4 = true;
+
+				this.custom_fields.forEach(field_name => {
+						
+					let temp_new_value = field_name.value;
+					
+					if(temp_new_value !== null){
+						temp_new_value = temp_new_value.toString().trim();
+					}
+
+					this.$refs[field_name.ref][0].validate();
+					
+					if(!temp_new_value && field_name.required){
+						valid_tab_4 = false;
+						field_name.error = common.formatKey(field_name.label)+" is required";
+					}else{
+						field_name.error = "";
+					}
+						
+				});
+
+				
+				if(valid_tab_4){
+					this.active_tab_index = 4;
+				}
+
+			},
+
+			validateTab5() : void{
+
+				let valid_settings = true;
+
+				for(let key in this.client_settings){
+					
+					const ref_name = 'client_settings_'+key; 
+					const ref_to_check = this.$refs[ref_name];
+					
+					if(ref_to_check && typeof ref_to_check.validate === 'function'){
+						if(!ref_to_check.validate()){
+							valid_settings = false;
+						}
+					}
+					
+				}
+
+				
+
 			}
 			
 		},

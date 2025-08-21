@@ -67,7 +67,7 @@
 				random_field_id: '',
 				local_placeholder: '',
 				local_min: 0,
-				local_max: 0
+				local_max: 99999999999999
 			};
 		},
 
