@@ -189,6 +189,10 @@
   				return obj.hours >= 0 && obj.hours <= 23 && obj.minutes >= 0 && obj.minutes <= 59;
 			},
 			parseTimeString(time:string) : any{
+				
+				if(typeof time === 'object'){
+					return time;
+				}
 
 				const match = time.match(/^(\d{1,2}):(\d{2}):(\d{2})$/);
 

@@ -3,7 +3,7 @@
 		<label :for="text_id">{{ local_label }}</label>
 		<input type="text" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="text_id" @input="filterOptions" :class="{'red-input-order': (local_error !== '' && show_errors)}" @keydown="handleKeydown">
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
-		<div v-show="show_dropdown" class="autocomplete-area absolute bg-background-card w-full max-h-[300px] overflow-auto styled-scrollbar z-10">
+		<div v-show="show_dropdown" class="autocomplete-area absolute top-16 bg-background-card w-full max-h-[300px] overflow-auto styled-scrollbar z-10">
 			<ul>
 				<li v-for="(option, key) in copy_options" :key="key" class="cursor-pointer pl-3 py-2 border-b-1 border-solid border-deskmint-green-light" @click="EmitModel(option)" :class="{'bg-deskmint-cyan text-white!': (active_index === key)}" :ref="el => option_refs[key] = el">{{ option.text }}</li>
 			</ul>
@@ -108,7 +108,9 @@
 				
 				if(this.input_required === true){
 					
-					if(Object.keys(this.current_selected).length === 0 && this.input_value === ''){
+					/* test if value was selected or not */
+
+					if(Object.keys(this.current_selected).length === 0 || this.input_value === ''){
 						this.show_errors = true;
 						this.is_valid = false;
 					}else{
@@ -119,7 +121,7 @@
 					this.is_valid = true;
 				}
 				
-				
+
 				return this.is_valid;
 				
 			},
@@ -187,6 +189,7 @@
 		},
 
 		mounted(){
+			
 			if(common.isset(this.required)){
 				this.input_required = this.required;
 			}else{
@@ -199,7 +202,19 @@
 				this.is_valid = false;
 				
 			}
+			
 			this.input_value = this.modelValue?.trim() || '';
+
+			if(this.input_value !== ''){
+				let option_id = parseInt(this.input_value);
+				for(let z = 0 ; z < this.options?.length ; z++){
+					if(this.options[z].value === option_id){
+						this.current_selected = this.options[z];
+						this.input_value = this.options[z].text;
+						break;
+					}
+				}
+			}
 			
 			this.local_error = '';
 			if(common.isset(this.error)){

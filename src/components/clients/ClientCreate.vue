@@ -92,7 +92,7 @@
 								<input-text :required="true" label="Postal code" prop_placeholder="Enter postal code" v-model="client_billing_info.postal_code.value" :error="client_billing_info.postal_code.error" ref="client_billing_info_postal_code"></input-text>
 							</div>
 							<div class="lg:col-span-4 mt-[20px]">
-								<input-auto-complete label="Choose a country" :required="true" :error="client_billing_info.country.error" :options="countries" :prop_placeholder="'Type to select a country'" @selected="selectCountry" ref="client_billing_info_country"></input-auto-complete>
+								<input-auto-complete label="Choose a country" :required="true" :error="client_billing_info.country.error" v-model="client_billing_info.country.value" :options="countries" :prop_placeholder="'Type to select a country'" @selected="selectCountry" ref="client_billing_info_country"></input-auto-complete>
 							</div>
 						</div>
 						<br>
@@ -119,11 +119,11 @@
 									<input-text :required="true" label="Postal code" prop_placeholder="Enter postal code" v-model="client_shipping_info.postal_code.value" :error="client_shipping_info.postal_code.error" ref="client_shipping_info_postal_code"></input-text>
 								</div>
 								<div class="lg:col-span-4 mt-[20px]">
-									<input-auto-complete label="Choose a country" :required="true" :error="client_shipping_info.country.error" :options="countries" :prop_placeholder="'Type to select a country'" @selected="selectShippingCountry" ref="client_shipping_info_country"></input-auto-complete>
+									<input-auto-complete label="Choose a country" :required="true" :error="client_shipping_info.country.error" v-model="client_shipping_info.country.value" :options="countries" :prop_placeholder="'Type to select a country'" @selected="selectShippingCountry" ref="client_shipping_info_country"></input-auto-complete>
 								</div>
 							</div>
 						</span>
-						<input-button btn_text="Next" @click="active_tab_index = 1" icon="IconCaretRight" class="lg:float-end"></input-button>
+						<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
 						<div class="clear-both"></div>
 					</form>
 				</template>
@@ -170,7 +170,8 @@
 								</div>
 								
 							</div>
-							
+							<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
+							<div class="clear-both"></div>
 						</div>
 					</form>
 
@@ -319,30 +320,55 @@
 				client_billing_info: {
 					street: {
 						value : '',
-						error: ''
+						error: 'Street is required'
 					},
 					apt: {
 						value : '',
-						error: ''
+						error: 'Apt / Suite is required'
 					},
 					city: {
 						value : '',
-						error: ''
+						error: 'City is required'
 					},
 					state: {
 						value : '',
-						error: ''
+						error: 'State is required'
 					},
 					postal_code: {
 						value : '',
-						error: ''
+						error: 'Postal code is required'
 					},
 					country: {
 						value : '',
 						error: 'Please select a country'
 					}
 				},
-				client_shipping_info: {},
+				client_shipping_info: {
+					street: {
+						value : '',
+						error: 'Street is required'
+					},
+					apt: {
+						value : '',
+						error: 'Apt / Suite is required'
+					},
+					city: {
+						value : '',
+						error: 'City is required'
+					},
+					state: {
+						value : '',
+						error: 'State is required'
+					},
+					postal_code: {
+						value : '',
+						error: 'Postal code is required'
+					},
+					country: {
+						value : '',
+						error: 'Please select a country'
+					}
+				},
 				copy_to_shipping: false,
 				custom_fields: [],
 				currencies: [],
@@ -461,6 +487,55 @@
 			},
 			"client_personal_info.email.value"() : void{
 				this.tab1FieldsValidations('client_personal_info', 'personal_info_email', 'email', 'Invalid email provided');
+			},
+			"client_billing_info.street.value"() : void{
+				this.tab1FieldsValidations('client_billing_info', 'client_billing_info_street', 'street', 'Street is required');
+			},
+			"client_billing_info.apt.value"() : void{
+				this.tab1FieldsValidations('client_billing_info', 'client_billing_info_apt', 'apt', 'Apt / Suite is required');
+			},
+			"client_billing_info.city.value"() : void{
+				this.tab1FieldsValidations('client_billing_info', 'client_billing_info_city', 'city', 'City is required');
+			},
+			"client_billing_info.state.value"() : void{
+				this.tab1FieldsValidations('client_billing_info', 'client_billing_info_state', 'state', 'State is required');
+			},
+			"client_billing_info.postal_code.value"() : void{
+				this.tab1FieldsValidations('client_billing_info', 'client_billing_info_postal_code', 'postal_code', 'Postal code is required');
+			},
+			"client_billing_info.country.value"() : void{
+				this.tab1FieldsValidations('client_billing_info', 'client_billing_info_country', 'country', 'Country is required');
+			},
+
+			"client_shipping_info.street.value"() : void{
+				if(!this.copy_to_shipping){
+					this.tab1FieldsValidations('client_shipping_info', 'client_shipping_info_street', 'street', 'Street is required');
+				}
+			},
+			"client_shipping_info.apt.value"() : void{
+				if(!this.copy_to_shipping){
+					this.tab1FieldsValidations('client_shipping_info', 'client_shipping_info_apt', 'apt', 'Apt / Suite is required');
+				}
+			},
+			"client_shipping_info.city.value"() : void{
+				if(!this.copy_to_shipping){
+					this.tab1FieldsValidations('client_shipping_info', 'client_shipping_info_city', 'city', 'City is required');
+				}
+			},
+			"client_shipping_info.state.value"() : void{
+				if(!this.copy_to_shipping){
+					this.tab1FieldsValidations('client_shipping_info', 'client_shipping_info_state', 'state', 'State is required');
+				}
+			},
+			"client_shipping_info.postal_code.value"() : void{
+				if(!this.copy_to_shipping){
+					this.tab1FieldsValidations('client_shipping_info', 'client_shipping_info_postal_code', 'postal_code', 'Postal code is required');
+				}
+			},
+			"client_shipping_info.country.value"() : void{
+				if(!this.copy_to_shipping){
+					this.tab1FieldsValidations('client_shipping_info', 'client_shipping_info_country', 'country', 'Country is required');
+				}
 			}
 		},
 		methods : {
@@ -543,7 +618,14 @@
 						(newVal) => {
 							let dynamic_ref = 'client_contact_info_'+index+'_'+field_name;
 							this.$refs[dynamic_ref][0].validate();
-							if(!newVal){
+
+							let temp_val = newVal;
+
+							if(temp_val !== null){
+								temp_val = newVal.toString().trim();
+							}
+
+							if(!temp_val){
 								this.client_contact_info[index][field_name].error = common.formatKey(field_name)+" is required";
 							}else{
 								this.client_contact_info[index][field_name].error = "";
@@ -609,32 +691,30 @@
 
 			setShippingInfo(): void{
 				this.client_shipping_info = {
-					
 					street: {
 						value : '',
-						error: ''
+						error: 'Street is required'
 					},
 					apt: {
 						value : '',
-						error: ''
+						error: 'Apt / Suite is required'
 					},
 					city: {
 						value : '',
-						error: ''
+						error: 'City is required'
 					},
 					state: {
 						value : '',
-						error: ''
+						error: 'State is required'
 					},
 					postal_code: {
 						value : '',
-						error: ''
+						error: 'Postal code is required'
 					},
 					country: {
 						value : '',
 						error: 'Please select a country'
 					}
-					
 				};
 			},
 
@@ -703,9 +783,57 @@
 			},
 
 			validateTab3() : void{
+				let valid_billing_info = this.validateClientBillingInfo();
+				let valid_shipping_info = this.validateClientShippingInfo();
+				if(valid_billing_info && valid_shipping_info){
+					this.active_tab_index = 3;
+				}
 
+			},
 
+			validateClientBillingInfo() : boolean{
+				
+				let valid_billing_info = true;
 
+				for(let key in this.client_billing_info){
+					
+					const ref_name = 'client_billing_info_'+key; 
+					const ref_to_check = this.$refs[ref_name];
+					
+					if(ref_to_check && typeof ref_to_check.validate === 'function'){
+						if(!ref_to_check.validate()){
+							valid_billing_info = false;
+						}
+					}
+					
+				}
+				
+				return valid_billing_info;
+						
+			},
+			validateClientShippingInfo() : boolean{
+				
+				if(this.copy_to_shipping){
+					return true;
+				}
+
+				let valid_shipping_info = true;
+
+				for(let key in this.client_shipping_info){
+					
+					const ref_name = 'client_shipping_info_'+key; 
+					const ref_to_check = this.$refs[ref_name];
+					
+					if(ref_to_check && typeof ref_to_check.validate === 'function'){
+						if(!ref_to_check.validate()){
+							valid_shipping_info = false;
+						}
+					}
+					
+				}
+				
+				return valid_shipping_info;
+						
 			}
 			
 		},

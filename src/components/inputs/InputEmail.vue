@@ -113,7 +113,7 @@
 				this.$emit('update:modelValue', this.input_value);
 			},
 			sanitizeInput(in_string:string) : string{
-				return common.stripTags(common.sanitize(in_string));
+				return common.stripTags(common.sanitize(in_string.trim()));
 			}
 		},
 
