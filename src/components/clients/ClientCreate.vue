@@ -4,7 +4,7 @@
         <h1 class="text-2xl!">Create a client</h1>
         <br>
 					
-			<tabs :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="false">
+			<tabs :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="true">
 				<template v-slot:tab-0>
 			
 					<form @submit.prevent="validateTab1" class="form">
@@ -612,6 +612,24 @@
 
 			},
 			createClient() : void{
+
+				/* send server request */
+
+				let client_data = {
+					personal_info:this.client_personal_info,
+					contact_info:this.client_contact_info,
+					billing_info: this.client_billing_info,
+					shipping_info: this.client_shipping_info,
+					custom_fields: this.custom_fields,
+					settings: this.client_settings,
+					copy_to_shipping: this.copy_to_shipping
+				};
+
+				api.post('manage-clients', client_data).then((response) => {
+					console.log(response);
+				}).catch((error) => {
+
+				});
 				
 			},
 			changeActiveTabValue(index:number) : void{
@@ -912,7 +930,9 @@
 					
 				}
 
-				
+				if(valid_settings){
+					this.createClient();
+				}
 
 			}
 			
