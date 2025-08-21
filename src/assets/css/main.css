@@ -327,6 +327,12 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 .form-group select{
 	@apply bg-background-card!;
 }
+.form-group select:focus option:checked{
+	@apply bg-deskmint-original-dark text-white!;
+}
+.form-group select option:checked{
+	@apply bg-deskmint-original-dark text-white!;
+}
 .form-group input:hover, .form-group select:hover, .form-group textarea:hover{
 	@apply  border-input-border-hover;
 }
