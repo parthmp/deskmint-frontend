@@ -381,27 +381,27 @@
 						text: 'Select'
 					},
 					{
-						value: 'Due on receipt',
+						value: 0,
 						text: 'Due on receipt'
 					},
 					{
-						value: '7 Days',
+						value: 7,
 						text: '7 Days'
 					},
 					{
-						value: '14 Days',
+						value: 14,
 						text: '14 Days'
 					},
 					{
-						value: '30 Days',
+						value: 30,
 						text: '30 Days'
 					},
 					{
-						value: '60 Days',
+						value: 60,
 						text: '60 Days'
 					},
 					{
-						value: '90 Days',
+						value: 90,
 						text: '90 Days'
 					}
 					
@@ -412,11 +412,11 @@
 						text: 'Select'
 					},
 					{
-						value: 'Yes',
+						value: 1,
 						text: 'Yes'
 					},
 					{
-						value: 'No',
+						value: 0,
 						text: 'No'
 					}
 				],
@@ -628,7 +628,10 @@
 				api.post('manage-clients', client_data).then((response) => {
 					console.log(response);
 				}).catch((error) => {
-
+					
+					if(error.response?.data?.tab_switch !== undefined){
+						this.active_tab_index = error.response.data.tab_switch;
+					}
 				});
 				
 			},
