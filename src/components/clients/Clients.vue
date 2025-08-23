@@ -9,7 +9,7 @@
 			<input-button class="lg:float-end" btn_text="Add New" url="/clients/create" icon="IconPlus"></input-button>
 			<div class="clear-both"></div>
 			<br>
-			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="custom-fields/clients" :row_actions="['edit', 'delete']" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
+			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="clients" :row_actions="['edit', 'delete']" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
 		</span>
     </div>
 	
@@ -22,6 +22,8 @@
 
 
 	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
+
+	import SkeletonTable from '../skeletons/SkeletonTable.vue';
 	
 	import { defineComponent } from 'vue';
 
@@ -29,18 +31,23 @@
 
 	import DataTable from '../UI/DataTable.vue';
 	import common from '../../helpers/common';
+	import api from '../../helpers/api';
+	import { env } from '../../env';
 
 	export interface ClientsInterface{
 		data_loading:boolean,
 		per_page:number,
-		table_data:object
+		table_data:object,
+		total_pages: number,
+		dynamic_loading_status:boolean
 	}
 	
 	export default defineComponent({
 		name : 'Clients',
 		components : {
 			DataTable,
-			InputButton
+			InputButton,
+			SkeletonTable
 		},
 		data(): ClientsInterface{
 			return {
@@ -49,7 +56,9 @@
 				table_data: {
 					columns : [],
 					rows: []
-				}
+				},
+				total_pages: 0,
+				dynamic_loading_status: false
 			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
@@ -57,6 +66,41 @@
 			
 		},
 		methods : {
+			fetchClients(page_data = '') : void{
+				
+				if(page_data === ''){
+					this.data_loading = true;
+				}else{
+					this.dynamic_loading_status = true;
+				}
+				
+				api.get('manage-clients', {
+					params: {
+						...(page_data || {}),
+						default_per_page: env.DEFAULT_TABLE_ROWS,
+						timezone: common.getBrowserTimezone()
+					}
+
+				}).then((response) => {
+
+					if(page_data === ''){
+						this.data_loading = false;
+					}else{
+						this.dynamic_loading_status = false;
+					}
+
+					this.table_data = response.data.table_data;
+					this.total_pages = response.data.total_pages;
+
+				}).catch((error) => {
+					if(page_data === ''){
+						this.data_loading = false;
+					}else{
+						this.dynamic_loading_status = false;
+					}
+
+				});
+			},
 			handleDeleted(row_id:object) : void{
 				console.log('===');
 				console.log(row_id);
@@ -70,58 +114,12 @@
 				/* handle axios here for multiple deletes */
 			},
 			handleAPI(json_object:object) : void{
-				
-				
-				console.log('API CALL START');
-				console.log(json_object);
-				console.log('API CALL END');
-				/* handle axios here for fetching data */
-
-				/*
-					this.table_data.rows.push({
-						id: 400,
-						index: 400,
-						first_name: 'searched tony',
-						last_name: 'Statk',
-						status: {
-							type:'label',
-							text: 'active'
-						},
-						date: '1950-05-27',
-						actions: ['edit', 'delete']
-					});
-		
-				*/
-
-				
+				this.fetchClients(json_object);
 			}
 
 		},
 		mounted : function(){
-			/*setInterval(() => {
-				this.table_data.rows.push({
-							index: 4,
-							first_name: 'Jack4 ==',
-							last_name: 'Sparrow',
-							status: {
-								type:'label',
-								text: 'active'
-							},
-							date: '1950-05-27',
-							actions: ['edit', 'delete']
-						});
-			}, 200);*/
-
-			/*
-			if(common.isset(this.$route.params.id)){
-				this.handleAPI(this.$route.params.id);
-			}else{
-				this.handleAPI(btoa(JSON.stringify({
-					per_page: this.per_page,
-					current_page: 1
-				})));
-			}*/
-			
+			this.fetchClients();
 		}
 
 	});
