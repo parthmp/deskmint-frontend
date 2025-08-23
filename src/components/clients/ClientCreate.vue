@@ -635,8 +635,32 @@
 				});
 				
 			},
-			changeActiveTabValue(index:number) : void{
+			changeActiveTabValue(index:number, locked:boolean) : void{
 				this.active_tab_index = index;
+				this.$nextTick(() => {
+					if(!locked){
+						if(this.active_tab_index === 0){
+	
+							this.tab1FieldsValidations('client_personal_info', 'personal_info_first_name', 'first_name', 'First name is required');
+							this.tab1FieldsValidations('client_personal_info', 'personal_info_last_name', 'last_name', 'Last name is required');
+							this.tab1FieldsValidations('client_personal_info', 'personal_info_email', 'email', 'Invalid email provided');
+							
+						}else if(this.active_tab_index === 1){
+							this.validateTab2();
+							this.active_tab_index = 1;
+						}else if(this.active_tab_index === 2){
+							this.validateTab3();
+							this.active_tab_index = 2;
+						}else if(this.active_tab_index === 3){
+							this.validateTab4();
+							this.active_tab_index = 3;
+						}else if(this.active_tab_index === 4){
+							this.validateClientSettings((valid:boolean) => {
+								
+							});
+						}
+					}
+				});
 			},
 			addNewContactInfoFields() : void{
 				
@@ -916,7 +940,7 @@
 
 			},
 
-			validateTab5() : void{
+			validateClientSettings(callback:any) : void{
 
 				let valid_settings = true;
 
@@ -933,10 +957,19 @@
 					
 				}
 
-				if(valid_settings){
-					this.createClient();
-				}
+				callback(valid_settings);
 
+			},
+
+			validateTab5() : void{
+
+				this.validateClientSettings((valid_settings:boolean) => {
+					if(valid_settings){
+						this.createClient();
+					}
+				});
+
+				
 			}
 			
 		},

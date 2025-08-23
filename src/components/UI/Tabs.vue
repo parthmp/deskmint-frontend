@@ -15,7 +15,8 @@
 	export interface TabsInterface{
 		local_options : Array<object>,
 		local_active_tab_index: number,
-		activated_indexes: Array<number>
+		activated_indexes: Array<number>,
+		is_locked:boolean
 	}
 
 	import { defineComponent } from 'vue';
@@ -31,15 +32,17 @@
 			return {
 				local_options : [],
 				local_active_tab_index: 0,
-				activated_indexes : []
+				activated_indexes : [],
+				is_locked: false
 			}
 		},
 		watch:{
 			active_tab_index() : void{
-				console.log('fired');
 				this.local_active_tab_index = this.active_tab_index;
+				this.is_locked = true;
 				if(this.disable_further === true){
 					this.activated_indexes.push(this.local_active_tab_index);
+					this.is_locked = false;
 				}
 			}
 		},
@@ -48,8 +51,10 @@
 		},
 		methods : {
 			is_item_can_be_active(index:number) : boolean{
+				this.is_locked = true;
 				if(this.disable_further === true){
 					if(this.activated_indexes.includes(index)){
+						this.is_locked = false;
 						return true;
 					}
 					return false;
@@ -62,7 +67,10 @@
 				if(common.isset(this.active_tab_index)){
 					this.local_active_tab_index = this.active_tab_index;
 					if(this.disable_further === true){
+						this.is_locked = true;
 						this.activated_indexes.push(this.active_tab_index);
+					}else{
+						this.is_locked = false;
 					}
 				}
 
@@ -75,10 +83,13 @@
 
 			setActiveTab(index:number) : void{
 				if(this.disable_further !== true){
+					this.is_locked = false;
 					this.local_active_tab_index = index;
 				}else if(this.disable_further === true){
+					this.is_locked = true;
 					if(this.activated_indexes.includes(index)){
 						this.local_active_tab_index = index;
+						this.is_locked = false;
 					}
 				}
 
@@ -87,7 +98,7 @@
 			},
 
 			emitTabChanged(index:number) : void{
-				this.$emit('tab-changed', index);
+				this.$emit('tab-changed', index, this.is_locked);
 			}
 
 		},
