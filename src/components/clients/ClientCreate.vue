@@ -202,7 +202,7 @@
 								<input-select :options="industries" :required="true" v-model="client_settings.industry.value" :error="client_settings.industry.error" label="Industry" ref="client_settings_industry"></input-select>
 							</div>
 						</div>
-						<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
+						<input-button btn_text="Save" :disabled="btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
 						<div class="clear-both"></div>
 					</form>
 				</template>
@@ -613,6 +613,8 @@
 			},
 			createClient() : void{
 
+				this.btn_disabled = true;
+
 				/* send server request */
 
 				let client_data = {
@@ -626,12 +628,15 @@
 				};
 
 				api.post('manage-clients', client_data).then((response) => {
-					console.log(response);
+					this.$router.push('/clients');
 				}).catch((error) => {
 					
 					if(error.response?.data?.tab_switch !== undefined){
 						this.active_tab_index = error.response.data.tab_switch;
 					}
+					
+				}).finally(() => {
+					this.btn_disabled = false;
 				});
 				
 			},
@@ -656,7 +661,7 @@
 							this.active_tab_index = 3;
 						}else if(this.active_tab_index === 4){
 							this.validateClientSettings((valid:boolean) => {
-								
+
 							});
 						}
 					}
