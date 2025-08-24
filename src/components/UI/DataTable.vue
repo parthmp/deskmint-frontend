@@ -292,6 +292,11 @@ export default defineComponent({
 				if(common.isset(row.created_at)){
 					row.created_at = common.formatDate(row.created_at);
 				}
+				for(let colkey in row){
+					if(common.isValidISODate(row[colkey]) && colkey !== 'created_at'){
+						row[colkey] = common.formatDate(row[colkey]);
+					}
+				}
 			});
 		},
 		date_range() : void{
@@ -606,9 +611,17 @@ export default defineComponent({
 					if(common.isset(this.checkbox_actions) && common.isset(this.local_table_data.rows)){
 						this.local_table_data.rows.forEach(row => {
 							row.selected = false;
+
 							if(common.isset(row.created_at)){
 								row.created_at = common.formatDate(row.created_at);
 							}
+							for(let colkey in row){
+								if(common.isValidISODate(row[colkey]) && colkey !== 'created_at'){
+									row[colkey] = common.formatDate(row[colkey]);
+								}
+							}
+
+							
 						});
 					}
 				}

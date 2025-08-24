@@ -188,6 +188,24 @@ export default {
 
 	formatKey(str:string) : string {
 		return str.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+	},
+
+	isValidISODate(date_str:string):boolean{
+		
+		if(typeof date_str !== 'string'){
+			return false;
+		}
+	
+		const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/;
+		
+		if(!isoRegex.test(date_str)){
+			return false;
+		}
+		
+		const date = new Date(date_str);
+
+		return !isNaN(date.getTime()) && date.toISOString() === date_str;
+		
 	}
 
 
