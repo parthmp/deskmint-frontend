@@ -162,7 +162,7 @@ export default {
 		return true;
 	},
 
-	formatDate(dateString:string) : string{
+	formatDate(dateString:string, dateonly = false) : string{
 
 		const date = new Date(dateString); // converts UTC → local automatically
 
@@ -177,8 +177,13 @@ export default {
 		const ampm = hours >= 12 ? 'PM' : 'AM';
 		hours = hours % 12;
 		hours = hours ? hours : 12; // 0 → 12
-
-		return `${day}-${month}-${year} ${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+		
+		if(dateonly === false){
+			return `${day}-${month}-${year} ${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+		}else{
+			return `${day}-${month}-${year}`;
+		}
+		
 		
 	},
 

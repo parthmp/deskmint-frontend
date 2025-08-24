@@ -295,7 +295,13 @@ export default defineComponent({
 				for(let colkey in row){
 					if(common.isValidISODate(row[colkey]) && colkey !== 'created_at'){
 						row[colkey] = common.formatDate(row[colkey]);
+						if(colkey.includes('_cdate_')){
+							row[colkey] = common.formatDate(row[colkey], true);
+						}else{
+							row[colkey] = common.formatDate(row[colkey]);
+						}
 					}
+					
 				}
 			});
 		},
@@ -616,8 +622,15 @@ export default defineComponent({
 								row.created_at = common.formatDate(row.created_at);
 							}
 							for(let colkey in row){
+								
 								if(common.isValidISODate(row[colkey]) && colkey !== 'created_at'){
-									row[colkey] = common.formatDate(row[colkey]);
+
+									if(colkey.includes('_cdate_')){
+										row[colkey] = common.formatDate(row[colkey], true);
+									}else{
+										row[colkey] = common.formatDate(row[colkey]);
+									}
+									
 								}
 							}
 
