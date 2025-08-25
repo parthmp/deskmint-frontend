@@ -34,16 +34,7 @@
 						<input-text label="Default value" :required="false" prop_placeholder="Default value" v-model="default_value.value" :error="default_value.error" ref="default_value"></input-text>
 					</div>
 					<div class="lg:col-span-4 mt-[20px]">
-						<input-select :options="show_on_index_options" label="Show on index?" :required="true" prop_placeholder="Select" v-model="show_on_index" ref="show_on_index"></input-select>
-					</div>
-				</div>
-			
-				<div class="lg:grid lg:grid-cols-12 gap-5">
-					<div class="lg:col-span-6 mt-[20px]">
 						<input-number :min="0" :max="999999" field_name="Add Edit page order" :required="true" placeholder="Enter field order number" v-model="add_edit_page_order.value" :error="add_edit_page_order.error" ref="add_edit_page_order"></input-number>
-					</div>
-					<div class="lg:col-span-6 mt-[20px]">
-						<input-number :min="0" :max="999999" field_name="Index page column order" :required="true" placeholder="Enter field order number" v-model="column_order.value" :error="column_order.error" ref="column_order"></input-number>
 					</div>
 				</div>
 				
@@ -71,10 +62,7 @@
 		required_flag:string,
 		required_options: Array<String>,
 		default_value: object,
-		show_on_index_options: Array<String>,
-		show_on_index: string,
 		add_edit_page_order: any,
-		column_order: any
 		select_options: object,
 		show_options_textarea: boolean,
 		show_options_textarea_required: boolean
@@ -137,24 +125,9 @@
 					value : '',
 					error: ''
 				},
-				show_on_index_options: [
-					{
-						value: 'true',
-						text: 'Yes'
-					},
-					{
-						value: 'false',
-						text: 'No'
-					}
-				],
-				show_on_index: '',
 				add_edit_page_order: {
 					value: '0',
 					error: 'Please enter a valid number for add Edit page order'
-				},
-				column_order: {
-					value: '0',
-					error: 'Please enter a valid number for index page column order'
 				},
 				select_options: {
 					value: '',
@@ -184,9 +157,6 @@
 			required_flag() : void{
 				this.$refs.required_flag.validate();
 			},
-			show_on_index() : void{
-				this.$refs.show_on_index.validate();
-			},
 			"add_edit_page_order.value"() : void{
 
 				if(this.add_edit_page_order.value.trim() !== ''){
@@ -196,16 +166,6 @@
 				}
 
 				this.$refs.add_edit_page_order.validate();
-			},
-			"column_order.value"() : void{
-
-				if(this.column_order.value.trim() !== ''){
-					this.column_order.error = '';
-				}else{
-					this.column_order.error = 'Please enter a valid number for index page column order';
-				}
-
-				this.$refs.column_order.validate();
 			},
 			"select_options.value"() : void{
 
@@ -227,13 +187,11 @@
 				let input_field_validated = this.$refs.custom_field.validate();
 				let label_validated = this.$refs.label.validate();
 				let is_required_validated = this.$refs.required_flag.validate();
-				let show_index_validated = this.$refs.show_on_index.validate();
 				let add_edit_page_order_validated = this.$refs.add_edit_page_order.validate();
-				let column_order_validated = this.$refs.column_order.validate();
 				let select_options_validated = this.$refs.select_options.validate();
 
 
-				if(input_field_validated && label_validated && is_required_validated && show_index_validated && add_edit_page_order_validated && column_order_validated && select_options_validated){
+				if(input_field_validated && label_validated && is_required_validated && add_edit_page_order_validated && select_options_validated){
 
 					api.post('clients-custom-fields', {
 						input_field: this.custom_field,
@@ -241,9 +199,7 @@
 						placeholder: this.placeholder.value,
 						is_required: this.required_flag,
 						default_value: this.default_value.value,
-						show_on_index: this.show_on_index,
 						add_edit_page_order: this.add_edit_page_order.value,
-						column_order: this.column_order.value,
 						select_options: this.select_options.value
 					}).then((response) => {
 						this.btn_disabled = false;
