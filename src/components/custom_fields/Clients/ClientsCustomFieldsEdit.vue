@@ -65,7 +65,8 @@
 		add_edit_page_order: any,
 		select_options: object,
 		show_options_textarea: boolean,
-		show_options_textarea_required: boolean
+		show_options_textarea_required: boolean,
+		past_label:string
 	}
 
 	import { defineComponent } from 'vue';
@@ -134,7 +135,8 @@
 					error: 'Please enter options seperated by comma'
 				},
 				show_options_textarea: false,
-				show_options_textarea_required: true
+				show_options_textarea_required: true,
+				past_label: ''
 			}
 		},
 
@@ -209,7 +211,8 @@
 						is_required: this.required_flag,
 						default_value: this.default_value.value,
 						add_edit_page_order: this.add_edit_page_order.value,
-						select_options: this.select_options.value
+						select_options: this.select_options.value,
+						past_label: this.past_label
 					}).then((response) => {
 						this.btn_disabled = false;
 						this.$router.push('/custom-fields/clients');
@@ -262,6 +265,7 @@
 					
 					this.custom_field = data.custom_field_type_id+'';
 					this.label.value = data.label;
+					this.past_label = data.label;
 					this.placeholder.value = data.placeholder;
 					if(data.required === 0){
 						this.required_flag = 'false';
