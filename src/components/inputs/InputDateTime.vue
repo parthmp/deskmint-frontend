@@ -137,7 +137,9 @@
 			EmitModel(e:any) : void{
 
 				if(common.isset(e) && e !== null && e !== '' && (this.mode === 'date' || this.mode === 'datetime')){
+					
 					let utc_date = e.toISOString();
+					
 					this.$emit('update:modelValue', utc_date);
 				}else{
 
@@ -249,7 +251,7 @@
 				
 			}
 
-
+			
 
 			if(this.mode === 'time'){
 				this.placeholder = 'Select time';
