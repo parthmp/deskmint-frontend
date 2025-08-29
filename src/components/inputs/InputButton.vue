@@ -42,7 +42,7 @@
 
 	import common from '../../helpers/common';
 
-	import { IconRotateClockwise2, IconSend, IconLogin2, IconLink, IconCaretLeft, IconRepeat, IconKey, IconCaretRight, IconCheck, IconX, IconPlus } from '@tabler/icons-vue';
+	import { IconRotateClockwise2, IconSend, IconLogin2, IconLink, IconCaretLeft, IconRepeat, IconKey, IconCaretRight, IconCheck, IconX, IconPlus, IconColumns3 } from '@tabler/icons-vue';
 
 	import { defineComponent } from 'vue';
 
@@ -72,7 +72,8 @@
 			IconCheck,
 			IconX,
 			IconPlus,
-			IconRepeat
+			IconRepeat,
+			IconColumns3
 		},
 
 		watch: {
