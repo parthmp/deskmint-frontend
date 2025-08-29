@@ -5,9 +5,24 @@
         <br>
         <skeleton-table v-if="data_loading" :rows="10"></skeleton-table>
 		<a href="javascript:;" @click="show_popup = !show_popup">Test for popup</a>
-		<popup :show_popup="show_popup" @closed="closePopup">
-			<div>
-				this is test
+		<input-switch v-model="switchstatus"></input-switch>
+		<popup :show_popup="show_popup" @closed="closePopup" header="Arrange columns">
+			<div class="mt-4">
+				<p class="mb-5">Drag and drop to arrange columns, use switches to show/hide and enable/disable column search.</p>
+				<draggable v-model="myArray" group="people" @start="drag=true" @end="drag=false" item-key="id" :animation="200">
+					<template #item="{element, index}">
+						<transition-group name="fade" tag="div">
+							<div class="px-5 py-2 mt-3 rounded-xl shadow-sm outline-1 outline-deskmint-green-light dark:bg-deskmint-cyan-light" :key="element.id">
+								<span class="flex gap-2">
+									<span><icon-grain /></span>
+									<span>{{element.name}}</span>
+									<!-- <span><input-switch></input-switch></span> -->
+								</span>
+							</div>
+						</transition-group>
+					</template>
+				</draggable>
+
 			</div>
 		</popup>
 		<span v-if="!data_loading" class="">
@@ -22,6 +37,7 @@
 </section>
 </template>
 <style scoped>
+
 
 </style>
 <script lang="ts">
@@ -41,13 +57,20 @@
 	import api from '../../helpers/api';
 	import { env } from '../../env';
 
+	import draggable from 'vuedraggable';
+	import { IconGrain } from '@tabler/icons-vue';
+	import InputSwitch from '../inputs/InputSwitch.vue';
+
 	export interface ClientsInterface{
 		data_loading:boolean,
 		per_page:number,
 		table_data:object,
 		total_pages: number,
 		dynamic_loading_status:boolean,
-		show_popup: boolean
+		show_popup: boolean,
+		switchstatus: boolean,
+
+		myArray: Array<object>
 	}
 	
 	export default defineComponent({
@@ -56,7 +79,10 @@
 			DataTable,
 			InputButton,
 			SkeletonTable,
-			Popup
+			Popup,
+			draggable,
+			IconGrain,
+			InputSwitch
 		},
 		data(): ClientsInterface{
 			return {
@@ -68,12 +94,47 @@
 				},
 				total_pages: 0,
 				dynamic_loading_status: false,
-				show_popup: false
+				show_popup: false,
+				switchstatus: true,
+				myArray: [
+					{
+						id:1,
+						name: 'test 1',
+						value: 'val 1'
+					},
+					{
+						id:2,
+						name: 'test 2',
+						value: 'val 2'
+					},
+					{
+						id:3,
+						name: 'test 3',
+						value: 'val 3'
+					},
+					{
+						id:4,
+						name: 'test 4',
+						value: 'val 4'
+					},
+					{
+						id:5,
+						name: 'test 5',
+						value: 'val 5'
+					},
+					{
+						id:6,
+						name: 'test 6',
+						value: 'val 6'
+					}
+				]
 			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
 		watch: {
-			
+			switchstatus(): void{
+				console.log(this.switchstatus);
+			}
 		},
 		methods : {
 			fetchClients(page_data = '') : void{
@@ -134,6 +195,7 @@
 		},
 		mounted : function(){
 			this.fetchClients();
+			console.log(this.switchstatus);
 		}
 
 	});

@@ -1,7 +1,8 @@
 <template>
 	<transition name="fade-scale">
 		<div class="fixed inset-0 bg-background-2-tra z-40" v-show="show_popup" :class="{'h-[100vh]':local_blocker}" @click.self="selfClick">
-			<div class="delete-popup bg-background-2" :class="{'top-40':!local_blocker, 'top-2/10':local_blocker}">
+			<div class="delete-popup bg-background-2 min-w-[40%]" :class="{'top-40':!local_blocker, 'top-2/10':local_blocker}">
+				<h3 class="text-xl! float-start">{{ header }}</h3>
 				<IconX class="float-end cursor-pointer" @click="closePopup(false)" :size="22"></IconX>
 				<div class="clear-both"></div>
 				<slot></slot>
@@ -40,7 +41,7 @@
 	import { IconX } from '@tabler/icons-vue';
 
 
-	export interface ConfirmationPopupInterface{
+	export interface PopupInterface{
 		local_confirm_text:string,
 		local_blocker:boolean,
 		local_scrollable:boolean
@@ -59,10 +60,11 @@
 			show_popup:Boolean,
 			blocker:Boolean,
 			scrollable:Boolean,
-			close_outside:Boolean
+			close_outside:Boolean,
+			header:String
 		},
 		emits: ['update:show_popup', 'closed'],
-		data(): ConfirmationPopupInterface{
+		data(): PopupInterface{
 			return {
 				local_confirm_text : '',
 				local_blocker: true,
