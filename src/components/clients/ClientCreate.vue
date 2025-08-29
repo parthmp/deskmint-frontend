@@ -4,7 +4,7 @@
         <h1 class="text-2xl!">Create a client</h1>
         <br>
 					
-			<tabs :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="false">
+			<tabs :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="true">
 				<template v-slot:tab-0>
 			
 					<form @submit.prevent="validateTab1" class="form">

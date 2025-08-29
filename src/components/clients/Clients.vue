@@ -4,13 +4,19 @@
         <h1 class="text-2xl!">Clients</h1>
         <br>
         <skeleton-table v-if="data_loading" :rows="10"></skeleton-table>
-
+		<a href="javascript:;" @click="show_popup = !show_popup">Test for popup</a>
+		<popup :show_popup="show_popup" @closed="closePopup">
+			<div>
+				this is test
+			</div>
+		</popup>
 		<span v-if="!data_loading" class="">
 			<input-button class="lg:float-end" btn_text="Add New" url="/clients/create" icon="IconPlus"></input-button>
 			<div class="clear-both"></div>
 			<br>
 			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="clients" :row_actions="['edit', 'delete']" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
 		</span>
+		
     </div>
 	
 </section>
@@ -28,6 +34,7 @@
 	import { defineComponent } from 'vue';
 
 	import InputButton from '../inputs/InputButton.vue';
+	import Popup from '../UI/Popup.vue';
 
 	import DataTable from '../UI/DataTable.vue';
 	import common from '../../helpers/common';
@@ -39,7 +46,8 @@
 		per_page:number,
 		table_data:object,
 		total_pages: number,
-		dynamic_loading_status:boolean
+		dynamic_loading_status:boolean,
+		show_popup: boolean
 	}
 	
 	export default defineComponent({
@@ -47,7 +55,8 @@
 		components : {
 			DataTable,
 			InputButton,
-			SkeletonTable
+			SkeletonTable,
+			Popup
 		},
 		data(): ClientsInterface{
 			return {
@@ -58,7 +67,8 @@
 					rows: []
 				},
 				total_pages: 0,
-				dynamic_loading_status: false
+				dynamic_loading_status: false,
+				show_popup: false
 			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
@@ -115,6 +125,10 @@
 			},
 			handleAPI(json_object:object) : void{
 				this.fetchClients(json_object);
+			},
+
+			closePopup(e:any): void{
+				this.show_popup = false;
 			}
 
 		},
