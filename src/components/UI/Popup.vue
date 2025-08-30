@@ -97,6 +97,11 @@
 						document.body.style.overflow = '';
 					}
 				}
+			},
+			handleEsc(e) : void{
+				if (e.key === "Escape" && this.show_popup) {
+					this.closePopup(false);
+				}
 			}
 		},
 		watch : {
@@ -129,7 +134,7 @@
 				this.local_blocker = this.blocker;
 			}
 
-			
+			window.addEventListener('keydown', this.handleEsc);
 			
 		},
 
@@ -139,6 +144,8 @@
 				this.outside_click_handler = null;
 			}
 			document.body.style.overflow = '';
+
+			window.removeEventListener('keydown', this.handleEsc);
 		}
 
 	});
