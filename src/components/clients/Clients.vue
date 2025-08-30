@@ -9,7 +9,7 @@
 		
 		<popup :show_popup="show_popup" @closed="closePopup" header="Arrange columns">
 			<div>
-				<div class="mt-4 overflow-auto max-h-[700px] styled-scrollbar">
+				<div class="mt-4 overflow-auto max-h-[550px] styled-scrollbar">
 					<p class="mb-5">Drag and drop to arrange columns, use switches to show/hide and enable/disable column search.</p>
 					<div class="px-5 py-2 mt-3 rounded-xl">
 						<span class="grid grid-cols-12 gap-1">
@@ -18,13 +18,13 @@
 							<span class="col-span-4 lg:col-span-2 text-center">Searchable</span>
 						</span>
 					</div>
-					<draggable v-model="myArray" group="people" @start="drag=true" @end="drag=false" item-key="id" :animation="200">
+					<draggable v-model="columns" group="people" @start="drag=true" @end="drag=false" item-key="id" :animation="200">
 						<template #item="{element, index}">
 							<transition-group name="fade" tag="div">
 								<div class="px-5 py-2 mt-3 rounded-xl shadow-sm outline-1 outline-deskmint-green-light dark:bg-deskmint-cyan-light" :key="element.id">
 									<span class="grid grid-cols-12 gap-1">
-										<span class="col-span-4 lg:col-span-8"><icon-grain class="inline-block" />&nbsp;{{element.name}}</span>
-										<span class="col-span-4 lg:col-span-2 m-auto"><input-switch v-model="element.show_column"></input-switch></span>
+										<span class="col-span-4 lg:col-span-8"><icon-grain class="inline-block" />&nbsp;{{element.text}}</span>
+										<span class="col-span-4 lg:col-span-2 m-auto"><input-switch v-model="element.show"></input-switch></span>
 										<span class="col-span-4 lg:col-span-2 m-auto"><input-switch v-model="element.searchable"></input-switch></span>
 									</span>
 								</div>
@@ -32,7 +32,7 @@
 						</template>
 					</draggable>
 				</div>
-				<input-button class="lg:float-end" btn_text="Save & Close" icon="IconCheck" @click="saveArrangedColumns"></input-button>
+				<input-button :disabled="btn_disabled" class="lg:float-end" btn_text="Save & Close" icon="IconCheck" @click="saveArrangedColumns"></input-button>
 				<div class="lg:clear-both"></div>
 			</div>
 		</popup>
@@ -79,7 +79,8 @@
 		total_pages: number,
 		dynamic_loading_status:boolean,
 		show_popup: boolean,
-		myArray: Array<object>
+		columns: Array<object>,
+		btn_disabled: boolean
 	}
 	
 	export default defineComponent({
@@ -104,50 +105,8 @@
 				total_pages: 0,
 				dynamic_loading_status: false,
 				show_popup: false,
-				myArray: [
-					{
-						id:1,
-						name: 'test 1',
-						value: 'val 1',
-						show_column: false,
-						searchable: false
-					},
-					{
-						id:2,
-						name: 'test 2',
-						value: 'val 2',
-						show_column: false,
-						searchable: false
-					},
-					{
-						id:3,
-						name: 'test 3',
-						value: 'val 3',
-						show_column: false,
-						searchable: false
-					},
-					{
-						id:4,
-						name: 'test 4',
-						value: 'val 4',
-						show_column: false,
-						searchable: false
-					},
-					{
-						id:5,
-						name: 'test 5',
-						value: 'val 5',
-						show_column: false,
-						searchable: false
-					},
-					{
-						id:6,
-						name: 'test 6',
-						value: 'val 6',
-						show_column: false,
-						searchable: false
-					}
-				]
+				columns: [],
+				btn_disabled: false
 			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
@@ -192,8 +151,7 @@
 			},
 			fetchArrangedColumns() : void{
 				api.get('manage-clients/fetch-arranged-columns').then((response) => {
-
-					
+					this.columns = response.data;
 				}).catch((error) => {
 
 				});
@@ -219,7 +177,16 @@
 			},
 
 			saveArrangedColumns() : void{
-				//this.show_popup = false;
+				this.btn_disabled = true;
+				console.log(this.columns);
+				api.post('manage-clients/save-arranged-columns', {
+					columns:this.columns
+				}).then((response) => {
+					this.show_popup = false;
+					this.btn_disabled = false;
+				}).catch((error) => {
+					this.btn_disabled = false;
+				});
 			}
 
 		},
