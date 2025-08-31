@@ -195,21 +195,20 @@ export default {
 		return str.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 	},
 
-	isValidISODate(date_str:string):boolean{
-		
+	isValidISODate(date_str: string): boolean {
 		if(typeof date_str !== 'string'){
 			return false;
 		}
-	
-		const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/;
+
+		const date = new Date(date_str);
 		
-		if(!isoRegex.test(date_str)){
+		if(isNaN(date.getTime())){
 			return false;
 		}
-		
-		const date = new Date(date_str);
 
-		return !isNaN(date.getTime()) && date.toISOString() === date_str;
+		const normalized = date_str.replace(/(\.\d{3})\d*Z?$/, '$1Z');
+		
+		return date.toISOString() === normalized;
 		
 	}
 

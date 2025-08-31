@@ -52,6 +52,9 @@
 										<span v-if="row[column2.label].highlight === 'success'" class="bg-green-500/18 pl-[12px]! pr-[12px]! pt-[3px]! pb-[3px]! rounded-2xl text-sm text-green-950 dark:text-green-600">{{ row[column2.label].text }}</span>
 										<span v-if="row[column2.label].highlight === 'error'" class="bg-red-500/18 pl-[12px]! pr-[12px]! pt-[3px]! pb-[3px]! rounded-2xl text-sm text-red-950 dark:text-red-600">{{ row[column2.label].text }}</span>
 									</span>
+									<span v-if="row[column2.label]?.type === 'date'">
+										<span>{{ row[column2.label].text }}</span>
+									</span>
 								</span>
 								<span v-else>{{ row[column2.label] }}</span>
 							</span>
@@ -293,11 +296,12 @@ export default defineComponent({
 					row.created_at = common.formatDate(row.created_at);
 				}
 				for(let colkey in row){
-					if(common.isValidISODate(row[colkey]) && colkey !== 'created_at'){
-						row[colkey] = common.formatDate(row[colkey]);
-						if(colkey.includes('_cdate_')){
-							row[colkey] = common.formatDate(row[colkey], true);
-						}else{
+					if(typeof row[colkey] === 'object' && row[colkey] !== null){
+						if(row[colkey].type === 'date'){
+							row[colkey] = common.formatDate(row[colkey].text, true);
+						}
+					}else{
+						if(common.isValidISODate(row[colkey]) && colkey !== 'created_at'){
 							row[colkey] = common.formatDate(row[colkey]);
 						}
 					}
@@ -623,15 +627,16 @@ export default defineComponent({
 							}
 							for(let colkey in row){
 								
-								if(common.isValidISODate(row[colkey]) && colkey !== 'created_at'){
-
-									if(colkey.includes('_cdate_')){
-										row[colkey] = common.formatDate(row[colkey], true);
-									}else{
+								if(typeof row[colkey] === 'object' && row[colkey] !== null){
+									if(row[colkey].type === 'date'){
+									 	row[colkey] = common.formatDate(row[colkey].text, true);
+									}
+								}else{
+									if(common.isValidISODate(row[colkey]) && colkey !== 'created_at'){
 										row[colkey] = common.formatDate(row[colkey]);
 									}
-									
 								}
+								
 							}
 
 							
