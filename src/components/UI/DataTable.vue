@@ -48,7 +48,7 @@
 							</span>
 							<span v-if="!Array.isArray(row[column2.label])">
 								<span v-if="typeof row[column2.label] === 'object'">
-									<span v-if="row[column2.label].type === 'label'">
+									<span v-if="row[column2.label]?.type === 'label'">
 										<span v-if="row[column2.label].highlight === 'success'" class="bg-green-500/18 pl-[12px]! pr-[12px]! pt-[3px]! pb-[3px]! rounded-2xl text-sm text-green-950 dark:text-green-600">{{ row[column2.label].text }}</span>
 										<span v-if="row[column2.label].highlight === 'error'" class="bg-red-500/18 pl-[12px]! pr-[12px]! pt-[3px]! pb-[3px]! rounded-2xl text-sm text-red-950 dark:text-red-600">{{ row[column2.label].text }}</span>
 									</span>
