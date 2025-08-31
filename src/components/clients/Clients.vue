@@ -5,7 +5,7 @@
         <br>
         <skeleton-table v-if="data_loading" :rows="10"></skeleton-table>
 		
-		<input-button class="lg:float-start mb-5 lg:mb-0" btn_text="Arrange columns" icon="IconColumns3" @click="show_popup = true"></input-button>
+		<input-button class="lg:float-start mb-5 lg:mb-0" btn_text="Arrange columns" icon="IconColumns3" @click="showPopup"></input-button>
 		
 		<popup :show_popup="show_popup" @closed="closePopup" header="Arrange columns">
 			<div>
@@ -18,7 +18,7 @@
 							<span class="col-span-4 lg:col-span-2 text-center">Searchable</span>
 						</span>
 					</div>
-					<draggable v-model="columns" group="people" @start="drag=true" @end="drag=false" item-key="id" :animation="200">
+					<draggable v-if="!arrange_columns_loading" v-model="columns" group="people" @start="drag=true" @end="drag=false" item-key="id" :animation="200">
 						<template #item="{element, index}">
 							<transition-group name="fade" tag="div">
 								<div class="px-5 py-2 mt-3 rounded-xl shadow-sm outline-1 outline-deskmint-green-light dark:bg-deskmint-cyan-light" :key="element.id">
@@ -31,6 +31,9 @@
 							</transition-group>
 						</template>
 					</draggable>
+					<div v-if="arrange_columns_loading">
+						<arrange-columns-skeleton :rows="20"></arrange-columns-skeleton>
+					</div>
 				</div>
 				<input-button :disabled="btn_disabled" class="lg:float-end" btn_text="Save & Close" icon="IconCheck" @click="saveArrangedColumns"></input-button>
 				<div class="lg:clear-both"></div>
@@ -71,6 +74,7 @@
 	import draggable from 'vuedraggable';
 	import { IconGrain } from '@tabler/icons-vue';
 	import InputSwitch from '../inputs/InputSwitch.vue';
+	import ArrangeColumnsSkeleton from '../skeletons/ArrangeColumnsSkeleton.vue';
 
 	export interface ClientsInterface{
 		data_loading:boolean,
@@ -80,7 +84,8 @@
 		dynamic_loading_status:boolean,
 		show_popup: boolean,
 		columns: Array<object>,
-		btn_disabled: boolean
+		btn_disabled: boolean,
+		arrange_columns_loading: boolean
 	}
 	
 	export default defineComponent({
@@ -92,7 +97,8 @@
 			Popup,
 			draggable,
 			IconGrain,
-			InputSwitch
+			InputSwitch,
+			ArrangeColumnsSkeleton
 		},
 		data(): ClientsInterface{
 			return {
@@ -106,7 +112,8 @@
 				dynamic_loading_status: false,
 				show_popup: false,
 				columns: [],
-				btn_disabled: false
+				btn_disabled: false,
+				arrange_columns_loading: false
 			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
@@ -139,7 +146,7 @@
 
 					this.table_data = response.data.table_data;
 					this.total_pages = response.data.total_pages;
-					this.fetchArrangedColumns();
+					
 				}).catch((error) => {
 					if(page_data === ''){
 						this.data_loading = false;
@@ -152,6 +159,7 @@
 			fetchArrangedColumns() : void{
 				api.get('manage-clients/fetch-arranged-columns').then((response) => {
 					this.columns = response.data;
+					this.arrange_columns_loading = false;
 				}).catch((error) => {
 
 				});
@@ -187,6 +195,12 @@
 				}).catch((error) => {
 					this.btn_disabled = false;
 				});
+			},
+
+			showPopup(): void{
+				this.show_popup = true;
+				this.arrange_columns_loading = true;
+				this.fetchArrangedColumns();
 			}
 
 		},
