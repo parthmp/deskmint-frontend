@@ -115,9 +115,14 @@
 			},
 			sanitizeInput(in_string:string) : string{
 				return common.stripTags(in_string);
-			}
+			},
+			showErrorsExplicitly() : void{
+				this.show_errors = true;
+			},
+
 		},
 
+		
 		mounted(){
 			if(common.isset(this.required)){
 				this.input_required = this.required;

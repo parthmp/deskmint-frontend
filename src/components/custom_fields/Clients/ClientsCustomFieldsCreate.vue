@@ -147,6 +147,10 @@
 			"label.value"(): void{
 				if(this.label.value.trim() !== ''){
 					this.label.error = '';
+					if(this.label.value.trim().length > 50){
+						this.$refs.label.showErrorsExplicitly();
+						this.label.error = 'Label must not have more than 50 characters';
+					}
 				}else{
 					this.label.error = 'Label is a required field'
 				}
@@ -192,21 +196,36 @@
 
 
 				if(input_field_validated && label_validated && is_required_validated && add_edit_page_order_validated && select_options_validated){
+					this.label.error = '';
+					let label_trimmed = this.label.value.trim();
+					if(label_trimmed.length > 50){
+						this.$refs.label.showErrorsExplicitly();
+						this.label.error = 'Label must not have more than 50 characters';
+						this.btn_disabled = false;
+						toastEvents.emit('toast', {
+							type: 'error',
+							message: 'Label must not have more than 50 characters'
+						});
+					}else{
 
-					api.post('clients-custom-fields', {
-						input_field: this.custom_field,
-						label:this.label.value,
-						placeholder: this.placeholder.value,
-						is_required: this.required_flag,
-						default_value: this.default_value.value,
-						add_edit_page_order: this.add_edit_page_order.value,
-						select_options: this.select_options.value
-					}).then((response) => {
-						this.btn_disabled = false;
-						this.$router.push('/custom-fields/clients');
-					}).catch((error) => {
-						this.btn_disabled = false;
-					});
+						api.post('clients-custom-fields', {
+							input_field: this.custom_field,
+							label:this.label.value,
+							placeholder: this.placeholder.value,
+							is_required: this.required_flag,
+							default_value: this.default_value.value,
+							add_edit_page_order: this.add_edit_page_order.value,
+							select_options: this.select_options.value
+						}).then((response) => {
+							this.btn_disabled = false;
+							this.$router.push('/custom-fields/clients');
+						}).catch((error) => {
+							this.btn_disabled = false;
+						});
+
+					}
+
+					
 
 				}else{
 
