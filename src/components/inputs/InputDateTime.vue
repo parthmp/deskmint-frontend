@@ -70,6 +70,10 @@
 			},
 			mode(): void{
 				this.modding();
+			},
+
+			modelValue() : void{
+				this.setModelValue();
 			}
 		},
 
@@ -84,7 +88,31 @@
 		},
 
 		methods: {
-
+			setModelValue() : void{
+				if(this.mode === 'time'){
+					this.placeholder = 'Select time';
+					this.input_value = this.parseTimeString(this.modelValue) || '';
+				}else{
+					if(this.mode === 'range'){
+						this.placeholder = 'Select datetime range';
+						
+						if(common.isset(this.modelValue[0]) && common.isset(this.modelValue[1]) && this.modelValue[0] !== '' && this.modelValue[0] !== ''){
+							this.input_value = [new Date(this.modelValue[0]), new Date(this.modelValue[1])] || '';
+						}else{
+							this.input_value = '';
+						}
+						
+					}else{
+						this.placeholder = 'Select date';
+						if(common.isset(this.modelValue) && this.modelValue !== ''){
+							this.input_value = new Date(this.modelValue) || '';
+						}else{
+							this.input_value = '';
+						}
+					}
+					
+				}
+			},
 			setValid() : void{
 				this.is_valid = true;
 			},
@@ -190,28 +218,49 @@
 				if (!obj || typeof obj.hours !== 'number' || typeof obj.minutes !== 'number') return false;
   				return obj.hours >= 0 && obj.hours <= 23 && obj.minutes >= 0 && obj.minutes <= 59;
 			},
-			parseTimeString(time:string) : any{
+			parseTimeString(time: string): any{
 				
 				if(typeof time === 'object'){
 					return time;
 				}
-
-				const match = time.match(/^(\d{1,2}):(\d{2}):(\d{2})$/);
-
+				
+				const match = time.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s?(AM|PM)?$/i);
+				
 				if(!match){
 					return null;
 				}
 
-				const hours = parseInt(match[1], 10);
+				let hours = parseInt(match[1], 10);
 				const minutes = parseInt(match[2], 10);
-				const seconds = parseInt(match[3], 10);
+				const seconds = match[3] ? parseInt(match[3], 10) : 0; // Default to 0 if no seconds
+				const ampm = match[4] ? match[4].toUpperCase() : null;
 
-				if(hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59 && seconds >= 0 && seconds <= 59) {
-					return { hours, minutes, seconds };
+				// Validate minutes and seconds
+				if(minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59){
+					return null;
 				}
 
-				return null;
+				// Handle 12-hour format
+				if(ampm){
+					// Validate 12-hour format hours
+					if(hours < 1 || hours > 12){
+						return null;
+					}
+					
+					// Convert to 24-hour format
+					if(ampm === 'AM' && hours === 12){
+						hours = 0; // 12:xx AM = 00:xx
+					}else if (ampm === 'PM' && hours !== 12){
+						hours += 12; // 1:xx PM = 13:xx, but 12:xx PM stays 12:xx
+					}
+				}else{
+					// Validate 24-hour format hours
+					if(hours < 0 || hours > 23){
+						return null;
+					}
+				}
 
+				return { hours, minutes, seconds };
 			},
 			stringJsDate(str:string) : any{
 				if(str === ''){ return ''; }
@@ -252,30 +301,8 @@
 			}
 
 			
-
-			if(this.mode === 'time'){
-				this.placeholder = 'Select time';
-				this.input_value = this.parseTimeString(this.modelValue) || '';
-			}else{
-				if(this.mode === 'range'){
-					this.placeholder = 'Select datetime range';
-					
-					if(common.isset(this.modelValue[0]) && common.isset(this.modelValue[1]) && this.modelValue[0] !== '' && this.modelValue[0] !== ''){
-						this.input_value = [new Date(this.modelValue[0]), new Date(this.modelValue[1])] || '';
-					}else{
-						this.input_value = '';
-					}
-					
-				}else{
-					this.placeholder = 'Select date';
-					if(common.isset(this.modelValue) && this.modelValue !== ''){
-						this.input_value = new Date(this.modelValue) || '';
-					}else{
-						this.input_value = '';
-					}
-				}
-				
-			}
+			this.setModelValue();
+			//
 			if(this.input_value !== '' && this.input_value !== null){
 				this.EmitModel(this.input_value);
 			}
