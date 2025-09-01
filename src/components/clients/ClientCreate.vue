@@ -2,6 +2,8 @@
 	<section class="main-content">
     <div class="card">
         <h1 class="text-2xl!">Create a client</h1>
+		<input-button class="lg:float-start" btn_text="Back" url="/clients" icon="IconCaretLeft"></input-button>
+			<div class="clear-both"></div>
         <br>
 					
 			<tabs :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="true">

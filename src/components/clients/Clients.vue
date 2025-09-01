@@ -43,7 +43,7 @@
 			<input-button class="lg:float-end" btn_text="Add New" url="/clients/create" icon="IconPlus"></input-button>
 			<div class="lg:clear-both"></div>
 			<br>
-			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="clients" :row_actions="['edit', 'delete']" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
+			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="clients" :row_actions="['view', 'edit', 'delete']" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
 		</span>
 		
     </div>
@@ -164,17 +164,23 @@
 
 				});
 			},
-			handleDeleted(row_id:object) : void{
-				console.log('===');
-				console.log(row_id);
-				console.log('===');
+			handleDeleted(id:object) : void{
+				this.deleteFields([id]);
 				/* handle axios here for single deletes */
 			},
 			handleMultipleDelete(ids:any) : void{
-				console.log('FIRED');
-				console.log(ids);
-				console.log('===');
-				/* handle axios here for multiple deletes */
+				this.deleteFields(ids);
+			},
+			deleteFields(ids:any) : void{
+				api.delete('manage-clients', {
+					data : {
+						ids : ids
+					}
+				}).catch((error) => {
+					
+				}).finally((e) => {
+					this.fetchClients();
+				});
 			},
 			handleAPI(json_object:object) : void{
 				this.fetchClients(json_object);
