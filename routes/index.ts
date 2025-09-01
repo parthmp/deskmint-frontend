@@ -85,6 +85,10 @@ const routes = [
 			{
 				path: '/clients/create',
 				component: ClientCreate,	
+			},
+			{
+				path: '/clients/edit/:id',
+				component: ClientCreate,	
 			}
 		]
 	}

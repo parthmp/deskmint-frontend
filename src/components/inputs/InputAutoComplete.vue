@@ -90,6 +90,9 @@
 					this.local_error = this.error || '';
 				}
 			
+			},
+			modelValue() : void{
+				this.setModelValue();
 			}
 		},
 
@@ -101,6 +104,22 @@
 		},
 
 		methods: {
+
+			setModelValue() : void{
+				this.input_value = this.modelValue?.trim() || '';
+
+				if(this.input_value !== ''){
+					let option_id = parseInt(this.input_value);
+					for(let z = 0 ; z < this.options?.length ; z++){
+						if(this.options[z].value === option_id){
+							this.current_selected = this.options[z];
+							this.input_value = this.options[z].text;
+							break;
+						}
+					}
+				}
+			},
+
 			validate() : boolean{
 				
 				//this.show_errors = false;
@@ -203,18 +222,7 @@
 				
 			}
 			
-			this.input_value = this.modelValue?.trim() || '';
-
-			if(this.input_value !== ''){
-				let option_id = parseInt(this.input_value);
-				for(let z = 0 ; z < this.options?.length ; z++){
-					if(this.options[z].value === option_id){
-						this.current_selected = this.options[z];
-						this.input_value = this.options[z].text;
-						break;
-					}
-				}
-			}
+			this.setModelValue();
 			
 			this.local_error = '';
 			if(common.isset(this.error)){

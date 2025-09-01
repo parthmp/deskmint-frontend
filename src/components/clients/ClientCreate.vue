@@ -1,12 +1,13 @@
 <template>
 	<section class="main-content">
     <div class="card">
-        <h1 class="text-2xl!">Create a client</h1>
+        <h1 class="text-2xl!" v-if="(mode === 'create')">Create a client</h1>
+        <h1 class="text-2xl!" v-if="(mode === 'edit')">Edit client</h1>
 		<input-button class="lg:float-start" btn_text="Back" url="/clients" icon="IconCaretLeft"></input-button>
 			<div class="clear-both"></div>
         <br>
 					
-			<tabs :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="true">
+			<tabs :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="(mode === 'create')">
 				<template v-slot:tab-0>
 			
 					<form @submit.prevent="validateTab1" class="form">
@@ -67,7 +68,7 @@
 						<p v-if="client_contact_info.length === 0" class="text-red-500!">Please add a contact info to continue</p>
 						<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
 					</form>
-					<input-button btn_text="Add More" icon="IconPlus" class="lg:float-start" @click="addNewContactInfoFields"></input-button>
+					<input-button btn_text="Add More" icon="IconPlus" class="lg:float-start" @click="addNewContactInfoFields()"></input-button>
 					
 					<div class="clear-both"></div>
 
@@ -262,7 +263,9 @@
 		reminder_options: Array<object>,
 		size_options: Array<object>,
 		industries: Array<object>,
-		payment_terms: Array<object>
+		payment_terms: Array<object>,
+		mode:string,
+		edit_loaded: boolean
 	}
 	
 	export default defineComponent({
@@ -478,11 +481,29 @@
 						value : '',
 						error : 'Industry is required field'
 					}
-				}
+				},
+				mode: 'create',
+				edit_loaded : false
 				
 			}
 		},
 		mixins: [RedirectToLoginForNoTokens],
+		computed: {
+			allowWatchers() : boolean{
+
+				if(this.mode === 'create'){
+					return true;
+				}
+
+				if(this.mode === 'edit'){
+					if(this.edit_loaded){
+						return true;
+					}
+				}
+
+				return false;
+			}
+		},
 		watch: {
 			"client_personal_info.first_name.value"() : void{
 				this.tab1FieldsValidations('client_personal_info', 'personal_info_first_name', 'first_name', 'First name is required');
@@ -565,27 +586,52 @@
 		methods : {
 
 			tab1FieldsValidations(tab_info, ref, field, error) : void{
-				if(this.$refs[ref].validate()){
-					this[tab_info][field].error = '';
-				}else{
-					this[tab_info][field].error = error;
+				if(this.allowWatchers){
+					if(this.$refs[ref].validate()){
+						this[tab_info][field].error = '';
+					}else{
+						this[tab_info][field].error = error;
+					}
 				}
+				
 			},
 
-			fetchClientAreaFields() : void{
+			fetchClientAreaFields(fillers:Array<object> = []) : void{
 				
 				api.get('manage-clients/fetch-clients-custom-fields').then((response) => {
 					this.custom_fields = response.data;
+					console.log(fillers);
+					console.log(this.custom_fields);
 					
-					/* handle date edge case for timezone conversions */
-					for(let z = 0 ; z < this.custom_fields.length ; z++){
-						if(this.custom_fields[z].custom_field_type.input_type === 'date'){
-							this.custom_fields[z].value = new Date(this.custom_fields[z].value);
-							let now_date_time = new Date();
-							this.custom_fields[z].value.setHours(now_date_time.getHours(), now_date_time.getMinutes(), now_date_time.getSeconds());
-							
+					/**/
+					if(fillers.length !== 0){
+						
+						for(let z = 0 ; z < this.custom_fields.length ; z++){
+
+							for(let x = 0 ; x < fillers.length ; x++){
+								if(fillers[x].clients_custom_field_id === this.custom_fields[z].id){
+									if(fillers[x].clients_custom_field.custom_field_type.input_type === 'multiselect'){
+										this.custom_fields[z].value = JSON.parse(fillers[x].field_value);
+									}else{
+										this.custom_fields[z].value = fillers[x].field_value;
+									}
+									
+								}
+							}
+
+						}
+					}else{
+						/* handle date edge case for timezone conversions */
+						for(let z = 0 ; z < this.custom_fields.length ; z++){
+							if(this.custom_fields[z].custom_field_type.input_type === 'date'){
+								this.custom_fields[z].value = new Date(this.custom_fields[z].value);
+								let now_date_time = new Date();
+								this.custom_fields[z].value.setHours(now_date_time.getHours(), now_date_time.getMinutes(), now_date_time.getSeconds());
+								
+							}
 						}
 					}
+					/**/
 
 
 					/**/
@@ -680,14 +726,20 @@
 					}
 				});
 			},
-			addNewContactInfoFields() : void{
+			addNewContactInfoFields(id:number = 0, first_name_value:string = '', last_name_value:string = '', email_value:string = '', phone_value:string = '') : void{
 				
+				let use_id = Date.now();
+
+				if(id !== 0){
+					use_id = id;
+				}
+
 				const new_contact = reactive({
-					id: Date.now(),
-					first_name: { value: "", error: "First name is required" },
-					last_name: { value: "", error: "Last name is required" },
-					email: { value: "", error: "Email is required" },
-					phone: { value: "", error: "" }
+					id: use_id,
+					first_name: { value: first_name_value, error: "First name is required" },
+					last_name: { value: last_name_value, error: "Last name is required" },
+					email: { value: email_value, error: "Email is required" },
+					phone: { value: phone_value, error: "" }
 				});
 
 				this.client_contact_info.push(new_contact);
@@ -988,14 +1040,76 @@
 				});
 
 				
+			},
+
+			fetchClientInfo() : void{
+				api.get('manage-clients/'+this.$route.params.id).then((response) => {
+
+					let client_info = response.data.client_info;
+					let contact_info = response.data.contact_info;
+					let custom_fields = response.data.custom_fields;
+
+					/* fill tab 1 */
+					this.client_personal_info.first_name.value = client_info.first_name;
+					this.client_personal_info.last_name.value = client_info.last_name;
+					this.client_personal_info.tax_id.value = client_info.tax_number;
+					this.client_personal_info.website.value = client_info.website;
+					this.client_personal_info.email.value = client_info.email;
+					this.client_personal_info.phone.value = client_info.phone;
+
+					/* fill tab 2 */
+					for(let z = 0 ; z < contact_info.length ; z++){
+						this.addNewContactInfoFields(contact_info[z].id, contact_info[z].first_name, contact_info[z].last_name, contact_info[z].email, contact_info[z].phone);
+					}
+					
+					/* fill tab 3 */
+					this.client_billing_info.street.value = client_info.billing_street;
+					this.client_billing_info.apt.value = client_info.billing_apt;
+					this.client_billing_info.city.value = client_info.billing_city;
+					this.client_billing_info.state.value = client_info.billing_state;
+					this.client_billing_info.postal_code.value = client_info.billing_postal_code;
+					this.client_billing_info.country.value = client_info.billing_country_id+'';
+
+					this.client_shipping_info.street.value = client_info.shipping_street;
+					this.client_shipping_info.apt.value = client_info.shipping_apt;
+					this.client_shipping_info.city.value = client_info.shipping_city;
+					this.client_shipping_info.state.value = client_info.shipping_state;
+					this.client_shipping_info.postal_code.value = client_info.shipping_postal_code;
+					this.client_shipping_info.country.value = client_info.shipping_country_id+'';
+					
+					/* fill tab 4 */
+					this.fetchClientAreaFields(custom_fields);
+
+
+					/* handle race condition below once data loaded */
+					setTimeout(() => {
+						this.edit_loaded = true;
+					}, 1000);
+
+
+				}).catch((errors) => {
+
+				});
 			}
 			
 		},
 		mounted : function(){
-			this.addNewContactInfoFields();
-			this.fetchClientAreaFields();
+
+			if(this.$route.params.id){
+				this.mode = 'edit';
+				this.fetchClientInfo();
+			}else{
+				this.addNewContactInfoFields();
+				this.setShippingInfo();
+				this.fetchClientAreaFields();
+			}
+
 			
-			this.setShippingInfo();
+			
+			
+			
+
+			
 			
 		}
 

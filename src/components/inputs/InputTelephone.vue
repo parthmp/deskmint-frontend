@@ -67,6 +67,9 @@
 					this.local_error = this.error || '';
 				}
 			
+			},
+			modelValue() : void{
+				this.input_value = this.standardizePhoneNumber(this.modelValue?.trim()) || '';
 			}
 		},
 

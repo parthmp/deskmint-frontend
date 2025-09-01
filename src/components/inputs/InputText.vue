@@ -67,6 +67,9 @@
 					this.local_error = this.error || '';
 				}
 			
+			},
+			modelValue() : void{
+				this.input_value = this.modelValue;
 			}
 		},
 
@@ -136,6 +139,7 @@
 				this.is_valid = false;
 				
 			}
+			
 			this.input_value = this.modelValue?.trim() || '';
 			
 			this.local_error = '';
