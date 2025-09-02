@@ -610,6 +610,7 @@
 
 							for(let x = 0 ; x < fillers.length ; x++){
 								if(fillers[x].clients_custom_field_id === this.custom_fields[z].id){
+									this.custom_fields[z].value_id = fillers[x].id;
 									if(fillers[x].clients_custom_field.custom_field_type.input_type === 'multiselect'){
 										this.custom_fields[z].value = JSON.parse(fillers[x].field_value);
 									}else{
@@ -623,6 +624,7 @@
 					}else{
 						/* handle date edge case for timezone conversions */
 						for(let z = 0 ; z < this.custom_fields.length ; z++){
+							this.custom_fields[z].value_id = null;
 							if(this.custom_fields[z].custom_field_type.input_type === 'date'){
 								this.custom_fields[z].value = new Date(this.custom_fields[z].value);
 								let now_date_time = new Date();
@@ -1130,13 +1132,6 @@
 				this.setShippingInfo();
 				this.fetchClientAreaFields();
 			}
-
-			
-			
-			
-			
-
-			
 			
 		}
 
