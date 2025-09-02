@@ -670,7 +670,8 @@
 				}).catch((error) => {});
 
 			},
-			createClient() : void{
+
+			saveClient() : void{
 
 				this.btn_disabled = true;
 
@@ -686,17 +687,37 @@
 					copy_to_shipping: this.copy_to_shipping
 				};
 
-				api.post('manage-clients', client_data).then((response) => {
-					this.$router.push('/clients');
-				}).catch((error) => {
-					
-					if(error.response?.data?.tab_switch !== undefined){
-						this.active_tab_index = error.response.data.tab_switch;
-					}
-					
-				}).finally(() => {
-					this.btn_disabled = false;
-				});
+				if(this.mode === 'create'){
+
+					api.post('manage-clients', client_data).then((response) => {
+						this.$router.push('/clients');
+					}).catch((error) => {
+						
+						if(error.response?.data?.tab_switch !== undefined){
+							this.active_tab_index = error.response.data.tab_switch;
+						}
+						
+					}).finally(() => {
+						this.btn_disabled = false;
+					});
+				
+
+				}else{
+
+					api.patch('manage-clients/'+this.$route.params.id, client_data).then((response) => {
+						this.$router.push('/clients');
+					}).catch((error) => {
+						
+						if(error.response?.data?.tab_switch !== undefined){
+							this.active_tab_index = error.response.data.tab_switch;
+						}
+						
+					}).finally(() => {
+						this.btn_disabled = false;
+					});
+				
+
+				}
 				
 			},
 			changeActiveTabValue(index:number, locked:boolean) : void{
@@ -1035,7 +1056,7 @@
 
 				this.validateClientSettings((valid_settings:boolean) => {
 					if(valid_settings){
-						this.createClient();
+						this.saveClient();
 					}
 				});
 
@@ -1080,11 +1101,17 @@
 					/* fill tab 4 */
 					this.fetchClientAreaFields(custom_fields);
 
+					/* fill tab 5 */
+					this.client_settings.currency.value = client_info.currency_id+'';
+					this.client_settings.payment_terms.value = client_info.payment_terms+'';
+					this.client_settings.quote_valid.value = client_info.quote_valid_days+'';
+					this.client_settings.send_reminder.value = client_info.send_reminders+'';
+					this.client_settings.size.value = client_info.size+'';
+					this.client_settings.industry.value = client_info.industry_id;
 
-					/* handle race condition below once data loaded */
-					setTimeout(() => {
+					this.$nextTick(() => {
 						this.edit_loaded = true;
-					}, 1000);
+					});
 
 
 				}).catch((errors) => {
