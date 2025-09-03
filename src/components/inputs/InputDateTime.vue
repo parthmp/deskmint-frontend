@@ -219,48 +219,7 @@
   				return obj.hours >= 0 && obj.hours <= 23 && obj.minutes >= 0 && obj.minutes <= 59;
 			},
 			parseTimeString(time: string): any{
-				
-				if(typeof time === 'object'){
-					return time;
-				}
-				
-				const match = time.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s?(AM|PM)?$/i);
-				
-				if(!match){
-					return null;
-				}
-
-				let hours = parseInt(match[1], 10);
-				const minutes = parseInt(match[2], 10);
-				const seconds = match[3] ? parseInt(match[3], 10) : 0; // Default to 0 if no seconds
-				const ampm = match[4] ? match[4].toUpperCase() : null;
-
-				// Validate minutes and seconds
-				if(minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59){
-					return null;
-				}
-
-				// Handle 12-hour format
-				if(ampm){
-					// Validate 12-hour format hours
-					if(hours < 1 || hours > 12){
-						return null;
-					}
-					
-					// Convert to 24-hour format
-					if(ampm === 'AM' && hours === 12){
-						hours = 0; // 12:xx AM = 00:xx
-					}else if (ampm === 'PM' && hours !== 12){
-						hours += 12; // 1:xx PM = 13:xx, but 12:xx PM stays 12:xx
-					}
-				}else{
-					// Validate 24-hour format hours
-					if(hours < 0 || hours > 23){
-						return null;
-					}
-				}
-
-				return { hours, minutes, seconds };
+				return common.parseTimeString(time);
 			},
 			stringJsDate(str:string) : any{
 				if(str === ''){ return ''; }

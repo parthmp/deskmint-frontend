@@ -614,7 +614,12 @@
 									if(fillers[x].clients_custom_field.custom_field_type.input_type === 'multiselect'){
 										this.custom_fields[z].value = JSON.parse(fillers[x].field_value);
 									}else{
-										this.custom_fields[z].value = fillers[x].field_value;
+										if(fillers[x].clients_custom_field.custom_field_type.input_type === 'time'){
+											this.custom_fields[z].value = common.parseTimeString(fillers[x].field_value);
+										}else{
+											this.custom_fields[z].value = fillers[x].field_value;
+										}
+										
 									}
 									
 								}
