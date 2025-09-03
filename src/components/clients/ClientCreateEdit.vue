@@ -6,8 +6,8 @@
 		<input-button class="lg:float-start" btn_text="Back" url="/clients" icon="IconCaretLeft"></input-button>
 			<div class="clear-both"></div>
         <br>
-					
-			<tabs :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="(mode === 'create')">
+			<client-create-edit-skeleton v-if="data_loading_for_edit"></client-create-edit-skeleton>
+			<tabs v-if="!data_loading_for_edit" :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="(mode === 'create')">
 				<template v-slot:tab-0>
 			
 					<form @submit.prevent="validateTab1" class="form">
@@ -245,7 +245,10 @@
 	import { toastEvents } from '../../events/toastEvents';
 	import common from '../../helpers/common';
 
+	import ClientCreateEditSkeleton from '../skeletons/ClientCreateEditSkeleton.vue';
+
 	export interface ClientCreateInterface{
+		data_loading_for_edit:boolean,
 		btn_disabled:boolean,
 		fields: Array<object>,
 		countries: Array<object>,
@@ -269,7 +272,7 @@
 	}
 	
 	export default defineComponent({
-		name : 'ClientCreate',
+		name : 'ClientCreateEdit',
 		components : {
 			InputButton,
 			InputText,
@@ -284,10 +287,12 @@
 			InputSelect,
 			InputNumber,
 			InputDateTime,
-			InputMultiselect
+			InputMultiselect,
+			ClientCreateEditSkeleton
 		},
 		data(): ClientCreateInterface{
 			return {
+				data_loading_for_edit:false,
 				btn_disabled: false,
 				fields: [],
 				countries: [],
@@ -490,7 +495,7 @@
 		mixins: [RedirectToLoginForNoTokens],
 		computed: {
 			allowWatchers() : boolean{
-
+			
 				if(this.mode === 'create'){
 					return true;
 				}
@@ -581,6 +586,10 @@
 			},
 			"client_settings.industry.value"() : void{
 				this.tab1FieldsValidations('client_settings', 'client_settings_industry', 'industry', 'Industry is required field');
+			},
+
+			active_tab_index() : void{
+				this.changeActiveTabValue(this.active_tab_index, false);
 			}
 		},
 		methods : {
@@ -600,8 +609,6 @@
 				
 				api.get('manage-clients/fetch-clients-custom-fields').then((response) => {
 					this.custom_fields = response.data;
-					console.log(fillers);
-					console.log(this.custom_fields);
 					
 					/**/
 					if(fillers.length !== 0){
@@ -616,6 +623,8 @@
 									}else{
 										if(fillers[x].clients_custom_field.custom_field_type.input_type === 'time'){
 											this.custom_fields[z].value = common.parseTimeString(fillers[x].field_value);
+										}else if(fillers[x].clients_custom_field.custom_field_type.input_type === 'select'){
+											this.custom_fields[z].value = fillers[x].field_value+'';
 										}else{
 											this.custom_fields[z].value = fillers[x].field_value;
 										}
@@ -831,7 +840,7 @@
 						value: '',
 						text: 'Select'
 					});
-					
+					this.data_loading_for_edit = false;
 				}).catch((error) => {});
 			},
 			selectCountry(country_object:object) : void{
@@ -1114,7 +1123,7 @@
 					this.client_settings.quote_valid.value = client_info.quote_valid_days+'';
 					this.client_settings.send_reminder.value = client_info.send_reminders+'';
 					this.client_settings.size.value = client_info.size+'';
-					this.client_settings.industry.value = client_info.industry_id;
+					this.client_settings.industry.value = client_info.industry_id+'';
 
 					this.$nextTick(() => {
 						this.edit_loaded = true;
@@ -1131,6 +1140,7 @@
 
 			if(this.$route.params.id){
 				this.mode = 'edit';
+				this.data_loading_for_edit = true;
 				this.fetchClientInfo();
 			}else{
 				this.addNewContactInfoFields();
