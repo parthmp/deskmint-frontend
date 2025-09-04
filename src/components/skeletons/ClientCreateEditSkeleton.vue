@@ -3,8 +3,8 @@
 		<div class="skeleton">
 
 			<div class="tabs">
-				<ul class="flex gap-2 flex-col lg:flex-row">
-					<li v-for="(option, key) in 5" :key="key"><a class="block border-1 cursor-default border-solid border-transparent pl-4 lg:pl-8 pt-2 pr-4 lg:pr-8 pb-2 rounded-lg lg:rounded-none! lg:rounded-t-lg! bg-deskmint-green-light lg:border-b-0 transition-all duration-300 lg:w-[100px] xl:w-[150px] h-[42px] animate-[pulse_1s_ease-in-out_infinite]" href="javascript:;"></a></li>
+				<ul class="flex gap-2 flex-col xl:flex-row">
+					<li v-for="(option, key) in 5" :key="key"><a class="block border-1 cursor-default border-solid border-transparent pl-4 lg:pl-8 pt-2 pr-4 lg:pr-8 pb-2 rounded-lg lg:rounded-none! lg:rounded-t-lg! bg-deskmint-green-light lg:border-b-0 transition-all duration-300 xl:w-[150px] w-[100%] h-[42px] animate-[pulse_1s_ease-in-out_infinite]" href="javascript:;"></a></li>
 				</ul>
 
 				<div class="tab-content mt-[20px]">

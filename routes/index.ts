@@ -19,6 +19,7 @@ import ClientsCustomFieldsEdit from '../src/components/custom_fields/Clients/Cli
 
 import Clients from '../src/components/clients/Clients.vue';
 import ClientCreateEdit from '../src/components/clients/ClientCreateEdit.vue';
+import ClientView from '../src/components/clients/ClientView.vue';
 
 
 const routes = [
@@ -89,6 +90,10 @@ const routes = [
 			{
 				path: '/clients/edit/:id',
 				component: ClientCreateEdit,	
+			},
+			{
+				path: '/clients/view/:id',
+				component: ClientView,	
 			}
 		]
 	}

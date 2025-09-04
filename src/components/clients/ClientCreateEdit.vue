@@ -7,7 +7,7 @@
 			<div class="clear-both"></div>
         <br>
 			<client-create-edit-skeleton v-if="data_loading_for_edit"></client-create-edit-skeleton>
-			<tabs v-if="!data_loading_for_edit" :options="tab_options" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="(mode === 'create')">
+			<tabs v-if="!data_loading_for_edit" :options="tab_options" :horizontal="true" :active_tab_index="active_tab_index" @tab-changed="changeActiveTabValue" :disable_further="(mode === 'create')">
 				<template v-slot:tab-0>
 			
 					<form @submit.prevent="validateTab1" class="form">

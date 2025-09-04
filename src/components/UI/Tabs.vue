@@ -1,10 +1,10 @@
 <template>
-	<div class="tabs">
-		<ul class="flex gap-2 flex-col lg:flex-row">
-			<li v-for="(option, key) in options" :key="key"><a class="block border-1 border-solid border-transparent pl-4 lg:pl-8 pt-2 pr-4 lg:pr-8 pb-2 rounded-lg lg:rounded-none! lg:rounded-t-lg! bg-deskmint-green-light lg:border-b-0 transition-all duration-300" :class="{'tab-active': (key === local_active_tab_index), 'hover:bg-transparent hover:border-deskmint-green-light': is_item_can_be_active(key), 'cursor-not-allowed': !is_item_can_be_active(key)}" href="javascript:;" @click="setActiveTab(key)">{{ option }}</a></li>
+	<div class="tabs" :class="{'grid grid-cols-12 gap-5':!horizontal}">
+		<ul :class="{'flex gap-2 flex-col xl:flex-row': horizontal, 'col-span-12 xl:col-span-2':!horizontal}">
+			<li v-for="(option, key) in options" :key="key"><a class="block border-1 border-solid border-transparent pl-4 lg:pl-8 pt-2 pr-4 lg:pr-8 pb-2 rounded-lg lg:rounded-none bg-deskmint-green-light transition-all duration-300" :class="{'lg:border-b-0! tab-active-h': (key === local_active_tab_index && horizontal), 'hover:bg-transparent hover:border-deskmint-green-light': is_item_can_be_active(key), 'cursor-not-allowed': !is_item_can_be_active(key), 'mb-[10px] lg:rounded-lg!':!horizontal, 'lg:rounded-t-lg! border-b-0':horizontal, 'tab-active-v':  (key === local_active_tab_index && !horizontal)}" href="javascript:;" @click="setActiveTab(key)">{{ option }}</a></li>
 		</ul>
 
-		<div class="tab-content mt-[20px]">
+		<div class="tab-content" :class="{'col-span-12 xl:col-span-10':!horizontal, 'mt-[20px]' : horizontal}">
 			<slot :name="`tab-${local_active_tab_index}`"></slot>
 		</div>
 	</div>
@@ -24,7 +24,7 @@
 	
 	export default defineComponent({
 		name : 'Tabs',
-		props: ['options', 'active_tab_index', 'disable_further'],
+		props: ['options', 'active_tab_index', 'disable_further', 'horizontal'],
 		components : {
 
 		},
