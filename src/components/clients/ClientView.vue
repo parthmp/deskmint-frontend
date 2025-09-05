@@ -3,6 +3,9 @@
 		<div class="card">
 			
 			<h1 class="text-2xl!">View Client</h1>
+			<input-button class="lg:float-start" btn_text="Back" url="/clients" icon="IconCaretLeft"></input-button>
+			<div class="clear-both"></div>
+       
 			<br>
 			<tabs :horizontal="tabs_horizontal" :options="tab_options">
 				<template v-slot:tab-0>
@@ -182,6 +185,8 @@
 	import api from '../../helpers/api';
 	import common from '../../helpers/common';
 	import ClientViewInfoSkeleton from '../skeletons/ClientViewInfoSkeleton.vue';
+	import InputButton from '../inputs/InputButton.vue';
+
 
 	export interface ClientViewInterface{
 		tab_options: Array<string>,
@@ -196,7 +201,8 @@
 		mixins: [RedirectToLoginForNoTokens],
 		components : {
 			Tabs,
-			ClientViewInfoSkeleton
+			ClientViewInfoSkeleton,
+			InputButton
 		},
 		data(): ClientViewInterface{
 			return {
