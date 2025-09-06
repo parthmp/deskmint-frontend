@@ -1,6 +1,6 @@
 <template>
 	<span>
-		<div class="skeleton" v-for="(looper, key) in 5" :key="key">
+		<div class="skeleton" v-for="(looper) in 5" :key="looper">
 			<div class="h-[25px] animate-[pulse_1s_ease-in-out_infinite] bg-deskmint-loading rounded-lg w-full"></div>
 			<br>
 			<div class="lg:grid lg:grid-cols-12 gap-5">

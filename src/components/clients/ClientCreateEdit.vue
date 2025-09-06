@@ -253,6 +253,7 @@
 		fields: Array<object>,
 		countries: Array<object>,
 		tab_options: Array<string>,
+		tab_counts: Array<number>,
 		active_tab_index: number,
 		client_personal_info: object,
 		client_contact_info: Array<object>
@@ -297,6 +298,7 @@
 				fields: [],
 				countries: [],
 				tab_options: ['Personal info', 'Contact info', 'Billing & Shipping info', 'Custom fields', 'Settings'],
+				tab_counts: [0, 0, 0, 0, 0],
 				active_tab_index: 0,
 				client_personal_info: {
 					first_name : {
@@ -594,6 +596,22 @@
 		},
 		methods : {
 
+			allowHighlightOnTabChange(tab_index:number) : boolean{
+
+				if(this.mode === 'edit'){
+					return true;
+				}
+
+				if(this.mode === 'create'){
+					if(this.tab_counts[tab_index] > 0){
+						return true;
+					}
+				}
+
+				return false;
+
+			},
+
 			tab1FieldsValidations(tab_info, ref, field, error) : void{
 				if(this.allowWatchers){
 					if(this.$refs[ref].validate()){
@@ -741,26 +759,40 @@
 				this.$nextTick(() => {
 					if(!locked){
 						if(this.active_tab_index === 0){
-	
-							this.tab1FieldsValidations('client_personal_info', 'personal_info_first_name', 'first_name', 'First name is required');
-							this.tab1FieldsValidations('client_personal_info', 'personal_info_last_name', 'last_name', 'Last name is required');
-							this.tab1FieldsValidations('client_personal_info', 'personal_info_email', 'email', 'Invalid email provided');
+
+							if(this.allowHighlightOnTabChange(index)){
+								this.tab1FieldsValidations('client_personal_info', 'personal_info_first_name', 'first_name', 'First name is required');
+								this.tab1FieldsValidations('client_personal_info', 'personal_info_last_name', 'last_name', 'Last name is required');
+								this.tab1FieldsValidations('client_personal_info', 'personal_info_email', 'email', 'Invalid email provided');
+							}
+							
 							
 						}else if(this.active_tab_index === 1){
-							this.validateTab2();
+							if(this.allowHighlightOnTabChange(index)){
+								this.validateTab2();
+							}
 							this.active_tab_index = 1;
 						}else if(this.active_tab_index === 2){
-							this.validateTab3();
+							if(this.allowHighlightOnTabChange(index)){
+								this.validateTab3();
+							}
 							this.active_tab_index = 2;
 						}else if(this.active_tab_index === 3){
-							this.validateTab4();
+							if(this.allowHighlightOnTabChange(index)){
+								this.validateTab4();
+							}
 							this.active_tab_index = 3;
 						}else if(this.active_tab_index === 4){
-							this.validateClientSettings((valid:boolean) => {
+							if(this.allowHighlightOnTabChange(index)){
+								this.validateClientSettings((valid:boolean) => {
 
-							});
+								});
+							}
 						}
 					}
+
+					this.tab_counts[index]++;
+					
 				});
 			},
 			addNewContactInfoFields(id:number = 0, first_name_value:string = '', last_name_value:string = '', email_value:string = '', phone_value:string = '') : void{
@@ -1146,6 +1178,7 @@
 				this.addNewContactInfoFields();
 				this.setShippingInfo();
 				this.fetchClientAreaFields();
+				this.tab_counts[0]++;
 			}
 			
 		}

@@ -219,7 +219,6 @@
 				this.data_loading = true;
 				api.get('manage-clients/'+id).then((response) => {
 					this.client_data = response.data;
-					console.log(this.client_data);
 					this.fetchClientAreaFields(this.client_data.custom_fields);
 				}).catch((error) => {
 
@@ -259,7 +258,6 @@
 							}
 
 					}
-					console.log(this.custom_fields);
 					this.data_loading = false;
 				}).catch((error) => {});
 
