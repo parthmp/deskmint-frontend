@@ -238,7 +238,14 @@
 								if(fillers[x].clients_custom_field_id === this.custom_fields[z].id){
 									this.custom_fields[z].value_id = fillers[x].id;
 									if(fillers[x].clients_custom_field.custom_field_type.input_type === 'multiselect'){
-										this.custom_fields[z].value = JSON.parse(fillers[x].field_value).join(', ');
+										try{
+											const trimmed = fillers[x].field_value.trim();
+											const parsed = trimmed ? JSON.parse(trimmed) : null;
+											this.custom_fields[z].value = (parsed && Array.isArray(parsed)) ? parsed.join(', ') : '';
+										}catch{
+											this.custom_fields[z].value = '';
+										}
+										
 									}else{
 										if(fillers[x].clients_custom_field.custom_field_type.input_type === 'time'){
 											this.custom_fields[z].value = fillers[x].field_value;
@@ -258,8 +265,12 @@
 							}
 
 					}
+					
 					this.data_loading = false;
-				}).catch((error) => {});
+					
+				}).catch((error) => {
+					console.log(error);
+				});
 
 			}
 			
