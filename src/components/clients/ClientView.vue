@@ -269,7 +269,7 @@
 					this.data_loading = false;
 					
 				}).catch((error) => {
-					console.log(error);
+					
 				});
 
 			}
