@@ -637,7 +637,14 @@
 								if(fillers[x].clients_custom_field_id === this.custom_fields[z].id){
 									this.custom_fields[z].value_id = fillers[x].id;
 									if(fillers[x].clients_custom_field.custom_field_type.input_type === 'multiselect'){
-										this.custom_fields[z].value = JSON.parse(fillers[x].field_value);
+										
+										if(fillers[x].field_value === ''){
+											this.custom_fields[z].value = [];
+										}else{
+											this.custom_fields[z].value = JSON.parse(fillers[x].field_value);
+										}
+										
+										
 									}else{
 										if(fillers[x].clients_custom_field.custom_field_type.input_type === 'time'){
 											this.custom_fields[z].value = common.parseTimeString(fillers[x].field_value);
