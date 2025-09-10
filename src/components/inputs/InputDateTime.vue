@@ -165,10 +165,15 @@
 			EmitModel(e:any) : void{
 
 				if(common.isset(e) && e !== null && e !== '' && (this.mode === 'date' || this.mode === 'datetime')){
+					let utc_date = '';
+					try{
+						utc_date = e.toISOString();
+						this.$emit('update:modelValue', utc_date);
+					}catch(exception){
+						
+					}
 					
-					let utc_date = e.toISOString();
 					
-					this.$emit('update:modelValue', utc_date);
 				}else{
 
 					if(this.mode === 'range'){
@@ -263,6 +268,7 @@
 			this.setModelValue();
 			//
 			if(this.input_value !== '' && this.input_value !== null){
+
 				this.EmitModel(this.input_value);
 			}
 			

@@ -658,9 +658,13 @@
 						for(let z = 0 ; z < this.custom_fields.length ; z++){
 							this.custom_fields[z].value_id = null;
 							if(this.custom_fields[z].custom_field_type.input_type === 'date'){
-								this.custom_fields[z].value = new Date(this.custom_fields[z].value);
-								let now_date_time = new Date();
-								this.custom_fields[z].value.setHours(now_date_time.getHours(), now_date_time.getMinutes(), now_date_time.getSeconds());
+								
+								if(this.custom_fields[z].value !== ''){
+									this.custom_fields[z].value = new Date(this.custom_fields[z].value);
+									let now_date_time = new Date();
+									this.custom_fields[z].value.setHours(now_date_time.getHours(), now_date_time.getMinutes(), now_date_time.getSeconds());
+								}
+								
 								
 							}
 						}
