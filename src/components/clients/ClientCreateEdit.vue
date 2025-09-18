@@ -175,6 +175,7 @@
 							</div>
 							
 						</div>
+						<p v-if="custom_fields.length === 0">There are no custom fields added for the clients, click next.</p>
 						<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
 						<div class="clear-both"></div>
 					</form>
