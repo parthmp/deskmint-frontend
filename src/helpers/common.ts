@@ -178,6 +178,10 @@ export default {
 		hours = hours % 12;
 		hours = hours ? hours : 12; // 0 → 12
 		
+		if(isNaN(day)){
+			return '';
+		}
+
 		if(dateonly === false){
 			return `${day}-${month}-${year} ${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
 		}else{
