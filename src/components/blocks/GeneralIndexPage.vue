@@ -40,10 +40,10 @@
 			</div>
 		</popup>
 		<span v-if="!data_loading" class="">
-			<input-button class="lg:float-end" btn_text="Add New" url="/clients/create" icon="IconPlus"></input-button>
+			<input-button class="lg:float-end" btn_text="Add New" :url="'../'+slug+'/create'" icon="IconPlus"></input-button>
 			<div class="lg:clear-both"></div>
 			<br>
-			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" url_slug="clients" :row_actions="['view', 'edit', 'delete']" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
+			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" :url_slug="slug" :row_actions="actions" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
 		</span>
 		
     </div>
@@ -55,9 +55,6 @@
 
 </style>
 <script lang="ts">
-
-
-	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
 
 	import SkeletonTable from '../skeletons/SkeletonTable.vue';
 	
@@ -89,7 +86,7 @@
 	}
 	
 	export default defineComponent({
-		name : 'GeneralIndex',
+		name : 'GeneralIndexPage',
 		components : {
 			DataTable,
 			InputButton,
@@ -100,7 +97,7 @@
 			InputSwitch,
 			ArrangeColumnsSkeleton
 		},
-		props: ['page_title', 'enable_arranged_columns', 'base_url'],
+		props: ['page_title', 'enable_arranged_columns', 'base_url', 'slug', 'actions'],
 		data(): ClientsInterface{
 			return {
 				data_loading : false,
@@ -117,7 +114,6 @@
 				arrange_columns_loading: false
 			}
 		},
-		mixins: [RedirectToLoginForNoTokens],
 		watch: {
 			
 		},
@@ -130,7 +126,7 @@
 					this.dynamic_loading_status = true;
 				}
 				
-				api.get('manage-clients', {
+				api.get(this.base_url, {
 					params: {
 						...(page_data || {}),
 						default_per_page: env.DEFAULT_TABLE_ROWS,
@@ -158,7 +154,7 @@
 				});
 			},
 			fetchArrangedColumns() : void{
-				api.get('manage-clients/fetch-arranged-columns').then((response) => {
+				api.get(this.base_url+'/fetch-arranged-columns').then((response) => {
 					this.columns = response.data;
 					this.arrange_columns_loading = false;
 				}).catch((error) => {
@@ -173,7 +169,7 @@
 				this.deleteFields(ids);
 			},
 			deleteFields(ids:any) : void{
-				api.delete('manage-clients', {
+				api.delete(this.base_url, {
 					data : {
 						ids : ids
 					}
@@ -194,7 +190,7 @@
 			saveArrangedColumns() : void{
 				this.btn_disabled = true;
 				
-				api.post('manage-clients/save-arranged-columns', {
+				api.post(this.base_url+'/save-arranged-columns', {
 					columns:this.columns
 				}).then((response) => {
 					this.fetchClients();
