@@ -22,8 +22,6 @@
 <script lang="ts">
 
 
-	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
-	
 	import { defineComponent } from 'vue';
 
 	import DataTable from '../UI/DataTable.vue';
@@ -60,14 +58,13 @@
 					
 			}
 		},
-		mixins: [RedirectToLoginForNoTokens],
 		watch: {
 			
 		},
 		methods : {
 
 			showCreateAdminPage() : void{
-				console.log('clicked!');
+				
 			},
 
 			handleDeleted(row_id:object) : void{

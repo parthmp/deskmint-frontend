@@ -10,10 +10,6 @@
 	import LoginForm from './blocks/LoginForm.vue';
 
 	import TwoFactorAuth from './blocks/TwoFactorAuth.vue';
-
-	
-	import RedirectToPanelForTokens from '../mixins/RedirectToPanelForTokens';
-
 	
 	import { defineComponent } from 'vue';
 	
@@ -35,7 +31,6 @@
 				this.tfa_token = obj.token;
 			}
 		},
-		mixins: [RedirectToPanelForTokens],
 		mounted : function(){
 
 			this.tfa_token = '';

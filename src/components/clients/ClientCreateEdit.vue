@@ -223,7 +223,7 @@
 
 
 	import api from '../../helpers/api';
-	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
+	
 	import InputText from '../inputs/InputText.vue';
 	import InputButton from '../inputs/InputButton.vue';
 	import InputTelephone from '../inputs/InputTelephone.vue';
@@ -495,7 +495,6 @@
 				
 			}
 		},
-		mixins: [RedirectToLoginForNoTokens],
 		computed: {
 			allowWatchers() : boolean{
 			

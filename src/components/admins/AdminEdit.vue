@@ -44,9 +44,6 @@
 </style>
 <script lang="ts">
 
-
-	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
-
 	import InputButton from '../inputs/InputButton.vue';
 	import InputText from '../inputs/InputText.vue';
 	import InputEmail from '../inputs/InputEmail.vue';
@@ -91,7 +88,6 @@
 				require_password: false
 			}
 		},
-		mixins: [RedirectToLoginForNoTokens],
 		watch: {
 			"name.value"(): void {
 

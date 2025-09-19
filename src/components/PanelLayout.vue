@@ -307,7 +307,6 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import Footer from './blocks/Footer.vue';
 import api from '../helpers/api';
 
-import RedirectToLoginForNoTokens from '../mixins/RedirectToLoginForNoTokens';
 import common from '../helpers/common';
 
 
@@ -473,7 +472,6 @@ export default defineComponent({
 			return useThemeOptions().get_theme;
 		}
 	},
-	mixins: [RedirectToLoginForNoTokens],
 	methods:{
 		updateSidebar() : void{
 			/* for touch devices */

@@ -49,8 +49,7 @@
 
 	import ManageCustomFieldTypesCreateSkeleton from '../../skeletons/ManageCustomFieldTypesCreateSkeleton.vue';
 	import { toastEvents } from '../../../events/toastEvents';
-	import RedirectToLoginForNoTokens from '../../../mixins/RedirectToLoginForNoTokens';
-	
+
 	export default defineComponent({
 
 		name: 'ManageCustomFieldTypesCreate',
@@ -74,9 +73,6 @@
 				}
 			}
 		},
-
-		mixins: [RedirectToLoginForNoTokens],
-
 		watch: {
 			input_type() : void{
 				this.$refs.input_type.validate();

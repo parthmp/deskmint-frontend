@@ -82,8 +82,7 @@
 	import api from '../../../helpers/api';
 	import common from '../../../helpers/common';
 	import { toastEvents } from '../../../events/toastEvents';
-	import RedirectToLoginForNoTokens from '../../../mixins/RedirectToLoginForNoTokens';
-	
+
 	export default defineComponent({
 
 		name: 'ClientsCustomFieldsEdit',
@@ -139,9 +138,6 @@
 				past_label: ''
 			}
 		},
-
-		mixins: [RedirectToLoginForNoTokens],
-
 		watch: {
 			custom_field() : void{
 				if(!this.data_loading){

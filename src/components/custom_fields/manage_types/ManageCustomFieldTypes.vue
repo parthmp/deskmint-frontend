@@ -34,10 +34,7 @@
 
 	import SkeletonTable from '../../skeletons/SkeletonTable.vue';
 	import { env } from '../../../env';
-	import RedirectToLoginForNoTokens from '../../../mixins/RedirectToLoginForNoTokens';
 
-	
-	
 	export default defineComponent({
 
 		name: 'ManageCustomFieldTypes',
@@ -60,9 +57,6 @@
 				dynamic_loading_status: false
 			}
 		},
-
-		mixins: [RedirectToLoginForNoTokens],
-
 		methods : {
 
 			fetchFieldTypes(page_data = '') : void{

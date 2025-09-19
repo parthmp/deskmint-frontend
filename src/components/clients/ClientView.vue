@@ -179,8 +179,7 @@
 
 
 	import { defineComponent } from 'vue';
-	
-	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
+
 	import Tabs from '../UI/Tabs.vue';
 	import api from '../../helpers/api';
 	import common from '../../helpers/common';
@@ -198,7 +197,6 @@
 
 	export default defineComponent({
 		name : 'ClientView',
-		mixins: [RedirectToLoginForNoTokens],
 		components : {
 			Tabs,
 			ClientViewInfoSkeleton,

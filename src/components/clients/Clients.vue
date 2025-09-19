@@ -56,9 +56,6 @@
 </style>
 <script lang="ts">
 
-
-	import RedirectToLoginForNoTokens from '../../mixins/RedirectToLoginForNoTokens';
-
 	import SkeletonTable from '../skeletons/SkeletonTable.vue';
 	
 	import { defineComponent } from 'vue';
@@ -116,7 +113,6 @@
 				arrange_columns_loading: false
 			}
 		},
-		mixins: [RedirectToLoginForNoTokens],
 		watch: {
 			
 		},

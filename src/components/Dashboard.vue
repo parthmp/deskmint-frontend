@@ -6,9 +6,6 @@
 
 <script lang="ts">
 
-
-	import RedirectToLoginForNoTokens from '../mixins/RedirectToLoginForNoTokens';
-	
 	import { defineComponent } from 'vue';
 	
 	export default defineComponent({
@@ -23,7 +20,6 @@
 		methods : {
 			
 		},
-		mixins: [RedirectToLoginForNoTokens],
 		mounted : function(){
 			
 		}
