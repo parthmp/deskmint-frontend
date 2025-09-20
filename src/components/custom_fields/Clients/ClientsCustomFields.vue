@@ -7,42 +7,4 @@
 	/* using compositon API */
 	import GeneralIndexPage from '../../blocks/GeneralIndexPage.vue';
 
-	// export interface ClientsCustomFieldsInterface{
-		
-	// }
-
-	// import { defineComponent } from 'vue';
-
-	
-	// import RedirectToLoginForNoTokens from '../../../mixins/RedirectToLoginForNoTokens';
-	// import GeneralIndexPage from '../../blocks/GeneralIndexPage.vue';
-	
-	
-	// export default defineComponent({
-
-	// 	name: 'ClientsCustomFields',
-
-	// 	components: {
-	// 		GeneralIndexPage
-	// 	},
-
-	// 	data() : ClientsCustomFieldsInterface {
-	// 		return {
-				
-	// 		}
-	// 	},
-
-	// 	mixins: [RedirectToLoginForNoTokens],
-	// 	methods : {
-
-			
-			
-	// 	},
-
-	// 	mounted(){
-			
-	// 	}
-
-	// });
-
 </script>
