@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="random_field_id">{{ local_field_name }}</label>
-		<input type="number" :min="local_min" :max="local_max" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="random_field_id" @input="EmitModel" :class="{'red-input-order': highlight_error}">
+		<input type="number" step="0.01" :min="local_min" :max="local_max" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="random_field_id" @input="EmitModel" :class="{'red-input-order': highlight_error}">
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid number</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
@@ -10,7 +10,7 @@
 <script lang="ts">
 
 	export interface InputNumberInterface{
-		input_value: string,
+		input_value: Number,
 		input_required: boolean,
 		is_valid: boolean,
 		local_error: string,
@@ -30,30 +30,7 @@
 	export default defineComponent({
 
 		name : 'InputNumber',
-
-		props : {
-			modelValue : {
-				type:String
-			},
-			required : {
-				type:Boolean
-			},
-			error : {
-				type :String
-			},
-			field_name: {
-				type:String
-			},
-			placeholder: {
-				type:String
-			},
-			min: {
-				type:Number
-			},
-			max: {
-				type:Number
-			}
-		},
+		props: ['modelValue', 'required', 'error', 'field_name', 'placeholder', 'min', 'max'],
 
 		data() : InputNumberInterface {
 			return {
@@ -99,9 +76,9 @@
 				/* validate here */
 				
 				if(this.input_required === true){
-					
-					this.input_value = common.stripTags(common.sanitize(this.input_value));
-					let temp_value = this.input_value.trim();
+					let temp_value = this.input_value;
+					// this.input_value = common.stripTags(common.sanitize(this.input_value));
+					// let temp_value = this.input_value.trim();
 					if(temp_value !== '' && this.input_value !== null && typeof this.input_value !== 'undefined'){
 						this.is_valid = true;
 					}else{
@@ -112,16 +89,17 @@
 					this.is_valid = true;
 				}
 				
-				this.input_value = this.sanitizeInput(this.input_value);
-				this.$emit('update:modelValue', this.input_value.toLocaleLowerCase());
+				//this.input_value = this.sanitizeInput(this.input_value);
+				this.$emit('update:modelValue', this.input_value);
 				
 				this.$emit('is-valid', this.is_valid);
 				return this.is_valid;
 				
 			},
 			EmitModel(e:any) : void{
-				this.input_value = this.sanitizeInput(e.target.value).toLocaleLowerCase();
-				this.$emit('update:modelValue', this.input_value.toLocaleLowerCase());
+				// this.input_value = this.sanitizeInput(e.target.value).toLocaleLowerCase();
+				// this.$emit('update:modelValue', this.input_value.toLocaleLowerCase());
+				this.$emit('update:modelValue', this.input_value+'');
 			},
 			sanitizeInput(in_string:string) : string{
 				return common.stripTags(common.sanitize(in_string));
@@ -142,7 +120,7 @@
 				
 			}
 
-			this.input_value = this.modelValue;
+			this.input_value = parseFloat(this.modelValue);
 			
 			this.local_error = '';
 			if(common.isset(this.error)){

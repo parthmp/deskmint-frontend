@@ -18,6 +18,7 @@ export default {
 	},
 
 	stripTags(sample:string) : string{
+		return sample;
 		return sample.replace(/<[^>]*>/g, '');
 	},
 

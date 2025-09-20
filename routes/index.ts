@@ -23,6 +23,9 @@ import Clients from '../src/components/clients/Clients.vue';
 import ClientCreateEdit from '../src/components/clients/ClientCreateEdit.vue';
 import ClientView from '../src/components/clients/ClientView.vue';
 
+import Products from '../src/components/products/Products.vue';
+import ProductsCreateEdit from '../src/components/products/ProductsCreateEdit.vue';
+
 
 const routes = [
 	{
@@ -112,6 +115,21 @@ const routes = [
 			{
 				path: '/clients/view/:id',
 				component: ClientView,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/products',
+				component: Products,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/products/create',
+				component: ProductsCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/products/edit/:id',
+				component: ProductsCreateEdit,
 				meta: { requires_auth: true }
 			}
 		]

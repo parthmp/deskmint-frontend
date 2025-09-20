@@ -297,7 +297,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -354,7 +354,8 @@ export default defineComponent({
 		IconUsersGroup:IconUsersGroup,
 		IconUserShield:IconUserShield,
 		IconSquarePlus2:IconSquarePlus2,
-		IconCircleDotted:IconCircleDotted
+		IconCircleDotted:IconCircleDotted,
+		IconPackages:IconPackages
 	},
 	data() : PanelData{
 		return {
@@ -389,6 +390,16 @@ export default defineComponent({
 						icon: 'IconUsersGroup',
 						icon_size: 22,
 						menu_text: 'Clients',
+						has_submenu : false,
+						show_submenu : false,
+						is_active: false,
+						submenu: []
+					},
+					{
+						path: '/products',
+						icon: 'IconPackages',
+						icon_size: 22,
+						menu_text: 'Products',
 						has_submenu : false,
 						show_submenu : false,
 						is_active: false,
