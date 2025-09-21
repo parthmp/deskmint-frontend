@@ -8,6 +8,7 @@
 			<div class="clear-both"></div>
 			
 			<br>
+			<product-edit-skeleton v-if="data.data_loading"></product-edit-skeleton>
 
 			<form v-if="!data.data_loading" @submit.prevent="createClientCustomField" class="form">
 				<div class="lg:grid lg:grid-cols-12 gap-5">
@@ -44,11 +45,11 @@
 	import api from '../../helpers/api';
 	import { useRoute, useRouter } from 'vue-router';
 	import common from '../../helpers/common';
+
+	import ProductEditSkeleton from '../skeletons/ProductEditSkeleton.vue';
 	
 	const route = useRoute();
 	const router = useRouter();
-
-	let pause_watchers = ref(false);
 
 	/* interfaces */
 	interface ProductData{
@@ -93,7 +94,7 @@
 
 	/* watchers */
 	watch(() => data.product_name.value, () => {
-		if(!pause_watchers.value){
+		if(!data.data_loading){
 			let product_name_v = product_name_ref.value?.validate() ?? false;
 			data.product_name.error = '';
 			if(!product_name_v){
@@ -140,10 +141,10 @@
 
 	const fetchProduct = (id:number) : void => {
 		
-		pause_watchers.value = true;
+		data.data_loading = true;
 
 		api.get('manage-products/'+id).then(response => {
-			
+
 			data.product_name.value = response.data.product_name;
 			data.price = response.data.price;
 			data.sku = response.data.sku;
@@ -153,7 +154,7 @@
 		}).catch(error => {
 
 		}).finally(() => {
-			pause_watchers.value = false;
+			data.data_loading = false;
 		});
 
 	}
@@ -165,7 +166,6 @@
 		let temp_id = route.params.id;
 		if(common.isset(temp_id)){
 			if(temp_id !== ''){
-				pause_watchers.value = true;
 				data.id = Array.isArray(temp_id) ? temp_id[0] : temp_id ?? '';
 				data.mode = 'edit';
 				fetchProduct(temp_id);

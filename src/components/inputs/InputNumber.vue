@@ -126,7 +126,7 @@
 				
 			}
 
-			
+			this.fillMe();
 			
 			this.local_error = '';
 			if(common.isset(this.error)){
