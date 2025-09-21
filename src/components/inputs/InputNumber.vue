@@ -60,6 +60,9 @@
 					this.local_error = this.error || '';
 				}
 			
+			},
+			modelValue() : void{
+				this.fillMe();
 			}
 		},
 
@@ -70,6 +73,9 @@
 		},
 
 		methods: {
+			fillMe() : void{
+				this.input_value = parseFloat(this.modelValue);
+			},
 			validate() : boolean{
 				
 				//this.show_errors = false;
@@ -120,7 +126,7 @@
 				
 			}
 
-			this.input_value = parseFloat(this.modelValue);
+			
 			
 			this.local_error = '';
 			if(common.isset(this.error)){

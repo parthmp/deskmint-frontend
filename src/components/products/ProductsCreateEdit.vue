@@ -48,6 +48,8 @@
 	const route = useRoute();
 	const router = useRouter();
 
+	let pause_watchers = ref(false);
+
 	/* interfaces */
 	interface ProductData{
 		data_loading: boolean,
@@ -91,10 +93,12 @@
 
 	/* watchers */
 	watch(() => data.product_name.value, () => {
-		let product_name_v = product_name_ref.value?.validate() ?? false;
-		data.product_name.error = '';
-		if(!product_name_v){
-			data.product_name.error = 'Please enter product name';
+		if(!pause_watchers.value){
+			let product_name_v = product_name_ref.value?.validate() ?? false;
+			data.product_name.error = '';
+			if(!product_name_v){
+				data.product_name.error = 'Please enter product name';
+			}
 		}
 	});
 
@@ -134,6 +138,26 @@
 		}
 	}
 
+	const fetchProduct = (id:number) : void => {
+		
+		pause_watchers.value = true;
+
+		api.get('manage-products/'+id).then(response => {
+			
+			data.product_name.value = response.data.product_name;
+			data.price = response.data.price;
+			data.sku = response.data.sku;
+			data.description = response.data.description;
+
+			
+		}).catch(error => {
+
+		}).finally(() => {
+			pause_watchers.value = false;
+		});
+
+	}
+
 	
 
 	/* lifecycle hooks */
@@ -141,8 +165,10 @@
 		let temp_id = route.params.id;
 		if(common.isset(temp_id)){
 			if(temp_id !== ''){
+				pause_watchers.value = true;
 				data.id = Array.isArray(temp_id) ? temp_id[0] : temp_id ?? '';
 				data.mode = 'edit';
+				fetchProduct(temp_id);
 			}
 		}
 	});
