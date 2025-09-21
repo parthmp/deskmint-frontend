@@ -42,9 +42,11 @@
 	import InputNumber from '../inputs/InputNumber.vue';
 	import { toastEvents } from '../../events/toastEvents';
 	import api from '../../helpers/api';
-	import { useRoute } from 'vue-router';
-import common from '../../helpers/common';
+	import { useRoute, useRouter } from 'vue-router';
+	import common from '../../helpers/common';
+	
 	const route = useRoute();
+	const router = useRouter();
 
 	/* interfaces */
 	interface ProductData{
@@ -108,14 +110,14 @@ import common from '../../helpers/common';
 			if(data.mode === 'edit'){
 				post_url += '/'+data.id
 			}
-			
-			sendRequest(data.mode === 'edit' ? 'patch' : 'post', post_url, {
+
+			common.sendRequest(data.mode === 'edit' ? 'patch' : 'post', post_url, {
 				product_name: data.product_name.value,
 				price: data.price,
 				sku: data.sku,
 				description: data.description
 			}).then(response => {
-				
+				router.push('/products');
 			}).catch(error => {
 				
 			}).finally(() => {
@@ -132,9 +134,7 @@ import common from '../../helpers/common';
 		}
 	}
 
-	function sendRequest(method: 'post' | 'patch', url: string, data: any) {
-		return method === 'post' ? api.post(url, data) : api.patch(url, data);
-	}
+	
 
 	/* lifecycle hooks */
 	onMounted(() :void => {

@@ -3,6 +3,7 @@ import { Capacitor } from '@capacitor/core';
 import { env } from "../env";
 
 import { Device } from '@capacitor/device';
+import api from "./api";
 
 export default {
 	sanitize(value: any): string {
@@ -260,6 +261,10 @@ export default {
 		}
 
 		return { hours, minutes, seconds };
+	},
+
+	sendRequest(method: 'post' | 'patch', url: string, data: any) {
+		return method === 'post' ? api.post(url, data) : api.patch(url, data);
 	}
 
 
