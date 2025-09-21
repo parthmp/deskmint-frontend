@@ -139,7 +139,7 @@
 		}
 	}
 
-	const fetchProduct = (id:number) : void => {
+	const fetchProduct = (id:string) : void => {
 		
 		data.data_loading = true;
 
@@ -168,7 +168,7 @@
 			if(temp_id !== ''){
 				data.id = Array.isArray(temp_id) ? temp_id[0] : temp_id ?? '';
 				data.mode = 'edit';
-				fetchProduct(temp_id);
+				fetchProduct(data.id);
 			}
 		}
 	});
