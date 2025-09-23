@@ -297,7 +297,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -355,7 +355,10 @@ export default defineComponent({
 		IconUserShield:IconUserShield,
 		IconSquarePlus2:IconSquarePlus2,
 		IconCircleDotted:IconCircleDotted,
-		IconPackages:IconPackages
+		IconPackages:IconPackages,
+		IconFileDollar:IconFileDollar,
+		IconScript:IconScript,
+		IconUsers:IconUsers
 	},
 	data() : PanelData{
 		return {
@@ -416,17 +419,43 @@ export default defineComponent({
 						submenu: [
 							{
 								path: '/custom-fields/clients',
-								icon: 'IconCircleDotted',
+								icon: 'IconUsers',
 								icon_size: 22,
 								is_active: false,
 								menu_text: 'CF - Clients'
 							},
 							{
+								path: '/custom-fields/invoices',
+								icon: 'IconFileDollar',
+								icon_size: 22,
+								is_active: false,
+								menu_text: 'CF - Invoices'
+							},
+							{
 								path: '/custom-fields/manage-field-types',
-								icon: 'IconCircleDotted',
+								icon: 'IconScript',
 								icon_size: 22,
 								is_active: false,
 								menu_text: 'Field Types'
+							}
+							
+						]
+					},
+					{
+						path: '',
+						icon: 'IconSettings',
+						icon_size: 22,
+						menu_text: 'Settings',
+						has_submenu : true,
+						show_submenu : false,
+						is_active: false,
+						submenu: [
+							{
+								path: '/settings/invoice',
+								icon: 'IconFileDollar',
+								icon_size: 22,
+								is_active: false,
+								menu_text: 'Invoice'
 							}
 							
 						]
