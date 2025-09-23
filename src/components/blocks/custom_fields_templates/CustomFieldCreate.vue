@@ -34,7 +34,7 @@
 						<input-text label="Default value" :required="false" prop_placeholder="Default value" v-model="default_value.value" :error="default_value.error" ref="gen_default_value"></input-text>
 					</div>
 					<div class="lg:col-span-4 mt-[20px]">
-						<input-number :min="0" :max="999999" field_name="Add Edit page order" :required="true" placeholder="Enter field order number" v-model="add_edit_page_order.value" :error="add_edit_page_order.error" ref="add_edit_page_order"></input-number>
+						<input-number :min="0" :max="999999" :step="1" field_name="Add Edit page order" :required="true" placeholder="Enter field order number" v-model="add_edit_page_order.value" :error="add_edit_page_order.error" ref="gen_add_edit_page_order"></input-number>
 					</div>
 				</div>
 				
@@ -169,6 +169,16 @@
 				}
 
 				this.$refs.gen_select_options.validate();
+			},
+			"add_edit_page_order.value"() : void{
+
+				if(this.add_edit_page_order.value+''.trim() !== ''){
+					this.add_edit_page_order.error = '';
+				}else{
+					this.add_edit_page_order.error = 'Please enter a valid number for add Edit page order';
+				}
+
+				this.$refs.gen_add_edit_page_order.validate();
 			}
 		},
 
@@ -180,11 +190,11 @@
 				let input_field_validated = this.$refs.gen_custom_field.validate();
 				let label_validated = this.$refs.gen_label.validate();
 				let is_required_validated = this.$refs.gen_required_flag.validate();
-				
+				let add_edit_page_order_validated = this.$refs.gen_add_edit_page_order.validate();
 				let select_options_validated = this.$refs.gen_select_options.validate();
 
 
-				if(input_field_validated && label_validated && is_required_validated && select_options_validated){
+				if(input_field_validated && label_validated && is_required_validated && select_options_validated && add_edit_page_order_validated){
 					this.label.error = '';
 					let label_trimmed = this.label.value.trim();
 					if(label_trimmed.length > 50){

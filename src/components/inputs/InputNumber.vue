@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="random_field_id">{{ local_field_name }}</label>
-		<input type="number" step="0.01" :min="local_min" :max="local_max" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="random_field_id" @input="EmitModel" :class="{'red-input-order': highlight_error}">
+		<input type="number" :step="local_step" :min="local_min" :max="local_max" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="random_field_id" @input="EmitModel" :class="{'red-input-order': highlight_error}">
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid number</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
@@ -20,7 +20,8 @@
 		random_field_id: string,
 		local_placeholder: string,
 		local_min: number,
-		local_max: number
+		local_max: number,
+		local_step: number
 	}
 
 	import common from '../../helpers/common';
@@ -30,7 +31,7 @@
 	export default defineComponent({
 
 		name : 'InputNumber',
-		props: ['modelValue', 'required', 'error', 'field_name', 'placeholder', 'min', 'max'],
+		props: ['modelValue', 'required', 'error', 'field_name', 'placeholder', 'min', 'max', 'step'],
 
 		data() : InputNumberInterface {
 			return {
@@ -44,7 +45,8 @@
 				random_field_id: '',
 				local_placeholder: '',
 				local_min: 0,
-				local_max: 99999999999999
+				local_max: 99999999999999,
+				local_step : 1
 			};
 		},
 
@@ -75,6 +77,9 @@
 		methods: {
 			fillMe() : void{
 				this.input_value = parseFloat(this.modelValue);
+				if(common.isset(this.step)){
+					this.local_step = this.step;
+				}
 			},
 			validate() : boolean{
 				

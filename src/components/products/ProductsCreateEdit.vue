@@ -16,7 +16,7 @@
 						<input-text label="Product name" prop_placeholder="Enter product name" :required="true" v-model="data.product_name.value" :error="data.product_name.error" ref="product_name_ref"></input-text>
 					</div>
 					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-						<input-number field_name="Price" :required="false" prop_placeholder="Enter price" v-model="data.price" ref="price_ref"></input-number>
+						<input-number :step="0.01" field_name="Price" :required="false" prop_placeholder="Enter price" v-model="data.price" ref="price_ref"></input-number>
 					</div>
 					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
 						<input-text label="SKU" prop_placeholder="Enter SKU" :required="false" v-model="data.sku" ref="sku_ref"></input-text>
