@@ -16,8 +16,7 @@ import ManageCustomFieldTypesCreate from '../src/components/custom_fields/manage
 import ManageCustomFieldTypesEdit from '../src/components/custom_fields/manage_types/ManageCustomFieldTypesEdit.vue';
 
 import ClientsCustomFields from '../src/components/custom_fields/Clients/ClientsCustomFields.vue';
-import ClientsCustomFieldsCreate from '../src/components/custom_fields/Clients/ClientsCustomFieldsCreate.vue';
-import ClientsCustomFieldsEdit from '../src/components/custom_fields/Clients/ClientsCustomFieldsEdit.vue';
+import ClientsCustomFieldsCreateEdit from '../src/components/custom_fields/Clients/ClientsCustomFieldsCreateEdit.vue';
 
 import InvoicesCustomFields from '../src/components/custom_fields/invoices/InvoicesCustomFields.vue';
 import InvoicesCustomFieldsCreateEdit from '../src/components/custom_fields/invoices/InvoicesCustomFieldsCreateEdit.vue';
@@ -77,12 +76,12 @@ const routes = [
 			},
 			{
 				path:'/custom-fields/clients/create',
-				component: ClientsCustomFieldsCreate,
+				component: ClientsCustomFieldsCreateEdit,
 				meta: { requires_auth: true }
 			},
 			{
 				path:'/custom-fields/clients/edit/:id',
-				component: ClientsCustomFieldsEdit,
+				component: ClientsCustomFieldsCreateEdit,
 				meta: { requires_auth: true }
 			},
 			{
