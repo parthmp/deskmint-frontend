@@ -1,7 +1,8 @@
 <template>
 	<section class="main-content">
 		<div class="card">
-			<h1 class="text-2xl!">{{ title }}</h1>
+			<h1 class="text-2xl!" v-if="mode === 'create'">{{ title }}</h1>
+			<h1 class="text-2xl!" v-if="mode === 'edit'">{{ update_title }}</h1>
 			
 			<input-button class="lg:float-start" btn_text="Back" :url="'/custom-fields/'+slug" icon="IconCaretLeft"></input-button>
 			<div class="clear-both"></div>
@@ -11,7 +12,7 @@
 
 			<clients-custom-fields-create-skeleton v-if="data_loading"></clients-custom-fields-create-skeleton>
 			
-			<form v-if="!data_loading" @submit.prevent="createClientCustomField" class="form">
+			<form v-if="!data_loading" @submit.prevent="createGenCustomField" class="form">
 
 				
 				<div class="lg:grid lg:grid-cols-12 gap-5">
@@ -52,7 +53,7 @@
 
 <script lang="ts">
 
-	export interface CustomFieldCreateInterface{
+	export interface CustomFieldCreateEditInterface{
 		data_loading:boolean,
 		btn_disabled:boolean,
 		input_fields_options: Array<any>,
@@ -65,7 +66,9 @@
 		add_edit_page_order: any,
 		select_options: object,
 		show_options_textarea: boolean,
-		show_options_textarea_required: boolean
+		show_options_textarea_required: boolean,
+		update_id: string,
+		past_label: string
 	}
 
 	import { defineComponent } from 'vue';
@@ -84,7 +87,7 @@
 	
 	export default defineComponent({
 
-		name: 'CustomFieldCreate',
+		name: 'CustomFieldCreateEdit',
 
 		components: {
 			InputButton,
@@ -95,9 +98,9 @@
 			ClientsCustomFieldsCreateSkeleton
 		},
 
-		props: ['title', 'slug'],
+		props: ['title', 'update_title','slug'],
 
-		data() : CustomFieldCreateInterface {
+		data() : CustomFieldCreateEditInterface {
 			return {
 				data_loading : false,
 				btn_disabled: false,
@@ -135,13 +138,16 @@
 					error: 'Please enter options seperated by comma'
 				},
 				show_options_textarea: false,
-				show_options_textarea_required: true
+				show_options_textarea_required: true,
+				mode : 'create',
+				update_id: '',
+				past_label: ''
 			}
 		},
 
 		watch: {
 			custom_field() : void{
-				this.$refs.gen_custom_field.validate();
+				this.$refs?.gen_custom_field?.validate();
 			},
 			"label.value"(): void{
 				if(this.label.value.trim() !== ''){
@@ -154,11 +160,11 @@
 					this.label.error = 'Label is a required field'
 				}
 
-				this.$refs.gen_label.validate();
+				this.$refs?.gen_label?.validate();
 				
 			},
 			required_flag() : void{
-				this.$refs.gen_required_flag.validate();
+				this.$refs?.gen_required_flag?.validate();
 			},
 			"select_options.value"() : void{
 
@@ -168,7 +174,7 @@
 					this.select_options.error = 'Please enter options seperated by comma';
 				}
 
-				this.$refs.gen_select_options.validate();
+				this.$refs?.gen_select_options?.validate();
 			},
 			"add_edit_page_order.value"() : void{
 
@@ -178,12 +184,12 @@
 					this.add_edit_page_order.error = 'Please enter a valid number for add Edit page order';
 				}
 
-				this.$refs.gen_add_edit_page_order.validate();
+				this.$refs?.gen_add_edit_page_order?.validate();
 			}
 		},
 
 		methods : {
-			createClientCustomField() : void{
+			createGenCustomField() : void{
 				
 				this.btn_disabled = true;
 
@@ -192,7 +198,10 @@
 				let is_required_validated = this.$refs.gen_required_flag.validate();
 				let add_edit_page_order_validated = this.$refs.gen_add_edit_page_order.validate();
 				let select_options_validated = this.$refs.gen_select_options.validate();
-
+				
+				if(!add_edit_page_order_validated){
+					this.add_edit_page_order.error = 'Please enter a valid number for add Edit page order';
+				}
 
 				if(input_field_validated && label_validated && is_required_validated && select_options_validated && add_edit_page_order_validated){
 					this.label.error = '';
@@ -207,19 +216,27 @@
 						});
 					}else{
 
-						api.post(this.slug+'-custom-fields', {
+						let post_url = this.slug+'-custom-fields';
+						if(this.mode === 'edit'){
+							post_url += '/'+this.update_id;
+						}
+					
+						common.sendRequest(this.mode === 'edit' ? 'patch' : 'post', post_url, {
 							input_field: this.custom_field,
 							label:this.label.value,
 							placeholder: this.placeholder.value,
 							is_required: this.required_flag,
 							default_value: this.default_value.value,
 							add_edit_page_order: this.add_edit_page_order.value,
-							select_options: this.select_options.value
-						}).then((response) => {
+							select_options: this.select_options.value,
+							past_label : this.past_label
+						}).then(response => {
 							this.btn_disabled = false;
 							this.$router.push('/custom-fields/'+this.slug);
-						}).catch((error) => {
+						}).catch(error => {
 							this.btn_disabled = false;
+						}).finally(() => {
+							
 						});
 
 					}
@@ -240,11 +257,17 @@
 				
 			},
 
-			fetchFields() : void{
+			fetchFields(mode:string, id:string) : void{
+				
 				this.data_loading = true;
 				api.get(this.slug+'-custom-fields/fetch-field-types').then((response) => {
 					this.input_fields_options = response.data;
-					this.data_loading = false;
+					if(mode === 'create'){
+						this.data_loading = false;
+					}else{
+						this.fetchCustomFieldData(id);
+					}
+					
 				}).catch((error) => {});
 			},
 
@@ -259,12 +282,61 @@
 					}
 				}
 				
+			},
+
+			fetchCustomFieldData(id:string) : void{
+				api.get(this.slug+'-custom-fields/'+id).then((response) => {
+
+					let data = response.data;
+					
+					this.custom_field = data.custom_field_type_id+'';
+					this.label.value = data.label;
+					this.past_label = data.label;
+					this.placeholder.value = data.placeholder;
+					if(data.required === 0){
+						this.required_flag = 'false';
+					}else{
+						this.required_flag = 'true';
+					}
+					
+					this.default_value.value = data.default_value;
+
+					if(data.show_on_index_page === 0){
+						this.show_on_index = 'false';
+					}else{
+						this.show_on_index = 'true';
+					}
+					
+					this.add_edit_page_order.value = data.order_on_add_edit_page+'';
+					
+					this.show_options_textarea_required = false;
+					
+					this.changeEventFired(data.custom_field_type);
+					
+					if(data.custom_field_type.input_type === 'select' || data.custom_field_type.input_type === 'multiselect'){
+						this.select_options.value = data.type_params;
+						this.show_options_textarea = true;
+						this.show_options_textarea_required = true;
+					}
+					
+				}).catch((error) => {
+
+				}).finally(() => {
+					this.data_loading = false;
+				});
 			}
 
 		},
 
 		mounted(){
-			this.fetchFields();
+
+			let id = this.$route.params.id;
+			this.update_id = id;
+			if(common.isset(id)){
+				this.mode = 'edit';
+			}
+
+			this.fetchFields(this.mode, id);
 		}
 
 	});

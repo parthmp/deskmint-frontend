@@ -20,7 +20,7 @@ import ClientsCustomFieldsCreate from '../src/components/custom_fields/Clients/C
 import ClientsCustomFieldsEdit from '../src/components/custom_fields/Clients/ClientsCustomFieldsEdit.vue';
 
 import InvoicesCustomFields from '../src/components/custom_fields/invoices/InvoicesCustomFields.vue';
-import InvoicesCustomFieldsCreate from '../src/components/custom_fields/invoices/InvoicesCustomFieldsCreate.vue';
+import InvoicesCustomFieldsCreateEdit from '../src/components/custom_fields/invoices/InvoicesCustomFieldsCreateEdit.vue';
 
 import Clients from '../src/components/clients/Clients.vue';
 import ClientCreateEdit from '../src/components/clients/ClientCreateEdit.vue';
@@ -92,7 +92,12 @@ const routes = [
 			},
 			{
 				path:'/custom-fields/invoices/create',
-				component: InvoicesCustomFieldsCreate,
+				component: InvoicesCustomFieldsCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
+				path:'/custom-fields/invoices/edit/:id',
+				component: InvoicesCustomFieldsCreateEdit,
 				meta: { requires_auth: true }
 			},
 			{

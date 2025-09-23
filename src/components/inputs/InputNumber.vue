@@ -88,14 +88,20 @@
 				
 				if(this.input_required === true){
 					let temp_value = this.input_value;
-					// this.input_value = common.stripTags(common.sanitize(this.input_value));
-					// let temp_value = this.input_value.trim();
-					if(temp_value !== '' && this.input_value !== null && typeof this.input_value !== 'undefined'){
-						this.is_valid = true;
-					}else{
+					if(isNaN(temp_value)){
 						this.is_valid = false;
 						this.show_errors = true;
+					}else{
+						// this.input_value = common.stripTags(common.sanitize(this.input_value));
+						// let temp_value = this.input_value.trim();
+						if(temp_value !== '' && this.input_value !== null && typeof this.input_value !== 'undefined'){
+							this.is_valid = true;
+						}else{
+							this.is_valid = false;
+							this.show_errors = true;
+						}
 					}
+					
 				}else{
 					this.is_valid = true;
 				}
