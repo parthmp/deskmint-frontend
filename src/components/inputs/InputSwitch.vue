@@ -40,7 +40,9 @@
 
 		},
 		watch: {
-
+			modelValue() : void{
+				this.fillMe();
+			}
 		},
 
 		computed : {
@@ -54,14 +56,17 @@
 			},
 			EmitModel() : void{
 				this.$emit('update:modelValue', this.input_value);
+			},
+			fillMe() : void{
+				if(common.isset(this.modelValue)){
+					this.input_value = this.modelValue;
+				}
 			}
 		},
 
 		mounted(){
 
-			if(common.isset(this.modelValue)){
-				this.input_value = this.modelValue;
-			}
+			this.fillMe();
 			this.EmitModel();
 		}
 

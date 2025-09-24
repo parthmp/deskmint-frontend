@@ -28,6 +28,8 @@ import ClientView from '../src/components/clients/ClientView.vue';
 import Products from '../src/components/products/Products.vue';
 import ProductsCreateEdit from '../src/components/products/ProductsCreateEdit.vue';
 
+import InvoiceSettings from '../src/components/settings/invoice/InvoiceSettings.vue';
+
 
 const routes = [
 	{
@@ -147,6 +149,11 @@ const routes = [
 			{
 				path: '/products/edit/:id',
 				component: ProductsCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/settings/invoice',
+				component: InvoiceSettings,
 				meta: { requires_auth: true }
 			}
 		]
