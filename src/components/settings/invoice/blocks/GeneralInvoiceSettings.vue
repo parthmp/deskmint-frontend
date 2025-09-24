@@ -18,10 +18,10 @@
 
 		<div class="lg:grid lg:grid-cols-12 gap-5 mt-[20px]">
 			<div class="lg:col-span-6">
-				primary color
+				<input-color label="Primary color" :required="true" v-model="data.primary_color" :alpha="false" :location="'bottom'" ref="gid_primacy_color"></input-color>
 			</div>
 			<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
-				secondary color
+				<input-color label="Secondry color" :required="true" v-model="data.secondary_color" :alpha="false" :location="'bottom'" ref="gid_secondary_color"></input-color>
 			</div>
 		</div>
 
@@ -30,27 +30,44 @@
 				<span><input-switch v-model="data.e_invoice_value"></input-switch></span>
 				<span @click="data.e_invoice_value = !data.e_invoice_value">&nbsp;E invoice on/off</span>
 			</div>
-			
 		</div>
+
+		<input-button btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
+		<div class="clear-both"></div>
 
 	</div>
 </template>
 <script lang="ts" setup>
 	
-	import { onMounted, reactive } from 'vue';
+	import { onMounted, reactive, ref } from 'vue';
 	import InputSelect from '../../../inputs/InputSelect.vue';
 	import InputNumber from '../../../inputs/InputNumber.vue';
 	import InputSwitch from '../../../inputs/InputSwitch.vue';
+	import InputColor from '../../../inputs/InputColor.vue';
+	import InputButton from '../../../inputs/InputButton.vue';
 
+	/* intarfaces */
 	interface GeneralInvoiceSettingsInterface{
 		invoice_templates: Array<object>,
 		template_value: string,
 		font_sizes: Array<object>,
 		font_size_value: string,
 		logo_size_value: string,
-		e_invoice_value:boolean
+		e_invoice_value:boolean,
+		primary_color:string,
+		secondary_color:string,
+		btn_disabled:boolean
 	}
 
+	interface InputComponent{
+  		validate: () => boolean
+	}
+	
+
+	/* refs */
+	const gid_primacy_color = ref<InputComponent | null>(null);
+
+	/* data */
 	const data = reactive<GeneralInvoiceSettingsInterface>({
 		invoice_templates : [ /* fetch this from the backend */
 			{
@@ -66,10 +83,16 @@
 		font_sizes : [],
 		font_size_value : '',
 		logo_size_value : '',
-		e_invoice_value : false
+		e_invoice_value : false,
+		primary_color: '#e7e7e7',
+		secondary_color: '#118B65',
+		btn_disabled: false
 		
 	});
 
+	/* methods */
+
+	/* hooks */
 	onMounted(() => {
 		for(let z = 6 ; z < 40 ; z++){
 			if(z%2 === 0){
