@@ -23,6 +23,7 @@
 
 	import Tabs from '../../UI/Tabs.vue';
 	import GeneralInvoiceSettings from './blocks/GeneralInvoiceSettings.vue';
+	import InputButton from '../../inputs/InputButton.vue';
 
 	interface InvoiceSettingsInterface{
 		tab_options : Array<string>

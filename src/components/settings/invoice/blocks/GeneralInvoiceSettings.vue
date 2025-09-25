@@ -45,6 +45,8 @@
 	import InputSwitch from '../../../inputs/InputSwitch.vue';
 	import InputColor from '../../../inputs/InputColor.vue';
 	import InputButton from '../../../inputs/InputButton.vue';
+	import api from '../../../../helpers/api';
+	import common from '../../../../helpers/common';
 
 	/* intarfaces */
 	interface GeneralInvoiceSettingsInterface{
@@ -69,16 +71,7 @@
 
 	/* data */
 	const data = reactive<GeneralInvoiceSettingsInterface>({
-		invoice_templates : [ /* fetch this from the backend */
-			{
-				text: 'Plain',
-				value: 'plain'
-			},
-			{
-				text: 'Stylish',
-				value: 'stylish'
-			}
-		],
+		invoice_templates : [],
 		template_value : '',
 		font_sizes : [],
 		font_size_value : '',
@@ -91,6 +84,40 @@
 	});
 
 	/* methods */
+	const fetchInvoiceGeneralSettings = () : void => {
+		api.get('manage-invoice-settings').then(response => {
+			response.data.templates.forEach((file:string) => {
+				data.invoice_templates.push({
+					text: common.capitalizeFirstLetter(file),
+					value: file
+				});
+			});
+			data.template_value = response.data.settings.template;
+			data.font_size_value = response.data.settings.font_size;
+			data.logo_size_value = response.data.settings.logo_size;
+			data.primary_color = response.data.settings.primary_color;
+			data.secondary_color = response.data.settings.secondary_color;
+		}).catch(error => {
+
+		});
+	}
+
+	const saveInvoiceGeneralSettings = () : void => {
+		data.btn_disabled = true;
+		api.post('manage-invoice-settings', {
+			template : data.template_value,
+			font_size : data.font_size_value,
+			logo_size : data.logo_size_value,
+			primary_color : data.primary_color,
+			secondary_color : data.secondary_color,
+		}).then(response => {
+			
+		}).catch(error => {
+
+		}).finally(() => {
+			data.btn_disabled = false;
+		});
+	}
 
 	/* hooks */
 	onMounted(() => {
@@ -102,6 +129,8 @@
 				});
 			}
 		}
+
+		fetchInvoiceGeneralSettings();
 	});
 
 </script>

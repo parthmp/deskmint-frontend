@@ -76,7 +76,7 @@
 			
 			},
 			modelValue() : void{
-				
+				this.fillMe();
 			}
 		},
 
@@ -89,6 +89,11 @@
 		},
 
 		methods: {
+
+			fillMe() : void{
+				this.input_value = this.modelValue || '';
+			},
+
 			validate() : boolean{
 				
 			
@@ -143,7 +148,8 @@
 				this.is_valid = false;
 				
 			}
-			this.input_value = this.modelValue || '';
+			
+			this.fillMe();
 			
 			this.local_error = '';
 			if(common.isset(this.error)){

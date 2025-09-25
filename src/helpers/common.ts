@@ -265,6 +265,11 @@ export default {
 
 	sendRequest(method: 'post' | 'patch', url: string, data: any) {
 		return method === 'post' ? api.post(url, data) : api.patch(url, data);
+	},
+
+	capitalizeFirstLetter(str:string) {
+		if (!str) return '';
+		return str.charAt(0).toUpperCase() + str.slice(1);
 	}
 
 
