@@ -69,7 +69,7 @@
 			
 			},
 			modelValue() : void{
-				this.input_value = this.modelValue;
+				this.input_value = this.modelValue?.trim() || '';
 			}
 		},
 

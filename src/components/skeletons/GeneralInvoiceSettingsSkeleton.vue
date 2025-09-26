@@ -1,5 +1,5 @@
 <template>
-	<div class="lg:grid lg:grid-cols-12 gap-">
+	<div class="lg:grid lg:grid-cols-12 gap-5">
 		<div class="lg:col-span-6">
 			<div class="h-[40px] animate-[pulse_1s_ease-in-out_infinite] bg-deskmint-loading rounded-lg w-full"></div>
 		</div>

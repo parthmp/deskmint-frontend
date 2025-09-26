@@ -125,15 +125,15 @@
 
 		let valid = true;
 
-		if(!gid_invoice_template.value.validate()){
+		if(!gid_invoice_template.value?.validate()){
 			valid = false;
 			data.template.error = 'Please select a template';
 		}
-		if(!gid_invoice_font_size.value.validate()){
+		if(!gid_invoice_font_size.value?.validate()){
 			valid = false;
 			data.font_size.error = 'Please select font size';
 		}
-		if(!gid_invoice_logo_size.value.validate()){
+		if(!gid_invoice_logo_size.value?.validate()){
 			valid = false;
 			data.logo_size.error = 'Please enter logo size';
 		}
