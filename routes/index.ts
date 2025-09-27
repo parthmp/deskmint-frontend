@@ -29,6 +29,8 @@ import Products from '../src/components/products/Products.vue';
 import ProductsCreateEdit from '../src/components/products/ProductsCreateEdit.vue';
 
 import InvoiceSettings from '../src/components/settings/invoice/InvoiceSettings.vue';
+import NumbersInvoiceSettings from '../src/components/settings/invoice/blocks/NumbersInvoiceSettings.vue';
+import GeneralInvoiceSettings from '../src/components/settings/invoice/blocks/GeneralInvoiceSettings.vue';
 
 
 const routes = [
@@ -154,7 +156,24 @@ const routes = [
 			{
 				path: '/settings/invoice',
 				component: InvoiceSettings,
-				meta: { requires_auth: true }
+				meta: { requires_auth: true },
+				children : [
+					{
+						path: '/settings/invoice',
+						component: GeneralInvoiceSettings,
+						meta: { requires_auth: true }
+					},
+					{
+						path: '/settings/invoice/general',
+						component: GeneralInvoiceSettings,
+						meta: { requires_auth: true }
+					},
+					{
+						path: '/settings/invoice/numbers',
+						component: NumbersInvoiceSettings,
+						meta: { requires_auth: true }
+					}
+				]
 			}
 		]
 	}
