@@ -422,14 +422,14 @@ export default defineComponent({
 								icon: 'IconUsers',
 								icon_size: 22,
 								is_active: false,
-								menu_text: 'CF - Clients'
+								menu_text: 'Clients'
 							},
 							{
 								path: '/custom-fields/invoices',
 								icon: 'IconFileDollar',
 								icon_size: 22,
 								is_active: false,
-								menu_text: 'CF - Invoices'
+								menu_text: 'Invoices'
 							},
 							{
 								path: '/custom-fields/manage-field-types',

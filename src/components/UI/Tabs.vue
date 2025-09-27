@@ -73,7 +73,7 @@
 					return option_text_modified === path_array[path_array.length-1];
 				}
 
-				return false
+				return false;
 			},
 			is_item_can_be_active(index:number) : boolean{
 				this.is_locked = true;

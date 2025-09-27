@@ -31,6 +31,7 @@ import ProductsCreateEdit from '../src/components/products/ProductsCreateEdit.vu
 import InvoiceSettings from '../src/components/settings/invoice/InvoiceSettings.vue';
 import NumbersInvoiceSettings from '../src/components/settings/invoice/blocks/NumbersInvoiceSettings.vue';
 import GeneralInvoiceSettings from '../src/components/settings/invoice/blocks/GeneralInvoiceSettings.vue';
+import ClientDetailsInvoiceSettings from '../src/components/settings/invoice/blocks/ClientDetailsInvoiceSettings.vue';
 
 
 const routes = [
@@ -171,6 +172,11 @@ const routes = [
 					{
 						path: '/settings/invoice/numbers',
 						component: NumbersInvoiceSettings,
+						meta: { requires_auth: true }
+					},
+					{
+						path: '/settings/invoice/client-details',
+						component: ClientDetailsInvoiceSettings,
 						meta: { requires_auth: true }
 					}
 				]
