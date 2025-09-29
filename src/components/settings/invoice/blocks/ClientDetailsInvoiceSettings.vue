@@ -1,11 +1,24 @@
 <template>
-	<p class="pl-1">Arrange how you want to display client details in the invoice</p>
-	<input-select label="Add a field" v-model="data.dropdown_value" :options="data.dropdown_fields" prop_placeholder="Select" @changed="dropDownChanged"></input-select>
-	<br>
-	<p class="pl-1 pb-0">Drag and drop fields below to arrange</p>
-	<draggable-list v-model="data.rows" :delete="true" @deleted="rowDeleted"></draggable-list>
-	<input-button @click.prevent="saveClientDetailsSettings" btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
-	<div class="clear-both"></div>
+	<div>
+		<div v-if="data.loading">
+			<client-details-invoice-settings-skeleton></client-details-invoice-settings-skeleton>
+		</div>
+		
+		<div v-if="!data.loading">
+			<p class="pl-1">Arrange how you want to display client details in the invoice</p>
+		
+			<input-select label="Add a field" v-model="data.dropdown_value" :options="data.dropdown_fields" prop_placeholder="Select" @changed="dropDownChanged"></input-select>
+			<br>
+			
+			<p class="pl-1 pb-0">Drag and drop fields below to arrange</p>
+			
+			<draggable-list v-model="data.rows" :delete="true" @deleted="rowDeleted"></draggable-list>
+			
+			<input-button @click.prevent="saveClientDetailsSettings" btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
+			<div class="clear-both"></div>
+		</div>
+	</div>
+	
 </template>
 <script lang="ts" setup>
 
@@ -15,11 +28,14 @@
 	import InputSelect from '../../../inputs/InputSelect.vue';
 	import api from '../../../../helpers/api';
 
+	import ClientDetailsInvoiceSettingsSkeleton from '../../../skeletons/ClientDetailsInvoiceSettingsSkeleton.vue';
+
 	interface ClientDetailsInvoiceSettingsInterface{
 		rows : Array<object>,
 		dropdown_fields : Array<object>,
 		dropdown_value : string,
 		btn_disabled : boolean
+		loading : boolean
 	}
 
 	/* data */
@@ -27,14 +43,17 @@
 		rows : [],
 		dropdown_fields : [],
 		dropdown_value : '',
-		btn_disabled: false
+		btn_disabled: false,
+		loading: false
 	});
 
 	/* methods */
 	const fetchCompanyDetailsFields = () : void => {
+		data.loading = true;
 		api.get('manage-invoice-settings-client-details').then(response => {
 			data.rows = response.data.rows;
 			data.dropdown_fields = response.data.dropdown;
+			data.loading = false;
 		}).catch(error => {
 			
 		});
@@ -62,12 +81,13 @@
 	}
 
 	const saveClientDetailsSettings = () : void => {
+		data.btn_disabled = true;
 		api.post('manage-invoice-settings-client-details', {
 			rows : data.rows	
 		}).then(response => {
-			
+			data.btn_disabled = false;
 		}).catch(error => {
-
+			data.btn_disabled = false;
 		});
 	}
 
