@@ -1,35 +1,80 @@
 <template>
-	<p class="pl-1">this is sample test</p>
-	<draggable-list v-model="data.rows"></draggable-list>
-	<input-button @click="displayList" btn_text="test"></input-button>
+	<p class="pl-1">Arrange how you want to display client details in the invoice</p>
+	<input-select label="Add a field" v-model="data.dropdown_value" :options="data.dropdown_fields" prop_placeholder="Select" @changed="dropDownChanged"></input-select>
+	<br>
+	<p class="pl-1 pb-0">Drag and drop fields below to arrange</p>
+	<draggable-list v-model="data.rows" :delete="true" @deleted="rowDeleted"></draggable-list>
+	<input-button @click.prevent="saveClientDetailsSettings" btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
+	<div class="clear-both"></div>
 </template>
 <script lang="ts" setup>
 
-	import { reactive } from 'vue';
+	import { onMounted, reactive } from 'vue';
 	import DraggableList from '../../../UI/DraggableList.vue';
 	import InputButton from '../../../inputs/InputButton.vue';
+	import InputSelect from '../../../inputs/InputSelect.vue';
+	import api from '../../../../helpers/api';
 
-	const data = reactive({
-		rows : [
-			{
-				id : 1,
-				text: 'one'
-			},
-			{
-				id : 2,
-				text: 'two'
-			},
-			{
-				id : 3,
-				text: 'three'
-			}
-		]
+	interface ClientDetailsInvoiceSettingsInterface{
+		rows : Array<object>,
+		dropdown_fields : Array<object>,
+		dropdown_value : string,
+		btn_disabled : boolean
+	}
+
+	/* data */
+	const data = reactive<ClientDetailsInvoiceSettingsInterface>({
+		rows : [],
+		dropdown_fields : [],
+		dropdown_value : '',
+		btn_disabled: false
 	});
 
-	const displayList = () : void => {
-		for(let z = 0 ; z < data.rows.length ; z++){
-			console.log(data.rows[z].text);
-		}
+	/* methods */
+	const fetchCompanyDetailsFields = () : void => {
+		api.get('manage-invoice-settings-client-details').then(response => {
+			data.rows = response.data.rows;
+			data.dropdown_fields = response.data.dropdown;
+		}).catch(error => {
+			
+		});
 	}
+
+	const rowDeleted = (deleted:object) : void => {
+		deleted.id = data.dropdown_fields.length + 2;
+		data.dropdown_fields.push(deleted);
+		data.dropdown_value = '';
+	}
+
+	const dropDownChanged = (object:object) : void => {
+
+		let temp_object = object;
+		
+		object.id = data.rows.length + 5;
+		data.rows.push(object);
+		data.dropdown_value = '';
+
+		let temp_index = data.dropdown_fields.indexOf(temp_object);
+		if(temp_index !== -1){
+			data.dropdown_fields.splice(temp_index, 1);
+		}
+
+	}
+
+	const saveClientDetailsSettings = () : void => {
+		api.post('manage-invoice-settings-client-details', {
+			rows : data.rows	
+		}).then(response => {
+			
+		}).catch(error => {
+
+		});
+	}
+
+	/* hooks */
+	onMounted(() : void => {
+		fetchCompanyDetailsFields();
+	});
+	
 
 </script>
