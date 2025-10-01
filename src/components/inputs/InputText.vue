@@ -72,7 +72,7 @@
 			
 			},
 			modelValue() : void{
-				this.input_value = this.modelValue?.trim() || '';
+				this.input_value = this.modelValue || '';
 			}
 		},
 
@@ -117,7 +117,7 @@
 			},
 			EmitModel(e:any) : void{
 				this.input_value = this.sanitizeInput(e.target.value);
-				this.$emit('update:modelValue', this.input_value);
+				this.$emit('update:modelValue', e.target.value);
 			},
 			sanitizeInput(in_string:string) : string{
 				return common.stripTags(in_string);
