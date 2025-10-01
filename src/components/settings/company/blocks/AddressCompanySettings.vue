@@ -21,7 +21,7 @@
 					<input-text label="Postal code" :required="false" v-model="data.postal_code" placeholder="Enter postal code"></input-text>
 				</div>
 				<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-					<input-auto-complete label="Country" placeholder="Type to select a country" v-model="data.country_id" :options="data.countries"></input-auto-complete>
+					<input-auto-complete label="Country" placeholder="Type to select a country" v-model="data.country_id" :options="data.countries" ref="company_address_country_autocomplete" @selected="countrySelected"></input-auto-complete>
 				</div>
 			</div>
 
@@ -37,8 +37,12 @@
 	import InputAutoComplete from '../../../inputs/InputAutoComplete.vue';
 	import InputButton from '../../../inputs/InputButton.vue';
 
-	import { onMounted, reactive } from 'vue';
+	import { onMounted, reactive, ref } from 'vue';
 	import api from '../../../../helpers/api';
+
+	interface InputComponent{
+  		validate: () => boolean
+	}
 
 	interface AddressCompanySettingsInterface{
 		btn_disabled : boolean,
@@ -50,6 +54,8 @@
 		country_id:string,
 		countries : Array<object>
 	}
+
+	const company_address_country_autocomplete = ref<InputComponent | null>(null);
 
 	const data = reactive<AddressCompanySettingsInterface>({
 		btn_disabled: false,
@@ -71,7 +77,14 @@
 		});
 	}
 
+	const countrySelected = (country_id:object) : void => {
+		if(Object.keys(country_id).length > 0){
+			console.log(country_id);
+		}
+	}
+
 	const saveCompanyAddressData = () : void => {
+		console.log(company_address_country_autocomplete.value?.validate());
 		console.log('this should be shown');
 	}
 

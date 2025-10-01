@@ -5,7 +5,7 @@
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 		<div v-show="show_dropdown" class="autocomplete-area absolute top-16 bg-background-card w-full max-h-[300px] overflow-auto styled-scrollbar z-10">
 			<ul>
-				<li v-for="(option, key) in copy_options" :key="key" class="cursor-pointer pl-3 py-2 border-b-1 border-solid border-deskmint-green-light" @click="EmitModel(option)" :class="{'bg-deskmint-cyan text-white!': (active_index === key)}" :ref="el => option_refs[key] = el">{{ option.text }}</li>
+				<li v-for="(option, key) in copy_options" :key="key" class="cursor-pointer pl-3 py-2 border-b-1 border-solid border-deskmint-green-light" @click.prevent="EmitModel(option)" :class="{'bg-deskmint-cyan text-white!': (active_index === key)}" :ref="el => option_refs[key] = el">{{ option.text }}</li>
 			</ul>
 		</div>
 	</div>
@@ -110,8 +110,7 @@
 
 			setModelValue() : void{
 				
-				this.input_value = this.modelValue ?? '';
-				//this.input_value = this.input_value.trim();
+				this.input_value = this.modelValue?.trim() || '';
 
 				if(this.input_value !== ''){
 					let option_id = parseInt(this.input_value);
@@ -152,7 +151,8 @@
 			EmitModel(e:any) : void{
 				this.show_dropdown = false;
 				this.input_value = e.text;
-				this.$emit('update:modelValue', e);
+				//this.$emit('update:modelValue', e);
+				this.$emit('update:modelValue', e.value+'');
 				this.current_selected = e;
 				this.emitSelected(e);
 			},
