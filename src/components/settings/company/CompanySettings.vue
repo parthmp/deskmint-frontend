@@ -15,6 +15,7 @@
 
 	import { reactive } from 'vue';
 	import Tabs from '../../UI/Tabs.vue';
+	import api from '../../../helpers/api';
 	
 	interface ComapnySettingsInterface{
 		tab_options : Array<string>
