@@ -57,6 +57,9 @@
 			prop_placeholder: {
 				type:String
 			},
+			placeholder: {
+				type:String
+			},
 			options: {
 				type: Array<object>
 			}
@@ -106,7 +109,9 @@
 		methods: {
 
 			setModelValue() : void{
-				this.input_value = this.modelValue?.trim() || '';
+				
+				this.input_value = this.modelValue ?? '';
+				//this.input_value = this.input_value.trim();
 
 				if(this.input_value !== ''){
 					let option_id = parseInt(this.input_value);
@@ -236,6 +241,11 @@
 			if(common.isset(this.prop_placeholder)){
 				this.local_placeholder = this.prop_placeholder+'';
 			}
+
+			if(common.isset(this.placeholder)){
+				this.local_placeholder = this.placeholder+'';
+			}
+
 			if(common.isset(this.options)){
 				this.copy_options = this.options;
 			}

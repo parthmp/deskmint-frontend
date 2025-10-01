@@ -1,0 +1,84 @@
+<template>
+	<div>
+		<form @submit.prevent="saveCompanyAddressData">
+			<div class="lg:grid lg:grid-cols-12 gap-5">
+				<div class="lg:col-span-4">
+					<input-text label="Street" :required="false" v-model="data.street"  placeholder="Enter street"></input-text>
+				</div>
+				<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
+					<input-text label="Apt/Suite" :required="false" v-model="data.apt" placeholder="Enter apt/suite"></input-text>
+				</div>
+				<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
+					<input-text label="City" :required="false" v-model="data.city" placeholder="Enter city"></input-text>
+				</div>
+			</div>
+
+			<div class="lg:grid lg:grid-cols-12 gap-5 mt-[20px]">
+				<div class="lg:col-span-4">
+					<input-text label="State" :required="false" v-model="data.state"  placeholder="Enter state"></input-text>
+				</div>
+				<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
+					<input-text label="Postal code" :required="false" v-model="data.postal_code" placeholder="Enter postal code"></input-text>
+				</div>
+				<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
+					<input-auto-complete label="Country" placeholder="Type to select a country" v-model="data.country_id" :options="data.countries"></input-auto-complete>
+				</div>
+			</div>
+
+			<input-button label="Save" icon="IconCheck" :disabled="data.btn_disabled" class="lg:float-end"></input-button>
+			<div class="clear-both"></div>
+		</form>
+	</div>
+</template>
+
+<script lang="ts" setup>
+
+	import InputText from '../../../inputs/InputText.vue';
+	import InputAutoComplete from '../../../inputs/InputAutoComplete.vue';
+	import InputButton from '../../../inputs/InputButton.vue';
+
+	import { onMounted, reactive } from 'vue';
+	import api from '../../../../helpers/api';
+
+	interface AddressCompanySettingsInterface{
+		btn_disabled : boolean,
+		street : string,
+		apt : string,
+		city : string,
+		state : string,
+		postal_code : string,
+		country_id:string,
+		countries : Array<object>
+	}
+
+	const data = reactive<AddressCompanySettingsInterface>({
+		btn_disabled: false,
+		street : '',
+		apt : '',
+		city : '',
+		state : '',
+		postal_code : '',
+		country_id: '',
+		countries: []
+	});	
+
+	/* methods */
+	const fetchCompanyAddressSettings = () : void => {
+		api.get('get-countries').then(response => {
+			data.countries = response.data;
+		}).catch(error => {
+
+		});
+	}
+
+	const saveCompanyAddressData = () : void => {
+		console.log('this should be shown');
+	}
+
+
+	/* hooks */
+	onMounted(() : void => {
+		fetchCompanyAddressSettings();
+	});
+
+</script>
