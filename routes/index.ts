@@ -33,6 +33,9 @@ import NumbersInvoiceSettings from '../src/components/settings/invoice/blocks/Nu
 import GeneralInvoiceSettings from '../src/components/settings/invoice/blocks/GeneralInvoiceSettings.vue';
 import ClientDetailsInvoiceSettings from '../src/components/settings/invoice/blocks/ClientDetailsInvoiceSettings.vue';
 
+import CompanySettings from '../src/components/settings/company/CompanySettings.vue';
+import DetailsCompanySettings from '../src/components/settings/company/blocks/DetailsCompanySettings.vue';
+
 
 const routes = [
 	{
@@ -155,15 +158,10 @@ const routes = [
 				meta: { requires_auth: true }
 			},
 			{
-				path: '/settings/invoice',
+				path: '/settings/invoice/general',
 				component: InvoiceSettings,
 				meta: { requires_auth: true },
 				children : [
-					{
-						path: '/settings/invoice',
-						component: GeneralInvoiceSettings,
-						meta: { requires_auth: true }
-					},
 					{
 						path: '/settings/invoice/general',
 						component: GeneralInvoiceSettings,
@@ -179,6 +177,28 @@ const routes = [
 						component: ClientDetailsInvoiceSettings,
 						meta: { requires_auth: true }
 					}
+				]
+			},
+			{
+				path: '/settings/company/details',
+				component: CompanySettings,
+				meta: { requires_auth: true },
+				children : [
+					{
+						path: '/settings/company/details',
+						component: DetailsCompanySettings,
+						meta: { requires_auth: true }
+					},
+					// {
+					// 	path: '/settings/invoice/numbers',
+					// 	component: NumbersInvoiceSettings,
+					// 	meta: { requires_auth: true }
+					// },
+					// {
+					// 	path: '/settings/invoice/client-details',
+					// 	component: ClientDetailsInvoiceSettings,
+					// 	meta: { requires_auth: true }
+					// }
 				]
 			}
 		]

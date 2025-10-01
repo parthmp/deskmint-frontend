@@ -2,7 +2,7 @@
 	<div class="form-group">
 		<label v-if="label" :for="email_id">{{ label }}</label>
 		<label v-else :for="email_id">Email Address</label>
-		<input type="email" placeholder="Email Address" v-model="input_value" class="form-control" :id="email_id" @input="EmitModel" :class="{'red-input-order': highlight_error}">
+		<input type="email" :placeholder="(local_placeholder !== '') ? local_placeholder : 'Email address'" v-model="input_value" class="form-control" :id="email_id" @input="EmitModel" :class="{'red-input-order': highlight_error}">
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid email address</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
@@ -42,6 +42,9 @@
 			},
 			prop_placeholder: {
 				type:String
+			},
+			placeholder: {
+				type:String
 			}
 		},
 
@@ -52,7 +55,7 @@
 				is_valid : true,
 				local_error : '',
 				show_errors: false,
-				local_placeholder: 'Email Address'
+				local_placeholder: ''
 			};
 		},
 
@@ -141,7 +144,10 @@
 				this.local_error = this.error || '';
 			}
 			if(common.isset(this.prop_placeholder)){
-				this.local_placeholder = this.prop_placeholder;
+				this.local_placeholder = this.prop_placeholder ?? '';
+			}
+			if(common.isset(this.placeholder)){
+				this.local_placeholder = this.placeholder ?? '';
 			}
 		}
 

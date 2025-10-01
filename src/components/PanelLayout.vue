@@ -297,7 +297,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -358,7 +358,8 @@ export default defineComponent({
 		IconPackages:IconPackages,
 		IconFileDollar:IconFileDollar,
 		IconScript:IconScript,
-		IconUsers:IconUsers
+		IconUsers:IconUsers,
+		IconBuildingFactory:IconBuildingFactory
 	},
 	data() : PanelData{
 		return {
@@ -451,7 +452,14 @@ export default defineComponent({
 						is_active: false,
 						submenu: [
 							{
-								path: '/settings/invoice',
+								path: '/settings/company/details',
+								icon: 'IconBuildingFactory',
+								icon_size: 22,
+								is_active: false,
+								menu_text: 'Company'
+							},
+							{
+								path: '/settings/invoice/general',
 								icon: 'IconFileDollar',
 								icon_size: 22,
 								is_active: false,

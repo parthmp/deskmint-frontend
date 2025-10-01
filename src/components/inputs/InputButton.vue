@@ -3,18 +3,18 @@
 		<component :is="url ? 'router-link' : 'button'" :to="url" :disabled="local_disabled" :class="buttonClasses" @click="emitSubmit(url)">
 			<span v-if="icon === 'IconCaretRight'">
 				<span v-if="!local_disabled" class="flex gap-1 items-center">
-					{{ btn_text }}&nbsp;<component :is="icon" :size="17"></component>
+					{{ btn_text ? btn_text : label }}&nbsp;<component :is="icon" :size="17"></component>
 				</span>
 				<span v-if="local_disabled" class="flex gap-1 items-center">
-					{{ btn_text }}&nbsp;<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="17"></IconRotateClockwise2>
+					{{ btn_text ? btn_text : label }}&nbsp;<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="17"></IconRotateClockwise2>
 				</span>
 			</span>
 			<span v-if="icon !== 'IconCaretRight'">
 				<span v-if="!local_disabled" class="flex gap-1 items-center">
-					<component :is="icon" :size="17"></component>&nbsp;{{ btn_text }}
+					<component :is="icon" :size="17"></component>&nbsp;{{ btn_text ? btn_text : label }}
 				</span>
 				<span v-if="local_disabled" class="flex gap-1 items-center">
-					<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="17"></IconRotateClockwise2>&nbsp;{{ btn_text }}
+					<IconRotateClockwise2 v-if="local_disabled" class="animate-spin" :size="17"></IconRotateClockwise2>&nbsp;{{ btn_text ? btn_text : label }}
 				</span>
 			</span>
 		</component>
@@ -50,7 +50,7 @@
 
 		name : 'InputButton',
 
-		props : ['full_width', 'disabled', 'icon', 'btn_text', "style_type", "remove_margin", "url", "max_height", "min_width"],
+		props : ['full_width', 'disabled', 'icon', 'btn_text', "style_type", "remove_margin", "url", "max_height", "min_width", "label"],
 
 		data() : InputButtonIntarface {
 			return {

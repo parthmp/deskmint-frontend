@@ -46,6 +46,9 @@
 			prop_placeholder: {
 				type:String
 			},
+			placeholder: {
+				type:String
+			},
 			options:{
 				type:Array<Object>
 			}
@@ -162,6 +165,10 @@
 
 			if(common.isset(this.prop_placeholder)){
 				this.local_placeholder = this.prop_placeholder+'';
+			}
+
+			if(common.isset(this.placeholder)){
+				this.local_placeholder = this.placeholder+'';
 			}
 		}
 
