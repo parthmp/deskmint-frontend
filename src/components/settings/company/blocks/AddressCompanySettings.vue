@@ -39,7 +39,7 @@
 
 	import { onMounted, reactive, ref } from 'vue';
 	import api from '../../../../helpers/api';
-
+	
 	interface InputComponent{
   		validate: () => boolean
 	}
@@ -52,6 +52,7 @@
 		state : string,
 		postal_code : string,
 		country_id:string,
+		country_selected_id:string,
 		countries : Array<object>
 	}
 
@@ -65,13 +66,25 @@
 		state : '',
 		postal_code : '',
 		country_id: '',
+		country_selected_id: '',
 		countries: []
 	});	
 
 	/* methods */
 	const fetchCompanyAddressSettings = () : void => {
-		api.get('get-countries').then(response => {
-			data.countries = response.data;
+		api.get('manage-company-settings-address').then(response => {
+
+			/* fill the fields */
+			
+			data.countries = response.data.countries;
+
+			data.street = response.data.company.address_street;
+			data.apt = response.data.company.apt;
+			data.city = response.data.company.city;
+			data.state = response.data.company.state;
+			data.postal_code = response.data.company.postal_code;
+			data.country_id = response.data.company.country_id+'';
+
 		}).catch(error => {
 
 		});
@@ -79,13 +92,25 @@
 
 	const countrySelected = (country_id:object) : void => {
 		if(Object.keys(country_id).length > 0){
-			console.log(country_id);
+			data.country_selected_id = country_id?.value ?? '';
 		}
 	}
 
 	const saveCompanyAddressData = () : void => {
-		console.log(company_address_country_autocomplete.value?.validate());
-		console.log('this should be shown');
+		
+		api.post('manage-company-settings-address', {
+			address_street : data.street,
+			apt : data.apt,
+			city : data.city,
+			state : data.state,
+			postal_code : data.postal_code,
+			country_id : data.country_selected_id,
+		}).then(response => {
+			
+		}).catch(error => {
+
+		});
+
 	}
 
 
