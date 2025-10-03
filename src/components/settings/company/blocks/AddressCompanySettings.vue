@@ -1,6 +1,9 @@
 <template>
 	<div>
-		<form @submit.prevent="saveCompanyAddressData">
+
+		<address-company-settings-skeleton v-if="data.loading"></address-company-settings-skeleton>
+
+		<form @submit.prevent="saveCompanyAddressData" v-if="!data.loading">
 			<div class="lg:grid lg:grid-cols-12 gap-5">
 				<div class="lg:col-span-4">
 					<input-text label="Street" :required="false" v-model="data.street"  placeholder="Enter street"></input-text>
@@ -39,12 +42,15 @@
 
 	import { onMounted, reactive, ref } from 'vue';
 	import api from '../../../../helpers/api';
+
+	import AddressCompanySettingsSkeleton from '../../../skeletons/AddressCompanySettingsSkeleton.vue';
 	
 	interface InputComponent{
   		validate: () => boolean
 	}
 
 	interface AddressCompanySettingsInterface{
+		loading : boolean,
 		btn_disabled : boolean,
 		street : string,
 		apt : string,
@@ -59,6 +65,7 @@
 	const company_address_country_autocomplete = ref<InputComponent | null>(null);
 
 	const data = reactive<AddressCompanySettingsInterface>({
+		loading: false,
 		btn_disabled: false,
 		street : '',
 		apt : '',
@@ -72,6 +79,7 @@
 
 	/* methods */
 	const fetchCompanyAddressSettings = () : void => {
+		data.loading = true;
 		api.get('manage-company-settings-address').then(response => {
 
 			/* fill the fields */
@@ -84,6 +92,7 @@
 			data.state = response.data.company.state;
 			data.postal_code = response.data.company.postal_code;
 			data.country_id = response.data.company.country_id+'';
+			data.loading = false;
 
 		}).catch(error => {
 
@@ -97,7 +106,7 @@
 	}
 
 	const saveCompanyAddressData = () : void => {
-		
+		data.btn_disabled = true;
 		api.post('manage-company-settings-address', {
 			address_street : data.street,
 			apt : data.apt,
@@ -109,6 +118,8 @@
 			
 		}).catch(error => {
 
+		}).finally(() => {
+			data.btn_disabled = false;
 		});
 
 	}
