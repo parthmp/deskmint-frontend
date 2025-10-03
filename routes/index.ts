@@ -36,6 +36,7 @@ import ClientDetailsInvoiceSettings from '../src/components/settings/invoice/blo
 import CompanySettings from '../src/components/settings/company/CompanySettings.vue';
 import DetailsCompanySettings from '../src/components/settings/company/blocks/DetailsCompanySettings.vue';
 import AddressCompanySettings from '../src/components/settings/company/blocks/AddressCompanySettings.vue';
+import LogoCompanySettings from '../src/components/settings/company/blocks/LogoCompanySettings.vue';
 
 
 const routes = [
@@ -193,6 +194,11 @@ const routes = [
 					{
 						path: '/settings/company/address',
 						component: AddressCompanySettings,
+						meta: { requires_auth: true }
+					},
+					{
+						path: '/settings/company/logo',
+						component: LogoCompanySettings,
 						meta: { requires_auth: true }
 					}
 					
