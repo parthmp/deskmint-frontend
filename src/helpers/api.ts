@@ -58,15 +58,30 @@ api.interceptors.request.use(async (config) => {
 
 	}else{
 
-		if(typeof config.data !== 'object' || config.data === null){
-			config.data = {};
+		if (config.data instanceof FormData) {
+			
+			// For FormData, append company_id using the append method
+			if(common.isset(companyId) && companyId !== ''){
+				config.data.append('company_id', companyId);
+			}
+			// Remove Content-Type header to let browser set it with boundary
+			delete config.headers['Content-Type'];
+
+		}else{
+
+			if(typeof config.data !== 'object' || config.data === null){
+				config.data = {};
+			}
+
+			if(common.isset(companyId)){
+				if(companyId !== ''){
+					config.data.company_id = companyId;
+				}
+			}
+
 		}
 
-		if(common.isset(companyId)){
-			if(companyId !== ''){
-				config.data.company_id = companyId;
-			}
-		}
+		
 		
 	}
 

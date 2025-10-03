@@ -16,6 +16,7 @@
 	import { toastEvents } from '../../../../events/toastEvents';
 
 	import InputButton from '../../../inputs/InputButton.vue';
+	import api from '../../../../helpers/api';
 
 	interface LogoImageFileInterface{
 		getFiles: () => Array<object>
@@ -48,11 +49,18 @@
 	}
 
 	const getFiles = (files: Array<object>) : void => {
-		data.image = files[0];
+		data.image = files[0] ?? {};
 	}
 
 	const saveLogoImage = () : void => {
+		
+		let form_data = new FormData();
+		form_data.append('logo', data.image)
+		api.post('manage-company-settings-logo', form_data).then(response => {
+			console.log(response);
+		}).catch(error => {
 
+		});
 	}
 
 
