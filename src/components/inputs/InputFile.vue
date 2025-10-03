@@ -10,8 +10,9 @@
 
 <script lang="ts" setup>
 
-	import { reactive, ref } from 'vue';
+	import { onMounted, reactive, ref, watch } from 'vue';
 	import InputButton from './InputButton.vue';
+	import common from '../../helpers/common';
 
 	interface InputFileInterface{
 		files : Array<object>,
@@ -30,6 +31,7 @@
 		required?: boolean,
 		label?:string,
 		icon?:string
+		modelValue?:string
 	}>();
 
 	const emit = defineEmits<{
@@ -56,6 +58,10 @@
 		preview_image : ''
 	});
 
+	/* watchers */
+	watch(() => props.modelValue, () => {
+		fillImage();
+	})
 
 	/* methods */
 	const launchFileSelector = () : void => {
@@ -105,6 +111,18 @@
 	const getFiles = () : Array<object> => {
 		return data.files;
 	}
+
+	const fillImage = () : void => {
+		if(common.isset(props.modelValue)){
+			if(props.modelValue?.trim() !== ''){
+				data.preview_image =  props.modelValue ?? '';
+			}
+		}
+	}
+
+	onMounted(() => {
+		fillImage();
+	})
 
 	/* exposed */
 	defineExpose({

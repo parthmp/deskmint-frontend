@@ -6,7 +6,7 @@
 		<div v-if="!data.loading">
 			<p>Note: only images (jpg, jpeg, png, gif, webp) are allowed to upload. Max file size must not exceed more than 5mb.</p>
 			<br>
-			<input-file label="Select logo image" icon="IconPhoto" :multiple="false" type="image" :mb_limit="5" ref="logo_image_file" @invalid_file="triggerInvalidFile" @invalid_size="triggerInvalidSize" @get_files="getFiles"></input-file>
+			<input-file label="Select logo image" icon="IconPhoto" v-model="data.image_path" :multiple="false" type="image" :mb_limit="5" ref="logo_image_file" @invalid_file="triggerInvalidFile" @invalid_size="triggerInvalidSize" @get_files="getFiles"></input-file>
 
 			<input-button @click.prevent="saveLogoImage" label="Save" icon="IconCheck" :disabled="data.btn_disabled" class="lg:float-start"></input-button>
 			<div class="clear-both"></div>
@@ -16,7 +16,7 @@
 
 <script lang="ts" setup>
 
-	import { reactive, ref } from 'vue';
+	import { onMounted, reactive, ref } from 'vue';
 	import InputFile from '../../../inputs/InputFile.vue';
 	import { toastEvents } from '../../../../events/toastEvents';
 	import LogoCompanySettingsSkeleton from '../../../skeletons/LogoCompanySettingsSkeleton.vue';
@@ -32,13 +32,15 @@
 		loading:boolean,
 		btn_disabled:boolean,
 		image : object
+		image_path : string
 	}
 
 	const logo_image_file = ref<LogoImageFileInterface | null>(null);
 	const data = reactive<LogoCompanySettingsInterface>({
 		loading:false,
 		btn_disabled : false,
-		image: {}
+		image: {},
+		image_path : ''
 	});
 
 	/* methods */
@@ -82,6 +84,18 @@
 
 		
 	}
+
+	const fetchCompanyLogo = () : void => {
+		data.loading = true;
+		api.get('manage-company-settings-logo').then(response => {
+			data.image_path = response.data.url
+			data.loading = false;
+		}).catch(error => {});
+	}
+
+	onMounted(() => {
+		fetchCompanyLogo();
+	});
 
 
 </script>
