@@ -89,8 +89,8 @@
 		data.loading = true;
 		api.get('manage-company-settings-logo').then(response => {
 			data.image_path = response.data.url
-			data.loading = false;
-		}).catch(error => {});
+			
+		}).catch(error => {}).finally(() => { data.loading = false; });
 	}
 
 	onMounted(() => {
