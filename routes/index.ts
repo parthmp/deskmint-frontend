@@ -37,6 +37,7 @@ import CompanySettings from '../src/components/settings/company/CompanySettings.
 import DetailsCompanySettings from '../src/components/settings/company/blocks/DetailsCompanySettings.vue';
 import AddressCompanySettings from '../src/components/settings/company/blocks/AddressCompanySettings.vue';
 import LogoCompanySettings from '../src/components/settings/company/blocks/LogoCompanySettings.vue';
+import DefaultsCompanySettings from '../src/components/settings/company/blocks/DefaultsCompanySettings.vue';
 
 
 const routes = [
@@ -200,7 +201,13 @@ const routes = [
 						path: '/settings/company/logo',
 						component: LogoCompanySettings,
 						meta: { requires_auth: true }
+					},
+					{
+						path: '/settings/company/defaults',
+						component: DefaultsCompanySettings,
+						meta: { requires_auth: true }
 					}
+					
 					
 				]
 			}
