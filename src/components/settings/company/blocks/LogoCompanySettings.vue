@@ -4,12 +4,17 @@
 			<logo-company-settings-skeleton></logo-company-settings-skeleton>
 		</div>
 		<div v-if="!data.loading">
+			
 			<p>Note: only images (jpg, jpeg, png, gif, webp) are allowed to upload. Max file size must not exceed more than 5mb.</p>
 			<br>
+			<a v-if="data.image_path !== ''" href="javascript:;" class="text-red-500! block mb-[10px]" @click.prevent="deleteLogoImage"><IconTrash></IconTrash></a>
 			<input-file label="Select logo image" icon="IconPhoto" v-model="data.image_path" :multiple="false" type="image" :mb_limit="5" ref="logo_image_file" @invalid_file="triggerInvalidFile" @invalid_size="triggerInvalidSize" @get_files="getFiles"></input-file>
-
+	
+			<div class="clear-both"></div>
 			<input-button @click.prevent="saveLogoImage" label="Save" icon="IconCheck" :disabled="data.btn_disabled" class="lg:float-start"></input-button>
 			<div class="clear-both"></div>
+			
+
 		</div>
 	</div>
 </template>
@@ -23,6 +28,8 @@
 
 	import InputButton from '../../../inputs/InputButton.vue';
 	import api from '../../../../helpers/api';
+
+	import { IconTrash } from '@tabler/icons-vue';
 
 	interface LogoImageFileInterface{
 		getFiles: () => Array<object>
@@ -74,7 +81,7 @@
 			let form_data = new FormData();
 			form_data.append('logo', data.image)
 			api.post('manage-company-settings-logo', form_data).then(response => {
-				
+				fetchCompanyLogo();
 			}).catch(error => {
 
 			}).finally(() => {
@@ -89,6 +96,13 @@
 		data.loading = true;
 		api.get('manage-company-settings-logo').then(response => {
 			data.image_path = response.data.url
+			
+		}).catch(error => {}).finally(() => { data.loading = false; });
+	}
+
+	const deleteLogoImage = () : void => {
+		data.image_path = '';
+		api.delete('manage-company-settings-logo').then(response => {
 			
 		}).catch(error => {}).finally(() => { data.loading = false; });
 	}

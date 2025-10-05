@@ -113,6 +113,7 @@
 	}
 
 	const fillImage = () : void => {
+		data.preview_image = '';
 		if(common.isset(props.modelValue)){
 			if(props.modelValue?.trim() !== ''){
 				data.preview_image =  props.modelValue ?? '';
