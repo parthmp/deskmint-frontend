@@ -1,15 +1,15 @@
 <template>
 	<input-button label="Add new field" icon="IconPlus" class="lg:float-end" @click.prevent="data.add_new_field_toggle = !data.add_new_field_toggle"></input-button>
 	<div class="clear-both"></div>
+	<form v-if="data.add_new_field_toggle" @submit.prevent="addNewField">
+		<input-text label="Field label" v-model="data.field_label.value" :error="data.field_label.error" :required="true" ref="new_field_label"></input-text>
+		<div class="clear-both"></div>
+		<input-button label="Add" icon="IconPlus" class="lg:float-end"></input-button>
+		<div class="clear-both"></div>
+	</form>
 
 	<additional-fields-company-settings-skeleton v-if="data.loading"></additional-fields-company-settings-skeleton>
 	<div v-if="!data.loading">
-		<form v-if="data.add_new_field_toggle" @submit.prevent="addNewField">
-			<input-text label="Field label" v-model="data.field_label.value" :error="data.field_label.error" :required="true" ref="new_field_label"></input-text>
-			<div class="clear-both"></div>
-			<input-button label="Add" icon="IconPlus" class="lg:float-end"></input-button>
-			<div class="clear-both"></div>
-		</form>
 
 		<form @submit.prevent="saveFields">
 			<div v-for="(field,index) in data.all_fields" :key="field.key" class="mt-[20px] flex gap-5 items-center">
