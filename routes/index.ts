@@ -38,6 +38,7 @@ import DetailsCompanySettings from '../src/components/settings/company/blocks/De
 import AddressCompanySettings from '../src/components/settings/company/blocks/AddressCompanySettings.vue';
 import LogoCompanySettings from '../src/components/settings/company/blocks/LogoCompanySettings.vue';
 import DefaultsCompanySettings from '../src/components/settings/company/blocks/DefaultsCompanySettings.vue';
+import AdditionalFieldsCompanySettings from '../src/components/settings/company/blocks/AdditionalFieldsCompanySettings.vue';
 
 
 const routes = [
@@ -205,6 +206,11 @@ const routes = [
 					{
 						path: '/settings/company/defaults',
 						component: DefaultsCompanySettings,
+						meta: { requires_auth: true }
+					},
+					{
+						path: '/settings/company/additional-fields',
+						component: AdditionalFieldsCompanySettings,
 						meta: { requires_auth: true }
 					}
 					
