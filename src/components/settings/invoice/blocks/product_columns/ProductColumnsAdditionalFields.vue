@@ -20,12 +20,12 @@
 					<input-select label="Field type" :options="data.field_type_options" v-model="data.fields_types[key].value" :error="data.fields_types[key].error" :required="true"></input-select>
 				</div>
 			</div>
-			<input-number v-show="data.fields_types[key].value === 'tax'" @keydown.enter.prevent="saveFields" :step="0.01" label="Tax rate %" v-model="data.fields_taxes[key]" placeholder="Enter tax rate in %"></input-number>
+			<input-number v-show="data.fields_types[key].value === 'tax'" @keydown.enter.prevent="saveFields" :step="0.01" label="Tax rate %" v-model="data.fields_taxes[key].value" placeholder="Enter tax rate in %"></input-number>
 		</div>
 		<br>
 		<input-button @click.prevent="addNewField" label="Add new" icon="IconPlus" class="lg:mt-[0px]! lg:float-start"></input-button>
 		<div class="clear-both"></div>
-		<input-button @click.prevent="saveFields" label="Save" icon="IconCheck" class="lg:float-end"></input-button>
+		<input-button :disabled="data.btn_disabled" @click.prevent="saveFields" label="Save" icon="IconCheck" class="lg:float-end"></input-button>
 		<div class="clear-both"></div>
 		
 	</div>
@@ -42,8 +42,18 @@
 
 	import { IconTrash } from '@tabler/icons-vue';
 	import { toastEvents } from '../../../../../events/toastEvents';
+	import api from '../../../../../helpers/api';
 
-	const data = reactive({
+	interface ProductColumnsAFInterface{
+		btn_disabled:boolean
+		fields_labels : Array<object>,
+		fields_types : Array<object>,
+		fields_taxes : Array<object>,
+		field_type_options : Array<object>
+	}
+
+	const data = reactive<ProductColumnsAFInterface>({
+		btn_disabled : false,
 		fields_labels : [
 			
 		],
@@ -53,14 +63,6 @@
 		fields_taxes : [
 
 		],
-		field_label : {
-			value : '',
-			error : ''
-		},
-		field_type : {
-			value : '',
-			error : ''
-		},
 		field_type_options : [
 			{
 				text : 'Tax',
@@ -73,7 +75,7 @@
 		]
 	});
 
-	watch(() => data.fields_labels.map(field => field.value), (newValues, oldValues) => {
+	watch(() => data.fields_labels.map(field => field.value), (newValues:Array<object>, oldValues:Array<object>) : void => {
     
 		if(!oldValues || newValues.length !== oldValues.length){
 			return;
@@ -106,13 +108,17 @@
 			error : ''
 		});
 
-		data.fields_taxes.push(0);
+		data.fields_taxes.push({
+			id: null,
+			value: '0'
+		});
 		
 	}
 
 	const saveFields = () : void => {
 		
 		let labels_validated = true;
+		data.btn_disabled = true;
 
 		/* validate labels, not using refs for simplicity here */
 		data.fields_labels.forEach(field_label => {
@@ -128,14 +134,26 @@
 				type: 'error',
 				message : 'Please enter at least one tax field'
 			});
+			data.btn_disabled = false;
 		}else{
 
 			if(labels_validated){
 
 				/* api call */
-				console.log('all good');
+				api.post('manage-invoice-settings-additional-product-fields', {
+					labels : data.fields_labels,
+					taxes : data.fields_taxes,
+					types: data.fields_types
+				}).then(response => {
+					
+				}).catch(error => {
+					
+				}).finally(() => {
+					data.btn_disabled = false;
+				})
 
 			}else{
+				data.btn_disabled = false;
 				toastEvents.emit('toast', {
 					type: 'error',
 					message : 'Please enter field label(s)'
