@@ -44,6 +44,9 @@
 			},
 			placeholder: {
 				type:String
+			},
+			show_errors_prop : {
+				type:Boolean
 			}
 		},
 
@@ -64,7 +67,7 @@
 		},
 		watch: {
 			error() : void{
-
+				
 				this.local_error = '';
 				if(common.isset(this.error)){
 					this.local_error = this.error || '';
@@ -73,6 +76,12 @@
 			},
 			modelValue() : void{
 				this.input_value = this.modelValue || '';
+			},
+
+			show_errors_prop() : void{
+				if(common.isset(this.show_errors_prop)){
+					this.show_errors = this.show_errors_prop ?? false;
+				}
 			}
 		},
 
@@ -159,6 +168,10 @@
 			}
 			if(common.isset(this.placeholder)){
 				this.local_placeholder = this.placeholder+'';
+			}
+
+			if(common.isset(this.show_errors_prop)){
+				this.show_errors = this.show_errors_prop ?? false;
 			}
 		}
 

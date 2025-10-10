@@ -42,6 +42,9 @@ import AdditionalFieldsCompanySettings from '../src/components/settings/company/
 import CompanyDetailsInvoiceSettings from '../src/components/settings/invoice/blocks/CompanyDetailsInvoiceSettings.vue';
 import CompanyAddressInvoiceSettings from '../src/components/settings/invoice/blocks/CompanyAddressInvoiceSettings.vue';
 import InvoiceDetailsInvoiceSettings from '../src/components/settings/invoice/blocks/InvoiceDetailsInvoiceSettings.vue';
+import ProductColumnsInvoiceSettings from '../src/components/settings/invoice/blocks/product_columns/ProductColumnsInvoiceSettings.vue';
+import ProductColumnsDraggable from '../src/components/settings/invoice/blocks/product_columns/ProductColumnsDraggable.vue';
+import ProductColumnsAdditionalFields from '../src/components/settings/invoice/blocks/product_columns/ProductColumnsAdditionalFields.vue';
 
 
 const routes = [
@@ -198,6 +201,23 @@ const routes = [
 						path: '/settings/invoice/invoice-details',
 						component: InvoiceDetailsInvoiceSettings,
 						meta: { requires_auth: true }
+					},
+					{
+						path: '/settings/invoice/product-columns',
+						component: ProductColumnsInvoiceSettings,
+						meta: { requires_auth: true },
+						children: [
+							{
+								path: '/settings/invoice/product-columns',
+								component: ProductColumnsDraggable,
+								meta: { requires_auth: true }
+							},
+							{
+								path: '/settings/invoice/product-columns/additional-fields',
+								component: ProductColumnsAdditionalFields,
+								meta: { requires_auth: true }
+							}
+						]
 					}
 				]
 			},

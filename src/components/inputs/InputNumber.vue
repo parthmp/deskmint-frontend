@@ -31,7 +31,7 @@
 	export default defineComponent({
 
 		name : 'InputNumber',
-		props: ['modelValue', 'required', 'error', 'field_name', 'placeholder', 'min', 'max', 'step'],
+		props: ['modelValue', 'required', 'error', 'field_name', 'placeholder', 'min', 'max', 'step', 'label'],
 
 		data() : InputNumberInterface {
 			return {
@@ -160,6 +160,11 @@
 
 			if(common.isset(this.field_name)){
 				this.local_field_name = this.field_name+'';
+			}
+
+			
+			if(common.isset(this.label)){
+				this.local_field_name = this.label+'';
 			}
 		
 		}

@@ -70,7 +70,7 @@
 					let path_array = this.$route.path.split('/');
 					path_array = path_array.filter(item => typeof item === 'string' ? item.trim() !== '' : true);
 
-					return option_text_modified === path_array[path_array.length-1];
+					return option_text_modified === path_array[path_array.length-1] || option_text_modified === path_array[path_array.length-2];
 				}
 
 				return false;
