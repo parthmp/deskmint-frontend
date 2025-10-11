@@ -1,40 +1,41 @@
 <template>
 	<div>
-		<div class="flex gap-5">
-			
-		</div>
+		
 		<input-button url="../product-columns" label="Back" icon="IconCaretLeft" class="lg:float-start"></input-button>
 		<div class="clear-both"></div>
 		
 		<br>
 		<div class="clear-both"></div>
-		<div v-for="(field, key) in data.fields_labels" :key="key">
-			<hr class="mt-[40px] mb-[20px]">
-			<icon-trash class="float-end cursor-pointer text-red-500!" @click.prevent="removeField(key)"></icon-trash>
-			<div class="clear-both"></div>
-			<div class="grid lg:grid-cols-12 gap-5">
-				<div class="lg:col-span-6">
-					<input-text @keydown.enter.prevent="saveFields" label="Field label" v-model="data.fields_labels[key].value" :error="data.fields_labels[key].error" :show_errors_prop="data.fields_labels[key].show_errors" :required="true" ref="new_field_label" placeholder="Enter label"></input-text>
+
+		<product-columns-additional-fields-skeleton v-if="data.loading"></product-columns-additional-fields-skeleton>
+		<div v-if="!data.loading">
+			<div v-for="(field, key) in data.fields_labels" :key="key">
+				<hr class="mt-[40px] mb-[20px]">
+				<icon-trash class="float-end cursor-pointer text-red-500!" @click.prevent="removeField(key)"></icon-trash>
+				<div class="clear-both"></div>
+				<div class="grid lg:grid-cols-12 gap-5">
+					<div class="lg:col-span-6">
+						<input-text @keydown.enter.prevent="saveFields" label="Field label" v-model="data.fields_labels[key].value" :error="data.fields_labels[key].error" :show_errors_prop="data.fields_labels[key].show_errors" :required="true" ref="new_field_label" placeholder="Enter label"></input-text>
+					</div>
+					<div class="lg:col-span-6">
+						<input-select label="Field type" :options="data.field_type_options" v-model="data.fields_types[key].value" :error="data.fields_types[key].error" :required="true"></input-select>
+					</div>
 				</div>
-				<div class="lg:col-span-6">
-					<input-select label="Field type" :options="data.field_type_options" v-model="data.fields_types[key].value" :error="data.fields_types[key].error" :required="true"></input-select>
-				</div>
+				<input-number v-show="data.fields_types[key].value === 'tax'" @keydown.enter.prevent="saveFields" :step="0.01" label="Tax rate %" v-model="data.fields_taxes[key].value" placeholder="Enter tax rate in %"></input-number>
 			</div>
-			<input-number v-show="data.fields_types[key].value === 'tax'" @keydown.enter.prevent="saveFields" :step="0.01" label="Tax rate %" v-model="data.fields_taxes[key].value" placeholder="Enter tax rate in %"></input-number>
+			<br>
+			<input-button @click.prevent="addNewField" label="Add new" icon="IconPlus" class="lg:mt-[0px]! lg:float-start"></input-button>
+			<div class="clear-both"></div>
+			<input-button :disabled="data.btn_disabled" @click.prevent="saveFields" label="Save" icon="IconCheck" class="lg:float-end"></input-button>
+			<div class="clear-both"></div>
 		</div>
-		<br>
-		<input-button @click.prevent="addNewField" label="Add new" icon="IconPlus" class="lg:mt-[0px]! lg:float-start"></input-button>
-		<div class="clear-both"></div>
-		<input-button :disabled="data.btn_disabled" @click.prevent="saveFields" label="Save" icon="IconCheck" class="lg:float-end"></input-button>
-		<div class="clear-both"></div>
-		
 	</div>
 </template>
 
 
 <script lang="ts" setup>
 
-	import { reactive, watch } from 'vue';
+	import { onMounted, reactive, watch } from 'vue';
 	import InputButton from '../../../../inputs/InputButton.vue';
 	import InputText from '../../../../inputs/InputText.vue';
 	import InputSelect from '../../../../inputs/InputSelect.vue';
@@ -44,7 +45,10 @@
 	import { toastEvents } from '../../../../../events/toastEvents';
 	import api from '../../../../../helpers/api';
 
+	import ProductColumnsAdditionalFieldsSkeleton from '../../../../skeletons/ProductColumnsAdditionalFieldsSkeleton.vue';
+
 	interface ProductColumnsAFInterface{
+		loading:boolean
 		btn_disabled:boolean
 		fields_labels : Array<object>,
 		fields_types : Array<object>,
@@ -53,6 +57,7 @@
 	}
 
 	const data = reactive<ProductColumnsAFInterface>({
+		loading : false,
 		btn_disabled : false,
 		fields_labels : [
 			
@@ -145,12 +150,12 @@
 					taxes : data.fields_taxes,
 					types: data.fields_types
 				}).then(response => {
-					
+					fetchFields();
 				}).catch(error => {
 					
 				}).finally(() => {
 					data.btn_disabled = false;
-				})
+				});
 
 			}else{
 				data.btn_disabled = false;
@@ -166,12 +171,35 @@
 
 	}
 
+	const fetchFields = () : void => {
+		data.loading = true;
+		api.get('manage-invoice-settings-additional-product-fields').then(response => {
+			data.fields_labels = response.data.labels;
+			data.fields_types = response.data.types;
+			data.fields_taxes = response.data.taxes;
+			data.loading = false;
+		}).catch(error => {
+			
+		});
+	}
+
 	const removeField = (index:number) : void => {
+
+		const additional_field_id = data.fields_labels[index].id;
 
 		data.fields_labels.splice(index, 1);
 		data.fields_types.splice(index, 1);
 		data.fields_taxes.splice(index, 1);
 
+		if(additional_field_id){
+			api.delete(`manage-invoice-settings-additional-product-fields/${additional_field_id}`);
+		}
+		
+
 	}
+
+	onMounted(() : void => {
+		fetchFields();
+	})
 
 </script>
