@@ -45,6 +45,7 @@ import InvoiceDetailsInvoiceSettings from '../src/components/settings/invoice/bl
 import ProductColumnsInvoiceSettings from '../src/components/settings/invoice/blocks/product_columns/ProductColumnsInvoiceSettings.vue';
 import ProductColumnsDraggable from '../src/components/settings/invoice/blocks/product_columns/ProductColumnsDraggable.vue';
 import ProductColumnsAdditionalFields from '../src/components/settings/invoice/blocks/product_columns/ProductColumnsAdditionalFields.vue';
+import TotalFieldsInvoiceSettings from '../src/components/settings/invoice/blocks/TotalFieldsInvoiceSettings.vue';
 
 
 const routes = [
@@ -218,6 +219,11 @@ const routes = [
 								meta: { requires_auth: true }
 							}
 						]
+					},
+					{
+						path: '/settings/invoice/total-fields',
+						component: TotalFieldsInvoiceSettings,
+						meta: { requires_auth: true }
 					}
 				]
 			},

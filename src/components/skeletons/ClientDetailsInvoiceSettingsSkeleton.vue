@@ -1,9 +1,6 @@
 <template>
 	<div>
-		<div>
-			<div class="h-[20px] animate-[pulse_1s_ease-in-out_infinite] bg-deskmint-loading rounded-lg w-full"></div>
-		</div>
-		<div class="mt-[30px]">
+		<div class="mt-[0px]">
 			<div class="h-[40px] animate-[pulse_1s_ease-in-out_infinite] bg-deskmint-loading rounded-lg w-full"></div>
 		</div>
 		<div class="mt-[30px]">

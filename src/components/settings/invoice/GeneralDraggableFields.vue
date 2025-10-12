@@ -5,8 +5,7 @@
 		</div>
 		
 		<div v-if="!data.loading">
-			<p class="pl-1">Arrange how you want to display client details in the invoice</p>
-		
+			
 			<input-select label="Add a field" v-model="data.dropdown_value" :options="data.dropdown_fields" prop_placeholder="Select" @changed="dropDownChanged"></input-select>
 			<br>
 			
