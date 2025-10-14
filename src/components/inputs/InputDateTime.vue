@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<vue-date-picker :range="range" :id="text_id" :left="true" :placeholder="placeholder" v-model="input_value" :time-picker="time_picker_only" :enable-time-picker="time_picker" :is-24="false" :format="datetime_format" position="left" @update:model-value="EmitModel" :class="{'red-input-order-div': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors))}"></vue-date-picker>
+		<vue-date-picker :range="range" :id="text_id" :left="true" :placeholder="local_placeholder" v-model="input_value" :time-picker="time_picker_only" :enable-time-picker="time_picker" :is-24="false" :format="datetime_format" position="left" @update:model-value="EmitModel" :class="{'red-input-order-div': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors))}"></vue-date-picker>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
@@ -22,7 +22,6 @@
 		time_picker_only:boolean,
 		datetime_format: string,
 		range: any,
-		placeholder: string
 	}
 
 	import common from '../../helpers/common';
@@ -37,7 +36,7 @@
 
 		name : 'InputDateTime',
 
-		props : ['modelValue', 'required', 'error', 'label', 'mode', 'prop_placeholder'],
+		props : ['modelValue', 'required', 'error', 'label', 'mode', 'placeholder'],
 
 		data() : InputDateTimeInterface{
 			return {
@@ -51,8 +50,7 @@
 				time_picker: true,
 				time_picker_only: true,
 				datetime_format: 'dd-MMM-yyyy p',
-				range: false,
-				placeholder: ''
+				range: false
 			};
 		},
 
@@ -90,11 +88,11 @@
 		methods: {
 			setModelValue() : void{
 				if(this.mode === 'time'){
-					this.placeholder = 'Select time';
+					this.local_placeholder = 'Select time';
 					this.input_value = this.parseTimeString(this.modelValue) || '';
 				}else{
 					if(this.mode === 'range'){
-						this.placeholder = 'Select datetime range';
+						this.local_placeholder = 'Select datetime range';
 						
 						if(common.isset(this.modelValue[0]) && common.isset(this.modelValue[1]) && this.modelValue[0] !== '' && this.modelValue[0] !== ''){
 							this.input_value = [new Date(this.modelValue[0]), new Date(this.modelValue[1])] || '';
@@ -103,7 +101,7 @@
 						}
 						
 					}else{
-						this.placeholder = 'Select date';
+						this.local_placeholder = 'Select date';
 						if(common.isset(this.modelValue) && this.modelValue !== ''){
 							this.input_value = new Date(this.modelValue) || '';
 						}else{
@@ -282,8 +280,8 @@
 				this.local_label = this.label+'';
 			}
 
-			if(common.isset(this.prop_placeholder)){
-				this.placeholder = this.prop_placeholder;
+			if(common.isset(this.placeholder)){
+				this.local_placeholder = this.placeholder || '';
 			}
 
 			this.modding();
