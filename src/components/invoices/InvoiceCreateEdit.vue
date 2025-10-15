@@ -10,12 +10,22 @@
 							
 							<div class="lg:grid lg:grid-cols-12 lg:gap-5">
 								<div class="lg:col-span-4">
-									<input-auto-complete label="Client" :required="true" placeholder="Type to select a client" :options="data.all_clients"></input-auto-complete>
+									<div class="grid grid-cols-12 gap-2">
+										<div class="col-span-9">
+											<input-auto-complete label="Client" endpoint="manage-invoices/fetch-clients" :required="true" @selected="handleSelectedClient" placeholder="Type to select a client" :options="data.all_clients"></input-auto-complete>
+										</div>
+										<div class="col-span-3">
+											<input-button url="/clients/create" label="New" class="mt-[23.5px]"></input-button>
+											
+										</div>
+										
+										
+									</div>
 								</div>
-								<div class="lg:col-span-4">
+								<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
 									<input-date-time mode="date" label="Invoice date" :required="true" placeholder="Select invoice date"></input-date-time>
 								</div>
-								<div class="lg:col-span-4">
+								<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
 									<input-date-time mode="date" label="Due date" :required="true" placeholder="Select due date"></input-date-time>
 								</div>
 							</div>
@@ -61,15 +71,17 @@
 </template>
 <script lang="ts" setup>
 
-	import { reactive } from 'vue';
+	import { onMounted, reactive } from 'vue';
 	import Tabs from '../UI/Tabs.vue';
 	import InputAutoComplete from '../inputs/InputAutoComplete.vue';
 	import InputDateTime from '../inputs/InputDateTime.vue';
 	import InputText from '../inputs/InputText.vue';
 	import InputNumber from '../inputs/InputNumber.vue';
 	import InputSelect from '../inputs/InputSelect.vue';
-
+	
 	import ProductRow from './blocks/ProductRow.vue';
+
+	import InputButton from '../inputs/InputButton.vue';
 
 	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings', 'Preview'];
 	const discount_options = [
@@ -86,5 +98,18 @@
 	const data = reactive({
 		all_clients : []
 	});
+
+	const handleSelectedClient = (selected:object) => {
+		console.log(selected);
+	}
+
+	onMounted(() => {
+		// for(let z = 0 ; z < 50 ; z++){
+		// 	data.all_clients.push({
+		// 		text : `data ${z}`,
+		// 		value : `data ${z}`
+		// 	});
+		// }
+	})
 
 </script>

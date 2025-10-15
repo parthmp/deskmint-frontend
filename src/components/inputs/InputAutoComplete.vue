@@ -3,6 +3,7 @@
 		<label :for="text_id">{{ local_label }}</label>
 		<input type="text" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="text_id" @input="filterOptions" :class="{'red-input-order': (local_error !== '' && show_errors)}" @keydown="handleKeydown">
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
+		<p v-if="endpoint && ajax_loading">{{ ajax_loading_text }}</p>
 		<div v-show="show_dropdown" class="autocomplete-area absolute top-16 bg-background-card w-full max-h-[300px] overflow-auto styled-scrollbar z-10">
 			<ul>
 				<li v-for="(option, key) in copy_options" :key="key" class="cursor-pointer pl-3 py-2 border-b-1 border-solid border-deskmint-green-light" @click.prevent="EmitModel(option)" :class="{'bg-deskmint-cyan text-white!': (active_index === key)}" :ref="el => option_refs[key] = el">{{ option.text }}</li>
@@ -30,9 +31,12 @@
 		show_dropdown:boolean,
 		active_index:number,
 		option_refs: Array<string>,
-		current_selected : object
+		current_selected : object,
+		ajax_loading: boolean,
+		ajax_loading_text: string
 	}
 
+	import api from '../../helpers/api';
 	import common from '../../helpers/common';
 
 	import { defineComponent } from 'vue';
@@ -62,6 +66,12 @@
 			},
 			options: {
 				type: Array<object>
+			},
+			endpoint : {
+				type:String
+			},
+			addnew : {
+				type:String
 			}
 		},
 
@@ -78,7 +88,9 @@
 				show_dropdown: false,
 				active_index: 0,
 				option_refs: [],
-				current_selected: {}
+				current_selected: {},
+				ajax_loading: false,
+				ajax_loading_text: ''
 			};
 		},
 
@@ -160,16 +172,45 @@
 				return common.stripTags(in_string);
 			},
 			filterOptions() : void{
-				this.show_dropdown = true;
-				this.show_errors = false;
-				if(this.input_value.trim() === ''){
+
+				if(common.isset(this.endpoint)){
+					this.ajax_loading = true;
 					this.show_dropdown = false;
+					if(this.input_value.trim().length < 3){
+						this.ajax_loading_text = 'Please enter at least 3 characters to search';
+					}else{
+						this.ajax_loading_text = 'Loading...';
+						api.get(this.endpoint+'', {
+							params: {
+								searched : this.input_value.trim()
+							}
+						}).then(response => {
+							this.show_dropdown = true;
+							this.show_errors = false;
+							this.copy_options = response.data;
+							
+						}).finally(() => {
+							this.ajax_loading = false;
+							this.ajax_loading_text = '';
+						});
+					}
+
+					
+					
+				}else{
+					this.show_dropdown = true;
+					this.show_errors = false;
+					if(this.input_value.trim() === ''){
+						this.show_dropdown = false;
+					}
+					this.current_selected = {};
+					this.emitSelected(this.current_selected);
+					this.copy_options = this.options?.filter(option =>
+						option.text.toLowerCase().includes(this.input_value.toLowerCase())
+					);
 				}
-				this.current_selected = {};
-				this.emitSelected(this.current_selected);
-				this.copy_options = this.options?.filter(option =>
-					option.text.toLowerCase().includes(this.input_value.toLowerCase())
-				);
+
+				
 				
 			},
 			emitSelected(obj:object) : void{
