@@ -626,7 +626,7 @@
 			fetchClientAreaFields(fillers:Array<object> = []) : void{
 				
 				api.get('manage-clients/fetch-clients-custom-fields').then((response) => {
-					this.custom_fields = response.data;
+					this.custom_fields = response.data.data_fields;
 					
 					/**/
 					if(fillers.length !== 0){
@@ -711,7 +711,23 @@
 
 					/**/
 
-					this.fetchCountries();
+
+					// this.fetchCountries();
+					this.countries = response.data.countries;
+					this.currencies = response.data.currencies;
+
+					this.industries.unshift({
+						value: '',
+						text: 'Select'
+					});
+
+					this.industries = [];
+					this.industries = response.data.industries;
+					this.industries.unshift({
+						value: '',
+						text: 'Select'
+					});
+					this.data_loading_for_edit = false;
 				}).catch((error) => {});
 
 			},
@@ -858,34 +874,7 @@
 			removeContactInfoFields(index:number) : void{
 				this.client_contact_info.splice(index, 1);
 			},
-
-			fetchCountries() : void{
-				api.get('get-countries').then((response) => {
-					this.countries = response.data;
-					this.fetchCurrencies();
-				}).catch((error) => {});
-			},
-			fetchCurrencies() : void{
-				api.get('get-currencies').then((response) => {
-					this.currencies = response.data;
-					this.fetchIndustries();
-				}).catch((error) => {});
-			},
-			fetchIndustries() : void{
-				this.industries.unshift({
-					value: '',
-					text: 'Select'
-				});
-				api.get('get-industries').then((response) => {
-					this.industries = [];
-					this.industries = response.data;
-					this.industries.unshift({
-						value: '',
-						text: 'Select'
-					});
-					this.data_loading_for_edit = false;
-				}).catch((error) => {});
-			},
+			
 			selectCountry(country_object:object) : void{
 				this.$refs.client_billing_info_country.validate();
 				if(Object.keys(country_object).length === 0){
