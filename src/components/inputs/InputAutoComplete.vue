@@ -244,6 +244,7 @@
 				this.copy_options = [];
 				this.active_index = -1;
 				this.emitSelected(option);
+				this.EmitModel(option);
 			},
 			scrollToActive() {
 				const el = this.option_refs[this.active_index]

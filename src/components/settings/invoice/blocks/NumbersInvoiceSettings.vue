@@ -146,7 +146,7 @@
 		},
 		number_pattern : '',
 		patterns : [
-			'{$counter}', '{$client_id}', '{$year}', '{$day_number}', '{$day_name}', '{$month_number}', '{$month_short_name}', '{$month_full_name}'
+			'{$year}', '{$day_number}', '{$day_name}', '{$month_number}', '{$month_short_name}', '{$month_full_name}'
 		],
 		data_loading : false
 	});

@@ -12,7 +12,7 @@
 								<div class="lg:col-span-4">
 									<div class="grid grid-cols-12 gap-2">
 										<div class="col-span-9">
-											<input-auto-complete label="Client" endpoint="manage-invoices/fetch-clients" :required="true" @selected="handleSelectedClient" placeholder="Type to select a client" :options="data.all_clients"></input-auto-complete>
+											<input-auto-complete label="Client" v-model="data.client.value" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients"></input-auto-complete>
 										</div>
 										<div class="col-span-3">
 											<input-button url="/clients/create" label="New" class="mt-[23.5px]"></input-button>
@@ -23,27 +23,27 @@
 									</div>
 								</div>
 								<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-									<input-date-time mode="date" label="Invoice date" :required="true" placeholder="Select invoice date"></input-date-time>
+									<input-date-time mode="date" label="Invoice date" v-model="data.invoice_date.value" :error="data.invoice_date.error" :required="true" placeholder="Select invoice date"></input-date-time>
 								</div>
 								<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-									<input-date-time mode="date" label="Due date" :required="true" placeholder="Select due date"></input-date-time>
+									<input-date-time mode="date" label="Due date" v-model="data.due_date.value" :error="data.due_date.error" :required="true" placeholder="Select due date"></input-date-time>
 								</div>
 							</div>
 						
 							<div class="lg:grid lg:grid-cols-12 lg:gap-5">
 								<div class="lg:col-span-4 mt-[20px]">
-									<input-text label="Invoice number" :required="true" placeholder="Invoice number"></input-text>
+									<input-text label="Invoice number" v-model="data.invoice_number.value" :error="data.invoice_number.error" :required="true" placeholder="Invoice number"></input-text>
 								</div>
 								<div class="lg:col-span-4 mt-[20px]">
-									<input-text label="PO number" :required="true" placeholder="PO number"></input-text>
+									<input-text label="PO number" v-model="data.po_number" :required="true" placeholder="PO number"></input-text>
 								</div>
 								<div class="lg:col-span-4 mt-[20px]">
 									<div class="lg:grid lg:grid-cols-12 lg:gap-2">
 										<div class="lg:col-span-6">
-											<input-number label="Discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
+											<input-number label="Discount" v-model="data.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
 										</div>
 										<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
-											<input-select label="Discount type" placeholder="Select" :options="discount_options"></input-select>
+											<input-select label="Discount type" v-model="data.global_discount_type" placeholder="Select" :options="discount_options"></input-select>
 										</div>
 										
 									</div>
@@ -82,6 +82,7 @@
 	import ProductRow from './blocks/ProductRow.vue';
 
 	import InputButton from '../inputs/InputButton.vue';
+	import api from '../../helpers/api';
 
 	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings', 'Preview'];
 	const discount_options = [
@@ -96,20 +97,48 @@
 	];
 
 	const data = reactive({
-		all_clients : []
+		clients : [],
+		client : {
+			value : '',
+			error : 'Please select a client'
+		},
+		invoice_date : {
+			value : new Date(),
+			error : 'Please select invoice date'
+		},
+		due_date : {
+			value : null,
+			error : 'Please select due date'
+		},
+		invoice_number : {
+			value : '',
+			error : 'Please enter invoice number'
+		},
+		po_number : '',
+		global_discount : 0,
+		global_discount_type: 'percentage'
 	});
 
-	const handleSelectedClient = (selected:object) => {
-		console.log(selected);
+	const fetchInitialData = () : void =>  {
+
+		const d = new Date();
+		const timezone_offset_minutes = d.getTimezoneOffset();
+
+		api.get('manage-invoices/fetch-initial-data', {
+			params : {
+				timezone_offset_minutes : timezone_offset_minutes
+			}
+		}).then(response => {
+			
+		}).catch(error => {
+
+		});
+
 	}
 
 	onMounted(() => {
-		// for(let z = 0 ; z < 50 ; z++){
-		// 	data.all_clients.push({
-		// 		text : `data ${z}`,
-		// 		value : `data ${z}`
-		// 	});
-		// }
+		
+		fetchInitialData();
 	})
 
 </script>

@@ -228,7 +228,7 @@
 				
 				api.get('manage-clients/fetch-clients-custom-fields').then((response) => {
 
-					this.custom_fields = response.data;
+					this.custom_fields = response.data.data_fields;
 					
 					for(let z = 0 ; z < this.custom_fields.length ; z++){
 						
