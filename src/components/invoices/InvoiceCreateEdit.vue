@@ -50,19 +50,17 @@
 									
 								</div>
 							</div>
-
-							<product-row class="mt-[20px]"></product-row>
+							<div class="flex gap-5 mt-[20px]">
+								<span v-for="(product_column, key) in data.product_columns" :key="key" class="grow">{{ product_column.text }}</span>
+								<!-- <product-row class="mt-[20px]" :data="product_column"></product-row> -->
+							</div>
+							
 						</form>
 					</div>
 				</template>
 				<template v-slot:tab-1>
 					<div>
 						invoice settings here
-					</div>
-				</template>
-				<template v-slot:tab-2>
-					<div>
-						invoice preview here
 					</div>
 				</template>
 			 </tabs>
@@ -84,7 +82,7 @@
 	import InputButton from '../inputs/InputButton.vue';
 	import api from '../../helpers/api';
 
-	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings', 'Preview'];
+	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings'];
 	const discount_options = [
 		{
 			text: 'Percentage',
@@ -116,7 +114,8 @@
 		},
 		po_number : '',
 		global_discount : 0,
-		global_discount_type: 'percentage'
+		global_discount_type: 'percentage',
+		product_columns : []
 	});
 
 	const fetchInitialData = () : void =>  {
@@ -129,7 +128,8 @@
 				timezone_offset_minutes : timezone_offset_minutes
 			}
 		}).then(response => {
-			
+			data.invoice_number.value = response.data.invoice_number;
+			data.product_columns = response.data.product_columns;
 		}).catch(error => {
 
 		});
