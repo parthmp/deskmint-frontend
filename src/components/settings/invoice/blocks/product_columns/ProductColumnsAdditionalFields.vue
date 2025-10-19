@@ -146,7 +146,7 @@
 		if(data.fields_labels.length === 0){
 			toastEvents.emit('toast', {
 				type: 'error',
-				message : 'Please enter at least one tax field'
+				message : 'Please add at least one field to save'
 			});
 			data.btn_disabled = false;
 		}else{
@@ -174,7 +174,7 @@
 				});
 			}
 
-		}
+		 }
 
 		
 

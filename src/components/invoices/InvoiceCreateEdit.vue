@@ -50,146 +50,108 @@
 									
 								</div>
 							</div>
-							<!-- <div class="flex gap-5 mt-[40px]">
-								<span v-for="(product_column, key) in data.product_columns" :key="key" class="grow text-left w-[150px]">
-									{{ product_column.text }}
+							
+							<br>
+							<br>
+								<div class="space-y-4 mt-[25px]" v-for="(product_row, index) in data.product_rows" :key="product_row.id">
+									<IconTrash class="float-end text-red-500! cursor-pointer m-2" @click.prevent="removeProductRow(index)"></IconTrash>
+											
+									<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green">
+										
+										
+										<div class="overflow-x-auto -mx-4 px-4 styled-scrollbar">
+											
+											<div v-for="(product_column_slice, index) in data.product_columns_slices" :key="index" class="min-w-0">
+												
+												<div class="clear-both"></div>
+												<div class="grid gap-4 mb-4 min-w-[1000px]" :class="{'grid-cols-6' : index === 0, 'grid-cols-3' : index === 1}">
+													
+													<div v-for="(product_column, key2) in product_column_slice" :key="key2" class="min-w-0">
+														
+														<!-- Column Label -->
+														<label class="block mb-1.5">
+															{{ product_column.text }}
+														</label>
+														
+														<!-- Item Field -->
+														<div v-if="product_column.value == 'item'">
+															<input-auto-complete 
+															v-model="data.client.value" 
+															:error="data.client.error" 
+															endpoint="manage-invoices/fetch-clients" 
+															:required="true" 
+															placeholder="Product/Item" 
+															:options="data.clients" 
+															class="w-full">
+															</input-auto-complete>
+														</div>
+														
+														<!-- Description Field -->
+														<div v-if="product_column.value == 'description'">
+															<input-textarea class="w-full"></input-textarea>
+														</div>
+														
+														<!-- Unit Cost Field -->
+														<div v-if="product_column.value == 'unit_cost'">
+															<input-number :step="0.01" class="w-full"></input-number>
+														</div>
+														
+														<!-- Quantity Field -->
+														<div v-if="product_column.value == 'quantity'">
+															<input-number :step="1" class="w-full"></input-number>
+														</div>
+														
+														<!-- Discount Field -->
+														<div v-if="product_column.value == 'discount'">
+															<input-number :step="0.01" class="w-full"></input-number>
+														</div>
+														
+														<!-- Custom Field -->
+														<div v-if="product_column.type == 'custom' && product_column?.tax === true">
+															<input-number :step="0.01" class="w-full"></input-number>
+														</div>
+														<div v-if="product_column.type == 'custom' && product_column?.tax === false">
+															<input-text class="w-full"></input-text>
+														</div>
+														
+														<!-- Gross Line Total Field -->
+														<div v-if="product_column.value == 'gross_line_total'">
+															<input-number :step="0.01" class="w-full"></input-number>
+														</div>
+														
+														<!-- Tax Field -->
+														<div v-if="product_column.value == 'tax'">
+															<input-number :step="0.01" class="w-full"></input-number>
+														</div>
+														
+														<!-- Line Total Display -->
+														<div v-if="product_column.value == 'line_total'" 
+															class="font-semibold text-lg text-gray-900 pt-1">
+															TOTAL
+														</div>
+													
+													</div>
+												</div>
+											</div>
+										
+										</div>
+									</div>
 									
-								</span>
-								
-							</div> -->
-							<!-- <div class="flex gap-5">
-								<span v-for="(product_column, key) in data.product_columns" :key="key" class="grow w-[150px]">
-									<span v-if="product_column.value == 'item'">
-										<input-auto-complete v-model="data.client.value" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Product/Item" :options="data.clients"></input-auto-complete>
-									</span>
-									<span v-if="product_column.value == 'description'">
-										<input-textarea></input-textarea>
-									</span>
-									<span v-if="product_column.value == 'unit_cost'">
-										<input-number :step="0.01"></input-number>
-									</span>
-									<span v-if="product_column.value == 'quantity'">
-										<input-number :step="1"></input-number>
-									</span>
-									<span v-if="product_column.value == 'discount'">
-										<input-number :step="0.01"></input-number>
-									</span>
-								</span>
-							</div> -->
-							<br>
-							<br>
-							<!-- Replace your table structure with this -->
-<div class="space-y-4">
-  <!-- Each product row as a card -->
-  <div class="border rounded-lg p-4">
-    
-    <!-- Wrapper with horizontal scroll for small screens -->
-    <div class="overflow-x-auto -mx-4 px-4">
-      <!-- Grid that wraps: 7 columns per row on large screens -->
-      <div class="grid grid-cols-9 gap-4 min-w-[900px]">
-      
-      <div v-for="(product_column, key) in data.product_columns" 
-           :key="key"
-           class="min-w-0">
-        
-        <!-- Column Label -->
-        <label class="block text-xs font-medium mb-1.5">
-          {{ product_column.text }}
-        </label>
-        
-        <!-- Item Field -->
-        <div v-if="product_column.value == 'item'">
-          <input-auto-complete 
-            v-model="data.client.value" 
-            :error="data.client.error" 
-            endpoint="manage-invoices/fetch-clients" 
-            :required="true" 
-            placeholder="Product/Item" 
-            :options="data.clients" 
-            class="w-full">
-          </input-auto-complete>
-        </div>
-        
-        <!-- Description Field -->
-        <div v-if="product_column.value == 'description'">
-          <input-textarea class="w-full"></input-textarea>
-        </div>
-        
-        <!-- Unit Cost Field -->
-        <div v-if="product_column.value == 'unit_cost'">
-          <input-number :step="0.01" class="w-full"></input-number>
-        </div>
-        
-        <!-- Quantity Field -->
-        <div v-if="product_column.value == 'quantity'">
-          <input-number :step="1" class="w-full"></input-number>
-        </div>
-        
-        <!-- Discount Field -->
-        <div v-if="product_column.value == 'discount'">
-          <input-number :step="0.01" class="w-full"></input-number>
-        </div>
-        
-        <!-- Custom Field -->
-        <div v-if="product_column.type == 'custom'">
-          <input-number :step="0.01" class="w-full"></input-number>
-        </div>
-        
-        <!-- Gross Line Total Field -->
-        <div v-if="product_column.value == 'gross_line_total'">
-          <input-number :step="0.01" class="w-full"></input-number>
-        </div>
-        
-        <!-- Tax Field -->
-        <div v-if="product_column.value == 'tax'">
-          <input-number :step="0.01" class="w-full"></input-number>
-        </div>
-        
-        <!-- Line Total Display -->
-        <div v-if="product_column.value == 'line_total'" 
-             class="font-semibold text-lg text-gray-900 pt-1">
-          TOTAL
-        </div>
-        
-      </div>
-      </div>
-    </div>
-    
-    <!-- Optional: Remove button for each product -->
-    <!-- <button class="mt-3 text-red-500 text-sm hover:text-red-700">
-      Remove Item
-    </button> -->
-    
-  </div>
-  
-  <!-- If you have multiple products, use v-for on the card div above -->
-  
-</div>
+									
+								</div>
 
-<!-- 
-USAGE NOTES:
-1. Wraps at 7 columns per row automatically
-2. For 10 columns: First 7 on row 1, next 3 on row 2
-3. For 14 columns: 7 on row 1, 7 on row 2
-4. min-w-[900px] ensures 7 columns fit properly on desktop (1366px+)
-5. Small screens (<900px): horizontal scrolling enabled
-6. No horizontal scrolling on screens 1366px and larger
-
-SCREEN BEHAVIOR:
-- Desktop (1366px+): Shows 7 fields per row, wraps to next row if more. No scroll ✅
-- Tablet (768-1365px): Horizontal scroll if needed ↔️
-- Mobile (<768px): Horizontal scroll ↔️
-
-ADJUST MIN-WIDTH:
-- Change min-w-[900px] to adjust when scrolling kicks in
-- min-w-[1100px] = tighter fit, scrolls earlier
-- min-w-[800px] = looser fit, scrolls later
--->
+								<input-button @click.prevent="addNewProductRow" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
+									<div class="clear-both"></div>
 
 						</form>
 					</div>
 				</template>
 				<template v-slot:tab-1>
+					<div>
+						invoice cf here
+					</div>
+				</template>
+				<template v-slot:tab-2>
 					<div>
 						invoice settings here
 					</div>
@@ -209,8 +171,11 @@ ADJUST MIN-WIDTH:
 	import InputSelect from '../inputs/InputSelect.vue';
 	import InputTextarea from '../inputs/InputTextarea.vue';
 
+	import { IconTrash } from '@tabler/icons-vue';
+
 	import InputButton from '../inputs/InputButton.vue';
 	import api from '../../helpers/api';
+import common from '../../helpers/common';
 
 	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings'];
 	const discount_options = [
@@ -246,7 +211,9 @@ ADJUST MIN-WIDTH:
 		po_number : '',
 		global_discount : 0,
 		global_discount_type: 'percentage',
-		product_columns : []
+		product_columns : [],
+		product_columns_slices : [],
+		product_rows : []
 	});
 
 	const fetchInitialData = () : void =>  {
@@ -261,6 +228,11 @@ ADJUST MIN-WIDTH:
 		}).then(response => {
 			data.invoice_number.value = response.data.invoice_number;
 			data.product_columns = response.data.product_columns;
+			data.product_columns_slices.push(data.product_columns.slice(0, 6));
+			if(data.product_columns.length > 6){
+				data.product_columns_slices.push(data.product_columns.slice(6, 9));
+			}
+			
 		}).catch(error => {
 
 		});
@@ -271,8 +243,20 @@ ADJUST MIN-WIDTH:
 		data.client.client_id = ev.value+'';
 	}
 
+	const addNewProductRow = () : void => {
+		data.product_rows.push({
+			some : "thing",
+			id: common.random_number()
+		});
+	}
+
+	const removeProductRow = (index:number) : void => {
+		data.product_rows.splice(index, 1);
+	}
+
 	onMounted(() => {
 		fetchInitialData();
+		addNewProductRow();
 	})
 
 </script>
