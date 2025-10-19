@@ -100,23 +100,32 @@
 
 	const addNewField = () : void => {
 		
-		data.fields_labels.push({
-			id: null,
-			value : '',
-			error : 'Please enter the field label',
-			show_errors: false
-		});
+		if(data.fields_labels.length >= 3){
+			toastEvents.emit('toast', {
+				type: 'error',
+				message : 'Only 3 additional fields are allowed'
+			});
+		}else{
+			data.fields_labels.push({
+				id: null,
+				value : '',
+				error : 'Please enter the field label',
+				show_errors: false
+			});
 
-		data.fields_types.push({
-			id: null,
-			value : 'normal',
-			error : ''
-		});
+			data.fields_types.push({
+				id: null,
+				value : 'normal',
+				error : ''
+			});
 
-		data.fields_taxes.push({
-			id: null,
-			value: '0'
-		});
+			data.fields_taxes.push({
+				id: null,
+				value: '0'
+			});
+		}
+
+		
 		
 	}
 

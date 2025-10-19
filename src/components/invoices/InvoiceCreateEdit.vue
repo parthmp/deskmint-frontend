@@ -12,7 +12,7 @@
 								<div class="lg:col-span-4">
 									<div class="grid grid-cols-12 gap-2">
 										<div class="col-span-9">
-											<input-auto-complete label="Client" v-model="data.client.value" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients"></input-auto-complete>
+											<input-auto-complete label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients"></input-auto-complete>
 										</div>
 										<div class="col-span-3">
 											<input-button url="/clients/create" label="New" class="mt-[23.5px]"></input-button>
@@ -50,15 +50,14 @@
 									
 								</div>
 							</div>
-							<div class="flex gap-5 mt-[40px]">
+							<!-- <div class="flex gap-5 mt-[40px]">
 								<span v-for="(product_column, key) in data.product_columns" :key="key" class="grow text-left w-[150px]">
 									{{ product_column.text }}
 									
 								</span>
 								
-								<!-- <product-row class="mt-[20px]" :data="product_column"></product-row> -->
-							</div>
-							<div class="flex gap-5">
+							</div> -->
+							<!-- <div class="flex gap-5">
 								<span v-for="(product_column, key) in data.product_columns" :key="key" class="grow w-[150px]">
 									<span v-if="product_column.value == 'item'">
 										<input-auto-complete v-model="data.client.value" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Product/Item" :options="data.clients"></input-auto-complete>
@@ -76,7 +75,117 @@
 										<input-number :step="0.01"></input-number>
 									</span>
 								</span>
-							</div>
+							</div> -->
+							<br>
+							<br>
+							<!-- Replace your table structure with this -->
+<div class="space-y-4">
+  <!-- Each product row as a card -->
+  <div class="border rounded-lg p-4">
+    
+    <!-- Wrapper with horizontal scroll for small screens -->
+    <div class="overflow-x-auto -mx-4 px-4">
+      <!-- Grid that wraps: 7 columns per row on large screens -->
+      <div class="grid grid-cols-9 gap-4 min-w-[900px]">
+      
+      <div v-for="(product_column, key) in data.product_columns" 
+           :key="key"
+           class="min-w-0">
+        
+        <!-- Column Label -->
+        <label class="block text-xs font-medium mb-1.5">
+          {{ product_column.text }}
+        </label>
+        
+        <!-- Item Field -->
+        <div v-if="product_column.value == 'item'">
+          <input-auto-complete 
+            v-model="data.client.value" 
+            :error="data.client.error" 
+            endpoint="manage-invoices/fetch-clients" 
+            :required="true" 
+            placeholder="Product/Item" 
+            :options="data.clients" 
+            class="w-full">
+          </input-auto-complete>
+        </div>
+        
+        <!-- Description Field -->
+        <div v-if="product_column.value == 'description'">
+          <input-textarea class="w-full"></input-textarea>
+        </div>
+        
+        <!-- Unit Cost Field -->
+        <div v-if="product_column.value == 'unit_cost'">
+          <input-number :step="0.01" class="w-full"></input-number>
+        </div>
+        
+        <!-- Quantity Field -->
+        <div v-if="product_column.value == 'quantity'">
+          <input-number :step="1" class="w-full"></input-number>
+        </div>
+        
+        <!-- Discount Field -->
+        <div v-if="product_column.value == 'discount'">
+          <input-number :step="0.01" class="w-full"></input-number>
+        </div>
+        
+        <!-- Custom Field -->
+        <div v-if="product_column.type == 'custom'">
+          <input-number :step="0.01" class="w-full"></input-number>
+        </div>
+        
+        <!-- Gross Line Total Field -->
+        <div v-if="product_column.value == 'gross_line_total'">
+          <input-number :step="0.01" class="w-full"></input-number>
+        </div>
+        
+        <!-- Tax Field -->
+        <div v-if="product_column.value == 'tax'">
+          <input-number :step="0.01" class="w-full"></input-number>
+        </div>
+        
+        <!-- Line Total Display -->
+        <div v-if="product_column.value == 'line_total'" 
+             class="font-semibold text-lg text-gray-900 pt-1">
+          TOTAL
+        </div>
+        
+      </div>
+      </div>
+    </div>
+    
+    <!-- Optional: Remove button for each product -->
+    <!-- <button class="mt-3 text-red-500 text-sm hover:text-red-700">
+      Remove Item
+    </button> -->
+    
+  </div>
+  
+  <!-- If you have multiple products, use v-for on the card div above -->
+  
+</div>
+
+<!-- 
+USAGE NOTES:
+1. Wraps at 7 columns per row automatically
+2. For 10 columns: First 7 on row 1, next 3 on row 2
+3. For 14 columns: 7 on row 1, 7 on row 2
+4. min-w-[900px] ensures 7 columns fit properly on desktop (1366px+)
+5. Small screens (<900px): horizontal scrolling enabled
+6. No horizontal scrolling on screens 1366px and larger
+
+SCREEN BEHAVIOR:
+- Desktop (1366px+): Shows 7 fields per row, wraps to next row if more. No scroll ✅
+- Tablet (768-1365px): Horizontal scroll if needed ↔️
+- Mobile (<768px): Horizontal scroll ↔️
+
+ADJUST MIN-WIDTH:
+- Change min-w-[900px] to adjust when scrolling kicks in
+- min-w-[1100px] = tighter fit, scrolls earlier
+- min-w-[800px] = looser fit, scrolls later
+-->
+
 						</form>
 					</div>
 				</template>
@@ -100,8 +209,6 @@
 	import InputSelect from '../inputs/InputSelect.vue';
 	import InputTextarea from '../inputs/InputTextarea.vue';
 
-	import ProductRow from './blocks/ProductRow.vue';
-
 	import InputButton from '../inputs/InputButton.vue';
 	import api from '../../helpers/api';
 
@@ -121,7 +228,8 @@
 		clients : [],
 		client : {
 			value : '',
-			error : 'Please select a client'
+			error : 'Please select a client',
+			client_id : ''
 		},
 		invoice_date : {
 			value : new Date(),
@@ -159,8 +267,11 @@
 
 	}
 
+	const handleClientSelect = (ev:object) : void => {
+		data.client.client_id = ev.value+'';
+	}
+
 	onMounted(() => {
-		
 		fetchInitialData();
 	})
 

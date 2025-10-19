@@ -1,8 +1,8 @@
 <template>
 	<div class="form-group relative">
 		<label :for="text_id">{{ local_label }}</label>
-		<input type="text" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="text_id" @input="filterOptions" :class="{'red-input-order': (local_error !== '' && show_errors)}" @keydown="handleKeydown">
-		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
+		<input type="text" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="text_id" @input="filterOptions" :class="{'red-input-order': (local_error !== '' && local_show_errors)}" @keydown="handleKeydown">
+		<span v-if="(local_error !== '' && local_show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 		<p v-if="endpoint && ajax_loading">{{ ajax_loading_text }}</p>
 		<div v-show="show_dropdown" class="autocomplete-area absolute top-16 bg-background-card w-full max-h-[300px] overflow-auto styled-scrollbar z-10">
 			<ul>
@@ -24,7 +24,7 @@
 		input_required: boolean,
 		is_valid: boolean,
 		local_error: string,
-		show_errors: boolean,
+		local_show_errors: boolean,
 		local_label: string
 		local_placeholder: string,
 		copy_options: Array<object>,
@@ -70,6 +70,9 @@
 			endpoint : {
 				type:String
 			},
+			show_errors : {
+				type: Boolean
+			},
 			addnew : {
 				type:String
 			}
@@ -81,7 +84,7 @@
 				input_required: false,
 				is_valid : true,
 				local_error : '',
-				show_errors: false,
+				local_show_errors: false,
 				local_label: '',
 				local_placeholder:'',
 				copy_options: [],
@@ -108,6 +111,11 @@
 			},
 			modelValue() : void{
 				this.setModelValue();
+			},
+			show_errors () : void {
+				if(common.isset(this.show_errors)){
+					this.local_show_errors = this.show_errors;
+				}
 			}
 		},
 
@@ -138,7 +146,7 @@
 
 			validate() : boolean{
 				
-				//this.show_errors = false;
+				//this.local_show_errors = false;
 				/* validate here */
 				
 				if(this.input_required === true){
@@ -146,7 +154,7 @@
 					/* test if value was selected or not */
 
 					if(Object.keys(this.current_selected).length === 0 || this.input_value === ''){
-						this.show_errors = true;
+						this.local_show_errors = true;
 						this.is_valid = false;
 					}else{
 						this.is_valid = true;
@@ -164,7 +172,7 @@
 				this.show_dropdown = false;
 				this.input_value = e.text;
 				//this.$emit('update:modelValue', e);
-				this.$emit('update:modelValue', e.value+'');
+				//this.$emit('update:modelValue', e.value+'');
 				this.current_selected = e;
 				this.emitSelected(e);
 			},
@@ -186,7 +194,7 @@
 							}
 						}).then(response => {
 							this.show_dropdown = true;
-							this.show_errors = false;
+							this.local_show_errors = false;
 							this.copy_options = response.data;
 							
 						}).finally(() => {
@@ -199,7 +207,7 @@
 					
 				}else{
 					this.show_dropdown = true;
-					this.show_errors = false;
+					this.local_show_errors = false;
 					if(this.input_value.trim() === ''){
 						this.show_dropdown = false;
 					}
@@ -244,7 +252,7 @@
 				this.copy_options = [];
 				this.active_index = -1;
 				this.emitSelected(option);
-				this.EmitModel(option);
+				//this.EmitModel(option);
 			},
 			scrollToActive() {
 				const el = this.option_refs[this.active_index]
@@ -290,6 +298,10 @@
 
 			if(common.isset(this.options)){
 				this.copy_options = this.options;
+			}
+
+			if(common.isset(this.show_errors)){
+				this.local_show_errors = this.show_errors;
 			}
 		}
 
