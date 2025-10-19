@@ -50,11 +50,33 @@
 									
 								</div>
 							</div>
-							<div class="flex gap-5 mt-[20px]">
-								<span v-for="(product_column, key) in data.product_columns" :key="key" class="grow">{{ product_column.text }}</span>
+							<div class="flex gap-5 mt-[40px]">
+								<span v-for="(product_column, key) in data.product_columns" :key="key" class="grow text-left w-[150px]">
+									{{ product_column.text }}
+									
+								</span>
+								
 								<!-- <product-row class="mt-[20px]" :data="product_column"></product-row> -->
 							</div>
-							
+							<div class="flex gap-5">
+								<span v-for="(product_column, key) in data.product_columns" :key="key" class="grow w-[150px]">
+									<span v-if="product_column.value == 'item'">
+										<input-auto-complete v-model="data.client.value" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Product/Item" :options="data.clients"></input-auto-complete>
+									</span>
+									<span v-if="product_column.value == 'description'">
+										<input-textarea></input-textarea>
+									</span>
+									<span v-if="product_column.value == 'unit_cost'">
+										<input-number :step="0.01"></input-number>
+									</span>
+									<span v-if="product_column.value == 'quantity'">
+										<input-number :step="1"></input-number>
+									</span>
+									<span v-if="product_column.value == 'discount'">
+										<input-number :step="0.01"></input-number>
+									</span>
+								</span>
+							</div>
 						</form>
 					</div>
 				</template>
@@ -76,7 +98,8 @@
 	import InputText from '../inputs/InputText.vue';
 	import InputNumber from '../inputs/InputNumber.vue';
 	import InputSelect from '../inputs/InputSelect.vue';
-	
+	import InputTextarea from '../inputs/InputTextarea.vue';
+
 	import ProductRow from './blocks/ProductRow.vue';
 
 	import InputButton from '../inputs/InputButton.vue';

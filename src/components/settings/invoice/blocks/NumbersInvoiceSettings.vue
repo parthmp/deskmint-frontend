@@ -1,7 +1,9 @@
 <template>
 	<div>
 			<numbers-invoice-settings-skeleton v-if="data.data_loading"></numbers-invoice-settings-skeleton>
-
+			<p v-if="!data.data_loading">Note: Resetting invoice number means your next invoice number would start from 1 with padding that you select in the below settings.</p>
+			<input-button v-if="!data.data_loading" @click.prevent="resetInvoiceNumber" btn_text="Reset invoice number" :disabled="data.btn_disabled_reset_invoice_numbers" icon="IconRefresh" class="lg:float-end"></input-button>
+			<div class="clear-both"></div>
 			<form @submit.prevent="saveSettings" v-if="!data.data_loading">
 				<div class="lg:grid lg:grid-cols-12 gap-5">
 					<div class="lg:col-span-6">
@@ -47,6 +49,7 @@
 	/* interfaces */
 	interface NumbersInvoiceSettingsInterface{
 		btn_disabled: boolean,
+		btn_disabled_reset_invoice_numbers: boolean,
 		number_padding_options: Array<object>,
 		number_padding: object,
 		reset_counter_options: Array<object>,
@@ -68,6 +71,7 @@
 	/* data */
 	const data = reactive<NumbersInvoiceSettingsInterface>({
 		btn_disabled : false,
+		btn_disabled_reset_invoice_numbers : false,
 		number_padding_options : [
 			{
 				text : '1',
@@ -221,6 +225,15 @@
 		}).catch(error => {
 			data.data_loading = false;
 		});
+	}
+
+	const resetInvoiceNumber = () : void => {
+
+		data.btn_disabled_reset_invoice_numbers = true;
+		api.get('manage-invoice-settings-numbers/reset-number').finally(() => {
+			data.btn_disabled_reset_invoice_numbers = false;
+		});
+
 	}
 
 	/* lifecycle hooks */
