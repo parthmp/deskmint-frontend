@@ -52,92 +52,76 @@
 							</div>
 							
 							<br>
+							
 							<br>
-								<div class="space-y-4 mt-[25px]" v-for="(product_row, index) in data.product_rows" :key="product_row.id">
-									<IconTrash class="float-end text-red-500! cursor-pointer m-2" @click.prevent="removeProductRow(index)"></IconTrash>
-											
-									<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green">
+								<div class="overflow-x-auto overflow-y-hidden styled-scrollbar">
+									<div class="min-w-[1000px] mt-[25px]" v-for="(product_row, index) in data.product_rows" :key="product_row.id">
 										
-										
-										<div class="overflow-x-auto -mx-4 px-4 styled-scrollbar">
+										<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green">
 											
-											<div v-for="(product_column_slice, index) in data.product_columns_slices" :key="index" class="min-w-0">
+											<IconTrash class="float-end text-red-500! cursor-pointer" @click.prevent="removeProductRow(index)"></IconTrash>
+											<div class="clear-both"></div>
+											<div class="">
 												
-												<div class="clear-both"></div>
-												<div class="grid gap-4 mb-4 min-w-[1000px]" :class="{'grid-cols-6' : index === 0, 'grid-cols-3' : index === 1}">
+												<div v-for="(product_column_slice, index) in data.product_columns_slices" :key="index" class="min-w-0">
 													
-													<div v-for="(product_column, key2) in product_column_slice" :key="key2" class="min-w-0">
-														
-														<!-- Column Label -->
-														<label class="block mb-1.5">
-															{{ product_column.text }}
-														</label>
-														
-														<!-- Item Field -->
-														<div v-if="product_column.value == 'item'">
-															<input-auto-complete 
-															v-model="data.client.value" 
-															:error="data.client.error" 
-															endpoint="manage-invoices/fetch-clients" 
-															:required="true" 
-															placeholder="Product/Item" 
-															:options="data.clients" 
-															class="w-full">
-															</input-auto-complete>
-														</div>
-														
-														<!-- Description Field -->
-														<div v-if="product_column.value == 'description'">
-															<input-textarea class="w-full"></input-textarea>
-														</div>
-														
-														<!-- Unit Cost Field -->
-														<div v-if="product_column.value == 'unit_cost'">
-															<input-number :step="0.01" class="w-full"></input-number>
-														</div>
-														
-														<!-- Quantity Field -->
-														<div v-if="product_column.value == 'quantity'">
-															<input-number :step="1" class="w-full"></input-number>
-														</div>
-														
-														<!-- Discount Field -->
-														<div v-if="product_column.value == 'discount'">
-															<input-number :step="0.01" class="w-full"></input-number>
-														</div>
-														
-														<!-- Custom Field -->
-														<div v-if="product_column.type == 'custom' && product_column?.tax === true">
-															<input-number :step="0.01" class="w-full"></input-number>
-														</div>
-														<div v-if="product_column.type == 'custom' && product_column?.tax === false">
-															<input-text class="w-full"></input-text>
-														</div>
-														
-														<!-- Gross Line Total Field -->
-														<div v-if="product_column.value == 'gross_line_total'">
-															<input-number :step="0.01" class="w-full"></input-number>
-														</div>
-														
-														<!-- Tax Field -->
-														<div v-if="product_column.value == 'tax'">
-															<input-number :step="0.01" class="w-full"></input-number>
-														</div>
-														
-														<!-- Line Total Display -->
-														<div v-if="product_column.value == 'line_total'" 
-															class="font-semibold text-lg text-gray-900 pt-1">
-															TOTAL
-														</div>
 													
+													<div class="grid gap-4" :class="{'grid-cols-6' : index === 0, 'grid-cols-3' : index === 1}">
+														
+														<div v-for="(product_column, key2) in product_column_slice" :key="key2">
+															
+															
+															<div v-if="product_column.value == 'item'">
+																<input-auto-complete label="Item" v-model="product_row.item" @selected="handleProductSelect" :error="data.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
+															</div>
+															
+															
+															<!-- Description Field -->
+															<div v-if="product_column.value == 'description'">
+																<input-textarea label="Description" v-model="product_row.description" placeholder="Description" class="w-full"></input-textarea>
+															</div>
+															
+															<!-- Unit Cost Field -->
+															<div v-if="product_column.value == 'unit_cost'">
+																<input-number :step="0.01" label="Unit cost" v-model="product_row.unit_cost" placeholder="Unit cost" class="w-full"></input-number>
+															</div>
+															
+															<!-- Quantity Field -->
+															<div v-if="product_column.value == 'quantity'">
+																<input-number :step="1" label="Quantity" v-model="product_row.unit_cost" placeholder="quantity" class="w-full"></input-number>
+															</div>
+															
+															
+															
+															<!-- Custom Field -->
+															<div v-if="product_column.type == 'custom' && product_column?.tax === true">
+																<input-number :step="0.01" :label="product_column?.text" v-model="product_row['custom_tax_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text" class="w-full"></input-number>
+															</div>
+															<div v-if="product_column.type == 'custom' && product_column?.tax === false">
+																<input-text class="w-full" :label="product_column?.text" v-model="product_row['normal_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text"></input-text>
+															</div>
+															
+															
+															<!-- Tax Field -->
+															<div v-if="product_column.value == 'tax'">
+																<input-number :step="0.01" label="Tax %" v-model="product_row.tax" placeholder="Tax %" class="w-full"></input-number>
+															</div>
+															
+															<!-- Line Total Display -->
+															<div v-if="product_column.value == 'line_total'" class="font-semibold text-lg text-gray-900 pt-1">
+																TOTAL<br>
+																{{ product_row.line_total }}
+															</div>
+														
+														</div>
 													</div>
 												</div>
+											
 											</div>
-										
 										</div>
+										
+										
 									</div>
-									
-									
 								</div>
 
 								<input-button @click.prevent="addNewProductRow" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
@@ -175,7 +159,7 @@
 
 	import InputButton from '../inputs/InputButton.vue';
 	import api from '../../helpers/api';
-import common from '../../helpers/common';
+	import common from '../../helpers/common';
 
 	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings'];
 	const discount_options = [
@@ -189,8 +173,25 @@ import common from '../../helpers/common';
 		}
 	];
 
-	const data = reactive({
+	interface InvoiceCreateEditInterface{
+		clients : Array<object>,
+		products : Array<object>,
+		client : object,
+		invoice_date : object,
+		due_date : object,
+		invoice_number : object,
+		po_number : string,
+		global_discount : number,
+		global_discount_type : string,
+		product_columns : Array<object>,
+		product_columns_slices : Array<object>,
+		product_rows : Array<object>,
+		product_id : string
+	}
+
+	const data = reactive<InvoiceCreateEditInterface>({
 		clients : [],
+		products : [],
 		client : {
 			value : '',
 			error : 'Please select a client',
@@ -213,7 +214,8 @@ import common from '../../helpers/common';
 		global_discount_type: 'percentage',
 		product_columns : [],
 		product_columns_slices : [],
-		product_rows : []
+		product_rows : [],
+		product_id : ''
 	});
 
 	const fetchInitialData = () : void =>  {
@@ -232,7 +234,7 @@ import common from '../../helpers/common';
 			if(data.product_columns.length > 6){
 				data.product_columns_slices.push(data.product_columns.slice(6, 9));
 			}
-			
+			addNewProductRow();
 		}).catch(error => {
 
 		});
@@ -243,11 +245,46 @@ import common from '../../helpers/common';
 		data.client.client_id = ev.value+'';
 	}
 
+	const handleProductSelect = (ev:object) : void => {
+		data.product_id = ev.value;
+	}
+
 	const addNewProductRow = () : void => {
-		data.product_rows.push({
-			some : "thing",
-			id: common.random_number()
-		});
+
+		/* create an object to push */
+
+		let product_row = {
+			id : common.random_number()
+		};
+
+		
+		for(let row of data.product_columns){
+
+			if(row.type == 'custom' && row?.tax === true){
+				product_row['custom_tax_'+common.replaceWithUnderscores(row?.text)] = +row.tax_rate;
+			}else if(row.type == 'custom' && row?.tax === false){
+
+				product_row['normal_'+common.replaceWithUnderscores(row?.text)] = '';
+
+			}else{
+
+				if(row.value == 'tax' || row.value == 'line_total'){
+					product_row[row.value] = 0;
+				}else{
+					product_row[row.value] = '';
+				}
+
+			}
+			
+
+		}
+		
+		data.product_rows.push(product_row);
+		console.log(data.product_rows);
+
+		product_row = null;
+		
+
 	}
 
 	const removeProductRow = (index:number) : void => {
@@ -256,7 +293,7 @@ import common from '../../helpers/common';
 
 	onMounted(() => {
 		fetchInitialData();
-		addNewProductRow();
+		
 	})
 
 </script>

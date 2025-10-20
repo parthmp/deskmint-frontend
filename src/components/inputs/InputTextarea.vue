@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<textarea v-model="input_value" class="form-control" :id="text_id" @input="EmitModel" :class="{'red-input-order': (local_error !== '' && show_errors)}"></textarea>
+		<textarea v-model="input_value" class="form-control" :id="text_id" @input="EmitModel" :placeholder="local_placeholder" :class="{'red-input-order': (local_error !== '' && show_errors)}"></textarea>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
@@ -40,6 +40,9 @@
 				type:String
 			},
 			prop_placeholder: {
+				type:String
+			},
+			placeholder: {
 				type:String
 			}
 		},
@@ -150,6 +153,9 @@
 
 			if(common.isset(this.prop_placeholder)){
 				this.local_placeholder = this.prop_placeholder+'';
+			}
+			if(common.isset(this.placeholder)){
+				this.local_placeholder = this.placeholder+'';
 			}
 		}
 

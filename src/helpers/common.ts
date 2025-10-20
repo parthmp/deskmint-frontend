@@ -270,6 +270,14 @@ export default {
 	capitalizeFirstLetter(str:string) {
 		if (!str) return '';
 		return str.charAt(0).toUpperCase() + str.slice(1);
+	},
+
+	replaceWithUnderscores(str:string){
+		return str
+			.toLowerCase()
+			.replace(/[^a-z0-9]/g, '_')
+			.replace(/^_+|_+$/g, '')
+			.replace(/^(\d)/, 'c$1');
 	}
 
 
