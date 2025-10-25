@@ -60,23 +60,23 @@
 										<draggable class="min-w-[1000px] mt-[25px]" group="fields" @start="true" @end="printRows" v-model="data.product_rows" item-key="id" :animation="200" handle=".drag-handle">
 											<template #item="{element, index}">
 												<transition-group name="fade" tag="div">
-													<IconGrain class="float-start drag-handle block"></IconGrain>
-													<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green mt-5" :key="element.id">
-														
+													
+													<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green mt-5 relative" :key="element.id">
+														<IconGrain class="absolute left-0 top-0 drag-handle block"></IconGrain>
 														<IconTrash class="float-end text-red-500! cursor-pointer" @click.prevent="removeProductRow(index)"></IconTrash>
 														<div class="clear-both"></div>
 														<div class="">
 															
-															<div v-for="(product_column_slice, index) in data.product_columns_slices" :key="index" class="min-w-0">
+															<div v-for="(product_column_slice, index2) in data.product_columns_slices" :key="index" class="min-w-0">
 																
 																
-																<div class="grid gap-4 mt-2" :class="{'grid-cols-6' : index === 0, 'grid-cols-3' : index === 1}">
+																<div class="grid gap-4 mt-2" :class="{'grid-cols-6' : index2 === 0, 'grid-cols-3' : index2 === 1}">
 																	
 																	<div v-for="(product_column, column_index) in product_column_slice" :key="column_index">
 																		
 																		
 																		<div v-if="product_column.value == 'item'">
-																			<input-auto-complete label="Item" v-model="element.item" @selected="handleProductSelect(element)" :error="data.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
+																			<input-auto-complete label="Item" v-model="element.item" @selected="selected_item => handleProductSelect(selected_item, index)" :error="data.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
 																		</div>
 																		
 																		
@@ -114,7 +114,7 @@
 																		<!-- Line Total Display -->
 																		<div v-if="product_column.value == 'line_total'" class="font-semibold text-lg text-gray-900 pt-1">
 																			TOTAL<br>
-																			{{ element.line_total }}
+																			{{ element.line_total }} {{ data.currency_code }}
 																		</div>
 																	
 																	</div>
@@ -200,6 +200,8 @@
 		product_columns_slices : Array<object>,
 		product_rows : Array<object>,
 		product_id : string
+		currency_id : number
+		curreny_code : string
 	}
 
 	const data = reactive<InvoiceCreateEditInterface>({
@@ -228,7 +230,9 @@
 		product_columns : [],
 		product_columns_slices : [],
 		product_rows : [],
-		product_id : ''
+		product_id : '',
+		currency_id : 0,
+		curreny_code : '',
 	});
 
 	const fetchInitialData = () : void =>  {
@@ -255,15 +259,29 @@
 	}
 
 	const handleClientSelect = (ev:object) : void => {
+		
+		data.currency_id = ev.data.currency.id;
+		data.currency_code = ev.data.currency.code;
+
 		data.client.client_id = ev.value+'';
 	}
 
-	const handleProductSelect = (row:object) : void => {
-		// data.product_id = ev.value;
-		// console.log(data.product_id);
+	const handleProductSelect = (row:object, index:number) : void => {
+		
+		for(const key in data.product_rows[index]){
+			data.product_rows[index].quantity = 1;
+			if(key === 'description'){
+				data.product_rows[index].description = row.data.product.description;
+			}
+			if(key === 'unit_cost'){
+				data.product_rows[index].unit_cost = row.data.product.price;
+			}
+		}
 
-		console.log(`Object: ${JSON.stringify(row)}`);
+	}
 
+	const calculateItemCost = (index:number) : void => {
+		
 	}
 
 	const addNewProductRow = () : void => {
