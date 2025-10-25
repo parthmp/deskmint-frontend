@@ -54,14 +54,15 @@
 							<br>
 							
 							<br>
-							<p>Drag and drop the rows below to adjust their order.</p>
+							
 								<div class="overflow-x-auto overflow-y-visible! styled-scrollbar min-h-[0px]">
 									<!-- <div class="min-w-[1000px] mt-[25px]" v-for="(product_row, index_old) in data.product_rows" :key="product_row.id"> -->
-										<draggable group="fields" @start="true" @end="printRows" v-model="data.product_rows" item-key="id" :animation="200">
+										<draggable class="min-w-[1000px] mt-[25px]" group="fields" @start="true" @end="printRows" v-model="data.product_rows" item-key="id" :animation="200" handle=".drag-handle">
 											<template #item="{element, index}">
 												<transition-group name="fade" tag="div">
-													<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green mt-5 border-l-8 border-deskmint-cyan" :key="element.id">
-													
+													<IconGrain class="float-start drag-handle block"></IconGrain>
+													<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green mt-5" :key="element.id">
+														
 														<IconTrash class="float-end text-red-500! cursor-pointer" @click.prevent="removeProductRow(index)"></IconTrash>
 														<div class="clear-both"></div>
 														<div class="">
@@ -69,7 +70,7 @@
 															<div v-for="(product_column_slice, index) in data.product_columns_slices" :key="index" class="min-w-0">
 																
 																
-																<div class="grid gap-4" :class="{'grid-cols-6' : index === 0, 'grid-cols-3' : index === 1}">
+																<div class="grid gap-4 mt-2" :class="{'grid-cols-6' : index === 0, 'grid-cols-3' : index === 1}">
 																	
 																	<div v-for="(product_column, column_index) in product_column_slice" :key="column_index">
 																		
@@ -81,7 +82,7 @@
 																		
 																		<!-- Description Field -->
 																		<div v-if="product_column.value == 'description'">
-																			<input-textarea label="Description" v-model="element.description" placeholder="Description" class="w-full"></input-textarea>
+																			<input-textarea :rows="1" label="Description" v-model="element.description" placeholder="Description" class="w-full"></input-textarea>
 																		</div>
 																		
 																		<!-- Unit Cost Field -->
@@ -170,6 +171,8 @@
 	import common from '../../helpers/common';
 
 	import draggable from 'vuedraggable';
+
+	import { IconGrain } from '@tabler/icons-vue';
 
 	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings'];
 	const discount_options = [
