@@ -1,4 +1,5 @@
 <template>
+	<div id="autocomplete-portal"></div>
 		<div class="container-fluid" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">	
 			<div class="big-content">
 				<aside>

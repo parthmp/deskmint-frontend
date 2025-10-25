@@ -54,7 +54,7 @@
 							<br>
 							
 							<br>
-								<div class="overflow-x-auto overflow-y-hidden styled-scrollbar">
+								<div class="overflow-x-auto overflow-y-visible! styled-scrollbar min-h-[0px]">
 									<div class="min-w-[1000px] mt-[25px]" v-for="(product_row, index) in data.product_rows" :key="product_row.id">
 										
 										<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green">
@@ -68,11 +68,11 @@
 													
 													<div class="grid gap-4" :class="{'grid-cols-6' : index === 0, 'grid-cols-3' : index === 1}">
 														
-														<div v-for="(product_column, key2) in product_column_slice" :key="key2">
+														<div v-for="(product_column, column_index) in product_column_slice" :key="column_index">
 															
 															
 															<div v-if="product_column.value == 'item'">
-																<input-auto-complete label="Item" v-model="product_row.item" @selected="handleProductSelect" :error="data.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
+																<input-auto-complete label="Item" v-model="product_row.item" @selected="handleProductSelect(product_row)" :error="data.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
 															</div>
 															
 															
@@ -123,7 +123,7 @@
 										
 									</div>
 								</div>
-
+								<div class="clear-both"></div>
 								<input-button @click.prevent="addNewProductRow" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
 									<div class="clear-both"></div>
 
@@ -144,6 +144,9 @@
 		</div>
 	</section>
 </template>
+<style scoped>
+
+</style>
 <script lang="ts" setup>
 
 	import { onMounted, reactive } from 'vue';
@@ -245,16 +248,25 @@
 		data.client.client_id = ev.value+'';
 	}
 
-	const handleProductSelect = (ev:object) : void => {
-		data.product_id = ev.value;
+	const handleProductSelect = (row:object) : void => {
+		// data.product_id = ev.value;
+		// console.log(data.product_id);
+
+		console.log(`Object: ${JSON.stringify(row)}`);
+
 	}
 
 	const addNewProductRow = () : void => {
 
 		/* create an object to push */
 
+		let row_index = data.product_rows.length;
+
+
+
 		let product_row = {
-			id : common.random_number()
+			id : common.random_number(),
+			row_index: row_index
 		};
 
 		
@@ -280,8 +292,7 @@
 		}
 		
 		data.product_rows.push(product_row);
-		console.log(data.product_rows);
-
+		
 		product_row = null;
 		
 
