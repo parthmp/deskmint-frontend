@@ -131,7 +131,21 @@
 								</div>
 								<div class="clear-both"></div>
 								<input-button @click.prevent="addNewProductRow" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
-									<div class="clear-both"></div>
+								<div class="clear-both"></div>
+								<br>
+								<div class="lg:grid lg:grid-cols-12">
+									<div class="lg:col-span-3"></div>
+									<div class="lg:col-span-3"></div>
+									<div class="lg:col-span-3"></div>
+									<div class="lg:col-span-3">
+										<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal }} {{ data.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Tax : {{ data.global_tax_amount }} {{ data.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Discount : {{ data.global_discount }} {{ data.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Total : {{ data.global_total }} {{ data.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Balance due : {{ data.global_total }} {{ data.currency_code }}</p>
+									</div>
+								</div>
+								
 
 						</form>
 					</div>
@@ -201,7 +215,10 @@
 		product_rows : Array<object>,
 		product_id : string
 		currency_id : number
-		curreny_code : string
+		currency_code : string,
+		global_subtotal: number,
+		global_total : number,
+		global_tax_amount : number
 	}
 
 	const data = reactive<InvoiceCreateEditInterface>({
@@ -232,7 +249,10 @@
 		product_rows : [],
 		product_id : '',
 		currency_id : 0,
-		curreny_code : '',
+		currency_code : '',
+		global_subtotal : 0,
+		global_total : 0,
+		global_tax_amount : 0
 	});
 
 	const fetchInitialData = () : void =>  {
@@ -276,12 +296,37 @@
 			if(key === 'unit_cost'){
 				data.product_rows[index].unit_cost = row.data.product.price;
 			}
+			if(key === 'item'){
+				data.product_rows[index].item_id = row.value+'';
+			}
+			
 		}
-
+		calculateItemCost(index);
 	}
 
 	const calculateItemCost = (index:number) : void => {
 		
+		if(common.isset(data?.product_rows[index]?.item_id)){
+			data.product_rows[index].tax_amount = 0;
+			if(data?.product_rows[index]?.item_id !== ''){
+				data.product_rows[index].line_subtotal = (parseFloat(data?.product_rows[index].quantity) * parseFloat(data?.product_rows[index].unit_cost));
+				
+				/* find tax fields and apply tax by line */
+				let tax_amount = 0;
+				for(const key in data.product_rows[index]){
+					if(key.includes("tax")){
+						tax_amount += (parseFloat(data.product_rows[index].line_subtotal) * (parseFloat(data.product_rows[index][key]) / 100));
+					}
+				}
+
+				data.product_rows[index].tax_amount = tax_amount;
+
+				data.product_rows[index].line_total = (data.product_rows[index].line_subtotal - data.product_rows[index].tax_amount).toFixed(2);
+			}
+		}
+
+		console.log(data.product_rows[index]);
+
 	}
 
 	const addNewProductRow = () : void => {
@@ -318,7 +363,9 @@
 			
 
 		}
-		
+		product_row.item_id = '';
+		product_row.line_subtotal = 0;
+		product_row.tax_amount = 0;
 		data.product_rows.push(product_row);
 		
 		product_row = null;
