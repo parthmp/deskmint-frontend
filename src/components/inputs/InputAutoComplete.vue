@@ -232,6 +232,7 @@
 			filterOptions() : void{
 
 				if(common.isset(this.endpoint)){
+					this.emitSelected({});
 					this.ajax_loading = true;
 					this.show_dropdown = false;
 					if(this.input_value.trim().length < 3){
@@ -244,12 +245,13 @@
 							}
 						}).then(response => {
 							this.show_dropdown = true;
-							this.local_show_errors = false;
+							//this.local_show_errors = false;
 							this.copy_options = response.data;
 							this.updateDropdownPosition();
 						}).finally(() => {
 							this.ajax_loading = false;
 							this.ajax_loading_text = '';
+							
 						});
 					}
 				}else{
@@ -265,6 +267,8 @@
 					);
 					this.updateDropdownPosition();
 				}
+				
+				// this.$emit('update:modelValue', this.input_value);
 			},
 			emitSelected(obj:object) : void{
 				this.current_selected = obj;

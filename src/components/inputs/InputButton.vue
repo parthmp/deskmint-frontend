@@ -1,6 +1,6 @@
 <template>
 	<div class="form-group" :class="{'mt-0!': local_remove_margin}">
-		<component :is="url ? 'router-link' : 'button'" :to="url" :disabled="local_disabled" :class="buttonClasses" @click="emitSubmit(url)">
+		<component :is="url ? 'router-link' : 'button'" :to="url" :disabled="local_disabled" :type="local_type" :class="buttonClasses" @click="emitSubmit(url)">
 			<span v-if="icon === 'IconCaretRight'">
 				<span v-if="!local_disabled" class="flex gap-1 items-center">
 					{{ btn_text ? btn_text : label }}&nbsp;<component :is="icon" :size="17"></component>
@@ -37,7 +37,8 @@
 		local_disabled:boolean,
 		local_full_width:boolean,
 		local_style_type:string,
-		local_remove_margin:boolean
+		local_remove_margin:boolean,
+		local_type:string
 	}
 
 	import common from '../../helpers/common';
@@ -50,14 +51,15 @@
 
 		name : 'InputButton',
 
-		props : ['full_width', 'disabled', 'icon', 'btn_text', "style_type", "remove_margin", "url", "max_height", "min_width", "label"],
+		props : ['full_width', 'disabled', 'icon', 'btn_text', "style_type", "remove_margin", "url", "max_height", "min_width", "label", "type"],
 
 		data() : InputButtonIntarface {
 			return {
 				local_disabled: false,
 				local_full_width: true,
 				local_style_type: 'success',
-				local_remove_margin: false
+				local_remove_margin: false,
+				local_type: 'submit'
 			};
 		},
 
@@ -171,6 +173,10 @@
 
 			if(common.isset(this.remove_margin)){
 				this.local_remove_margin = this.remove_margin;
+			}
+
+			if(common.isset(this.type)){
+				this.local_type = this.type;
 			}
 
 		}

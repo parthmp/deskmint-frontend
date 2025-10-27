@@ -6,13 +6,14 @@
 			 <tabs :options="tab_options" :horizontal="true">
 				<template v-slot:tab-0>
 					<div>
-						<form>
+						<form @submit.prevent="validateStepOne">
 							
 							<div class="lg:grid lg:grid-cols-12 lg:gap-5">
 								<div class="lg:col-span-4">
 									<div class="grid grid-cols-12 gap-2">
 										<div class="col-span-9">
-											<input-auto-complete label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients"></input-auto-complete>
+											<input-auto-complete label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients" :show_errors="data.client.show_errors"></input-auto-complete>
+										
 										</div>
 										<div class="col-span-3">
 											<input-button url="/clients/create" label="New" class="mt-[23.5px]"></input-button>
@@ -23,19 +24,19 @@
 									</div>
 								</div>
 								<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-									<input-date-time mode="date" label="Invoice date" v-model="data.invoice_date.value" :error="data.invoice_date.error" :required="true" placeholder="Select invoice date"></input-date-time>
+									<input-date-time mode="date" label="Invoice date" v-model="data.invoice_date.value" :error="data.invoice_date.error" :required="true" ref="invoice_date_ref" placeholder="Select invoice date"></input-date-time>
 								</div>
 								<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-									<input-date-time mode="date" label="Due date" v-model="data.due_date.value" :error="data.due_date.error" :required="true" placeholder="Select due date"></input-date-time>
+									<input-date-time mode="date" label="Due date" v-model="data.due_date.value" :error="data.due_date.error" :required="true" placeholder="Select due date" ref="due_date_ref"></input-date-time>
 								</div>
 							</div>
 						
 							<div class="lg:grid lg:grid-cols-12 lg:gap-5">
 								<div class="lg:col-span-4 mt-[20px]">
-									<input-text label="Invoice number" v-model="data.invoice_number.value" :error="data.invoice_number.error" :required="true" placeholder="Invoice number"></input-text>
+									<input-text label="Invoice number" v-model="data.invoice_number.value" :error="data.invoice_number.error" :required="true" placeholder="Invoice number" ref="invoice_number_ref"></input-text>
 								</div>
 								<div class="lg:col-span-4 mt-[20px]">
-									<input-text label="PO number" v-model="data.po_number" :required="true" placeholder="PO number"></input-text>
+									<input-text label="PO number" v-model="data.po_number" :required="false" placeholder="PO number"></input-text>
 								</div>
 								<div class="lg:col-span-4 mt-[20px]">
 									<div class="lg:grid lg:grid-cols-12 lg:gap-2">
@@ -43,7 +44,7 @@
 											<input-number label="Discount" v-model="data.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
 										</div>
 										<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
-											<input-select label="Discount type" v-model="data.global_discount_type" placeholder="Select" :options="discount_options"></input-select>
+											<input-select label="Discount type" v-model="data.global_discount_type" :required="false" placeholder="Select" :options="discount_options"></input-select>
 										</div>
 										
 									</div>
@@ -61,9 +62,9 @@
 											<template #item="{element, index}">
 												<transition-group name="fade" tag="div">
 													
-													<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green mt-5 relative" :key="element.id">
+													<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green mt-5 relative" :key="index">
 														<IconGrain class="absolute left-0 top-0 drag-handle block"></IconGrain>
-														<IconTrash class="float-end text-red-500! cursor-pointer" @click.prevent="removeProductRow(index)"></IconTrash>
+														<IconTrash class="float-end text-red-500! cursor-pointer" @click.prevent="removeProductRow(element)"></IconTrash>
 														<div class="clear-both"></div>
 														<div class="">
 															
@@ -130,13 +131,13 @@
 									<!-- </div> -->
 								</div>
 								<div class="clear-both"></div>
-								<input-button @click.prevent="addNewProductRow" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
+								<input-button @click.prevent="addNewProductRow" type="button" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
 								<div class="clear-both"></div>
 								<br>
-								<div class="lg:grid lg:grid-cols-12">
-									<div class="lg:col-span-3"></div>
-									<div class="lg:col-span-3"></div>
-									<div class="lg:col-span-3"></div>
+								<div class="lg:grid lg:grid-cols-12 lg:gap-5">
+									<div class="lg:col-span-9">
+										<input-textarea label="Invoice terms" placeholder="Invoice terms" v-model="data.invoice_terms" :rows="4"></input-textarea>
+									</div>
 									<div class="lg:col-span-3">
 										<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal }} {{ data.currency_code }}</p>
 										<p class="text-xl! mb-[5px]">Tax : {{ data.global_tax_amount }} {{ data.currency_code }}</p>
@@ -145,7 +146,8 @@
 										<p class="text-xl! mb-[5px]">Balance due : {{ data.global_total }} {{ data.currency_code }}</p>
 									</div>
 								</div>
-								
+								<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
+								<div class="clear-both"></div>
 
 						</form>
 					</div>
@@ -169,7 +171,7 @@
 </style>
 <script lang="ts" setup>
 
-	import { onMounted, reactive, watch } from 'vue';
+	import { nextTick, onMounted, reactive, ref, watch } from 'vue';
 	import Tabs from '../UI/Tabs.vue';
 	import InputAutoComplete from '../inputs/InputAutoComplete.vue';
 	import InputDateTime from '../inputs/InputDateTime.vue';
@@ -221,7 +223,12 @@
 		currency_code : string,
 		global_subtotal: string,
 		global_total : string,
-		global_tax_amount : string
+		global_tax_amount : string,
+		invoice_terms: string
+	}
+
+	interface InputComponent{
+  		validate: () => boolean
 	}
 
 	const data = reactive<InvoiceCreateEditInterface>({
@@ -230,6 +237,7 @@
 		client : {
 			value : '',
 			error : 'Please select a client',
+			show_errors : false,
 			client_id : ''
 		},
 		invoice_date : {
@@ -256,11 +264,51 @@
 		currency_code : '',
 		global_subtotal : '0.00',
 		global_total : '0.00',
-		global_tax_amount : '0.00'
+		global_tax_amount : '0.00',
+		invoice_terms: ''
 	});
+
+
+	const invoice_date_ref = ref<InputComponent | null>(null);
+	const due_date_ref = ref<InputComponent | null>(null);
+	const invoice_number_ref = ref<InputComponent | null>(null);
+
 
 	watch(() => [data.global_discount_type, data.global_discount], () => {
 		calculateGlobalTotals();
+	});
+
+	/* validations with watchers */
+	watch(() => data.client.client_id, () => {
+		data.client.error = '',
+		data.client.show_errors = false;
+		if(data.client.client_id === ''){
+			data.client.error = 'Please select a client';
+			data.client.show_errors = true;
+		}
+	});
+
+	watch(() => data.invoice_date.value, () => {
+		data.invoice_date.error = '';
+		if(!invoice_date_ref.value.validate()){
+			data.invoice_date.error = 'Please select invoice date';
+		}
+	});
+
+	watch(() => data.due_date.value, () => {
+		data.due_date.error = '';
+		if(!due_date_ref.value.validate()){
+			data.due_date.error = 'Please select due date';
+		}
+	});
+
+	watch(() => data.invoice_number.value, () => {
+		nextTick(() => {
+			data.invoice_number.error = '';
+			if(!invoice_number_ref.value.validate()){
+				data.invoice_number.error = 'Please enter invoice number';
+			}
+		});
 	});
 
 	const fetchInitialData = () : void =>  {
@@ -287,70 +335,112 @@
 	}
 
 	const handleClientSelect = (ev:object) : void => {
-		
-		data.currency_id = ev.data.currency.id;
-		data.currency_code = ev.data.currency.code;
 
-		data.client.client_id = ev.value+'';
+		data.currency_id = 0;
+		data.currency_code = '';
+		data.client.client_id = '';
+
+		if(Object.keys(ev).length > 0){
+			data.currency_id = ev.data.currency.id;
+			data.currency_code = ev.data.currency.code;
+			data.client.client_id = ev.value+'';
+		}
 	}
 
 	const handleProductSelect = (row:object, index:number) : void => {
-		
-		for(const key in data.product_rows[index]){
-			data.product_rows[index].quantity = 1;
-			if(key === 'description'){
-				data.product_rows[index].description = row.data.product.description;
+		if(Object.keys(row).length > 0){
+			for(const key in data.product_rows[index]){
+				data.product_rows[index].quantity = 1;
+				if(key === 'description'){
+					data.product_rows[index].description = row.data.product.description;
+				}
+				if(key === 'unit_cost'){
+					data.product_rows[index].unit_cost = row.data.product.price;
+				}
+				if(key === 'item'){
+					data.product_rows[index].item_id = row.value+'';
+				}
+				
 			}
-			if(key === 'unit_cost'){
-				data.product_rows[index].unit_cost = row.data.product.price;
-			}
-			if(key === 'item'){
-				data.product_rows[index].item_id = row.value+'';
-			}
-			
+			calculateItemCost(row);
 		}
-		calculateItemCost(index);
+		
 	}
 
-	const calculateItemCost = (index:number) : void => {
+	const calculateItemCost = (row:object) : void => {
 		
-		if(common.isset(data?.product_rows[index]?.item_id)){
+		if(common.isset(row?.item_id)){
 
-			data.product_rows[index].tax_amount = new Decimal(0);
-			data.product_rows[index].line_subtotal = new Decimal(0);
+			row.tax_amount = new Decimal(0);
+			row.line_subtotal = new Decimal(0);
 			
-			data.product_rows[index].line_total = new Decimal(0);
+			row.line_total = new Decimal(0);
 
-			if (data?.product_rows[index]?.item_id !== '') {
+			if (row.item_id !== '') {
 				
-				const quantity = new Decimal(data.product_rows[index].quantity || 0);
-				const unit_cost = new Decimal(data.product_rows[index].unit_cost || 0);
+				const quantity = new Decimal(row.quantity || 0);
+				const unit_cost = new Decimal(row.unit_cost || 0);
 
 				// line_subtotal = quantity × unit_cost
 				const line_subtotal = quantity.mul(unit_cost);
-				data.product_rows[index].line_subtotal = line_subtotal.toNumber();
+				row.line_subtotal = line_subtotal.toNumber();
 
 				// calculate total tax for the line
 				let tax_amount = new Decimal(0);
-				for (const key in data.product_rows[index]) {
-					if (key.includes("tax")) {
-						const tax_percent = new Decimal(data.product_rows[index][key] || 0);
+				
+				for (const key in row) {
+					if(key.includes("tax")){
+						const tax_percent = new Decimal(row[key] || 0);
 						tax_amount = tax_amount.add(line_subtotal.mul(tax_percent.div(100)));
 					}
 				}
 
-				data.product_rows[index].tax_amount = tax_amount.toNumber();
+				row.tax_amount = tax_amount.toNumber();
 
 				// line_total = subtotal + tax
 				const lineTotal = line_subtotal.add(tax_amount);
-				data.product_rows[index].line_total = lineTotal.toFixed(2);
+				row.line_total = lineTotal.toFixed(2);
 
 			}
 		}
 		calculateGlobalTotals();
-		// console.log(data.product_rows[index]);
-
+		
 	}
+
+// 	import { toRaw } from "vue";
+
+// const calculateItemCost = (row) => {
+//   const rawRow = toRaw(row); // breaks Vue’s proxy link
+//   if (!common.isset(rawRow?.item_id)) return;
+
+//   rawRow.tax_amount = 0;
+//   rawRow.line_subtotal = 0;
+//   rawRow.line_total = 0;
+
+//   if (rawRow.item_id !== '') {
+//     const quantity = new Decimal(rawRow.quantity || 0);
+//     const unit_cost = new Decimal(rawRow.unit_cost || 0);
+
+//     const line_subtotal = quantity.mul(unit_cost);
+//     rawRow.line_subtotal = line_subtotal.toNumber();
+
+//     let tax_amount = new Decimal(0);
+//     for (const key in rawRow) {
+//       if (key.includes("tax")) {
+//         const tax_percent = new Decimal(rawRow[key] || 0);
+//         tax_amount = tax_amount.add(line_subtotal.mul(tax_percent.div(100)));
+//       }
+//     }
+
+//     rawRow.tax_amount = tax_amount.toNumber();
+//     rawRow.line_total = line_subtotal.add(tax_amount).toFixed(2);
+//   }
+
+//   // now mutate the reactive row *after* calculations
+//   Object.assign(row, rawRow);
+//   calculateGlobalTotals();
+// };
+
 
 	const calculateGlobalTotals = () : void => {
 		
@@ -403,7 +493,7 @@
 		let row_index = data.product_rows.length;
 
 		const product_row = reactive({
-			id : common.random_number(),
+			id : Date.now() + '_' + Math.random().toString(36).slice(2),
 			row_index: row_index
 		});
 
@@ -435,15 +525,16 @@
 		product_row.item_id = '';
 		product_row.line_subtotal = 0;
 		product_row.tax_amount = 0;
+		product_row.watchers = [];
 		
 		/* attach watchers */
 		for(const key in product_row){
 			if(key.includes("tax") || key == 'quantity' || key === 'unit_cost'){
 					
-				watch(() => product_row[key], (val:number) => {
-					calculateItemCost(row_index);
+				const watcher = watch(() => product_row[key], (val:number) => {
+					calculateItemCost(product_row);
 				});
-				
+				product_row.watchers.push(watcher);
 			}
 		}
 
@@ -453,12 +544,31 @@
 
 	}
 
-	const removeProductRow = (index:number) : void => {
-		data.product_rows.splice(index, 1);
+	const removeProductRow = (row:object) : void => {
+
+		row.watchers?.forEach(stop => stop());
+		row.watchers = null;
+
+		// remove the object from the array
+		const index = data.product_rows.indexOf(row);
+		if (index !== -1) {
+			data.product_rows.splice(index, 1);
+		}
+
+		// recalc totals
+  		calculateGlobalTotals();
+		//data.product_rows[index].watchers.forEach(stop => stop());
+		//data.product_rows[index].watchers = null;
+		// data.product_rows.splice(index, 1);
+		// calculateGlobalTotals();
 	}
 
 	const printRows = () : void => {
 		// console.log(data.product_rows);
+	}
+
+	const validateStepOne = () : void => {
+		console.log('submitted');
 	}
 
 	onMounted(() => {
