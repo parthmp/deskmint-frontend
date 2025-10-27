@@ -92,7 +92,7 @@
 																		
 																		<!-- Quantity Field -->
 																		<div v-if="product_column.value == 'quantity'">
-																			<input-number :step="1" label="Quantity" v-model="element.quantity" placeholder="quantity" class="w-full"></input-number>
+																			<input-number :step="1" label="Quantity" v-model="element.quantity" placeholder="Quantity" class="w-full"></input-number>
 																		</div>
 																		
 																		
@@ -140,7 +140,7 @@
 									<div class="lg:col-span-3">
 										<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal }} {{ data.currency_code }}</p>
 										<p class="text-xl! mb-[5px]">Tax : {{ data.global_tax_amount }} {{ data.currency_code }}</p>
-										<p class="text-xl! mb-[5px]">Discount : {{ data.global_discount }} {{ data.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Discount amount: {{ data.global_discount_amount }} {{ data.currency_code }}</p>
 										<p class="text-xl! mb-[5px]">Total : {{ data.global_total }} {{ data.currency_code }}</p>
 										<p class="text-xl! mb-[5px]">Balance due : {{ data.global_total }} {{ data.currency_code }}</p>
 									</div>
@@ -169,7 +169,7 @@
 </style>
 <script lang="ts" setup>
 
-	import { onMounted, reactive } from 'vue';
+	import { onMounted, reactive, watch } from 'vue';
 	import Tabs from '../UI/Tabs.vue';
 	import InputAutoComplete from '../inputs/InputAutoComplete.vue';
 	import InputDateTime from '../inputs/InputDateTime.vue';
@@ -187,6 +187,8 @@
 	import draggable from 'vuedraggable';
 
 	import { IconGrain } from '@tabler/icons-vue';
+
+	import Decimal from 'decimal.js';
 
 	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings'];
 	const discount_options = [
@@ -210,15 +212,16 @@
 		po_number : string,
 		global_discount : number,
 		global_discount_type : string,
+		global_discount_amount : string,
 		product_columns : Array<object>,
 		product_columns_slices : Array<object>,
 		product_rows : Array<object>,
 		product_id : string
 		currency_id : number
 		currency_code : string,
-		global_subtotal: number,
-		global_total : number,
-		global_tax_amount : number
+		global_subtotal: string,
+		global_total : string,
+		global_tax_amount : string
 	}
 
 	const data = reactive<InvoiceCreateEditInterface>({
@@ -244,15 +247,20 @@
 		po_number : '',
 		global_discount : 0,
 		global_discount_type: 'percentage',
+		global_discount_amount: '0.00',
 		product_columns : [],
 		product_columns_slices : [],
 		product_rows : [],
 		product_id : '',
 		currency_id : 0,
 		currency_code : '',
-		global_subtotal : 0,
-		global_total : 0,
-		global_tax_amount : 0
+		global_subtotal : '0.00',
+		global_total : '0.00',
+		global_tax_amount : '0.00'
+	});
+
+	watch(() => [data.global_discount_type, data.global_discount], () => {
+		calculateGlobalTotals();
 	});
 
 	const fetchInitialData = () : void =>  {
@@ -307,26 +315,85 @@
 	const calculateItemCost = (index:number) : void => {
 		
 		if(common.isset(data?.product_rows[index]?.item_id)){
-			data.product_rows[index].tax_amount = 0;
-			if(data?.product_rows[index]?.item_id !== ''){
-				data.product_rows[index].line_subtotal = (parseFloat(data?.product_rows[index].quantity) * parseFloat(data?.product_rows[index].unit_cost));
+
+			data.product_rows[index].tax_amount = new Decimal(0);
+			data.product_rows[index].line_subtotal = new Decimal(0);
+			
+			data.product_rows[index].line_total = new Decimal(0);
+
+			if (data?.product_rows[index]?.item_id !== '') {
 				
-				/* find tax fields and apply tax by line */
-				let tax_amount = 0;
-				for(const key in data.product_rows[index]){
-					if(key.includes("tax")){
-						tax_amount += (parseFloat(data.product_rows[index].line_subtotal) * (parseFloat(data.product_rows[index][key]) / 100));
+				const quantity = new Decimal(data.product_rows[index].quantity || 0);
+				const unit_cost = new Decimal(data.product_rows[index].unit_cost || 0);
+
+				// line_subtotal = quantity × unit_cost
+				const line_subtotal = quantity.mul(unit_cost);
+				data.product_rows[index].line_subtotal = line_subtotal.toNumber();
+
+				// calculate total tax for the line
+				let tax_amount = new Decimal(0);
+				for (const key in data.product_rows[index]) {
+					if (key.includes("tax")) {
+						const tax_percent = new Decimal(data.product_rows[index][key] || 0);
+						tax_amount = tax_amount.add(line_subtotal.mul(tax_percent.div(100)));
 					}
 				}
 
-				data.product_rows[index].tax_amount = tax_amount;
+				data.product_rows[index].tax_amount = tax_amount.toNumber();
 
-				data.product_rows[index].line_total = (data.product_rows[index].line_subtotal - data.product_rows[index].tax_amount).toFixed(2);
+				// line_total = subtotal + tax
+				const lineTotal = line_subtotal.add(tax_amount);
+				data.product_rows[index].line_total = lineTotal.toFixed(2);
+
 			}
 		}
+		calculateGlobalTotals();
+		// console.log(data.product_rows[index]);
 
-		console.log(data.product_rows[index]);
+	}
 
+	const calculateGlobalTotals = () : void => {
+		
+		let global_subtotal = new Decimal(0);
+		let global_tax = new Decimal(0);
+		let global_total = new Decimal(0);
+		let global_discount_amount = new Decimal(0);
+
+		for(const row of data.product_rows){
+
+			const subtotal = new Decimal(row.line_subtotal || 0);
+			const tax = new Decimal(row.tax_amount || 0);
+			const line_total = subtotal.add(tax);
+
+			global_subtotal = global_subtotal.add(subtotal);
+			global_tax = global_tax.add(tax);
+			global_total = global_total.add(line_total);
+			
+		}
+
+		data.global_subtotal = global_subtotal.toFixed(2);
+		data.global_tax_amount = global_tax.toFixed(2);
+
+		data.global_total = global_total.toFixed(2);
+
+		if(data.global_discount_type !== ''){
+			if(data.global_discount_type === 'percentage'){
+				let global_discount_perc = new Decimal(data.global_discount);
+				global_discount_amount = global_discount_amount.add(global_total.mul(global_discount_perc.div(100)));
+			}else{
+				global_discount_amount = new Decimal(data.global_discount);
+			}
+		}else{
+			data.global_discount = 0;
+		}
+
+		data.global_discount_amount = global_discount_amount.toFixed(2);
+
+		
+		
+		data.global_total = global_total.sub(data.global_discount_amount).toFixed(2);
+
+		
 	}
 
 	const addNewProductRow = () : void => {
@@ -335,18 +402,18 @@
 
 		let row_index = data.product_rows.length;
 
-
-
-		let product_row = {
+		const product_row = reactive({
 			id : common.random_number(),
 			row_index: row_index
-		};
+		});
 
 		
 		for(let row of data.product_columns){
 
 			if(row.type == 'custom' && row?.tax === true){
-				product_row['custom_tax_'+common.replaceWithUnderscores(row?.text)] = +row.tax_rate;
+				const key = 'custom_tax_' + common.replaceWithUnderscores(row?.text);
+				product_row[key] = +row.tax_rate;
+
 			}else if(row.type == 'custom' && row?.tax === false){
 
 				product_row['normal_'+common.replaceWithUnderscores(row?.text)] = '';
@@ -354,6 +421,7 @@
 			}else{
 
 				if(row.value == 'tax' || row.value == 'line_total'){
+					
 					product_row[row.value] = 0;
 				}else{
 					product_row[row.value] = '';
@@ -363,13 +431,25 @@
 			
 
 		}
+
 		product_row.item_id = '';
 		product_row.line_subtotal = 0;
 		product_row.tax_amount = 0;
+		
+		/* attach watchers */
+		for(const key in product_row){
+			if(key.includes("tax") || key == 'quantity' || key === 'unit_cost'){
+					
+				watch(() => product_row[key], (val:number) => {
+					calculateItemCost(row_index);
+				});
+				
+			}
+		}
+
+		
+
 		data.product_rows.push(product_row);
-		
-		product_row = null;
-		
 
 	}
 
