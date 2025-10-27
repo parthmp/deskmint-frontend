@@ -268,7 +268,7 @@
 					this.updateDropdownPosition();
 				}
 				
-				// this.$emit('update:modelValue', this.input_value);
+				//this.$emit('update:modelValue', this.input_value);
 			},
 			emitSelected(obj:object) : void{
 				this.current_selected = obj;

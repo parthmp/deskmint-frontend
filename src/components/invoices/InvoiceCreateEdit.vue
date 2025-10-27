@@ -3,7 +3,7 @@
     	<div class="card">
 			 <h1 class="text-2xl!">Create an invoice</h1>
 			 <br>
-			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="data.active_tab_index" :disable_further="true">
+			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="data.active_tab_index" :disable_further="false">
 				<template v-slot:tab-0>
 					<div>
 						<form @submit.prevent="validateStepOne">
@@ -154,7 +154,53 @@
 				</template>
 				<template v-slot:tab-1>
 					<div>
-						invoice cf here
+						<form class="form">
+						<div class="lg:grid lg:grid-cols-12 gap-5">
+							<div v-for="(field, key) in data.custom_fields" :key="key" :class="{'lg:col-span-12' : (field.span === 12), 'lg:col-span-6' : (field.span === 6), 'lg:col-span-4' : (field.span === 4)}">
+								
+								<div v-if="field.custom_field_type.input_type === 'text'">
+									<input-text :required="field.required" :label="field.label" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-text>
+								</div>
+								<div v-if="field.custom_field_type.input_type === 'textarea'">
+									<input-textarea :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-textarea>
+								</div>
+								<div v-if="field.custom_field_type.input_type === 'email'">
+									<input-email :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-email>
+								</div>
+								<div v-if="field.custom_field_type.input_type === 'select'">
+									<input-select :label="field.label" :options="field.type_params" :prop_placeholder="field.placeholder" :required="field.required" v-model="field.value" :error="field.error" :ref="field.ref"></input-select>
+								</div>
+								<div v-if="field.custom_field_type.input_type === 'number'">
+									<input-number :field_name="field.label" :required="field.required" :placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-number>
+								</div>
+								<div v-if="field.custom_field_type.input_type === 'date'">
+									<input-date-time mode="date" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
+								</div>
+
+								<div v-if="field.custom_field_type.input_type === 'time'">
+									<input-date-time mode="time" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
+								</div>
+
+								<div v-if="field.custom_field_type.input_type === 'datetime'">
+									<input-date-time mode="datetime" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
+								</div>
+
+								<div v-if="field.custom_field_type.input_type === 'telephone'">
+									<input-telephone mode="telephone" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-telephone>
+								</div>
+
+								<div v-if="field.custom_field_type.input_type === 'multiselect'">
+									<input-multiselect :label="field.label" :options="field.type_params" :required="field.required" v-model="field.value" :error="field.error" :ref="field.ref"></input-multiselect>
+								</div>
+								
+							</div>
+							
+						</div>
+						<p v-if="data.custom_fields.length === 0">There are no custom fields added for the clients, click next.</p>
+						<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
+						<div class="clear-both"></div>
+					</form>
+
 					</div>
 				</template>
 				<template v-slot:tab-2>
@@ -179,6 +225,9 @@
 	import InputNumber from '../inputs/InputNumber.vue';
 	import InputSelect from '../inputs/InputSelect.vue';
 	import InputTextarea from '../inputs/InputTextarea.vue';
+	import InputEmail from '../inputs/InputEmail.vue';
+	import InputTelephone from '../inputs/InputTelephone.vue';
+	import InputMultiselect from '../inputs/InputMultiselect.vue';
 
 	import { IconTrash } from '@tabler/icons-vue';
 
@@ -191,7 +240,7 @@
 	import { IconGrain } from '@tabler/icons-vue';
 
 	import Decimal from 'decimal.js';
-import { toastEvents } from '../../events/toastEvents';
+	import { toastEvents } from '../../events/toastEvents';
 
 	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings'];
 	const discount_options = [
@@ -226,7 +275,8 @@ import { toastEvents } from '../../events/toastEvents';
 		global_total : string,
 		global_tax_amount : string,
 		invoice_terms: string,
-		active_tab_index: number
+		active_tab_index: number,
+		custom_fields : Array<object>
 	}
 
 	interface InputComponent{
@@ -268,7 +318,8 @@ import { toastEvents } from '../../events/toastEvents';
 		global_total : '0.00',
 		global_tax_amount : '0.00',
 		invoice_terms: '',
-		active_tab_index: 0
+		active_tab_index: 0,
+		custom_fields : []
 	});
 
 
@@ -353,6 +404,7 @@ import { toastEvents } from '../../events/toastEvents';
 			data.currency_id = ev.data.currency.id;
 			data.currency_code = ev.data.currency.code;
 			data.client.client_id = ev.value+'';
+			data.client.value = ev.text+'';
 		}
 	}
 
@@ -593,9 +645,16 @@ import { toastEvents } from '../../events/toastEvents';
 		
 	}
 
+	const fetchCustomFields = () : void => {
+		api.get('manage-invoices/fetch-invoice-custom-fields').then((response) => {
+			data.custom_fields = response.data.data_fields;
+			console.log(response.data);
+		});
+	}
+
 	onMounted(() => {
 		fetchInitialData();
-		
+		fetchCustomFields();
 	})
 
 </script>
