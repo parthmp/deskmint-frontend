@@ -77,7 +77,7 @@
 																		
 																		
 																		<div v-if="product_column.value == 'item'">
-																			<input-auto-complete label="Item" v-model="element.item" @selected="selected_item => handleProductSelect(selected_item, index)" :error="data.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
+																			<input-auto-complete label="Item" v-model="element.item" @selected="selected_item => handleProductSelect(selected_item, element)" :error="data.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
 																		</div>
 																		
 																		
@@ -171,7 +171,7 @@
 </style>
 <script lang="ts" setup>
 
-	import { nextTick, onMounted, reactive, ref, watch } from 'vue';
+	import { nextTick, onMounted, reactive, ref, toRaw, watch } from 'vue';
 	import Tabs from '../UI/Tabs.vue';
 	import InputAutoComplete from '../inputs/InputAutoComplete.vue';
 	import InputDateTime from '../inputs/InputDateTime.vue';
@@ -274,6 +274,7 @@
 	const invoice_number_ref = ref<InputComponent | null>(null);
 
 
+	/* watchers */
 	watch(() => [data.global_discount_type, data.global_discount], () => {
 		calculateGlobalTotals();
 	});
@@ -311,6 +312,11 @@
 		});
 	});
 
+	watch(() => data.product_rows, (rows) => {
+		rows.forEach(row => calculateItemCost(row));
+		calculateGlobalTotals();
+	}, { deep:true })
+
 	const fetchInitialData = () : void =>  {
 
 		const d = new Date();
@@ -347,100 +353,69 @@
 		}
 	}
 
-	const handleProductSelect = (row:object, index:number) : void => {
+	const handleProductSelect = (row:object, element:object) : void => {
+		
 		if(Object.keys(row).length > 0){
-			for(const key in data.product_rows[index]){
-				data.product_rows[index].quantity = 1;
+			
+			for(const key in element){
+				element.quantity = 1;
 				if(key === 'description'){
-					data.product_rows[index].description = row.data.product.description;
+					element.description = row.data.product.description;
 				}
 				if(key === 'unit_cost'){
-					data.product_rows[index].unit_cost = row.data.product.price;
+					element.unit_cost = row.data.product.price;
 				}
 				if(key === 'item'){
-					data.product_rows[index].item_id = row.value+'';
+					element.item_id = row.value+'';
+					element.item = row.text+'';
 				}
 				
 			}
-			calculateItemCost(row);
+			calculateItemCost(element);
+			calculateGlobalTotals();
 		}
 		
 	}
 
 	const calculateItemCost = (row:object) : void => {
-		
-		if(common.isset(row?.item_id)){
+		const raw_row = toRaw(row);
+		if(common.isset(raw_row?.item_id)){
 
-			row.tax_amount = new Decimal(0);
-			row.line_subtotal = new Decimal(0);
+			raw_row.tax_amount = new Decimal(0);
+			raw_row.line_subtotal = new Decimal(0);
 			
-			row.line_total = new Decimal(0);
+			raw_row.line_total = new Decimal(0);
 
-			if (row.item_id !== '') {
+			if (raw_row.item_id !== '') {
 				
-				const quantity = new Decimal(row.quantity || 0);
-				const unit_cost = new Decimal(row.unit_cost || 0);
+				const quantity = new Decimal(raw_row.quantity || 0);
+				const unit_cost = new Decimal(raw_row.unit_cost || 0);
 
 				// line_subtotal = quantity × unit_cost
 				const line_subtotal = quantity.mul(unit_cost);
-				row.line_subtotal = line_subtotal.toNumber();
+				raw_row.line_subtotal = line_subtotal.toNumber();
 
 				// calculate total tax for the line
 				let tax_amount = new Decimal(0);
 				
-				for (const key in row) {
+				for (const key in raw_row) {
 					if(key.includes("tax")){
-						const tax_percent = new Decimal(row[key] || 0);
+						const tax_percent = new Decimal(raw_row[key] || 0);
 						tax_amount = tax_amount.add(line_subtotal.mul(tax_percent.div(100)));
 					}
 				}
 
-				row.tax_amount = tax_amount.toNumber();
+				raw_row.tax_amount = tax_amount.toNumber();
 
 				// line_total = subtotal + tax
 				const lineTotal = line_subtotal.add(tax_amount);
-				row.line_total = lineTotal.toFixed(2);
+				raw_row.line_total = lineTotal.toFixed(2);
 
 			}
+			Object.assign(row, raw_row);
 		}
-		calculateGlobalTotals();
 		
 	}
-
-// 	import { toRaw } from "vue";
-
-// const calculateItemCost = (row) => {
-//   const rawRow = toRaw(row); // breaks Vue’s proxy link
-//   if (!common.isset(rawRow?.item_id)) return;
-
-//   rawRow.tax_amount = 0;
-//   rawRow.line_subtotal = 0;
-//   rawRow.line_total = 0;
-
-//   if (rawRow.item_id !== '') {
-//     const quantity = new Decimal(rawRow.quantity || 0);
-//     const unit_cost = new Decimal(rawRow.unit_cost || 0);
-
-//     const line_subtotal = quantity.mul(unit_cost);
-//     rawRow.line_subtotal = line_subtotal.toNumber();
-
-//     let tax_amount = new Decimal(0);
-//     for (const key in rawRow) {
-//       if (key.includes("tax")) {
-//         const tax_percent = new Decimal(rawRow[key] || 0);
-//         tax_amount = tax_amount.add(line_subtotal.mul(tax_percent.div(100)));
-//       }
-//     }
-
-//     rawRow.tax_amount = tax_amount.toNumber();
-//     rawRow.line_total = line_subtotal.add(tax_amount).toFixed(2);
-//   }
-
-//   // now mutate the reactive row *after* calculations
-//   Object.assign(row, rawRow);
-//   calculateGlobalTotals();
-// };
-
 
 	const calculateGlobalTotals = () : void => {
 		
@@ -492,10 +467,10 @@
 
 		let row_index = data.product_rows.length;
 
-		const product_row = reactive({
+		const product_row = {
 			id : Date.now() + '_' + Math.random().toString(36).slice(2),
 			row_index: row_index
-		});
+		};
 
 		
 		for(let row of data.product_columns){
@@ -525,29 +500,12 @@
 		product_row.item_id = '';
 		product_row.line_subtotal = 0;
 		product_row.tax_amount = 0;
-		product_row.watchers = [];
 		
-		/* attach watchers */
-		for(const key in product_row){
-			if(key.includes("tax") || key == 'quantity' || key === 'unit_cost'){
-					
-				const watcher = watch(() => product_row[key], (val:number) => {
-					calculateItemCost(product_row);
-				});
-				product_row.watchers.push(watcher);
-			}
-		}
-
-		
-
 		data.product_rows.push(product_row);
 
 	}
 
 	const removeProductRow = (row:object) : void => {
-
-		row.watchers?.forEach(stop => stop());
-		row.watchers = null;
 
 		// remove the object from the array
 		const index = data.product_rows.indexOf(row);
