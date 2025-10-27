@@ -648,7 +648,6 @@
 	const fetchCustomFields = () : void => {
 		api.get('manage-invoices/fetch-invoice-custom-fields').then((response) => {
 			data.custom_fields = response.data.data_fields;
-			console.log(response.data);
 		});
 	}
 
