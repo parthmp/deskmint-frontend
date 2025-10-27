@@ -3,7 +3,7 @@
     	<div class="card">
 			 <h1 class="text-2xl!">Create an invoice</h1>
 			 <br>
-			 <tabs :options="tab_options" :horizontal="true">
+			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="data.active_tab_index" :disable_further="true">
 				<template v-slot:tab-0>
 					<div>
 						<form @submit.prevent="validateStepOne">
@@ -191,6 +191,7 @@
 	import { IconGrain } from '@tabler/icons-vue';
 
 	import Decimal from 'decimal.js';
+import { toastEvents } from '../../events/toastEvents';
 
 	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings'];
 	const discount_options = [
@@ -224,7 +225,8 @@
 		global_subtotal: string,
 		global_total : string,
 		global_tax_amount : string,
-		invoice_terms: string
+		invoice_terms: string,
+		active_tab_index: number
 	}
 
 	interface InputComponent{
@@ -265,7 +267,8 @@
 		global_subtotal : '0.00',
 		global_total : '0.00',
 		global_tax_amount : '0.00',
-		invoice_terms: ''
+		invoice_terms: '',
+		active_tab_index: 0
 	});
 
 
@@ -515,10 +518,7 @@
 
 		// recalc totals
   		calculateGlobalTotals();
-		//data.product_rows[index].watchers.forEach(stop => stop());
-		//data.product_rows[index].watchers = null;
-		// data.product_rows.splice(index, 1);
-		// calculateGlobalTotals();
+
 	}
 
 	const printRows = () : void => {
@@ -526,7 +526,71 @@
 	}
 
 	const validateStepOne = () : void => {
-		console.log('submitted');
+
+		let validated = true;
+
+		data.client.error = '',
+		data.client.show_errors = false;
+		if(data.client.client_id === ''){
+			data.client.error = 'Please select a client';
+			data.client.show_errors = true;
+			validated = false;
+		}
+		
+		data.invoice_date.error = '';
+		if(!invoice_date_ref.value.validate()){
+			data.invoice_date.error = 'Please select invoice date';
+			validated = false;
+		}
+
+		data.due_date.error = '';
+		if(!due_date_ref.value.validate()){
+			data.due_date.error = 'Please select due date';
+			validated = false;
+		}
+
+		data.invoice_number.error = '';
+		if(!invoice_number_ref.value.validate()){
+			data.invoice_number.error = 'Please enter invoice number';
+			validated = false;
+		}
+
+		if(!validated){
+			toastEvents.emit('toast', {
+				type : 'error',
+				message : 'Please fill in highlighted fields'
+			});
+		}else{
+
+			if(data.product_rows.length === 0){
+				validated = false;
+				toastEvents.emit('toast', {
+					type : 'error',
+					message : 'Please add at at least one product row for invoice'
+				});
+			}else{
+				for(const row of data.product_rows){
+					if(row.item_id === ''){
+						validated = false;
+						toastEvents.emit('toast', {
+							type : 'error',
+							message : 'Please select an item for each product row for invoice'
+						});
+						break;
+					}
+				}
+
+				
+			}
+
+			
+
+		}
+
+		if(validated){
+			data.active_tab_index = 1;
+		}
+		
 	}
 
 	onMounted(() => {
