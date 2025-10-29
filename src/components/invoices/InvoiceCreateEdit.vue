@@ -8,49 +8,7 @@
 					<div>
 						<form @submit.prevent="validateInvoiceDetails">
 							
-							<div class="lg:grid lg:grid-cols-12 lg:gap-5">
-								<div class="lg:col-span-4">
-									<div class="grid grid-cols-12 gap-2">
-										<div class="col-span-9">
-											<input-auto-complete label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients" :show_errors="data.client.show_errors"></input-auto-complete>
-										
-										</div>
-										<div class="col-span-3">
-											<input-button url="/clients/create" label="New" class="mt-[23.5px]"></input-button>
-											
-										</div>
-										
-										
-									</div>
-								</div>
-								<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-									<input-date-time mode="date" label="Invoice date" v-model="data.invoice_date.value" :error="data.invoice_date.error" :required="true" ref="invoice_date_ref" placeholder="Select invoice date"></input-date-time>
-								</div>
-								<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-									<input-date-time mode="date" label="Due date" v-model="data.due_date.value" :error="data.due_date.error" :required="true" placeholder="Select due date" ref="due_date_ref"></input-date-time>
-								</div>
-							</div>
-						
-							<div class="lg:grid lg:grid-cols-12 lg:gap-5">
-								<div class="lg:col-span-4 mt-[20px]">
-									<input-text label="Invoice number" v-model="data.invoice_number.value" :error="data.invoice_number.error" :required="true" placeholder="Invoice number" ref="invoice_number_ref"></input-text>
-								</div>
-								<div class="lg:col-span-4 mt-[20px]">
-									<input-text label="PO number" v-model="data.po_number" :required="false" placeholder="PO number"></input-text>
-								</div>
-								<div class="lg:col-span-4 mt-[20px]">
-									<div class="lg:grid lg:grid-cols-12 lg:gap-2">
-										<div class="lg:col-span-6">
-											<input-number label="Discount" v-model="data.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
-										</div>
-										<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
-											<input-select label="Discount type" v-model="data.global_discount_type" :required="false" placeholder="Select" :options="discount_options"></input-select>
-										</div>
-										
-									</div>
-									
-								</div>
-							</div>
+							<invoice-details v-model="data.invoice_details" ref="invoice_details_ref"></invoice-details>
 							
 							<br>
 							
@@ -77,7 +35,7 @@
 																		
 																		
 																		<div v-if="product_column.value == 'item'">
-																			<input-auto-complete label="Item" v-model="element.item" @selected="selected_item => handleProductSelect(selected_item, element)" :error="data.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
+																			<input-auto-complete label="Item" v-model="element.item" @selected="selected_item => handleProductSelect(selected_item, element)" :error="data.invoice_details.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
 																		</div>
 																		
 																		
@@ -115,7 +73,7 @@
 																		<!-- Line Total Display -->
 																		<div v-if="product_column.value == 'line_total'" class="font-semibold text-lg text-gray-900 pt-1">
 																			TOTAL<br>
-																			{{ element.line_total }} {{ data.currency_code }}
+																			{{ element.line_total }} {{ data.invoice_details.currency_code }}
 																		</div>
 																	
 																	</div>
@@ -139,11 +97,11 @@
 										<input-textarea label="Invoice terms" placeholder="Invoice terms" v-model="data.invoice_terms" :rows="4"></input-textarea>
 									</div>
 									<div class="lg:col-span-3">
-										<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal }} {{ data.currency_code }}</p>
-										<p class="text-xl! mb-[5px]">Tax : {{ data.global_tax_amount }} {{ data.currency_code }}</p>
-										<p class="text-xl! mb-[5px]">Discount amount: {{ data.global_discount_amount }} {{ data.currency_code }}</p>
-										<p class="text-xl! mb-[5px]">Total : {{ data.global_total }} {{ data.currency_code }}</p>
-										<p class="text-xl! mb-[5px]">Balance due : {{ data.global_total }} {{ data.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal }} {{ data.invoice_details.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Tax : {{ data.global_tax_amount }} {{ data.invoice_details.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Discount amount: {{ data.invoice_details.global_discount_amount }} {{ data.invoice_details.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Total : {{ data.global_total }} {{ data.invoice_details.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Balance due : {{ data.global_total }} {{ data.invoice_details.currency_code }}</p>
 									</div>
 								</div>
 								<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
@@ -172,15 +130,15 @@
 	import { nextTick, onMounted, reactive, ref, toRaw, watch, type Ref } from 'vue';
 	import Tabs from '../UI/Tabs.vue';
 	import InputAutoComplete from '../inputs/InputAutoComplete.vue';
-	import InputDateTime from '../inputs/InputDateTime.vue';
 	import InputText from '../inputs/InputText.vue';
 	import InputNumber from '../inputs/InputNumber.vue';
-	import InputSelect from '../inputs/InputSelect.vue';
 	import InputTextarea from '../inputs/InputTextarea.vue';
 	
 	import SettingsTab from './blocks/SettingsTab.vue';
 
 	import CustomFieldsRenderer from '../blocks/custom_fields_templates/CustomFieldsRenderer.vue';
+
+	import InvoiceDetails from './blocks/InvoiceDetails.vue';
 
 	import { IconTrash } from '@tabler/icons-vue';
 
@@ -196,34 +154,17 @@
 	import { toastEvents } from '../../events/toastEvents';
 
 	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings'];
-	const discount_options = [
-		{
-			text: 'Percentage',
-			value: 'percentage'
-		},
-		{
-			text: 'Amount',
-			value: 'amount'
-		}
-	];
+	
 
 	interface InvoiceCreateEditInterface{
 		clients : Array<object>,
 		products : Array<object>,
-		client : object,
-		invoice_date : object,
-		due_date : object,
-		invoice_number : object,
-		po_number : string,
-		global_discount : number,
-		global_discount_type : string,
+		invoice_details : object,
 		global_discount_amount : string,
 		product_columns : Array<object>,
 		product_columns_slices : Array<object>,
 		product_rows : Array<object>,
-		product_id : string
-		currency_id : number
-		currency_code : string,
+		product_id : string,
 		global_subtotal: string,
 		global_total : string,
 		global_tax_amount : string,
@@ -235,41 +176,41 @@
 		send_invoice_in_email : boolean
 	}
 
-	interface InputComponent{
-  		validate: () => boolean
-	}
 
 	const data = reactive<InvoiceCreateEditInterface>({
 		clients : [],
 		products : [],
-		client : {
-			value : '',
-			error : 'Please select a client',
-			show_errors : false,
-			client_id : ''
+		invoice_details : {
+			client : {
+				value : '',
+				error : 'Please select a client',
+				show_errors : false,
+				client_id : ''
+			},
+			invoice_date : {
+				value : new Date(),
+				error : 'Please select invoice date'
+			},
+			due_date : {
+				value : null,
+				error : 'Please select due date'
+			},
+			invoice_number : {
+				value : '',
+				error : 'Please enter invoice number'
+			},
+			po_number : '',
+			global_discount : 0,
+			global_discount_type: 'percentage',
+			currency_id : 0,
+			currency_code : '',
 		},
-		invoice_date : {
-			value : new Date(),
-			error : 'Please select invoice date'
-		},
-		due_date : {
-			value : null,
-			error : 'Please select due date'
-		},
-		invoice_number : {
-			value : '',
-			error : 'Please enter invoice number'
-		},
-		po_number : '',
-		global_discount : 0,
-		global_discount_type: 'percentage',
 		global_discount_amount: '0.00',
 		product_columns : [],
 		product_columns_slices : [],
 		product_rows : [],
 		product_id : '',
-		currency_id : 0,
-		currency_code : '',
+		
 		global_subtotal : '0.00',
 		global_total : '0.00',
 		global_tax_amount : '0.00',
@@ -284,49 +225,20 @@
 	});
 
 
-	const invoice_date_ref = ref<InputComponent | null>(null);
-	const due_date_ref = ref<InputComponent | null>(null);
-	const invoice_number_ref = ref<InputComponent | null>(null);
+	
 	const custom_fields_tab_ref = ref(null);
 	const settings_tab_ref = ref(null);
+	const invoice_details_ref = ref(null);
 	
 	/* watchers */
-	watch(() => [data.global_discount_type, data.global_discount], () => {
+	watch(() => [data.invoice_details.global_discount_type, data.invoice_details.global_discount], () => {
 		calculateGlobalTotals();
 	});
 
 	/* validations with watchers */
-	watch(() => data.client.client_id, () => {
-		data.client.error = '',
-		data.client.show_errors = false;
-		if(data.client.client_id === ''){
-			data.client.error = 'Please select a client';
-			data.client.show_errors = true;
-		}
-	});
+	
 
-	watch(() => data.invoice_date.value, () => {
-		data.invoice_date.error = '';
-		if(!invoice_date_ref.value.validate()){
-			data.invoice_date.error = 'Please select invoice date';
-		}
-	});
-
-	watch(() => data.due_date.value, () => {
-		data.due_date.error = '';
-		if(!due_date_ref.value.validate()){
-			data.due_date.error = 'Please select due date';
-		}
-	});
-
-	watch(() => data.invoice_number.value, () => {
-		nextTick(() => {
-			data.invoice_number.error = '';
-			if(!invoice_number_ref.value.validate()){
-				data.invoice_number.error = 'Please enter invoice number';
-			}
-		});
-	});
+	
 
 	watch(() => data.product_rows, (rows) => {
 		rows.forEach(row => calculateItemCost(row));
@@ -344,7 +256,7 @@
 				timezone_offset_minutes : timezone_offset_minutes
 			}
 		}).then(response => {
-			data.invoice_number.value = response.data.invoice_number;
+			data.invoice_details.invoice_number.value = response.data.invoice_number;
 			data.product_columns = response.data.product_columns;
 			data.product_columns_slices.push(data.product_columns.slice(0, 6));
 			if(data.product_columns.length > 6){
@@ -357,19 +269,7 @@
 
 	}
 
-	const handleClientSelect = (ev:object) : void => {
-
-		data.currency_id = 0;
-		data.currency_code = '';
-		data.client.client_id = '';
-
-		if(Object.keys(ev).length > 0){
-			data.currency_id = ev.data.currency.id;
-			data.currency_code = ev.data.currency.code;
-			data.client.client_id = ev.value+'';
-			data.client.value = ev.text+'';
-		}
-	}
+	
 
 	const handleProductSelect = (row:object, element:object) : void => {
 		
@@ -459,22 +359,22 @@
 
 		data.global_total = global_total.toFixed(2);
 
-		if(data.global_discount_type !== ''){
-			if(data.global_discount_type === 'percentage'){
-				let global_discount_perc = new Decimal(data.global_discount);
+		if(data.invoice_details.global_discount_type !== ''){
+			if(data.invoice_details.global_discount_type === 'percentage'){
+				let global_discount_perc = new Decimal(data.invoice_details.global_discount);
 				global_discount_amount = global_discount_amount.add(global_total.mul(global_discount_perc.div(100)));
 			}else{
-				global_discount_amount = new Decimal(data.global_discount);
+				global_discount_amount = new Decimal(data.invoice_details.global_discount);
 			}
 		}else{
-			data.global_discount = 0;
+			data.invoice_details.global_discount = 0;
 		}
 
-		data.global_discount_amount = global_discount_amount.toFixed(2);
+		data.invoice_details.global_discount_amount = global_discount_amount.toFixed(2);
 
 		
 		
-		data.global_total = global_total.sub(data.global_discount_amount).toFixed(2);
+		data.global_total = global_total.sub(data.invoice_details.global_discount_amount).toFixed(2);
 
 		
 	}
@@ -541,34 +441,10 @@
 	}
 
 	const validateInvoiceDetails = () : void => {
-
+		
 		let validated = true;
 
-		data.client.error = '',
-		data.client.show_errors = false;
-		if(data.client.client_id === ''){
-			data.client.error = 'Please select a client';
-			data.client.show_errors = true;
-			validated = false;
-		}
-		
-		data.invoice_date.error = '';
-		if(!invoice_date_ref?.value?.validate()){
-			data.invoice_date.error = 'Please select invoice date';
-			validated = false;
-		}
-
-		data.due_date.error = '';
-		if(!due_date_ref?.value?.validate()){
-			data.due_date.error = 'Please select due date';
-			validated = false;
-		}
-
-		data.invoice_number.error = '';
-		if(!invoice_number_ref?.value?.validate()){
-			data.invoice_number.error = 'Please enter invoice number';
-			validated = false;
-		}
+		validated = invoice_details_ref.value.validateInvoiceDetails();
 
 		if(!validated){
 			toastEvents.emit('toast', {
@@ -612,9 +488,10 @@
 	
 	// When tab changes, call child validation
 	const changedActiveTabValue = (tab_index: number) => {
+		
 		if(tab_index === 0){
 			nextTick(() => {
-				validateInvoiceDetails();
+				invoice_details_ref.value?.validateInvoiceDetails();
 			});
 		} else if(tab_index === 1){
 			nextTick(() => {
@@ -625,6 +502,8 @@
 				settings_tab_ref.value?.validateSettings();
 			});
 		}
+
+		data.active_tab_index = tab_index;
 	}
 	/**/
 	/**/
