@@ -11,82 +11,77 @@
 							<invoice-details v-model="data.invoice_details" ref="invoice_details_ref"></invoice-details>
 							
 							<br>
-							
 							<br>
-							
 								<div class="overflow-x-auto overflow-y-visible! styled-scrollbar min-h-[0px]">
-									<!-- <div class="min-w-[1000px] mt-[25px]" v-for="(product_row, index_old) in data.product_rows" :key="product_row.id"> -->
-										<draggable class="min-w-[1000px] mt-[25px]" group="fields" @start="true" @end="printRows" v-model="data.product_rows" item-key="id" :animation="200" handle=".drag-handle">
-											<template #item="{element, index}">
-												<transition-group name="fade" tag="div">
-													
-													<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green mt-5 relative" :key="index">
-														<IconGrain class="absolute left-0 top-0 drag-handle block"></IconGrain>
-														<IconTrash class="float-end text-red-500! cursor-pointer" @click.prevent="removeProductRow(element)"></IconTrash>
-														<div class="clear-both"></div>
-														<div class="">
+									<draggable class="min-w-[1000px] mt-[25px]" group="fields" @start="true" @end="printRows" v-model="data.product_rows" item-key="id" :animation="200" handle=".drag-handle">
+										<template #item="{element, index}">
+											<transition-group name="fade" tag="div">
+												
+												<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green mt-5 relative" :key="index">
+													<IconGrain class="absolute left-0 top-0 drag-handle block"></IconGrain>
+													<IconTrash class="float-end text-red-500! cursor-pointer" @click.prevent="removeProductRow(element)"></IconTrash>
+													<div class="clear-both"></div>
+													<div class="">
+														
+														<div v-for="(product_column_slice, index2) in data.product_columns_slices" :key="index" class="min-w-0">
 															
-															<div v-for="(product_column_slice, index2) in data.product_columns_slices" :key="index" class="min-w-0">
+															
+															<div class="grid gap-4 mt-2" :class="{'grid-cols-6' : index2 === 0, 'grid-cols-3' : index2 === 1}">
 																
-																
-																<div class="grid gap-4 mt-2" :class="{'grid-cols-6' : index2 === 0, 'grid-cols-3' : index2 === 1}">
+																<div v-for="(product_column, column_index) in product_column_slice" :key="column_index">
 																	
-																	<div v-for="(product_column, column_index) in product_column_slice" :key="column_index">
-																		
-																		
-																		<div v-if="product_column.value == 'item'">
-																			<input-auto-complete label="Item" v-model="element.item" @selected="selected_item => handleProductSelect(selected_item, element)" :error="data.invoice_details.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
-																		</div>
-																		
-																		
-																		<!-- Description Field -->
-																		<div v-if="product_column.value == 'description'">
-																			<input-textarea :rows="1" label="Description" v-model="element.description" placeholder="Description" class="w-full"></input-textarea>
-																		</div>
-																		
-																		<!-- Unit Cost Field -->
-																		<div v-if="product_column.value == 'unit_cost'">
-																			<input-number :step="0.01" label="Unit cost" v-model="element.unit_cost" placeholder="Unit cost" class="w-full"></input-number>
-																		</div>
-																		
-																		<!-- Quantity Field -->
-																		<div v-if="product_column.value == 'quantity'">
-																			<input-number :step="1" label="Quantity" v-model="element.quantity" placeholder="Quantity" class="w-full"></input-number>
-																		</div>
-																		
-																		
-																		
-																		<!-- Custom Field -->
-																		<div v-if="product_column.type == 'custom' && product_column?.tax === true">
-																			<input-number :step="0.01" :label="product_column?.text" v-model="element['custom_tax_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text" class="w-full"></input-number>
-																		</div>
-																		<div v-if="product_column.type == 'custom' && product_column?.tax === false">
-																			<input-text class="w-full" :label="product_column?.text" v-model="element['normal_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text"></input-text>
-																		</div>
-																		
-																		
-																		<!-- Tax Field -->
-																		<div v-if="product_column.value == 'tax'">
-																			<input-number :step="0.01" label="Tax %" v-model="element.tax" placeholder="Tax %" class="w-full"></input-number>
-																		</div>
-																		
-																		<!-- Line Total Display -->
-																		<div v-if="product_column.value == 'line_total'" class="font-semibold text-lg text-gray-900 pt-1">
-																			TOTAL<br>
-																			{{ element.line_total }} {{ data.invoice_details.currency_code }}
-																		</div>
 																	
+																	<div v-if="product_column.value == 'item'">
+																		<input-auto-complete label="Item" v-model="element.item" @selected="selected_item => handleProductSelect(selected_item, element)" :error="data.invoice_details.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
 																	</div>
+																	
+																	
+																	<!-- Description Field -->
+																	<div v-if="product_column.value == 'description'">
+																		<input-textarea :rows="1" label="Description" v-model="element.description" placeholder="Description" class="w-full"></input-textarea>
+																	</div>
+																	
+																	<!-- Unit Cost Field -->
+																	<div v-if="product_column.value == 'unit_cost'">
+																		<input-number :step="0.01" label="Unit cost" v-model="element.unit_cost" placeholder="Unit cost" class="w-full"></input-number>
+																	</div>
+																	
+																	<!-- Quantity Field -->
+																	<div v-if="product_column.value == 'quantity'">
+																		<input-number :step="1" label="Quantity" v-model="element.quantity" placeholder="Quantity" class="w-full"></input-number>
+																	</div>
+																	
+																	
+																	
+																	<!-- Custom Field -->
+																	<div v-if="product_column.type == 'custom' && product_column?.tax === true">
+																		<input-number :step="0.01" :label="product_column?.text" v-model="element['custom_tax_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text" class="w-full"></input-number>
+																	</div>
+																	<div v-if="product_column.type == 'custom' && product_column?.tax === false">
+																		<input-text class="w-full" :label="product_column?.text" v-model="element['normal_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text"></input-text>
+																	</div>
+																	
+																	
+																	<!-- Tax Field -->
+																	<div v-if="product_column.value == 'tax'">
+																		<input-number :step="0.01" label="Tax %" v-model="element.tax" placeholder="Tax %" class="w-full"></input-number>
+																	</div>
+																	
+																	<!-- Line Total Display -->
+																	<div v-if="product_column.value == 'line_total'" class="font-semibold text-lg text-gray-900 pt-1">
+																		TOTAL<br>
+																		{{ element.line_total }} {{ data.invoice_details.currency_code }}
+																	</div>
+																
 																</div>
 															</div>
-														
 														</div>
+													
 													</div>
-												</transition-group>
-											</template>
-										</draggable>
-										
-									<!-- </div> -->
+												</div>
+											</transition-group>
+										</template>
+									</draggable>
 								</div>
 								<div class="clear-both"></div>
 								<input-button @click.prevent="addNewProductRow" type="button" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
@@ -171,7 +166,6 @@
 		invoice_terms: string,
 		active_tab_index: number,
 		custom_fields : Array<object>,
-		// payment_methods : Array<object>,
 		payment_method : object,
 		send_invoice_in_email : boolean
 	}
@@ -235,11 +229,6 @@
 		calculateGlobalTotals();
 	});
 
-	/* validations with watchers */
-	
-
-	
-
 	watch(() => data.product_rows, (rows) => {
 		rows.forEach(row => calculateItemCost(row));
 		calculateGlobalTotals();
@@ -268,8 +257,6 @@
 		});
 
 	}
-
-	
 
 	const handleProductSelect = (row:object, element:object) : void => {
 		
@@ -484,9 +471,6 @@
 		
 	}
 	
-
-	
-	// When tab changes, call child validation
 	const changedActiveTabValue = (tab_index: number) => {
 		
 		if(tab_index === 0){
@@ -505,18 +489,13 @@
 
 		data.active_tab_index = tab_index;
 	}
-	/**/
-	/**/
-
 	
-	// Handle validation result from custom fields
 	const handleCustomFieldsValidated = (is_valid: boolean) => {
 		if(is_valid){
 			data.active_tab_index = 2;
 		}
 	}
 	
-	// Handle validation result from settings
 	const handleSettingsValidated = (is_valid: boolean) => {
 		if(is_valid){
 			// Submit the invoice or move to next step
@@ -524,9 +503,7 @@
 			console.log(data);
 		}
 	}
-
-	/**/
-
+	
 	const fetchCustomFields = () : void => {
 		api.get('manage-invoices/fetch-invoice-custom-fields').then((response) => {
 			data.custom_fields = response.data.data_fields;
