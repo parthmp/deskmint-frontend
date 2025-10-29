@@ -49,6 +49,7 @@ import TotalFieldsInvoiceSettings from '../src/components/settings/invoice/block
 import Invoices from '../src/components/invoices/Invoices.vue';
 import InvoiceCreateEdit from '../src/components/invoices/InvoiceCreateEdit.vue';
 
+//const InvoiceCreateEdit = () => import('../src/components/invoices/InvoiceCreateEdit.vue');
 
 const routes = [
 	{

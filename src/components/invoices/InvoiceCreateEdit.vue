@@ -154,52 +154,52 @@
 				</template>
 				<template v-slot:tab-1>
 					<div>
-						<form class="form">
-						<div class="lg:grid lg:grid-cols-12 gap-5">
-							<div v-for="(field, key) in data.custom_fields" :key="key" :class="{'lg:col-span-12' : (field.span === 12), 'lg:col-span-6' : (field.span === 6), 'lg:col-span-4' : (field.span === 4)}">
-								
-								<div v-if="field.custom_field_type.input_type === 'text'">
-									<input-text :required="field.required" :label="field.label" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-text>
-								</div>
-								<div v-if="field.custom_field_type.input_type === 'textarea'">
-									<input-textarea :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-textarea>
-								</div>
-								<div v-if="field.custom_field_type.input_type === 'email'">
-									<input-email :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-email>
-								</div>
-								<div v-if="field.custom_field_type.input_type === 'select'">
-									<input-select :label="field.label" :options="field.type_params" :prop_placeholder="field.placeholder" :required="field.required" v-model="field.value" :error="field.error" :ref="field.ref"></input-select>
-								</div>
-								<div v-if="field.custom_field_type.input_type === 'number'">
-									<input-number :field_name="field.label" :required="field.required" :placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-number>
-								</div>
-								<div v-if="field.custom_field_type.input_type === 'date'">
-									<input-date-time mode="date" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
-								</div>
+						<form class="form" @submit.prevent="validateCustomFields">
+							<div class="lg:grid lg:grid-cols-12 gap-5">
+								<div v-for="(field, key) in data.custom_fields" :key="key" :class="{'lg:col-span-12' : (field.span === 12), 'lg:col-span-6' : (field.span === 6), 'lg:col-span-4' : (field.span === 4)}">
+									
+									<div v-if="field.custom_field_type.input_type === 'text'">
+										<input-text :required="field.required" :label="field.label" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-text>
+									</div>
+									<div v-if="field.custom_field_type.input_type === 'textarea'">
+										<input-textarea :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-textarea>
+									</div>
+									<div v-if="field.custom_field_type.input_type === 'email'">
+										<input-email :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-email>
+									</div>
+									<div v-if="field.custom_field_type.input_type === 'select'">
+										<input-select :label="field.label" :options="field.type_params" :prop_placeholder="field.placeholder" :required="field.required" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-select>
+									</div>
+									<div v-if="field.custom_field_type.input_type === 'number'">
+										<input-number :field_name="field.label" :required="field.required" :placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-number>
+									</div>
+									<div v-if="field.custom_field_type.input_type === 'date'">
+										<input-date-time mode="date" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => set_field_ref(field.ref, el)"></input-date-time>
+									</div>
 
-								<div v-if="field.custom_field_type.input_type === 'time'">
-									<input-date-time mode="time" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
-								</div>
+									<div v-if="field.custom_field_type.input_type === 'time'">
+										<input-date-time mode="time" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => set_field_ref(field.ref, el)"></input-date-time>
+									</div>
 
-								<div v-if="field.custom_field_type.input_type === 'datetime'">
-									<input-date-time mode="datetime" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
-								</div>
+									<div v-if="field.custom_field_type.input_type === 'datetime'">
+										<input-date-time mode="datetime" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => set_field_ref(field.ref, el)"></input-date-time>
+									</div>
 
-								<div v-if="field.custom_field_type.input_type === 'telephone'">
-									<input-telephone mode="telephone" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-telephone>
-								</div>
+									<div v-if="field.custom_field_type.input_type === 'telephone'">
+										<input-telephone mode="telephone" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => set_field_ref(field.ref, el)"></input-telephone>
+									</div>
 
-								<div v-if="field.custom_field_type.input_type === 'multiselect'">
-									<input-multiselect :label="field.label" :options="field.type_params" :required="field.required" v-model="field.value" :error="field.error" :ref="field.ref"></input-multiselect>
+									<div v-if="field.custom_field_type.input_type === 'multiselect'">
+										<input-multiselect :label="field.label" :options="field.type_params" :required="field.required" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-multiselect>
+									</div>
+									
 								</div>
 								
 							</div>
-							
-						</div>
-						<p v-if="data.custom_fields.length === 0">There are no custom fields added for the clients, click next.</p>
-						<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
-						<div class="clear-both"></div>
-					</form>
+							<p v-if="data.custom_fields.length === 0">There are no custom fields added for the invoices, click next.</p>
+							<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
+							<div class="clear-both"></div>
+						</form>
 
 					</div>
 				</template>
@@ -216,6 +216,8 @@
 
 </style>
 <script lang="ts" setup>
+
+	/* refactor this component later on */
 
 	import { nextTick, onMounted, reactive, ref, toRaw, watch } from 'vue';
 	import Tabs from '../UI/Tabs.vue';
@@ -326,6 +328,13 @@
 	const invoice_date_ref = ref<InputComponent | null>(null);
 	const due_date_ref = ref<InputComponent | null>(null);
 	const invoice_number_ref = ref<InputComponent | null>(null);
+
+	const field_refs = ref({});
+
+	const set_field_ref = (name, el) => {
+		if (el) field_refs.value[name] = el;
+	}
+
 
 
 	/* watchers */
@@ -643,6 +652,46 @@
 			data.active_tab_index = 1;
 		}
 		
+	}
+
+	const validateCustomFields = () : void => {
+
+		let valid_custom_fields = true;
+
+		data.custom_fields.forEach(field_name => {
+				
+			let temp_new_value = field_name.value;
+			
+			if(temp_new_value !== null){
+				temp_new_value = temp_new_value.toString().trim();
+			}
+
+			const ref_component = field_refs.value[field_name.ref];
+			
+			if (ref_component?.validate) {
+				ref_component.validate();
+			}
+
+			if(!temp_new_value && field_name.required){
+				valid_custom_fields = false;
+				field_name.error = common.formatKey(field_name.label)+" is required";
+			}else{
+				field_name.error = "";
+			}
+
+				
+		});
+
+		
+		if(valid_custom_fields){
+			data.active_tab_index = 2;
+		}else{
+			toastEvents.emit('toast', {
+				type : 'error',
+				message : 'Please fill in highlighted fields'
+			});
+		}
+
 	}
 
 	const fetchCustomFields = () : void => {
