@@ -3,10 +3,10 @@
     	<div class="card">
 			 <h1 class="text-2xl!">Create an invoice</h1>
 			 <br>
-			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="data.active_tab_index" :disable_further="false">
+			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="data.active_tab_index" :disable_further="false" @tab-changed="changedActiveTabValue">
 				<template v-slot:tab-0>
 					<div>
-						<form @submit.prevent="validateStepOne">
+						<form @submit.prevent="validateInvoiceDetails">
 							
 							<div class="lg:grid lg:grid-cols-12 lg:gap-5">
 								<div class="lg:col-span-4">
@@ -205,7 +205,13 @@
 				</template>
 				<template v-slot:tab-2>
 					<div>
-						invoice settings here
+						<form @submit.prevent="validateSettings">
+							<input-select label="Payment method" :options="data.payment_methods" placeholder="Select payment method" :required="true" v-model="data.payment_method.value" :error="data.payment_method.error" ref="payment_method_ref"></input-select>
+							<br>
+							<span class="flex gap-5 items-center"><input-switch v-model="data.send_invoice_in_email"></input-switch><span @click.prevent="data.send_invoice_in_email = !data.send_invoice_in_email">Send email with invoice</span></span>
+							<input-button btn_text="Save" icon="iconCheck" class="lg:float-end"></input-button>
+							<div class="clear-both"></div>
+						</form>
 					</div>
 				</template>
 			 </tabs>
@@ -230,6 +236,7 @@
 	import InputEmail from '../inputs/InputEmail.vue';
 	import InputTelephone from '../inputs/InputTelephone.vue';
 	import InputMultiselect from '../inputs/InputMultiselect.vue';
+	import InputSwitch from '../inputs/InputSwitch.vue';
 
 	import { IconTrash } from '@tabler/icons-vue';
 
@@ -278,7 +285,10 @@
 		global_tax_amount : string,
 		invoice_terms: string,
 		active_tab_index: number,
-		custom_fields : Array<object>
+		custom_fields : Array<object>,
+		payment_methods : Array<object>,
+		payment_method : object,
+		send_invoice_in_email : boolean
 	}
 
 	interface InputComponent{
@@ -321,13 +331,37 @@
 		global_tax_amount : '0.00',
 		invoice_terms: '',
 		active_tab_index: 0,
-		custom_fields : []
+		custom_fields : [],
+		payment_methods : [ /* using hardcoded here , will change this after payment methods implemented */
+			{
+				text : 'Cash',
+				value : 'cash'
+			},
+			{
+				text : 'Net Banking',
+				value : 'net_banking'
+			},
+			{
+				text : 'PayPal',
+				value : 'paypal'
+			},
+			{
+				text : 'Stripe',
+				value : 'stripe'
+			}
+		],
+		payment_method : {
+			value : 'cash',
+			error : ''
+		},
+		send_invoice_in_email : true
 	});
 
 
 	const invoice_date_ref = ref<InputComponent | null>(null);
 	const due_date_ref = ref<InputComponent | null>(null);
 	const invoice_number_ref = ref<InputComponent | null>(null);
+	const payment_method_ref = ref<InputComponent | null>(null);
 
 	const field_refs: Ref<Record<string, any>> = ref({});
 
@@ -363,6 +397,13 @@
 		data.due_date.error = '';
 		if(!due_date_ref.value.validate()){
 			data.due_date.error = 'Please select due date';
+		}
+	});
+
+	watch(() => data.payment_method.value, () => {
+		data.payment_method.error = '';
+		if(!payment_method_ref.value.validate()){
+			data.payment_method.error = 'Please select a payment method';
 		}
 	});
 
@@ -603,7 +644,7 @@
 		// console.log(data.product_rows);
 	}
 
-	const validateStepOne = () : void => {
+	const validateInvoiceDetails = () : void => {
 
 		let validated = true;
 
@@ -616,19 +657,19 @@
 		}
 		
 		data.invoice_date.error = '';
-		if(!invoice_date_ref.value.validate()){
+		if(!invoice_date_ref?.value?.validate()){
 			data.invoice_date.error = 'Please select invoice date';
 			validated = false;
 		}
 
 		data.due_date.error = '';
-		if(!due_date_ref.value.validate()){
+		if(!due_date_ref?.value?.validate()){
 			data.due_date.error = 'Please select due date';
 			validated = false;
 		}
 
 		data.invoice_number.error = '';
-		if(!invoice_number_ref.value.validate()){
+		if(!invoice_number_ref?.value?.validate()){
 			data.invoice_number.error = 'Please enter invoice number';
 			validated = false;
 		}
@@ -708,6 +749,33 @@
 				message : 'Please fill in highlighted fields'
 			});
 		}
+
+	}
+
+	const changedActiveTabValue = (tab_index:number) : void => {
+		if(tab_index === 0){
+			nextTick(() => {
+				validateInvoiceDetails();
+			});
+		}else if(tab_index === 1){
+			nextTick(() => {
+				validateCustomFields();
+			});
+			
+		}else if(tab_index === 2){
+			nextTick(() => {
+				validateSettings();
+			});
+		}
+	}
+
+	const validateSettings = () : void => {
+		data.payment_method.error = '';
+		if(!payment_method_ref.value?.validate()){
+			data.payment_method.error = 'Please select a payment method';
+		}
+
+		/* send request here */
 
 	}
 
