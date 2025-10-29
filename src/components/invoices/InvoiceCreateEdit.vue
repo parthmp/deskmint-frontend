@@ -217,9 +217,9 @@
 </style>
 <script lang="ts" setup>
 
-	/* refactor this component later on */
+	/* refactor this component later on and split once it is working */
 
-	import { nextTick, onMounted, reactive, ref, toRaw, watch } from 'vue';
+	import { nextTick, onMounted, reactive, ref, toRaw, watch, type Ref } from 'vue';
 	import Tabs from '../UI/Tabs.vue';
 	import InputAutoComplete from '../inputs/InputAutoComplete.vue';
 	import InputDateTime from '../inputs/InputDateTime.vue';
@@ -329,9 +329,9 @@
 	const due_date_ref = ref<InputComponent | null>(null);
 	const invoice_number_ref = ref<InputComponent | null>(null);
 
-	const field_refs = ref({});
+	const field_refs: Ref<Record<string, any>> = ref({});
 
-	const set_field_ref = (name, el) => {
+	const set_field_ref = (name:string, el:any | null) => {
 		if (el) field_refs.value[name] = el;
 	}
 
@@ -378,7 +378,24 @@
 	watch(() => data.product_rows, (rows) => {
 		rows.forEach(row => calculateItemCost(row));
 		calculateGlobalTotals();
-	}, { deep:true })
+	}, { deep:true });
+
+	watch(() => data.custom_fields.map(f => f.value), (new_values, old_values) => {
+		new_values.forEach((new_val, index) => {
+			const old_val = old_values?.[index];
+			if (new_val !== old_val) {
+				const field = data.custom_fields[index];
+				field.error = '';
+				const ref_component = field_refs.value[field.ref];
+				if(ref_component?.validate){
+					if(!ref_component.validate()){
+						field.error = common.formatKey(field.label)+" is required";
+					}
+				}
+			}
+		});
+	}, { deep: false });
+
 
 	const fetchInitialData = () : void =>  {
 
