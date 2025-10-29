@@ -154,65 +154,11 @@
 				</template>
 				<template v-slot:tab-1>
 					<div>
-						<form class="form" @submit.prevent="validateCustomFields">
-							<div class="lg:grid lg:grid-cols-12 gap-5">
-								<div v-for="(field, key) in data.custom_fields" :key="key" :class="{'lg:col-span-12' : (field.span === 12), 'lg:col-span-6' : (field.span === 6), 'lg:col-span-4' : (field.span === 4)}">
-									
-									<div v-if="field.custom_field_type.input_type === 'text'">
-										<input-text :required="field.required" :label="field.label" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-text>
-									</div>
-									<div v-if="field.custom_field_type.input_type === 'textarea'">
-										<input-textarea :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-textarea>
-									</div>
-									<div v-if="field.custom_field_type.input_type === 'email'">
-										<input-email :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-email>
-									</div>
-									<div v-if="field.custom_field_type.input_type === 'select'">
-										<input-select :label="field.label" :options="field.type_params" :prop_placeholder="field.placeholder" :required="field.required" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-select>
-									</div>
-									<div v-if="field.custom_field_type.input_type === 'number'">
-										<input-number :field_name="field.label" :required="field.required" :placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-number>
-									</div>
-									<div v-if="field.custom_field_type.input_type === 'date'">
-										<input-date-time mode="date" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => set_field_ref(field.ref, el)"></input-date-time>
-									</div>
-
-									<div v-if="field.custom_field_type.input_type === 'time'">
-										<input-date-time mode="time" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => set_field_ref(field.ref, el)"></input-date-time>
-									</div>
-
-									<div v-if="field.custom_field_type.input_type === 'datetime'">
-										<input-date-time mode="datetime" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => set_field_ref(field.ref, el)"></input-date-time>
-									</div>
-
-									<div v-if="field.custom_field_type.input_type === 'telephone'">
-										<input-telephone mode="telephone" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => set_field_ref(field.ref, el)"></input-telephone>
-									</div>
-
-									<div v-if="field.custom_field_type.input_type === 'multiselect'">
-										<input-multiselect :label="field.label" :options="field.type_params" :required="field.required" v-model="field.value" :error="field.error" :ref="el => set_field_ref(field.ref, el)"></input-multiselect>
-									</div>
-									
-								</div>
-								
-							</div>
-							<p v-if="data.custom_fields.length === 0">There are no custom fields added for the invoices, click next.</p>
-							<input-button btn_text="Next" icon="IconCaretRight" class="lg:float-end"></input-button>
-							<div class="clear-both"></div>
-						</form>
-
+						<CustomFieldsRenderer v-model="data.custom_fields" @validated="handleCustomFieldsValidated" ref="custom_fields_tab_ref"></CustomFieldsRenderer>
 					</div>
 				</template>
 				<template v-slot:tab-2>
-					<div>
-						<form @submit.prevent="validateSettings">
-							<input-select label="Payment method" :options="data.payment_methods" placeholder="Select payment method" :required="true" v-model="data.payment_method.value" :error="data.payment_method.error" ref="payment_method_ref"></input-select>
-							<br>
-							<span class="flex gap-5 items-center"><input-switch v-model="data.send_invoice_in_email"></input-switch><span @click.prevent="data.send_invoice_in_email = !data.send_invoice_in_email">Send email with invoice</span></span>
-							<input-button btn_text="Save" icon="iconCheck" class="lg:float-end"></input-button>
-							<div class="clear-both"></div>
-						</form>
-					</div>
+					<SettingsTab v-model:payment_method="data.payment_method" v-model:send_invoice_in_email="data.send_invoice_in_email" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
 				</template>
 			 </tabs>
 		</div>
@@ -231,10 +177,10 @@
 	import InputNumber from '../inputs/InputNumber.vue';
 	import InputSelect from '../inputs/InputSelect.vue';
 	import InputTextarea from '../inputs/InputTextarea.vue';
-	import InputEmail from '../inputs/InputEmail.vue';
-	import InputTelephone from '../inputs/InputTelephone.vue';
-	import InputMultiselect from '../inputs/InputMultiselect.vue';
-	import InputSwitch from '../inputs/InputSwitch.vue';
+	
+	import SettingsTab from './blocks/SettingsTab.vue';
+
+	import CustomFieldsRenderer from '../blocks/custom_fields_templates/CustomFieldsRenderer.vue';
 
 	import { IconTrash } from '@tabler/icons-vue';
 
@@ -284,7 +230,7 @@
 		invoice_terms: string,
 		active_tab_index: number,
 		custom_fields : Array<object>,
-		payment_methods : Array<object>,
+		// payment_methods : Array<object>,
 		payment_method : object,
 		send_invoice_in_email : boolean
 	}
@@ -330,24 +276,6 @@
 		invoice_terms: '',
 		active_tab_index: 0,
 		custom_fields : [],
-		payment_methods : [ /* using hardcoded here , will change this after payment methods implemented */
-			{
-				text : 'Cash',
-				value : 'cash'
-			},
-			{
-				text : 'Net Banking',
-				value : 'net_banking'
-			},
-			{
-				text : 'PayPal',
-				value : 'paypal'
-			},
-			{
-				text : 'Stripe',
-				value : 'stripe'
-			}
-		],
 		payment_method : {
 			value : 'cash',
 			error : ''
@@ -359,16 +287,9 @@
 	const invoice_date_ref = ref<InputComponent | null>(null);
 	const due_date_ref = ref<InputComponent | null>(null);
 	const invoice_number_ref = ref<InputComponent | null>(null);
-	const payment_method_ref = ref<InputComponent | null>(null);
-
-	const field_refs: Ref<Record<string, any>> = ref({});
-
-	const set_field_ref = (name:string, el:any | null) => {
-		if (el) field_refs.value[name] = el;
-	}
-
-
-
+	const custom_fields_tab_ref = ref(null);
+	const settings_tab_ref = ref(null);
+	
 	/* watchers */
 	watch(() => [data.global_discount_type, data.global_discount], () => {
 		calculateGlobalTotals();
@@ -398,13 +319,6 @@
 		}
 	});
 
-	watch(() => data.payment_method.value, () => {
-		data.payment_method.error = '';
-		if(!payment_method_ref.value.validate()){
-			data.payment_method.error = 'Please select a payment method';
-		}
-	});
-
 	watch(() => data.invoice_number.value, () => {
 		nextTick(() => {
 			data.invoice_number.error = '';
@@ -418,22 +332,6 @@
 		rows.forEach(row => calculateItemCost(row));
 		calculateGlobalTotals();
 	}, { deep:true });
-
-	watch(() => data.custom_fields.map(f => f.value), (new_values, old_values) => {
-		new_values.forEach((new_val, index) => {
-			const old_val = old_values?.[index];
-			if (new_val !== old_val) {
-				const field = data.custom_fields[index];
-				field.error = '';
-				const ref_component = field_refs.value[field.ref];
-				if(ref_component?.validate){
-					if(!ref_component.validate()){
-						field.error = common.formatKey(field.label)+" is required";
-					}
-				}
-			}
-		});
-	}, { deep: false });
 
 
 	const fetchInitialData = () : void =>  {
@@ -709,73 +607,46 @@
 		}
 		
 	}
+	
 
-	const validateCustomFields = () : void => {
-
-		let valid_custom_fields = true;
-
-		data.custom_fields.forEach(field_name => {
-				
-			let temp_new_value = field_name.value;
-			
-			if(temp_new_value !== null){
-				temp_new_value = temp_new_value.toString().trim();
-			}
-
-			const ref_component = field_refs.value[field_name.ref];
-			
-			if (ref_component?.validate) {
-				ref_component.validate();
-			}
-
-			if(!temp_new_value && field_name.required){
-				valid_custom_fields = false;
-				field_name.error = common.formatKey(field_name.label)+" is required";
-			}else{
-				field_name.error = "";
-			}
-
-				
-		});
-
-		
-		if(valid_custom_fields){
-			data.active_tab_index = 2;
-		}else{
-			toastEvents.emit('toast', {
-				type : 'error',
-				message : 'Please fill in highlighted fields'
-			});
-		}
-
-	}
-
-	const changedActiveTabValue = (tab_index:number) : void => {
+	
+	// When tab changes, call child validation
+	const changedActiveTabValue = (tab_index: number) => {
 		if(tab_index === 0){
 			nextTick(() => {
 				validateInvoiceDetails();
 			});
-		}else if(tab_index === 1){
+		} else if(tab_index === 1){
 			nextTick(() => {
-				validateCustomFields();
+				custom_fields_tab_ref.value?.validateFields();
 			});
-			
-		}else if(tab_index === 2){
+		} else if(tab_index === 2){
 			nextTick(() => {
-				validateSettings();
+				settings_tab_ref.value?.validateSettings();
 			});
 		}
 	}
+	/**/
+	/**/
 
-	const validateSettings = () : void => {
-		data.payment_method.error = '';
-		if(!payment_method_ref.value?.validate()){
-			data.payment_method.error = 'Please select a payment method';
+	
+	// Handle validation result from custom fields
+	const handleCustomFieldsValidated = (is_valid: boolean) => {
+		if(is_valid){
+			data.active_tab_index = 2;
 		}
-
-		/* send request here */
-
 	}
+	
+	// Handle validation result from settings
+	const handleSettingsValidated = (is_valid: boolean) => {
+		if(is_valid){
+			// Submit the invoice or move to next step
+			console.log('All validated, submit invoice');
+			console.log(data);
+		}
+	}
+
+	/**/
 
 	const fetchCustomFields = () : void => {
 		api.get('manage-invoices/fetch-invoice-custom-fields').then((response) => {
