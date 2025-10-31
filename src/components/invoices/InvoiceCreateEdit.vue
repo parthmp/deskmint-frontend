@@ -94,7 +94,7 @@
 									<div class="lg:col-span-3">
 										<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal }} {{ data.invoice_details.currency_code }}</p>
 										<p class="text-xl! mb-[5px]">Tax : {{ data.global_tax_amount }} {{ data.invoice_details.currency_code }}</p>
-										<p class="text-xl! mb-[5px]">Discount amount: {{ data.invoice_details.global_discount_amount }} {{ data.invoice_details.currency_code }}</p>
+										<p class="text-xl! mb-[5px]">Discount amount: {{ data.global_discount_amount }} {{ data.invoice_details.currency_code }}</p>
 										<p class="text-xl! mb-[5px]">Total : {{ data.global_total }} {{ data.invoice_details.currency_code }}</p>
 										<p class="text-xl! mb-[5px]">Balance due : {{ data.global_total }} {{ data.invoice_details.currency_code }}</p>
 									</div>
@@ -148,13 +148,36 @@
 	import Decimal from 'decimal.js';
 	import { toastEvents } from '../../events/toastEvents';
 
-	const tab_options = ['Invoice Details', 'Custom Fields', 'Settings'];
+	const tab_options : Array<string> = ['Invoice Details', 'Custom Fields', 'Settings'];
 	
-
 	interface InvoiceCreateEditInterface{
 		clients : Array<object>,
 		products : Array<object>,
-		invoice_details : object,
+		invoice_details : {
+			client: {
+				value: string,
+				error: string,
+				show_errors: boolean,
+				client_id: string,
+			};
+			invoice_date: {
+				value: Date,
+				error: string,
+			};
+			due_date: {
+				value: Date | null,
+				error: string,
+			};
+			invoice_number: {
+				value: string,
+				error: string,
+			};
+			po_number: string,
+			global_discount: number,
+			global_discount_type: string,
+			currency_id: number,
+			currency_code: string
+		},
 		global_discount_amount : string,
 		product_columns : Array<object>,
 		product_columns_slices : Array<object>,
@@ -169,7 +192,6 @@
 		payment_method : object,
 		send_invoice_in_email : boolean
 	}
-
 
 	const data = reactive<InvoiceCreateEditInterface>({
 		clients : [],
@@ -357,11 +379,11 @@
 			data.invoice_details.global_discount = 0;
 		}
 
-		data.invoice_details.global_discount_amount = global_discount_amount.toFixed(2);
+		data.global_discount_amount = global_discount_amount.toFixed(2);
 
 		
 		
-		data.global_total = global_total.sub(data.invoice_details.global_discount_amount).toFixed(2);
+		data.global_total = global_total.sub(data.global_discount_amount).toFixed(2);
 
 		
 	}
