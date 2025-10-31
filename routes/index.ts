@@ -52,7 +52,8 @@ import InvoiceCreateEdit from '../src/components/invoices/InvoiceCreateEdit.vue'
 //const InvoiceCreateEdit = () => import('../src/components/invoices/InvoiceCreateEdit.vue');
 
 import EmailSettingsRender from '../src/components/settings/email/EmailSettingsRender.vue';
-import EmailSettingsContent from '../src/components/settings/email/EmailSettingsContent.vue';
+import EmailSettingsContent from '../src/components/settings/email/blocks/EmailSettingsContent.vue';
+import EmailSettingsReminders from '../src/components/settings/email/blocks/EmailSettingsReminders.vue';
 
 const routes = [
 	{
@@ -290,6 +291,11 @@ const routes = [
 					{
 						path:  '/settings/email/content',
 						component: EmailSettingsContent,
+						meta: { requires_auth: true }
+					},
+					{
+						path:  '/settings/email/reminders',
+						component: EmailSettingsReminders,
 						meta: { requires_auth: true }
 					}
 				]

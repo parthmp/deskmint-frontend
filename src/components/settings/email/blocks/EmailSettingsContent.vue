@@ -6,9 +6,9 @@
 			<input-button class="lg:float-end" btn_text="View variables" icon="IconEye" @click.prevent="data.show_popup = true"></input-button>
 			<div class="clear-both"></div>
 			<form @submit.prevent="saveEmailSettingsContent">
-				<input-textarea v-model="data.email_content_invoice" :rows="6" label="Email content to send with invoice"></input-textarea>
-				<input-textarea v-model="data.email_content_reminder" :rows="6" label="Email content to send for payment reminders"></input-textarea>
-				<input-textarea v-model="data.payment_details" :rows="3" label="Payment details text (This will be sent only if you have an online payment method set)"></input-textarea>
+				<input-textarea v-model="data.email_content_invoice" :rows="6" label="Email content to send with invoice" placeholder="Email content to send with invoice"></input-textarea>
+				<input-textarea v-model="data.email_content_reminder" :rows="6" label="Email content to send for payment reminders" placeholder="Email content to send for payment reminders"></input-textarea>
+				<input-textarea v-model="data.payment_details" :rows="3" label="Payment details text (This will be sent only if you have an online payment method set)" placeholder="Payment details text (This will be sent only if you have an online payment method set)"></input-textarea>
 				<input-button class="lg:float-end" btn_text="Save" icon="IconCheck" :disabled="data.btn_disabled"></input-button>
 				<div class="clear-both"></div>
 			</form>
@@ -31,13 +31,13 @@
 
 <script lang="ts" setup>
 
-	import EmailSettingsContentSkeleton from '../../skeletons/EmailSettingsContentSkeleton.vue';
+	import EmailSettingsContentSkeleton from '../../../skeletons/EmailSettingsContentSkeleton.vue';
 
-	import InputTextarea from '../../inputs/InputTextarea.vue';
-	import InputButton from '../../inputs/InputButton.vue';
-	import Popup from '../../UI/Popup.vue';
+	import InputTextarea from '../../../inputs/InputTextarea.vue';
+	import InputButton from '../../../inputs/InputButton.vue';
+	import Popup from '../../../UI/Popup.vue';
 	import { onMounted, reactive } from 'vue';
-	import api from '../../../helpers/api';
+	import api from '../../../../helpers/api';
 	
 	interface EmailSettingsContentInterface{
 		show_popup:boolean,
