@@ -298,7 +298,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport, IconMail } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -361,7 +361,8 @@ export default defineComponent({
 		IconScript:IconScript,
 		IconUsers:IconUsers,
 		IconBuildingFactory:IconBuildingFactory,
-		IconFileReport:IconFileReport
+		IconFileReport:IconFileReport,
+		IconMail:IconMail
 	},
 	data() : PanelData{
 		return {
@@ -486,6 +487,13 @@ export default defineComponent({
 								icon_size: 22,
 								is_active: false,
 								menu_text: 'Invoice'
+							},
+							{
+								path: '/settings/email/content',
+								icon: 'IconMail',
+								icon_size: 22,
+								is_active: false,
+								menu_text: 'Email'
 							}
 							
 						]

@@ -51,6 +51,9 @@ import InvoiceCreateEdit from '../src/components/invoices/InvoiceCreateEdit.vue'
 
 //const InvoiceCreateEdit = () => import('../src/components/invoices/InvoiceCreateEdit.vue');
 
+import EmailSettingsRender from '../src/components/settings/email/EmailSettingsRender.vue';
+import EmailSettingsContent from '../src/components/settings/email/EmailSettingsContent.vue';
+
 const routes = [
 	{
 		path: '/',
@@ -279,6 +282,18 @@ const routes = [
 				component: InvoiceCreateEdit,
 				meta: { requires_auth: true }
 			},
+			{
+				path: '/settings/email/content',
+				component: EmailSettingsRender,
+				meta: { requires_auth: true },
+				children : [
+					{
+						path:  '/settings/email/content',
+						component: EmailSettingsContent,
+						meta: { requires_auth: true }
+					}
+				]
+			}
 		]
 	}
 	
