@@ -21,7 +21,7 @@
 	}
 
 	const data = reactive<InvoiceSettingsInterface>({
-		tab_options : ['Content', 'SMTP']
+		tab_options : ['Content', 'Reminders', 'SMTP']
 	});
 
 </script>

@@ -76,9 +76,9 @@
 		methods : {
 
 			selfClick() : void{
-				if(this.local_close_outside){
+				//if(this.local_close_outside){
 					this.closePopup();
-				}
+				//}
 			},
 			
 			closePopup(value:boolean) : void{
