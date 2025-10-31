@@ -54,6 +54,7 @@ import InvoiceCreateEdit from '../src/components/invoices/InvoiceCreateEdit.vue'
 import EmailSettingsRender from '../src/components/settings/email/EmailSettingsRender.vue';
 import EmailSettingsContent from '../src/components/settings/email/blocks/EmailSettingsContent.vue';
 import EmailSettingsReminders from '../src/components/settings/email/blocks/EmailSettingsReminders.vue';
+import EmailSettingsSMTP from '../src/components/settings/email/blocks/EmailSettingsSMTP.vue';
 
 const routes = [
 	{
@@ -296,6 +297,11 @@ const routes = [
 					{
 						path:  '/settings/email/reminders',
 						component: EmailSettingsReminders,
+						meta: { requires_auth: true }
+					},
+					{
+						path:  '/settings/email/smtp',
+						component: EmailSettingsSMTP,
 						meta: { requires_auth: true }
 					}
 				]

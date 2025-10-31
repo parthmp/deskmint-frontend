@@ -106,7 +106,7 @@
 					this.input_value = this.sanitizeInput(this.input_value);
 
 					let temp_value = this.input_value.trim();
-
+					
 					if(temp_value !== ''){
 						this.is_valid = true;
 					}else{

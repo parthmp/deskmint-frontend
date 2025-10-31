@@ -84,6 +84,10 @@
 				this.input_required = this.required;
 				this.startMe();
 				this.validate();
+			},
+
+			modelValue() : void {
+				this.input_value = this.modelValue || '';
 			}
 		},
 

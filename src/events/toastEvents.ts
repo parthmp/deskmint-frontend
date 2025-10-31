@@ -2,8 +2,8 @@ import mitt from 'mitt';
 
 type Events = {
   toast: {
-    toast_type: string
-    toast_message: string
+    type: string
+    message: string
   }
 };
 
