@@ -12,7 +12,7 @@
 				<input-button class="lg:float-end" btn_text="Save" icon="IconCheck" :disabled="data.btn_disabled"></input-button>
 				<div class="clear-both"></div>
 			</form>
-			<popup :show_popup="data.show_popup" @closed="data.show_popup = false">
+			<popup :show_popup="data.show_popup" @closed="data.show_popup = false" :close_outside="true">
 				<h2 class="text-xl!">Available variables</h2>
 				<ul class="mt-[10px]">
 					<li>{$client_first_name}</li>

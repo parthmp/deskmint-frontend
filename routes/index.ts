@@ -55,6 +55,11 @@ import EmailSettingsRender from '../src/components/settings/email/EmailSettingsR
 import EmailSettingsContent from '../src/components/settings/email/blocks/EmailSettingsContent.vue';
 import EmailSettingsReminders from '../src/components/settings/email/blocks/EmailSettingsReminders.vue';
 import EmailSettingsSMTP from '../src/components/settings/email/blocks/EmailSettingsSMTP.vue';
+import PaymentsSettings from '../src/components/settings/payments/PaymentsSettings.vue';
+import PaymentsSettingsIntegrations from '../src/components/settings/payments/blocks/PaymentsSettingsIntegrations.vue';
+import PaymentsSettingsSettings from '../src/components/settings/payments/blocks/PaymentsSettingsSettings.vue';
+import PaymentsSettingsRender from '../src/components/settings/payments/PaymentsSettingsRender.vue';
+import PaymentSettingsNewGateway from '../src/components/settings/payments/blocks/PaymentSettingsNewGateway.vue';
 
 const routes = [
 	{
@@ -304,6 +309,29 @@ const routes = [
 						component: EmailSettingsSMTP,
 						meta: { requires_auth: true }
 					}
+				]
+			},
+			{
+				path: '/settings/payments/integrations',
+				component: PaymentsSettingsRender,
+				meta: { requires_auth: true },
+				children : [
+					{
+						path:  '/settings/payments/integrations',
+						component: PaymentsSettingsIntegrations,
+						meta: { requires_auth: true }
+					},
+					{
+						path:  '/settings/payments/settings',
+						component: PaymentsSettingsSettings,
+						meta: { requires_auth: true }
+					},
+					{
+						path:  '/settings/payments/integrations/new-gateway',
+						component: PaymentSettingsNewGateway,
+						meta: { requires_auth: true }
+					},
+					
 				]
 			}
 		]
