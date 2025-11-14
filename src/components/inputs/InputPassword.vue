@@ -124,6 +124,23 @@
 				return this.is_valid;
 				
 			},
+			validateText() : boolean {
+				if(this.input_required === true){
+					
+					if(this.input_value.trim() !== ''){
+						this.is_valid = true;
+					}else{
+						this.is_valid = false;
+						this.show_errors = true;
+					}
+				}else{
+					this.is_valid = true;
+				}
+			
+				this.$emit('update:modelValue', this.input_value);
+				this.$emit('is-valid', this.is_valid);
+				return this.is_valid;
+			},
 			EmitModel(e:any) : void{	
 				this.$emit('update:modelValue', this.input_value);
 			},

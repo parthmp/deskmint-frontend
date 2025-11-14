@@ -19,11 +19,11 @@
 	const payment_gateways : Array<{ image : string, url: string }> = [
 		{
 			image : '../../.././src/assets/images/paypal_logo.png',
-			url: 'paypal url'
+			url: 'paypal'
 		},
 		{
 			image : '../../.././src/assets/images/stripe_logo.png',
-			url: 'stripe url'
+			url: 'stripe'
 		}
 	];
 
