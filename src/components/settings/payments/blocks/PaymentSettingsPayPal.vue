@@ -1,16 +1,21 @@
 <template>
-	<p>Note: to use PayPal, you must have a business PayPal account to receive payments. Click <a href="https://developer.paypal.com/api/rest/production/#obtain-your-live-paypal-credentials" target="_blank">here</a> to know how to obtain your API keys.</p>
-	<p>Never share your API keys with anyone.</p>
-	<form @submit.prevent="handlePayPalSettings">
 
-		<input-text label="Client ID" placeholder="Client ID" v-model="data.client_id.value" :error="data.client_id.error" :required="true" ref="paypal_client_id_ref"></input-text>
-		<input-password label="Secret key" placeholder="Secret key" v-model="data.secret.value" :error="data.secret.error" :required="true" ref="paypal_secret_ref"></input-password>
-		<input-select label="Mode" placeholder="Select mode" v-model="data.mode.value" :error="data.mode.error" :options="modes" :required="true" ref="paypal_mode_ref"></input-select>
+	<payment-settings-paypal-seketon v-if="data.loading"></payment-settings-paypal-seketon>
 
-		<input-button btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="float-end"></input-button>
-		<div class="clear-both"></div>
+	<div v-if="!data.loading">
+		<p>Note: to use PayPal, you must have a business PayPal account to receive payments. Click <a href="https://developer.paypal.com/api/rest/production/#obtain-your-live-paypal-credentials" target="_blank">here</a> to know how to obtain your API keys.</p>
+		<p>Never share your API keys with anyone.</p>
+		<form @submit.prevent="handlePayPalSettings">
 
-	</form>
+			<input-text label="Client ID" placeholder="Client ID" v-model="data.client_id.value" :error="data.client_id.error" :required="true" ref="paypal_client_id_ref"></input-text>
+			<input-password label="Secret key" placeholder="Secret key" v-model="data.secret.value" :error="data.secret.error" :required="true" ref="paypal_secret_ref"></input-password>
+			<input-select label="Mode" placeholder="Select mode" v-model="data.mode.value" :error="data.mode.error" :options="modes" :required="true" ref="paypal_mode_ref"></input-select>
+
+			<input-button btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
+			<div class="clear-both"></div>
+
+		</form>
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -24,6 +29,11 @@
 	import { nextTick, onMounted, reactive, ref, watch } from 'vue';
 	import { toastEvents } from '../../../../events/toastEvents';
 	import api from '../../../../helpers/api';
+	import { useRouter } from 'vue-router';
+
+	import PaymentSettingsPaypalSeketon from '../../../skeletons/PaymentSettingsPaypalSeketon.vue';
+
+	const router = useRouter();
 
 	type InputObject = {
 		error : string,
@@ -109,12 +119,15 @@
 
 	const fetchPaypalSettings = async () : Promise<void> => {
 
+		data.loading = true;
+
 		const response = await api.get('manage-paypal-settings');
 		
 		data.client_id.value = response.data.client_id;
 		data.secret.value = response.data.secret;
 		data.mode.value = response.data.mode;
 
+		data.loading = false;
 	}
 
 	const handlePayPalSettings = async () : Promise<void> => {
@@ -135,7 +148,7 @@
 					mode : data.mode.value
 				});
 
-				console.log(response);
+				router.push('/settings/payments/integrations');
 
 			}finally{
 				data.btn_disabled = false;
