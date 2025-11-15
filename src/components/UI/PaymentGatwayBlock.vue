@@ -4,7 +4,8 @@
 			<img :src="props.image" class="max-h-[150px] w-auto m-auto" alt="">
 			<br>
 			<br>
-			<input-button label="Setup" :url="props.url" icon="IconRocket"></input-button>
+			<input-button label="Setup / Edit" :url="props.url" icon="IconRocket"></input-button>
+			<p><Tag :type="(props.active) ? 'green' : 'red'" class="m-auto mt-5">{{ (props.active) ? 'Active' : 'Inactive' }}</Tag></p>
 		</div>
 		
 	</div>
@@ -13,7 +14,8 @@
 <script lang="ts" setup>
 
 	import InputButton from '../inputs/InputButton.vue';
+	import Tag from './Tag.vue';
 
-	const props = defineProps(['image', 'url']);
+	const props = defineProps(['image', 'url', 'active']);
 
 </script>

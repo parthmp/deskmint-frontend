@@ -3,6 +3,9 @@
 	<payment-settings-stripe-skeleton v-if="data.loading"></payment-settings-stripe-skeleton>
 
 	<div v-if="!data.loading">
+		<input-button class="lg:float-start" btn_text="Back" url="/settings/payments/integrations" icon="IconCaretLeft"></input-button>
+		<div class="clear-both"></div>
+		<br>
 		<p>Click <a href="https://docs.stripe.com/keys" target="_blank">here</a> to know how to obtain your API key. Never share your API key with anyone.</p>
 		<form @submit.prevent="handleStripeSettings">
 

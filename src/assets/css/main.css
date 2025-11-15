@@ -534,3 +534,12 @@ background: #e7e7e7;
 .picker_editor input:focus{
 	@apply shadow-none! border-deskmint-green!;
 }
+.green-tag{
+	@apply bg-green-800/40 text-green-900! dark:bg-green-900/50 dark:text-green-200! px-5 py-0.5 rounded-2xl;
+}
+.red-tag{
+	@apply bg-red-800/40 text-red-900! dark:bg-red-900/50! dark:text-red-200! px-5 py-0.5 rounded-2xl;
+}
+.blue-tag{
+	@apply bg-blue-800/40 text-blue-900! dark:bg-blue-900/50! dark:text-blue-200! px-5 py-0.5 rounded-2xl;
+}

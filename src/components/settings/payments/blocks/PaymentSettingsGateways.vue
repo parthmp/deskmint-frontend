@@ -3,7 +3,7 @@
 
 		<div class="grid grid-cols-12 gap-5 items-stretch">
 				
-			<payment-gatway-block v-for="(gateway, index) in payment_gateways" :key="index" :image="gateway.image" :url="gateway.url"></payment-gatway-block>
+			<payment-gatway-block v-for="(gateway, index) in payment_gateways" :key="index" :image="gateway.image" :url="gateway.url" :active="gateway.active"></payment-gatway-block>
 			
 		</div>
 		<br>
@@ -16,14 +16,16 @@
 	
 	import PaymentGatwayBlock from '../../../UI/PaymentGatwayBlock.vue';
 
-	const payment_gateways : Array<{ image : string, url: string }> = [
+	const payment_gateways : Array<{ image : string, url: string, active : boolean }> = [
 		{
 			image : '../../.././src/assets/images/paypal_logo.png',
-			url: 'paypal'
+			url: 'integrations/paypal',
+			active : true
 		},
 		{
 			image : '../../.././src/assets/images/stripe_logo.png',
-			url: 'stripe'
+			url: 'integrations/stripe',
+			active : false
 		}
 	];
 

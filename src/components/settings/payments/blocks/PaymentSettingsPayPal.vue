@@ -3,6 +3,9 @@
 	<payment-settings-paypal-seketon v-if="data.loading"></payment-settings-paypal-seketon>
 
 	<div v-if="!data.loading">
+		<input-button class="lg:float-start" btn_text="Back" url="/settings/payments/integrations" icon="IconCaretLeft"></input-button>
+		<div class="clear-both"></div>
+		<br>
 		<p>Note: to use PayPal, you must have a business PayPal account to receive payments. Click <a href="https://developer.paypal.com/api/rest/production/#obtain-your-live-paypal-credentials" target="_blank">here</a> to know how to obtain your API keys.</p>
 		<p>Never share your API keys with anyone.</p>
 		<form @submit.prevent="handlePayPalSettings">
