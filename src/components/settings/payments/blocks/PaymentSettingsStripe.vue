@@ -27,7 +27,18 @@
 
 	import PaymentSettingsStripeSkeleton from '../../../skeletons/PaymentSettingsStripeSkeleton.vue';
 
-	const data = reactive({
+	type StripeSecretType = {
+		error : string,
+		value : string
+	};
+
+	interface PaymentSettingsStripeInterface{
+		loading:boolean,
+		btn_disabled:boolean
+		secret : StripeSecretType
+	}
+
+	const data = reactive<PaymentSettingsStripeInterface>({
 		loading : false, 
 		btn_disabled : false,
 		secret : {
@@ -36,7 +47,11 @@
 		}
 	});
 
-	const stripe_secret_ref = ref(null);
+	type StripeFieldvalidation = {
+		validateText : () => {}
+	};
+
+	const stripe_secret_ref = ref<StripeFieldvalidation | null>(null);
 	const router = useRouter();
 
 	watch(() => data.secret.value, () : void => {
