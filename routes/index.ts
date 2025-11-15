@@ -61,6 +61,7 @@ import PaymentsSettingsSettings from '../src/components/settings/payments/blocks
 import PaymentsSettingsRender from '../src/components/settings/payments/PaymentsSettingsRender.vue';
 import PaymentSettingsNewGateway from '../src/components/settings/payments/blocks/PaymentSettingsNewGateway.vue';
 import PaymentSettingsPayPal from '../src/components/settings/payments/blocks/PaymentSettingsPayPal.vue';
+import PaymentSettingsStripe from '../src/components/settings/payments/blocks/PaymentSettingsStripe.vue';
 
 const routes = [
 	{
@@ -335,6 +336,11 @@ const routes = [
 					{
 						path:  '/settings/payments/integrations/paypal',
 						component: PaymentSettingsPayPal,
+						meta: { requires_auth: true }
+					},
+					{
+						path:  '/settings/payments/integrations/stripe',
+						component: PaymentSettingsStripe,
 						meta: { requires_auth: true }
 					}
 					
