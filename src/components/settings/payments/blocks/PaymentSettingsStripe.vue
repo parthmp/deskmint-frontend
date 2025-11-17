@@ -1,7 +1,7 @@
 <template>
 
 	<payment-settings-stripe-skeleton v-if="data.loading"></payment-settings-stripe-skeleton>
-	<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="data.integrated_disabled" :blocker="true" :scrollable="false" :close_outside="false" @closed="removeStripeIntegration"></confirmation-popup>
+	<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="data.integrated_disabled" :blocker="true" :scrollable="false" :close_outside="true" @closed="removeStripeIntegration"></confirmation-popup>
 	<div v-if="!data.loading">
 		<input-button class="lg:float-start" btn_text="Back" url="/settings/payments/integrations" icon="IconCaretLeft"></input-button>
 		<input-button v-if="data.integrated" class="lg:float-end" style_type="error" btn_text="Remove Integration" icon="IconTrash" @click="data.integrated_disabled = true"></input-button>

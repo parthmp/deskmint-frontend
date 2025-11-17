@@ -1,5 +1,5 @@
 <template>
-	<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="data.integrated_disabled" :blocker="true" :scrollable="false" :close_outside="false" @closed="removePaypalIntegration"></confirmation-popup>
+	<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="data.integrated_disabled" :blocker="true" :scrollable="false" :close_outside="true" @closed="removePaypalIntegration"></confirmation-popup>
 	<payment-settings-paypal-seketon v-if="data.loading"></payment-settings-paypal-seketon>
 
 	<div v-if="!data.loading">
