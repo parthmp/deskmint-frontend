@@ -1,13 +1,18 @@
 <template>
-
+	<confirmation-popup confirm_text="Are you sure?" v-model:show_popup="data.integrated_disabled" :blocker="true" :scrollable="false" :close_outside="false" @closed="removePaypalIntegration"></confirmation-popup>
 	<payment-settings-paypal-seketon v-if="data.loading"></payment-settings-paypal-seketon>
 
 	<div v-if="!data.loading">
 		<input-button class="lg:float-start" btn_text="Back" url="/settings/payments/integrations" icon="IconCaretLeft"></input-button>
+		<input-button :disabled="data.integrated_disabled" v-if="data.integrated" class="lg:float-end" style_type="error" btn_text="Remove Integration" icon="IconTrash" @click="data.integrated_disabled = true"></input-button>
+		
 		<div class="clear-both"></div>
+		<br>
+		<p class="font-bold text-red-600! dark:text-red-400!">Removing integration or changine API details will not stop any active subscriptions nor you will be able to manage any active subscriptions which are linked to removed/prev API key details. Please make sure you have either stopped/removed subscriptions, payment URLs and generate URLs & subsscriptions again with after new API keys added.</p>
 		<br>
 		<p>Note: to use PayPal, you must have a business PayPal account to receive payments. Click <a href="https://developer.paypal.com/api/rest/production/#obtain-your-live-paypal-credentials" target="_blank">here</a> to know how to obtain your API keys.</p>
 		<p>Never share your API keys with anyone.</p>
+		<br>
 		<form @submit.prevent="handlePayPalSettings">
 
 			<input-text label="Client ID" placeholder="Client ID" v-model="data.client_id.value" :error="data.client_id.error" :required="true" ref="paypal_client_id_ref"></input-text>
@@ -35,8 +40,11 @@
 	import { useRouter } from 'vue-router';
 
 	import PaymentSettingsPaypalSeketon from '../../../skeletons/PaymentSettingsPaypalSeketon.vue';
+	import ConfirmationPopup from '../../../UI/ConfirmationPopup.vue';
 
 	const router = useRouter();
+
+	const emit = defineEmits(['remove_paypal']);
 
 	type InputObject = {
 		error : string,
@@ -56,7 +64,9 @@
 		secret : InputObject,
 		mode : InputObject,
 		btn_disabled: boolean,
-		loading: boolean
+		loading: boolean,
+		integrated: boolean,
+		integrated_disabled: boolean
 	}
 
 	const modes = [
@@ -84,7 +94,9 @@
 			value : ''
 		},
 		btn_disabled: false,
-		loading : false
+		loading : false,
+		integrated : false,
+		integrated_disabled : false
 	});
 
 	const paypal_client_id_ref = ref<RefType | null>(null);
@@ -130,6 +142,10 @@
 		data.secret.value = response.data.secret;
 		data.mode.value = response.data.mode;
 
+		if(response.data.secret !== ''){
+			data.integrated = true;
+		}
+
 		data.loading = false;
 	}
 
@@ -169,6 +185,17 @@
 			});
 
 		}
+
+	}
+
+	const removePaypalIntegration = async ({ closed, value } : {closed : boolean, value : boolean} ) : Promise<void> => {
+		
+		if(value){
+			await api.delete('manage-paypal-settings');
+			router.push('/settings/payments/integrations');
+		}
+
+		data.integrated_disabled = false;
 
 	}
 

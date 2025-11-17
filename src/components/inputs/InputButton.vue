@@ -43,7 +43,7 @@
 
 	import common from '../../helpers/common';
 
-	import { IconRotateClockwise2, IconSend, IconLogin2, IconLink, IconCaretLeft, IconRepeat, IconKey, IconCaretRight, IconCheck, IconX, IconPlus, IconColumns3, IconPhoto, IconSquarePlus2, IconRefresh, IconEye, IconRocket } from '@tabler/icons-vue';
+	import { IconRotateClockwise2, IconSend, IconLogin2, IconLink, IconCaretLeft, IconRepeat, IconKey, IconCaretRight, IconCheck, IconX, IconPlus, IconColumns3, IconPhoto, IconSquarePlus2, IconRefresh, IconEye, IconRocket, IconTrash } from '@tabler/icons-vue';
 
 	import { defineComponent } from 'vue';
 
@@ -80,7 +80,8 @@
 			IconSquarePlus2,
 			IconRefresh,
 			IconEye,
-			IconRocket
+			IconRocket,
+			IconTrash
 		},
 
 		watch: {
@@ -129,7 +130,7 @@
 					'bg-gradient-to-r': !this.local_disabled && this.local_style_type === 'success',
 					'from-deskmint-cyan': !this.local_disabled && this.local_style_type === 'success',
 					'to-deskmint-original-dark': !this.local_disabled && this.local_style_type === 'success',
-					'bg-red-600': !this.local_disabled && this.local_style_type === 'error',
+					'dark:bg-red-800 bg-red-500': this.local_style_type === 'error',
 					'bg-blue-800': !this.local_disabled && this.local_style_type === 'info',
 					
 					
@@ -138,7 +139,7 @@
 					'hover:to-deskmint-original-dark-plus': !this.local_disabled && this.local_style_type === 'success',
 					'hover:shadow-none': !this.local_disabled && this.local_style_type === 'success',
 					
-					'hover:bg-red-700': !this.local_disabled && this.local_style_type === 'error',
+					'hover:bg-red-600 dark:hover:bg-red-900': !this.local_disabled && this.local_style_type === 'error',
 					'hover:bg-blue-900': !this.local_disabled && this.local_style_type === 'info',
 					
 					
