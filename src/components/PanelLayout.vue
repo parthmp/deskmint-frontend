@@ -1,5 +1,7 @@
 <template>
+	<div class="fixed  bg-deskmint-cyan/25 h-full w-full z-20 top-0 left-0" v-show="phone_show" @click="phone_show = false" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"></div>
 	<div id="autocomplete-portal"></div>
+		
 		<div class="container-fluid" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">	
 			<div class="big-content">
 				<aside>
@@ -576,7 +578,7 @@ export default defineComponent({
 			const deltaX = touchEndX - this.touchStartX;
 			const deltaY = Math.abs(touchEndY - this.touchStartY);
 			
-			if (deltaY < 100) {
+			if (deltaY < 50) {
 				
 				if (deltaX > this.minSwipeDistance && this.touchStartX < 50) {
 					this.phone_show = true;
@@ -591,45 +593,6 @@ export default defineComponent({
 			}
 		},
 
-		handleOutsideClick(e:any): void {
-			if (this.phone_show && window.innerWidth < this.phone_breakpoint) {
-				
-				const sidebar = this.$el.querySelector('.sidebar.phone');
-				const launcher = e.target.closest('a[href="javascript:;"]');
-				const excludeme = e.target.closest('span[data-exclude="true"]');
-				
-				if (sidebar && !sidebar.contains(e.target) && !launcher && !excludeme) {
-					this.phone_show = false;
-					
-				}
-				
-			}
-			const theme_launcher = e.target.closest('a[class="theme_launcher"]');
-				
-			if (!theme_launcher) {
-				this.show_theme_menu = false;
-			}
-
-			const shortcuts_launcher = e.target.closest('a[class="shortcuts_launcher"]');
-				
-			if (!shortcuts_launcher) {
-				this.show_shortcuts_menu = false;
-			}
-
-			const notifications_launcher = e.target.closest('a[class="notifications_launcher relative"]');
-			const notifications_closer = e.target.closest('[ref="notifications-close"]');
-			
-			if (!notifications_launcher && !notifications_closer) {
-				this.show_notifications_menu = false;
-			}
-
-			const profile_menu_launcher = e.target.closest('a[class="profile_menu_launcher relative"]');
-				
-			if (!profile_menu_launcher) {
-				this.show_profile_menu = false;
-			}
-			
-		},
 		updateScreenSize() : void{
 			this.is_mobile = window.innerWidth < this.phone_breakpoint;
 		},
@@ -714,7 +677,6 @@ export default defineComponent({
 	
 	},
 	mounted(){
-		document.addEventListener('click', this.handleOutsideClick);
 		window.addEventListener('resize', this.updateScreenSize);
 		this.updateScreenSize();
 		if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -739,7 +701,6 @@ export default defineComponent({
 		
 	},
 	beforeUnmount() {
-		document.removeEventListener('click', this.handleOutsideClick);
 		window.removeEventListener('resize', this.updateScreenSize);
 	}
 
