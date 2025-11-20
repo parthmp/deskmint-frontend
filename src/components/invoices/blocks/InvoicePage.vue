@@ -128,10 +128,11 @@
 	const { addNewProductRow, removeProductRow, handleProductSelect } = useInvoiceProducts();
 
 	const invoice_details_ref = ref(null);
-	
 
-	const validateInvoiceDetails = () : void => {
-		
+	const emit = defineEmits(['validated']);
+
+	const isValid = () : void => {
+
 		let validated = true;
 
 		validated = invoice_details_ref.value.validateInvoiceDetails();
@@ -168,14 +169,23 @@
 
 		}
 
-		// if(validated){
-		// 	data.active_tab_index = 1;
-		// }
+		return validated;
+
+	}
+	
+
+	const validateInvoiceDetails = () : void => {
+		
+		const is_valid = isValid();
+
+		emit('validated', is_valid);
 		
 	}
 
 	const printRows = () : void => {
 		// console.log(data.product_rows);
 	}
+
+	defineExpose({isValid});
 
 </script>

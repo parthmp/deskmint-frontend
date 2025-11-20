@@ -5,7 +5,7 @@
 			 <br>
 			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="data.active_tab_index" :disable_further="false" @tab-changed="changedActiveTabValue">
 				<template v-slot:tab-0>
-					<invoice-page></invoice-page>
+					<invoice-page ref="invoice_page_validation" @validated="handleInvoicePageValidated"></invoice-page>
 				</template>
 				<template v-slot:tab-1>
 					<div>
@@ -45,6 +45,7 @@
 	
 	const custom_fields_tab_ref = ref(null);
 	const settings_tab_ref = ref(null);
+	const invoice_page_validation = ref(null);
 
 	const fetchInitialData = async () : Promise<void> =>  {
 
@@ -81,7 +82,7 @@
 		
 		if(tab_index === 0){
 			nextTick(() => {
-				//invoice_details_ref.value?.validateInvoiceDetails();
+				invoice_page_validation.value?.isValid();
 			});
 		} else if(tab_index === 1){
 			nextTick(() => {
@@ -99,6 +100,12 @@
 	const handleCustomFieldsValidated = (is_valid: boolean) => {
 		if(is_valid){
 			data.active_tab_index = 2;
+		}
+	}
+
+	const handleInvoicePageValidated = (is_valid: boolean) : void => {
+		if(is_valid){
+			data.active_tab_index = 1;
 		}
 	}
 	
