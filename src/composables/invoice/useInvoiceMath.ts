@@ -3,15 +3,36 @@ import { useInvoiceStore } from "./useInvoiceStore";
 import Decimal from "decimal.js";
 import common from "../../helpers/common";
 
+type rowType = {
+    id: string,
+    row_index: number,
+
+    item_id?: string,
+    quantity?: number | string,
+    unit_cost?: number | string,
+    line_total?: number | string | Decimal,
+    line_subtotal?: number | string | Decimal,
+    tax_amount?: number | string | Decimal,
+
+    type?: string,
+    tax?: boolean,
+
+    [key: `custom_tax_${string}`]: number | string | Decimal | undefined,
+    [key: `normal_${string}`]: number | string | Decimal | undefined,
+    [key: string]: number | string | Decimal | undefined
+};
+
+
+
 export function useInvoiceMath(){
 
 	const data = useInvoiceStore();
 
-	watch(() => [data.invoice_details.global_discount_type, data.invoice_details.global_discount], () => {
+	watch(() => [data.invoice_details.global_discount_type, data.invoice_details.global_discount], () : void => {
 		calculateGlobalTotals();
 	});
 
-	watch(() => data.product_rows, (rows) => {
+	watch(() => data.product_rows, (rows) : void => {
 		
 		rows.forEach(row => calculateItemCost(row));
 		calculateGlobalTotals();
@@ -26,9 +47,9 @@ export function useInvoiceMath(){
 
 		for(const row of data.product_rows){
 
-			const subtotal = new Decimal(row.line_subtotal || 0);
-			const tax = new Decimal(row.tax_amount || 0);
-			const line_total = subtotal.add(tax);
+			const subtotal = new Decimal(+row.line_subtotal || 0);
+			const tax = new Decimal(+row.tax_amount || 0);
+			const line_total = subtotal.add(+tax);
 
 			global_subtotal = global_subtotal.add(subtotal);
 			global_tax = global_tax.add(tax);
@@ -57,7 +78,7 @@ export function useInvoiceMath(){
 		data.global_total = global_total.sub(data.global_discount_amount).toFixed(2);
 	}
 
-	const calculateItemCost = (row:object) : void => {
+	const calculateItemCost = (row:rowType) : void => {
 		const raw_row = toRaw(row);
 		if(common.isset(raw_row?.item_id)){
 

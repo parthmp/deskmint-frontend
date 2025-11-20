@@ -1,6 +1,19 @@
 import { useInvoiceStore } from "./useInvoiceStore";
 import { useInvoiceMath } from "./useInvoiceMath";
 import common from "../../helpers/common";
+type rowType = {
+	id: string,
+	row_index: number,
+	type?: string | undefined,
+	tax?: boolean,
+	line_subtotal?: number,
+	tax_amount?: number,
+	
+	[key: `custom_tax_${string}`]: number | string,
+	[key: `normal_${string}`]: number | string,
+	[key: string]: number | string
+	
+};
 
 export function useInvoiceProducts(){
 
@@ -13,7 +26,7 @@ export function useInvoiceProducts(){
 
 		let row_index = data.product_rows.length;
 
-		const product_row = {
+		const product_row:rowType = {
 			id : Date.now() + '_' + Math.random().toString(36).slice(2),
 			row_index: row_index
 		};

@@ -29,9 +29,21 @@ interface InvoiceCreateEditInterface{
 		currency_code: string
 	},
 	global_discount_amount : string,
-	product_columns : Array<object>,
+	product_columns : Array<{
+		type:string,
+		tax:boolean,
+		text:string,
+		value:string,
+	}>,
 	product_columns_slices : Array<object>,
-	product_rows : Array<object>,
+	product_rows : Array<{
+		id: string,
+		row_index : number,
+		type: string,
+		tax:boolean,
+		line_subtotal: number,
+		tax_amount: number
+	}>,
 	product_id : string,
 	global_subtotal: string,
 	global_total : string,
@@ -96,13 +108,5 @@ const data = reactive<InvoiceCreateEditInterface>({
 });
 
 export function useInvoiceStore(){
-
-	
-	/* implement reset here */
-	const reset = () : void => {
-
-	}
-	
 	return data;
-
 }
