@@ -111,7 +111,7 @@
 					</div>
 				</template>
 				<template v-slot:tab-2>
-					<SettingsTab v-model:payment_method="data.payment_method" v-model:send_invoice_in_email="data.send_invoice_in_email" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
+					<SettingsTab v-model:payment_method="data.payment_method" v-model:send_invoice_in_email="data.send_invoice_in_email" v-model:gateways="data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
 				</template>
 			 </tabs>
 		</div>
@@ -190,7 +190,11 @@
 		active_tab_index: number,
 		custom_fields : Array<object>,
 		payment_method : object,
-		send_invoice_in_email : boolean
+		send_invoice_in_email : boolean,
+		gateways : Array<{
+			text : string,
+			value : string
+		}>
 	}
 
 	const data = reactive<InvoiceCreateEditInterface>({
@@ -237,7 +241,8 @@
 			value : 'cash',
 			error : ''
 		},
-		send_invoice_in_email : true
+		send_invoice_in_email : true,
+		gateways : []
 	});
 
 
@@ -257,26 +262,34 @@
 	}, { deep:true });
 
 
-	const fetchInitialData = () : void =>  {
+	const fetchInitialData = async () : Promise<void> =>  {
 
 		const d = new Date();
 		const timezone_offset_minutes = d.getTimezoneOffset();
 
-		api.get('manage-invoices/fetch-initial-data', {
+		const response = await api.get('manage-invoices/fetch-initial-data', {
 			params : {
 				timezone_offset_minutes : timezone_offset_minutes
 			}
-		}).then(response => {
-			data.invoice_details.invoice_number.value = response.data.invoice_number;
-			data.product_columns = response.data.product_columns;
-			data.product_columns_slices.push(data.product_columns.slice(0, 6));
-			if(data.product_columns.length > 6){
-				data.product_columns_slices.push(data.product_columns.slice(6, 9));
-			}
-			addNewProductRow();
-		}).catch(error => {
-
 		});
+
+		data.invoice_details.invoice_number.value = response.data.invoice_number;
+		data.product_columns = response.data.product_columns;
+		data.product_columns_slices.push(data.product_columns.slice(0, 6));
+		if(data.product_columns.length > 6){
+			data.product_columns_slices.push(data.product_columns.slice(6, 9));
+		}
+
+		data.custom_fields = response.data.custom_fields;
+		data.gateways = response.data.gateways.map(ele => {
+			return {
+				text : ele,
+				value : ele.toLowerCase()
+			};
+		});
+
+		
+		addNewProductRow();
 
 	}
 
@@ -525,16 +538,9 @@
 			console.log(data);
 		}
 	}
-	
-	const fetchCustomFields = () : void => {
-		api.get('manage-invoices/fetch-invoice-custom-fields').then((response) => {
-			data.custom_fields = response.data.data_fields;
-		});
-	}
 
 	onMounted(() => {
 		fetchInitialData();
-		fetchCustomFields();
 	})
 
 </script>

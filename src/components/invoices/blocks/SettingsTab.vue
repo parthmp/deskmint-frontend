@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 
-	import { ref } from 'vue';
+	import { onMounted, ref } from 'vue';
 	import InputButton from '../../inputs/InputButton.vue';
 	import InputSwitch from '../../inputs/InputSwitch.vue';
 	import InputSelect from '../../inputs/InputSelect.vue';
@@ -36,6 +36,7 @@
 
 	// Use defineModel for two-way binding
 	const payment_method = defineModel('payment_method', { required: true });
+	const gateways = defineModel('gateways', { required: false });
 	const send_invoice_in_email = defineModel('send_invoice_in_email', { 
 		default: true 
 	});
@@ -56,14 +57,7 @@
 			text: 'Net Banking',
 			value: 'net_banking'
 		},
-		{
-			text: 'PayPal',
-			value: 'paypal'
-		},
-		{
-			text: 'Stripe',
-			value: 'stripe'
-		}
+		...gateways.value
 	];
 
 	const validateSettings = (): boolean => {
