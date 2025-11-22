@@ -48,15 +48,7 @@ interface InvoiceCreateEditInterface{
 	global_subtotal: string,
 	global_total : string,
 	global_tax_amount : string,
-	invoice_terms: string,
-	active_tab_index: number,
-	custom_fields : Array<object>,
-	payment_method : object,
-	send_invoice_in_email : boolean,
-	gateways : Array<{
-		text : string,
-		value : string
-	}>
+	invoice_terms: string
 }
 
 const data = reactive<InvoiceCreateEditInterface>({
@@ -96,15 +88,7 @@ const data = reactive<InvoiceCreateEditInterface>({
 	global_subtotal : '0.00',
 	global_total : '0.00',
 	global_tax_amount : '0.00',
-	invoice_terms: '',
-	active_tab_index: 0,
-	custom_fields : [],
-	payment_method : {
-		value : 'cash',
-		error : ''
-	},
-	send_invoice_in_email : true,
-	gateways : []
+	invoice_terms: ''
 });
 
 export function useInvoiceStore(){

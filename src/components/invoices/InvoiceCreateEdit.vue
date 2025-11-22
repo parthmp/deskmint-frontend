@@ -3,17 +3,17 @@
     	<div class="card">
 			 <h1 class="text-2xl!">Create an invoice</h1>
 			 <br>
-			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="data.active_tab_index" :disable_further="false" @tab-changed="changedActiveTabValue">
+			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="additional_data.active_tab_index" :disable_further="false" @tab-changed="changedActiveTabValue">
 				<template v-slot:tab-0>
 					<invoice-page ref="invoice_page_validation" @validated="handleInvoicePageValidated"></invoice-page>
 				</template>
 				<template v-slot:tab-1>
 					<div>
-						<CustomFieldsRenderer v-model="data.custom_fields" @validated="handleCustomFieldsValidated" ref="custom_fields_tab_ref"></CustomFieldsRenderer>
+						<CustomFieldsRenderer v-model="additional_data.custom_fields" @validated="handleCustomFieldsValidated" ref="custom_fields_tab_ref"></CustomFieldsRenderer>
 					</div>
 				</template>
 				<template v-slot:tab-2>
-					<SettingsTab v-model:payment_method="data.payment_method" v-model:send_invoice_in_email="data.send_invoice_in_email" v-model:gateways="data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
+					<SettingsTab v-model:payment_method="additional_data.payment_method" v-model:send_invoice_in_email="additional_data.send_invoice_in_email" v-model:gateways="additional_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
 				</template>
 			 </tabs>
 		</div>
@@ -24,7 +24,7 @@
 </style>
 <script lang="ts" setup>
 
-	import { nextTick, onMounted, onUnmounted, reactive, ref, toRaw, watch, type Ref } from 'vue';
+	import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
 	import Tabs from '../UI/Tabs.vue';
 
 	import SettingsTab from './blocks/SettingsTab.vue';
@@ -39,6 +39,18 @@
 	const tab_options : Array<string> = ['Invoice Details', 'Custom Fields', 'Settings'];
 
 	const data = useInvoiceStore();
+
+	const additional_data = reactive({
+		active_tab_index: 0,
+		custom_fields : [],
+		payment_method : {
+			value : 'cash',
+			error : ''
+		},
+		send_invoice_in_email : true,
+		gateways : []
+	});
+
 	const { addNewProductRow } = useInvoiceProducts();
 
 	const { reset } = useInvoiceReset();
@@ -65,8 +77,8 @@
 			data.product_columns_slices.push(data.product_columns.slice(6, 9));
 		}
 
-		data.custom_fields = response.data.custom_fields;
-		data.gateways = response.data.gateways.map(ele => {
+		additional_data.custom_fields = response.data.custom_fields;
+		additional_data.gateways = response.data.gateways.map(ele => {
 			return {
 				text : ele,
 				value : ele.toLowerCase()
@@ -94,26 +106,28 @@
 			});
 		}
 
-		data.active_tab_index = tab_index;
+		additional_data.active_tab_index = tab_index;
 	}
 	
 	const handleCustomFieldsValidated = (is_valid: boolean) => {
 		if(is_valid){
-			data.active_tab_index = 2;
+			additional_data.active_tab_index = 2;
 		}
 	}
 
 	const handleInvoicePageValidated = (is_valid: boolean) : void => {
 		if(is_valid){
-			data.active_tab_index = 1;
+			additional_data.active_tab_index = 1;
 		}
 	}
 	
 	const handleSettingsValidated = (is_valid: boolean) => {
 		if(is_valid){
 			// Submit the invoice or move to next step
-			console.log('All validated, submit invoice');
+			console.log('All validated, submit invoice start');
 			console.log(data);
+			console.log(additional_data);
+			console.log('All validated, submit invoice end');
 		}
 	}
 
