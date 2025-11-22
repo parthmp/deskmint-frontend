@@ -131,7 +131,7 @@
 
 	const emit = defineEmits(['validated']);
 
-	const isValid = () : void => {
+	const isValid = () : boolean => {
 
 		let validated = true;
 

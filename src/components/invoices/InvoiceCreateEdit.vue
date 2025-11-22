@@ -36,11 +36,29 @@
 	import InvoicePage from './blocks/InvoicePage.vue';
 	import { useInvoiceReset } from '../../composables/invoice/useInvoiceReset';
 
+	interface InvoiceCreateEditInterface{
+		active_tab_index : number,
+		custom_fields : Array<object>,
+		payment_method : {
+			value:string,
+			error:string
+		},
+		send_invoice_in_email: boolean,
+		gateways: Array<string>
+	}
+
+	type refType = {
+		isValid: () => boolean,
+		validateFields: () => boolean,
+		validateSettings: () => boolean,
+	};
+
+
 	const tab_options : Array<string> = ['Invoice Details', 'Custom Fields', 'Settings'];
 
 	const data = useInvoiceStore();
 
-	const additional_data = reactive({
+	const additional_data = reactive<InvoiceCreateEditInterface>({
 		active_tab_index: 0,
 		custom_fields : [],
 		payment_method : {
@@ -55,9 +73,9 @@
 
 	const { reset } = useInvoiceReset();
 	
-	const custom_fields_tab_ref = ref(null);
-	const settings_tab_ref = ref(null);
-	const invoice_page_validation = ref(null);
+	const custom_fields_tab_ref = ref<refType | null>(null);
+	const settings_tab_ref = ref<refType | null>(null);
+	const invoice_page_validation = ref<refType | null>(null);
 
 	const fetchInitialData = async () : Promise<void> =>  {
 
@@ -78,7 +96,7 @@
 		}
 
 		additional_data.custom_fields = response.data.custom_fields;
-		additional_data.gateways = response.data.gateways.map(ele => {
+		additional_data.gateways = response.data.gateways.map((ele:string) => {
 			return {
 				text : ele,
 				value : ele.toLowerCase()
@@ -94,15 +112,15 @@
 		
 		if(tab_index === 0){
 			nextTick(() => {
-				invoice_page_validation.value?.isValid();
+				invoice_page_validation.value?.isValid() ?? false;
 			});
 		} else if(tab_index === 1){
 			nextTick(() => {
-				custom_fields_tab_ref.value?.validateFields();
+				custom_fields_tab_ref.value?.validateFields() ?? false;
 			});
 		} else if(tab_index === 2){
 			nextTick(() => {
-				settings_tab_ref.value?.validateSettings();
+				settings_tab_ref.value?.validateSettings() ?? false;
 			});
 		}
 
@@ -121,14 +139,42 @@
 		}
 	}
 	
-	const handleSettingsValidated = (is_valid: boolean) => {
-		if(is_valid){
-			// Submit the invoice or move to next step
-			console.log('All validated, submit invoice start');
-			console.log(data);
-			console.log(additional_data);
-			console.log('All validated, submit invoice end');
+	const handleSettingsValidated = async (is_valid: boolean) => {
+		
+		// if(is_valid){
+		// 	// Submit the invoice or move to next step
+		// 	console.log('All validated, submit invoice start');
+		// 	// console.log(data);
+		// 	// console.log(additional_data);
+		// 	console.log(additional_data.all_tabs_valid);
+		// 	console.log('All validated, submit invoice end');
+		// }
+
+		/**
+		 * switch tabs by validating server side.
+		 * */
+		console.log(additional_data);
+		try{
+
+			const post_settings = {
+				payment_method : additional_data.payment_method.value,
+				send_invoice_in_email : additional_data.send_invoice_in_email
+			};
+
+			const response = await api.post('manage-invoices', {
+				data:data,
+				custom_fields:additional_data.custom_fields,
+				settings : post_settings
+			});
+
+			//continue tomorrow
+
+		}catch(e){
+
+		}finally{
+			/* disable btn state here */
 		}
+
 	}
 
 	onMounted(() => {
