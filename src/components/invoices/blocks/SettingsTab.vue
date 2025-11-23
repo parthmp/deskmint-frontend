@@ -17,7 +17,7 @@
 					Send email with invoice
 				</span>
 			</span>
-			<input-button btn_text="Save" icon="iconCheck" class="lg:float-end" />
+			<input-button :disabled="data.btn_disabled_local" btn_text="Save" icon="iconCheck" class="lg:float-end" />
 			<div class="clear-both"></div>
 		</form>
 	</div>
@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 
-	import { onMounted, ref } from 'vue';
+	import { onMounted, reactive, ref, watch } from 'vue';
 	import InputButton from '../../inputs/InputButton.vue';
 	import InputSwitch from '../../inputs/InputSwitch.vue';
 	import InputSelect from '../../inputs/InputSelect.vue';
@@ -39,6 +39,16 @@
 	const gateways = defineModel('gateways', { required: false });
 	const send_invoice_in_email = defineModel('send_invoice_in_email', { 
 		default: true 
+	});
+
+	const data = reactive({
+		btn_disabled_local : false
+	});
+
+	const props = defineProps({
+		btn_disabled : {
+			type:Boolean
+		}
 	});
 
 	// Emit for validation result
@@ -59,6 +69,10 @@
 		},
 		...gateways.value
 	];
+
+	watch(() => props.btn_disabled, () => {
+		data.btn_disabled_local = props.btn_disabled ?? false;
+	});
 
 	const validateSettings = (): boolean => {
 		payment_method.value.error = '';

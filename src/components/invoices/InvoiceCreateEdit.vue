@@ -13,7 +13,7 @@
 					</div>
 				</template>
 				<template v-slot:tab-2>
-					<SettingsTab v-model:payment_method="additional_data.payment_method" v-model:send_invoice_in_email="additional_data.send_invoice_in_email" v-model:gateways="additional_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
+					<SettingsTab :btn_disabled="additional_data.btn_disabled" v-model:payment_method="additional_data.payment_method" v-model:send_invoice_in_email="additional_data.send_invoice_in_email" v-model:gateways="additional_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
 				</template>
 			 </tabs>
 		</div>
@@ -44,7 +44,8 @@
 			error:string
 		},
 		send_invoice_in_email: boolean,
-		gateways: Array<string>
+		gateways: Array<string>,
+		btn_disabled: boolean
 	}
 
 	type refType = {
@@ -66,7 +67,8 @@
 			error : ''
 		},
 		send_invoice_in_email : true,
-		gateways : []
+		gateways : [],
+		btn_disabled : false
 	});
 
 	const { addNewProductRow } = useInvoiceProducts();
@@ -153,7 +155,8 @@
 		/**
 		 * switch tabs by validating server side.
 		 * */
-		console.log(additional_data);
+		// console.log(additional_data);
+		additional_data.btn_disabled = true;
 		try{
 
 			const post_settings = {
@@ -166,13 +169,11 @@
 				custom_fields:additional_data.custom_fields,
 				settings : post_settings
 			});
-
-			//continue tomorrow
-
+			
 		}catch(e){
-
+			additional_data.active_tab_index = e.response.data.tab_switch;
 		}finally{
-			/* disable btn state here */
+			additional_data.btn_disabled = false;
 		}
 
 	}
