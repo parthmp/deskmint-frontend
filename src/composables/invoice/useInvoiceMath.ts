@@ -7,9 +7,9 @@ type rowType = {
     id: string,
     row_index: number,
 
-    item_id?: string,
+    product_id?: string,
     quantity?: number | string,
-    unit_cost?: number | string,
+    unit_price?: number | string,
     line_total?: number | string | Decimal,
     line_subtotal?: number | string | Decimal,
     tax_amount?: number | string | Decimal,
@@ -80,20 +80,20 @@ export function useInvoiceMath(){
 
 	const calculateItemCost = (row:rowType) : void => {
 		const raw_row = toRaw(row);
-		if(common.isset(raw_row?.item_id)){
+		if(common.isset(raw_row?.product_id)){
 
 			raw_row.tax_amount = new Decimal(0);
 			raw_row.line_subtotal = new Decimal(0);
 			
 			raw_row.line_total = new Decimal(0);
 
-			if (raw_row.item_id !== '') {
+			if (raw_row.product_id !== '') {
 				
 				const quantity = new Decimal(raw_row.quantity || 0);
-				const unit_cost = new Decimal(raw_row.unit_cost || 0);
+				const unit_price = new Decimal(raw_row.unit_price || 0);
 
 				// line_subtotal = quantity × unit_cost
-				const line_subtotal = quantity.mul(unit_cost);
+				const line_subtotal = quantity.mul(unit_price);
 				raw_row.line_subtotal = line_subtotal.toNumber();
 
 				// calculate total tax for the line

@@ -37,7 +37,7 @@
 													
 													<!-- Unit Cost Field -->
 													<div v-if="product_column.value == 'unit_cost'">
-														<input-number :step="0.01" label="Unit cost" v-model="element.unit_cost" placeholder="Unit cost" class="w-full"></input-number>
+														<input-number :step="0.01" label="Unit cost" v-model="element.unit_price" placeholder="Unit cost" class="w-full"></input-number>
 													</div>
 													
 													<!-- Quantity Field -->

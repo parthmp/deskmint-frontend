@@ -56,7 +56,7 @@ export function useInvoiceProducts(){
 
 		}
 
-		product_row.item_id = '';
+		product_row.product_id = '';
 		product_row.line_subtotal = 0;
 		product_row.tax_amount = 0;
 		
@@ -87,10 +87,10 @@ export function useInvoiceProducts(){
 					element.description = row.data.product.description;
 				}
 				if(key === 'unit_cost'){
-					element.unit_cost = row.data.product.price;
+					element.unit_price = row.data.product.price;
 				}
 				if(key === 'item'){
-					element.item_id = row.value+'';
+					element.product_id = row.value+'';
 					element.item = row.text+'';
 				}
 				
