@@ -77,6 +77,21 @@
 		}
 	];
 
+	watch(() => details.value.global_discount, () => {
+		nextTick(() => {
+			if(details.value.global_discount_type === 'percentage' && details.value.global_discount > 100){
+				details.value.global_discount = 100;
+			}
+		});
+	});
+
+	watch(() => details.value.global_discount_type, () => {
+		nextTick(() => {
+			details.value.global_discount = 0;
+		});
+	});
+
+
 	watch(() => details.value.client.client_id, () => {
 		details.value.client.error = '',
 		details.value.client.show_errors = false;

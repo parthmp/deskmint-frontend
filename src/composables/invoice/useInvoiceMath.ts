@@ -1,4 +1,4 @@
-import { toRaw, watch } from "vue";
+import { nextTick, toRaw, watch } from "vue";
 import { useInvoiceStore } from "./useInvoiceStore";
 import Decimal from "decimal.js";
 import common from "../../helpers/common";
@@ -34,8 +34,25 @@ export function useInvoiceMath(){
 
 	watch(() => data.product_rows, (rows) : void => {
 		
-		rows.forEach(row => calculateItemCost(row));
+		rows.forEach((row) => {
+			nextTick(() => {
+				for (const key in row) {
+					if(key.startsWith("custom_tax_") || key === 'tax'){
+						const tax_percent = +row[key];
+						if(tax_percent > 100){
+							row[key] = 100;
+						}
+					}
+				}
+			});
+			
+
+			calculateItemCost(row);
+			
+		});
+
 		calculateGlobalTotals();
+
 	}, { deep:true });
 
 	const calculateGlobalTotals = () : void => {
@@ -100,7 +117,7 @@ export function useInvoiceMath(){
 				let tax_amount = new Decimal(0);
 				
 				for (const key in raw_row) {
-					if(key.includes("tax")){
+					if(key.startsWith("custom_tax_") || key === 'tax'){
 						const tax_percent = new Decimal(raw_row[key] || 0);
 						tax_amount = tax_amount.add(line_subtotal.mul(tax_percent.div(100)));
 					}

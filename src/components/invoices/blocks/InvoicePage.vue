@@ -49,7 +49,7 @@
 													
 													<!-- Custom Field -->
 													<div v-if="product_column.type == 'custom' && product_column?.tax === true">
-														<input-number :step="0.01" :label="product_column?.text" v-model="element['custom_tax_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text" class="w-full"></input-number>
+														<input-number :step="0.01" :label="product_column?.text" :min="0" :max="100" v-model="element['custom_tax_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text" class="w-full"></input-number>
 													</div>
 													<div v-if="product_column.type == 'custom' && product_column?.tax === false">
 														<input-text class="w-full" :label="product_column?.text" v-model="element['normal_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text"></input-text>
@@ -58,7 +58,7 @@
 													
 													<!-- Tax Field -->
 													<div v-if="product_column.value == 'tax'">
-														<input-number :step="0.01" label="Tax %" v-model="element.tax" placeholder="Tax %" class="w-full"></input-number>
+														<input-number :step="0.01" label="Tax %" v-model="element.tax" :min="0" :max="100" placeholder="Tax %" class="w-full"></input-number>
 													</div>
 													
 													<!-- Line Total Display -->
