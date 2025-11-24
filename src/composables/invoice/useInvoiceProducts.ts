@@ -44,11 +44,16 @@ export function useInvoiceProducts(){
 
 			}else{
 
+				let modified_row_value = row.value;
+				if(row.value === 'unit_cost'){
+					modified_row_value = 'unit_price';
+				}
+
 				if(row.value == 'tax' || row.value == 'line_total'){
 					
-					product_row[row.value] = 0;
+					product_row[modified_row_value] = 0;
 				}else{
-					product_row[row.value] = '';
+					product_row[modified_row_value] = '';
 				}
 
 			}
@@ -86,7 +91,7 @@ export function useInvoiceProducts(){
 				if(key === 'description'){
 					element.description = row.data.product.description;
 				}
-				if(key === 'unit_cost'){
+				if(key === 'unit_price'){
 					element.unit_price = row.data.product.price;
 				}
 				if(key === 'item'){
