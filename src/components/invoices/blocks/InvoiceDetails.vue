@@ -72,21 +72,20 @@
 		global_discount_type: string,
 		client: ClientType,
 		invoice_date: {
-			value : string,
-			error : string
-		},
-		due_date : {
-			value : string,
-			error : string
-		},
-		invoice_number : {
-			value : string,
-			error : string
-		},
-		po_number : string,
-		clients : ClientType[],
-		currency_id : number,
-		currency_code : string,
+			value: string | Date | null,
+			error: string
+		};
+		due_date: {
+			value: string | Date | null,
+			error: string
+		};
+		invoice_number: {
+			value: string,
+			error: string
+		};
+		po_number: string,
+		currency_id: number,
+		currency_code: string,
 	};
 
 	type EvObject = {
@@ -99,7 +98,6 @@
 		value : string,
 		text : string
 	};
-
 
 	const details = defineModel<InvoiceDetailsType>({required : true});
 

@@ -122,7 +122,6 @@
 
 	import { IconGrain } from '@tabler/icons-vue';
 
-
 	const data = useInvoiceStore();
 
 	const { addNewProductRow, removeProductRow, handleProductSelect } = useInvoiceProducts();
