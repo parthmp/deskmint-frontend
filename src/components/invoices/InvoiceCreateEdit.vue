@@ -3,7 +3,7 @@
     	<div class="card">
 			 <h1 class="text-2xl!">Create an invoice</h1>
 			 <br>
-			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="additional_data.active_tab_index" :disable_further="false" @tab-changed="changedActiveTabValue">
+			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="additional_data.active_tab_index" :disable_further="true" @tab-changed="changedActiveTabValue">
 				<template v-slot:tab-0>
 					<invoice-page ref="invoice_page_validation" @validated="handleInvoicePageValidated"></invoice-page>
 				</template>
@@ -142,20 +142,10 @@
 	}
 	
 	const handleSettingsValidated = async (is_valid: boolean) => {
-		
-		// if(is_valid){
-		// 	// Submit the invoice or move to next step
-		// 	console.log('All validated, submit invoice start');
-		// 	// console.log(data);
-		// 	// console.log(additional_data);
-		// 	console.log(additional_data.all_tabs_valid);
-		// 	console.log('All validated, submit invoice end');
-		// }
 
 		/**
 		 * switch tabs by validating server side.
 		 * */
-		// console.log(additional_data);
 		additional_data.btn_disabled = true;
 		try{
 

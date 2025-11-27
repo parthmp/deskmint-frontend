@@ -124,10 +124,10 @@
 		});
 
 		if(!valid_custom_fields){
-			toastEvents.emit('toast', {
-				type : 'error',
-				message : 'Please fill in highlighted fields'
-			});
+			// toastEvents.emit('toast', {
+			// 	type : 'error',
+			// 	message : 'Please fill in highlighted fields'
+			// });
 		}
 
 		return valid_custom_fields;

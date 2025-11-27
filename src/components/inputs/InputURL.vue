@@ -80,7 +80,7 @@
 			},
 
 			modelValue() : void{
-				this.input_value = this.modelValue.toLocaleLowerCase() || '';
+				this.input_value = this.modelValue?.toLocaleLowerCase() || '';
 			}
 		},
 
@@ -139,7 +139,7 @@
 				this.is_valid = false;
 				
 			}
-			this.input_value = this.modelValue.toLocaleLowerCase() || '';
+			this.input_value = this.modelValue?.toLocaleLowerCase() || '';
 			
 			this.local_error = '';
 			if(common.isset(this.error)){
@@ -152,15 +152,15 @@
 				
 			}
 			if(common.isset(this.prop_placeholder)){
-				this.local_placeholder = this.prop_placeholder;
+				this.local_placeholder = this.prop_placeholder ?? '';
 			}
 			if(common.isset(this.placeholder)){
-				this.local_placeholder = this.placeholder;
+				this.local_placeholder = this.placeholder ?? '';
 			}
 
 
 			if(common.isset(this.label)){
-				this.local_label = this.label;
+				this.local_label = this.label ?? '';
 			}
 		}
 

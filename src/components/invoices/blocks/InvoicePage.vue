@@ -26,7 +26,7 @@
 													
 													
 													<div v-if="product_column.value == 'item'">
-														<input-auto-complete label="Item" v-model="element.item" @selected="selected_item => handleProductSelect(selected_item, element)" :error="data.invoice_details.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
+														<input-auto-complete label="Item" v-model="element.item" @selected="(selected_item:Row) => handleProductSelect(selected_item, element)" :error="data.invoice_details.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
 													</div>
 													
 													
@@ -122,11 +122,27 @@
 
 	import { IconGrain } from '@tabler/icons-vue';
 
+	type Row = {
+		data : {
+			product : {
+				description:string,
+				price:number,
+				
+			}
+		},
+		value:string,
+		text:string
+	};
+
+	interface InvoiceDetailsRefInterface{
+		validateInvoiceDetails : () => boolean
+	}
+
 	const data = useInvoiceStore();
 
 	const { addNewProductRow, removeProductRow, handleProductSelect } = useInvoiceProducts();
 
-	const invoice_details_ref = ref(null);
+	const invoice_details_ref = ref<InvoiceDetailsRefInterface | null>(null);
 
 	const emit = defineEmits(['validated']);
 
@@ -134,13 +150,13 @@
 
 		let validated = true;
 
-		validated = invoice_details_ref.value.validateInvoiceDetails();
+		validated = invoice_details_ref?.value?.validateInvoiceDetails() ?? false;
 
 		if(!validated){
-			toastEvents.emit('toast', {
-				type : 'error',
-				message : 'Please fill in highlighted fields'
-			});
+			// toastEvents.emit('toast', {
+			// 	type : 'error',
+			// 	message : 'Please fill in highlighted fields'
+			// });
 		}else{
 
 			if(data.product_rows.length === 0){

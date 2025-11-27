@@ -77,7 +77,7 @@
 
 			selfClick() : void{
 				if(this.local_close_outside){
-					this.closePopup();
+					this.closePopup(true);
 				}
 			},
 			

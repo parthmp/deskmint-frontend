@@ -1,7 +1,12 @@
 import { reactive } from "vue";
 
 type ProductColumnSlice = {
-	value : string
+	value : {
+		value : string,
+		type : string,
+		tax : boolean,
+		text : string,
+	}
 };
 
 interface InvoiceCreateEditInterface{
@@ -38,9 +43,11 @@ interface InvoiceCreateEditInterface{
 		tax:boolean,
 		text:string,
 		value:string,
+		tax_rate : string
 	}>,
 	product_columns_slices : Array<ProductColumnSlice>,
 	product_rows : Array<{
+		item_id?: number|string,
 		id: string,
 		row_index : number,
 		type: string,

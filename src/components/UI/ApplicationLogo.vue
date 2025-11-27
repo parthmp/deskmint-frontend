@@ -22,7 +22,7 @@
 			}
 		},
 		computed: {
-			theme_name(): string { return useThemeOptions().get_theme; }
+			theme_name(): string { return useThemeOptions().get_theme ?? ''; }
 		},
 		methods : {
 			setCurrentTheme() : void{
