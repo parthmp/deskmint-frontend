@@ -35,7 +35,7 @@
 					<input-number label="Discount" v-model="details.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
 				</div>
 				<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
-					<input-select label="Discount type" v-model="details.global_discount_type" :required="false" placeholder="Select" :options="discount_options"></input-select>
+					<input-select label="Discount type" v-model="details.global_discount_type" :required="false" :options="discount_options"></input-select>
 				</div>
 				
 			</div>
@@ -59,8 +59,49 @@
   		validate: () => boolean
 	}
 
+	type ClientType = {
+		value : string|undefined,
+		client_id : number|string,
+		error : string,
+		show_errors : boolean,
+	
+	};
 
-	const details = defineModel<object>({required : true});
+	type InvoiceDetailsType = {
+		global_discount: number,
+		global_discount_type: string,
+		client: ClientType,
+		invoice_date: {
+			value : string,
+			error : string
+		},
+		due_date : {
+			value : string,
+			error : string
+		},
+		invoice_number : {
+			value : string,
+			error : string
+		},
+		po_number : string,
+		clients : ClientType[],
+		currency_id : number,
+		currency_code : string,
+	};
+
+	type EvObject = {
+		data : {
+			currency : {
+				id : number,
+				code: string
+			}
+		},
+		value : string,
+		text : string
+	};
+
+
+	const details = defineModel<InvoiceDetailsType>({required : true});
 
 	const invoice_date_ref = ref<InputComponent | null>(null);
 	const due_date_ref = ref<InputComponent | null>(null);
@@ -103,28 +144,37 @@
 
 	watch(() => details.value.invoice_date.value, () => {
 		details.value.invoice_date.error = '';
-		if(!invoice_date_ref.value.validate()){
-			details.value.invoice_date.error = 'Please select invoice date';
+		if(invoice_date_ref.value){
+			if(!invoice_date_ref.value.validate()){
+				details.value.invoice_date.error = 'Please select invoice date';
+			}
 		}
+		
 	});
 
 	watch(() => details.value.due_date.value, () => {
 		details.value.due_date.error = '';
-		if(!due_date_ref.value.validate()){
-			details.value.due_date.error = 'Please select due date';
+		if(due_date_ref.value){
+			if(!due_date_ref.value.validate()){
+				details.value.due_date.error = 'Please select due date';
+			}
 		}
+		
 	});
 
 	watch(() => details.value.invoice_number.value, () => {
 		nextTick(() => {
 			details.value.invoice_number.error = '';
-			if(!invoice_number_ref.value.validate()){
-				details.value.invoice_number.error = 'Please enter invoice number';
+			if(invoice_number_ref.value){
+				if(!invoice_number_ref.value.validate()){
+					details.value.invoice_number.error = 'Please enter invoice number';
+				}
 			}
+			
 		});
 	});
 
-	const handleClientSelect = (ev:object) : void => {
+	const handleClientSelect = (ev:EvObject) : void => {
 
 		details.value.currency_id = 0;
 		details.value.currency_code = '';

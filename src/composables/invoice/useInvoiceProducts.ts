@@ -8,11 +8,24 @@ type rowType = {
 	tax?: boolean,
 	line_subtotal?: number,
 	tax_amount?: number,
+	tax_rate?: number
 	
 	[key: `custom_tax_${string}`]: number | string,
 	[key: `normal_${string}`]: number | string,
 	[key: string]: number | string
 	
+};
+
+type Row = {
+	data : {
+		product : {
+			description:string,
+			price:number,
+			
+		}
+	},
+	value:string,
+	text:string
 };
 
 export function useInvoiceProducts(){
@@ -82,7 +95,7 @@ export function useInvoiceProducts(){
 
 	}
 
-	const handleProductSelect = (row:object, element:object) : void => {
+	const handleProductSelect = (row:Row, element:rowType) : void => {
 		
 		if(Object.keys(row).length > 0){
 			
