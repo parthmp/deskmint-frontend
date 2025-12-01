@@ -59,6 +59,9 @@
 
 	const data = useInvoiceStore();
 
+	const d = new Date();
+	const timezone_offset_minutes = d.getTimezoneOffset();
+
 	const additional_data = reactive<InvoiceCreateEditInterface>({
 		active_tab_index: 0,
 		custom_fields : [],
@@ -81,9 +84,7 @@
 
 	const fetchInitialData = async () : Promise<void> =>  {
 
-		const d = new Date();
-		const timezone_offset_minutes = d.getTimezoneOffset();
-
+		
 		const response = await api.get('manage-invoices/fetch-initial-data', {
 			params : {
 				timezone_offset_minutes : timezone_offset_minutes
@@ -153,11 +154,12 @@
 				payment_method : additional_data.payment_method.value,
 				send_invoice_in_email : additional_data.send_invoice_in_email
 			};
-
+			
 			const response = await api.post('manage-invoices', {
 				data:data,
 				custom_fields:additional_data.custom_fields,
-				settings : post_settings
+				settings : post_settings,
+				timezone_offset_minutes : timezone_offset_minutes
 			});
 			
 		}catch(e){
