@@ -24,7 +24,28 @@ This repository contains the frontend for DeskMint. The frontend is built using 
 - **Dark Mode** toggle for a personalized user experience
 - **Panel** with management tools for clients, tasks, invoices, and documents
 
-## Installation
+## Installation (With docker)
+Clone this repository:
+   ```bash
+   git clone https://github.com/parthmp/deskmint-frontend.git
+   cd deskmint-frontend
+   ```
+run below commands
+   ```bash
+   docker compose up --build -d
+   ```
+   ```bash
+   chmod +x docker.dev/setup.sh
+   ```
+   ```bash
+   docker.dev/setup.sh
+   ```
+**setup.sh only should be ran on the initial setup, no need to run it again with docker down and up commands after it**
+
+Open src/env.ts file and set TURNSTILE_KEY to your cloudflare turnstile key.
+
+
+## Installation (Without docker)
 
 ### Prerequisites
 
