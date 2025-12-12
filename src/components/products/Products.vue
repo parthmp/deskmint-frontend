@@ -6,5 +6,4 @@
 	
 	/* using compositon API */
 	import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
-
 </script>

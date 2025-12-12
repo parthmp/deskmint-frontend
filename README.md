@@ -44,6 +44,26 @@ run below commands
 
 Open src/env.ts file and set TURNSTILE_KEY to your cloudflare turnstile key.
 
+## Fixing Vue + TypeScript Autocomplete in WSL
+
+If Vue autocomplete (`reactive`, `ref`, props, etc.) is broken inside VS Code, follow these steps.
+
+### 1. Fix permissions for the frontend folder
+If `node_modules` was created by Docker or root, TypeScript can't load properly.
+
+Run this once:
+
+```bash
+sudo chown -R $USER:$USER ~/deskmint/deskmint-frontend
+```
+Install TypeScript inside the project
+
+VS Code needs the workspace version of TypeScript.
+```bash
+cd deskmint-frontend
+npm install --save-dev typescript
+```
+Make sure VS Code is in WSL mode, bottom-left should show WSL: Ubuntu-24.04 (or your distroname)
 
 ## Installation (Without docker)
 

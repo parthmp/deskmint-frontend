@@ -18,8 +18,6 @@
 	import { Device } from '@capacitor/device';
 	import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 	import { getCompanyId } from './services/TokenService';
-	
-
 
 	export default{
 		name : 'App',
