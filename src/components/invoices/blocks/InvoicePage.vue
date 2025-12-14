@@ -146,21 +146,35 @@
 
 	const emit = defineEmits(['validated']);
 
-	const validateProductRows = () : boolean => {
+	const validateProductRows = (rows: Array<object>) : boolean => {
 		
+		const product_ids = [];
+
+		for(let row of rows){
+			if(row?.product_id.trim() !== ''){
+				product_ids.push(row?.product_id.trim());
+			}
+		}
+
+		if(product_ids.length === 0){
+			return false;
+		}
+
+		return true;
+
 	}
 
 	const isValid = () : boolean => {
-
+		console.log(data.product_rows);
 		let validated = true;
 
 		validated = invoice_details_ref?.value?.validateInvoiceDetails() ?? false;
 
 		if(!validated){
-			// toastEvents.emit('toast', {
-			// 	type : 'error',
-			// 	message : 'Please fill in highlighted fields'
-			// });
+			toastEvents.emit('toast', {
+				type : 'error',
+				message : 'Please fill in highlighted fields'
+			});
 		}else{
 
 			if(data.product_rows.length === 0){
@@ -170,16 +184,34 @@
 					message : 'Please add at at least one product row for invoice'
 				});
 			}else{
-				for(const row of data.product_rows){
-					if(row.item_id === ''){
-						validated = false;
-						toastEvents.emit('toast', {
-							type : 'error',
-							message : 'Please select an item for each product row for invoice'
-						});
-						break;
-					}
+
+				if(!validateProductRows(data.product_rows)){
+					validated = false;
+					toastEvents.emit('toast', {
+						type : 'error',
+						message : 'Please select at least one item for items rows'
+					});
 				}
+
+				// if(!validateProductRows(data.product_rows)){
+				// 	toastEvents.emit('toast', {
+				// 		type : 'error',
+				// 		message : 'Please select an item for each product row for invoice'
+				// 	});
+				// }else{
+					// for(const row of data.product_rows){
+					// 	if(row.item_id === ''){
+					// 		validated = false;
+					// 		toastEvents.emit('toast', {
+					// 			type : 'error',
+					// 			message : 'Please select an item for each product row for invoice'
+					// 		});
+					// 		break;
+					// 	}
+					// }
+				//}
+
+				
 
 				
 			}
