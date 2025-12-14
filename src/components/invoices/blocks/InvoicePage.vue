@@ -146,6 +146,10 @@
 
 	const emit = defineEmits(['validated']);
 
+	const validateProductRows = () : boolean => {
+		
+	}
+
 	const isValid = () : boolean => {
 
 		let validated = true;

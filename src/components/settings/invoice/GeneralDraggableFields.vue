@@ -11,7 +11,7 @@
 			
 			<p class="pl-1 pb-0">Drag and drop fields below to arrange</p>
 			
-			<draggable-list v-model="data.rows" :delete="true" @deleted="rowDeleted"></draggable-list>
+			<draggable-list v-model="data.rows" :delete="true" @deleted="rowDeleted" :exceptions="deletion_exceptions"></draggable-list>
 			
 			<input-button @click.prevent="saveDetailsSettings" btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
 			<div class="clear-both"></div>
@@ -28,7 +28,7 @@
 	import api from '../../../helpers/api';
 
 	import ClientDetailsInvoiceSettingsSkeleton from '../../skeletons/ClientDetailsInvoiceSettingsSkeleton.vue';
-
+	
 	interface DetailsInvoiceSettingsInterface{
 		rows : Array<object>,
 		dropdown_fields : Array<object>,
@@ -49,7 +49,8 @@
 
 	/* props */
 	const props = defineProps<{
-		url?: string
+		url?: string,
+		deletion_exceptions : Array<string>
 	}>();
 
 	/* methods */
@@ -65,9 +66,11 @@
 	}
 
 	const rowDeleted = (deleted:object) : void => {
+	
 		deleted.id = data.dropdown_fields.length + 2;
 		data.dropdown_fields.push(deleted);
 		data.dropdown_value = '';
+		
 	}
 
 	const dropDownChanged = (object:object) : void => {

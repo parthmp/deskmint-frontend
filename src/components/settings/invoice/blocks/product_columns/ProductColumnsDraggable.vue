@@ -5,7 +5,7 @@
 		<br>
 		<p>Arrange how you want to display product columns in the invoice</p>
 		<br>
-		<general-draggable-fields url="manage-invoice-settings-product-columns"></general-draggable-fields>
+		<general-draggable-fields url="manage-invoice-settings-product-columns" :deletion_exceptions="['product_id']"></general-draggable-fields>
 	</div>
 	
 </template>
@@ -13,5 +13,6 @@
 
 	import GeneralDraggableFields from '../../GeneralDraggableFields.vue';
 	import InputButton from '../../../../inputs/InputButton.vue';
+	import { reactive } from 'vue';
 
 </script>

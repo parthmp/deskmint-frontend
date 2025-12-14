@@ -21,15 +21,20 @@
 	import { IconGrain, IconTrash } from '@tabler/icons-vue';
 	import { onMounted, reactive, watch } from 'vue';
 	import common from '../../helpers/common';
+	import { toastEvents } from '../../events/toastEvents';
 
 	interface DraggableListInterface{
-		rows : Array<object>
+		rows : Array<{
+			mapped: Array<string>,
+			text : string
+		}>
 	}
 
 	const props = defineProps({
 		modelValue: Array<object>,
 		delete : Boolean,
-		overflow: Boolean
+		overflow: Boolean,
+		exceptions : Array<string>
 	});
 
 	const emit = defineEmits<{
@@ -54,9 +59,32 @@
 	}
 
 	const removeRow = (index:number) : void => {
-		let temp_object = data.rows[index];
-		data.rows.splice(index, 1);
-		emit('deleted', temp_object);
+		
+		let allowed_to_delete = true;
+
+		const exceptions = props.exceptions ?? [];
+
+		const to_be_deleted = data.rows[index];
+
+		if(exceptions.length > 0){
+			for(let mapped_val of to_be_deleted.mapped){
+				if(exceptions.includes(mapped_val)){
+					toastEvents.emit('toast', {
+						type: 'error',
+						message : `You are not allowed to delete ${to_be_deleted.text}`
+					});
+					allowed_to_delete = false;
+				}
+			}
+			
+		}
+
+		if(allowed_to_delete){
+			let temp_object = data.rows[index];
+			data.rows.splice(index, 1);
+			emit('deleted', temp_object);
+		}
+		
 	}
 
 	/* watchers */
