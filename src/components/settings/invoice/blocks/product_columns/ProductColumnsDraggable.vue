@@ -13,6 +13,5 @@
 
 	import GeneralDraggableFields from '../../GeneralDraggableFields.vue';
 	import InputButton from '../../../../inputs/InputButton.vue';
-	import { reactive } from 'vue';
 
 </script>
