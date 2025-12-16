@@ -66,7 +66,7 @@
 
 		const to_be_deleted = data.rows[index];
 
-		if(exceptions.length > 0){
+		if(exceptions.length > 0 && to_be_deleted.mapped){
 			for(let mapped_val of to_be_deleted.mapped){
 				if(exceptions.includes(mapped_val)){
 					toastEvents.emit('toast', {
