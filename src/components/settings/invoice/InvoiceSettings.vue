@@ -21,7 +21,7 @@
 	}
 
 	const data = reactive<InvoiceSettingsInterface>({
-		tab_options : ['General', 'Numbers', 'Client Details', 'Company Details', 'Company Address', 'Invoice Details', 'Product Columns', 'Total Fields']
+		tab_options : ['General', 'Numbers', 'Client Details', 'Company Details', 'Invoice Details', 'Product Columns', 'Total Fields']
 	});
 
 </script>
