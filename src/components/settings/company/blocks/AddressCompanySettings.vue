@@ -81,7 +81,7 @@
 	const fetchCompanyAddressSettings = () : void => {
 		data.loading = true;
 		api.get('manage-company-settings-address').then(response => {
-
+			
 			/* fill the fields */
 			
 			data.countries = response.data.countries;
@@ -106,6 +106,12 @@
 	}
 
 	const saveCompanyAddressData = () : void => {
+		
+		let temp_country_id = data.country_selected_id+'';
+		if(temp_country_id.trim() === ''){
+			temp_country_id = data.country_id;
+		}
+
 		data.btn_disabled = true;
 		api.post('manage-company-settings-address', {
 			address_street : data.street,
@@ -113,7 +119,7 @@
 			city : data.city,
 			state : data.state,
 			postal_code : data.postal_code,
-			country_id : data.country_selected_id,
+			country_id : temp_country_id
 		}).then(response => {
 			
 		}).catch(error => {

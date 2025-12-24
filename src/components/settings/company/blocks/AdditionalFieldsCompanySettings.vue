@@ -7,7 +7,7 @@
 		<input-button label="Add" icon="IconPlus" class="lg:float-end"></input-button>
 		<div class="clear-both"></div>
 	</form>
-
+	
 	<additional-fields-company-settings-skeleton v-if="data.loading"></additional-fields-company-settings-skeleton>
 	<div v-if="!data.loading">
 
