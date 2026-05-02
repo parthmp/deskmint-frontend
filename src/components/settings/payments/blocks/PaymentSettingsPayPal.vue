@@ -14,7 +14,7 @@
 		<p>Never share your API keys with anyone.</p>
 		<br>
 		<form @submit.prevent="handlePayPalSettings">
-
+			<input-text label="App ID" placeholder="App ID" v-model="data.app_id.value" :error="data.app_id.error" :required="true" ref="paypal_app_id_ref"></input-text>
 			<input-text label="Client ID" placeholder="Client ID" v-model="data.client_id.value" :error="data.client_id.error" :required="true" ref="paypal_client_id_ref"></input-text>
 			<input-password label="Secret key" placeholder="Secret key" v-model="data.secret.value" :error="data.secret.error" :required="true" ref="paypal_secret_ref"></input-password>
 			<input-select label="Mode" placeholder="Select mode" v-model="data.mode.value" :error="data.mode.error" :options="modes" :required="true" ref="paypal_mode_ref"></input-select>
@@ -61,6 +61,7 @@
 
 	interface PaymentSettingsPayPalInterface{
 		client_id : InputObject,
+		app_id : InputObject,
 		secret : InputObject,
 		mode : InputObject,
 		btn_disabled: boolean,
@@ -85,6 +86,10 @@
 			error : 'Please enter Client ID',
 			value : ''
 		},
+		app_id : {
+			error : 'Please enter App ID',
+			value : ''
+		},
 		secret: {
 			error : 'Please enter Secret key',
 			value : ''
@@ -100,6 +105,7 @@
 	});
 
 	const paypal_client_id_ref = ref<RefType | null>(null);
+	const paypal_app_id_ref = ref<RefType | null>(null);
 	const paypal_secret_ref = ref<RefTypePass | null>(null);
 	const paypal_mode_ref = ref<RefType | null>(null);
 
@@ -109,6 +115,17 @@
 			data.client_id.error = '';
 			if(!paypal_client_id_ref?.value?.validate()){
 				data.client_id.error = 'Please enter Client ID';
+			}
+		});
+		
+	});
+
+	watch(() => data.app_id.value, () : void => {
+		
+		nextTick(() => {
+			data.app_id.error = '';
+			if(!paypal_app_id_ref?.value?.validate()){
+				data.app_id.error = 'Please enter App ID';
 			}
 		});
 		
@@ -139,6 +156,7 @@
 		const response = await api.get('manage-paypal-settings');
 		
 		data.client_id.value = response.data.client_id;
+		data.app_id.value = response.data.app_id;
 		data.secret.value = response.data.secret;
 		data.mode.value = response.data.mode;
 
@@ -152,17 +170,19 @@
 	const handlePayPalSettings = async () : Promise<void> => {
 
 		const valid_client_id = paypal_client_id_ref.value?.validate() ?? false;
+		const valid_app_id = paypal_app_id_ref.value?.validate() ?? false;
 		const valid_secret = paypal_secret_ref.value?.validateText() ?? false;
 		const valid_mode = paypal_mode_ref.value?.validate() ?? false;
 
 		data.btn_disabled = true;
 		
-		if(valid_client_id && valid_secret && valid_mode){
+		if(valid_client_id && valid_app_id && valid_secret && valid_mode){
 
 			try{
 
 				const response = await api.post('manage-paypal-settings', {
 					client_id : data.client_id.value,
+					app_id : data.app_id.value,
 					secret : data.secret.value,
 					mode : data.mode.value
 				});
