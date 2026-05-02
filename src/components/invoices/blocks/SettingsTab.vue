@@ -59,14 +59,14 @@
 	const payment_method_ref = ref<InputComponent | null>(null);
 
 	const payment_methods = [
-		{
-			text: 'Cash',
-			value: 'cash'
-		},
-		{
-			text: 'Net Banking',
-			value: 'net_banking'
-		},
+		// {
+		// 	text: 'Cash',
+		// 	value: 'cash'
+		// },
+		// {
+		// 	text: 'Net Banking',
+		// 	value: 'net_banking'
+		// },
 		...gateways.value
 	];
 

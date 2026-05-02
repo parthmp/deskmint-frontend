@@ -13,6 +13,11 @@
 
 <script lang="ts" setup>
 
+	interface PaymentObjectInterface {
+		text : string,
+		value: number
+	};
+
 	
 	import { onMounted, reactive, ref } from 'vue';
 	import PaymentGatwayBlock from '../../../UI/PaymentGatwayBlock.vue';
@@ -41,10 +46,11 @@
 		try{
 
 			const response = await api.get('manage-payments-settings');
-			if(response.data.includes('paypal')){
+			
+			if(response.data.find((gateway:PaymentObjectInterface) => gateway.text.toLowerCase() === 'paypal')){
 				payment_gateways[0].active = true;
 			}
-			if(response.data.includes('stripe')){
+			if(response.data.find((gateway:PaymentObjectInterface) => gateway.text.toLowerCase() === 'stripe')){
 				payment_gateways[1].active = true;
 			}
 

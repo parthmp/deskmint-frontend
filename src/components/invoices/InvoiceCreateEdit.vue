@@ -99,12 +99,7 @@
 		}
 
 		additional_data.custom_fields = response.data.custom_fields;
-		additional_data.gateways = response.data.gateways.map((ele:string) => {
-			return {
-				text : ele,
-				value : ele.toLowerCase()
-			};
-		});
+		additional_data.gateways = response.data.gateways;
 
 		
 		addNewProductRow();
