@@ -6,6 +6,7 @@
 			<input-button class="lg:float-end" btn_text="View variables" icon="IconEye" @click.prevent="data.show_popup = true"></input-button>
 			<div class="clear-both"></div>
 			<form @submit.prevent="saveEmailSettingsContent">
+				<p>Place online gateway content between [{online-payment-start}] and [{online-payment-end}] tags, that content will only been displayed in email for invoices that has online gateways set.</p>
 				<input-textarea v-model="data.email_content_invoice" :rows="6" label="Email content to send with invoice" placeholder="Email content to send with invoice"></input-textarea>
 				<input-textarea v-model="data.email_content_reminder" :rows="6" label="Email content to send for payment reminders" placeholder="Email content to send for payment reminders"></input-textarea>
 				<input-textarea v-model="data.payment_details" :rows="3" label="Payment details text (This will be sent only if you have an online payment method set)" placeholder="Payment details text (This will be sent only if you have an online payment method set)"></input-textarea>
