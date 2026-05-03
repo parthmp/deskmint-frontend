@@ -15,6 +15,7 @@
 		<br>
 		<form @submit.prevent="handlePayPalSettings">
 			<input-text label="App ID" placeholder="App ID" v-model="data.app_id.value" :error="data.app_id.error" :required="true" ref="paypal_app_id_ref"></input-text>
+			<input-text label="Webhook ID" placeholder="Webhook" v-model="data.webhook_id.value" :error="data.webhook_id.error" :required="true" ref="paypal_webhook_id_ref"></input-text>
 			<input-text label="Client ID" placeholder="Client ID" v-model="data.client_id.value" :error="data.client_id.error" :required="true" ref="paypal_client_id_ref"></input-text>
 			<input-password label="Secret key" placeholder="Secret key" v-model="data.secret.value" :error="data.secret.error" :required="true" ref="paypal_secret_ref"></input-password>
 			<input-select label="Mode" placeholder="Select mode" v-model="data.mode.value" :error="data.mode.error" :options="modes" :required="true" ref="paypal_mode_ref"></input-select>
@@ -62,6 +63,7 @@
 	interface PaymentSettingsPayPalInterface{
 		client_id : InputObject,
 		app_id : InputObject,
+		webhook_id : InputObject,
 		secret : InputObject,
 		mode : InputObject,
 		btn_disabled: boolean,
@@ -90,6 +92,10 @@
 			error : 'Please enter App ID',
 			value : ''
 		},
+		webhook_id : {
+			error : 'Please enter Webhook ID',
+			value : ''
+		},
 		secret: {
 			error : 'Please enter Secret key',
 			value : ''
@@ -106,6 +112,7 @@
 
 	const paypal_client_id_ref = ref<RefType | null>(null);
 	const paypal_app_id_ref = ref<RefType | null>(null);
+	const paypal_webhook_id_ref = ref<RefType | null>(null);
 	const paypal_secret_ref = ref<RefTypePass | null>(null);
 	const paypal_mode_ref = ref<RefType | null>(null);
 
@@ -126,6 +133,17 @@
 			data.app_id.error = '';
 			if(!paypal_app_id_ref?.value?.validate()){
 				data.app_id.error = 'Please enter App ID';
+			}
+		});
+		
+	});
+
+	watch(() => data.webhook_id.value, () : void => {
+		
+		nextTick(() => {
+			data.webhook_id.error = '';
+			if(!paypal_webhook_id_ref?.value?.validate()){
+				data.webhook_id.error = 'Please enter Webhook ID';
 			}
 		});
 		
@@ -157,6 +175,7 @@
 		
 		data.client_id.value = response.data.client_id;
 		data.app_id.value = response.data.app_id;
+		data.webhook_id.value = response.data.webhook_id;
 		data.secret.value = response.data.secret;
 		data.mode.value = response.data.mode;
 
@@ -171,18 +190,20 @@
 
 		const valid_client_id = paypal_client_id_ref.value?.validate() ?? false;
 		const valid_app_id = paypal_app_id_ref.value?.validate() ?? false;
+		const valid_webhook_id = paypal_webhook_id_ref.value?.validate() ?? false;
 		const valid_secret = paypal_secret_ref.value?.validateText() ?? false;
 		const valid_mode = paypal_mode_ref.value?.validate() ?? false;
 
 		data.btn_disabled = true;
 		
-		if(valid_client_id && valid_app_id && valid_secret && valid_mode){
+		if(valid_client_id && valid_app_id && valid_secret && valid_mode && valid_webhook_id){
 
 			try{
 
 				const response = await api.post('manage-paypal-settings', {
 					client_id : data.client_id.value,
 					app_id : data.app_id.value,
+					webhook_id : data.webhook_id.value,
 					secret : data.secret.value,
 					mode : data.mode.value
 				});
