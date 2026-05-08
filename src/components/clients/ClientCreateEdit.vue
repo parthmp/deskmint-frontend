@@ -137,38 +137,38 @@
 						<div class="lg:grid lg:grid-cols-12 gap-5">
 							<div v-for="(field, key) in custom_fields" :key="key" :class="{'lg:col-span-12' : (field.span === 12), 'lg:col-span-6' : (field.span === 6), 'lg:col-span-4' : (field.span === 4)}">
 								
-								<div v-if="field.custom_field_type.input_type === 'text'">
+								<div v-if="field.input_type === 'text'">
 									<input-text :required="field.required" :label="field.label" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-text>
 								</div>
-								<div v-if="field.custom_field_type.input_type === 'textarea'">
+								<div v-if="field.input_type === 'textarea'">
 									<input-textarea :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-textarea>
 								</div>
-								<div v-if="field.custom_field_type.input_type === 'email'">
+								<div v-if="field.input_type === 'email'">
 									<input-email :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-email>
 								</div>
-								<div v-if="field.custom_field_type.input_type === 'select'">
+								<div v-if="field.input_type === 'select'">
 									<input-select :label="field.label" :options="field.type_params" :prop_placeholder="field.placeholder" :required="field.required" v-model="field.value" :error="field.error" :ref="field.ref"></input-select>
 								</div>
-								<div v-if="field.custom_field_type.input_type === 'number'">
+								<div v-if="field.input_type === 'number'">
 									<input-number :field_name="field.label" :required="field.required" :placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="field.ref"></input-number>
 								</div>
-								<div v-if="field.custom_field_type.input_type === 'date'">
+								<div v-if="field.input_type === 'date'">
 									<input-date-time mode="date" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
 								</div>
 
-								<div v-if="field.custom_field_type.input_type === 'time'">
+								<div v-if="field.input_type === 'time'">
 									<input-date-time mode="time" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
 								</div>
 
-								<div v-if="field.custom_field_type.input_type === 'datetime'">
+								<div v-if="field.input_type === 'datetime'">
 									<input-date-time mode="datetime" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-date-time>
 								</div>
 
-								<div v-if="field.custom_field_type.input_type === 'telephone'">
+								<div v-if="field.input_type === 'telephone'">
 									<input-telephone mode="telephone" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="field.ref"></input-telephone>
 								</div>
 
-								<div v-if="field.custom_field_type.input_type === 'multiselect'">
+								<div v-if="field.input_type === 'multiselect'">
 									<input-multiselect :label="field.label" :options="field.type_params" :required="field.required" v-model="field.value" :error="field.error" :ref="field.ref"></input-multiselect>
 								</div>
 								
@@ -636,7 +636,7 @@
 							for(let x = 0 ; x < fillers.length ; x++){
 								if(fillers[x].clients_custom_field_id === this.custom_fields[z].id){
 									this.custom_fields[z].value_id = fillers[x].id;
-									if(fillers[x].clients_custom_field.custom_field_type.input_type === 'multiselect'){
+									if(fillers[x].clients_custom_field.input_type === 'multiselect'){
 										
 										if(fillers[x].field_value === ''){
 											this.custom_fields[z].value = [];
@@ -646,9 +646,9 @@
 										
 										
 									}else{
-										if(fillers[x].clients_custom_field.custom_field_type.input_type === 'time'){
+										if(fillers[x].clients_custom_field.input_type === 'time'){
 											this.custom_fields[z].value = common.parseTimeString(fillers[x].field_value);
-										}else if(fillers[x].clients_custom_field.custom_field_type.input_type === 'select'){
+										}else if(fillers[x].clients_custom_field.input_type === 'select'){
 											this.custom_fields[z].value = fillers[x].field_value+'';
 										}else{
 											this.custom_fields[z].value = fillers[x].field_value;
@@ -664,7 +664,7 @@
 						/* handle date edge case for timezone conversions */
 						for(let z = 0 ; z < this.custom_fields.length ; z++){
 							this.custom_fields[z].value_id = null;
-							if(this.custom_fields[z].custom_field_type.input_type === 'date'){
+							if(this.custom_fields[z].input_type === 'date'){
 								
 								if(this.custom_fields[z].value !== ''){
 									this.custom_fields[z].value = new Date(this.custom_fields[z].value);
