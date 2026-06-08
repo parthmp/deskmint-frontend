@@ -2,7 +2,7 @@
 	<div class="form-group">
 		<label :for="password_id">{{ local_label }}</label>
 		<div class="relative">
-			<input :type="input_type" placeholder="Password" v-model="input_value" class="form-control" @input="EmitModel" :id="password_id" :class="{'red-input-order':highlight_error}">
+			<input :type="input_type" :placeholder="placeholder ? placeholder : 'Password'" v-model="input_value" class="form-control" @input="EmitModel" :id="password_id" :class="{'red-input-order':highlight_error}">
 			
 			<span class="absolute right-2 top-[20%]">
 				<icon-eye v-if="input_type == 'text'" @click="input_type = 'password'" class="cursor-pointer"></icon-eye>
@@ -49,6 +49,9 @@
 			},
 			label: {
 				type:String
+			},
+			placeholder : {
+				type : String
 			}
 		},
 
@@ -60,7 +63,7 @@
 				is_valid : true,
 				local_error : '',
 				show_errors: false,
-				local_label: 'Password',
+				local_label: 'Password'
 
 			};
 		},

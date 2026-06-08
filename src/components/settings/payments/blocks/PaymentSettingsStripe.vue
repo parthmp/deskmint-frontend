@@ -13,7 +13,9 @@
 		<p>Click <a href="https://docs.stripe.com/keys" target="_blank">here</a> to know how to obtain your API key. Never share your API key with anyone.</p>
 		<form @submit.prevent="handleStripeSettings">
 
-			<input-password label="Secret key" placeholder="Secret key" v-model="data.secret.value" :error="data.secret.error" :required="true" ref="stripe_secret_ref"></input-password>
+			<input-password label="API secret key" placeholder="API secret key" v-model="data.secret.value" :error="data.secret.error" :required="true" ref="stripe_secret_ref"></input-password>
+
+			<input-password label="Webhook secret key" placeholder="Webhook secret key" v-model="data.webhook_secret.value" :error="data.webhook_secret.error" :required="true" ref="stripe_webhook_secret_ref"></input-password>
 			
 			<input-button btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
 			<div class="clear-both"></div>
@@ -46,7 +48,8 @@
 		btn_disabled:boolean
 		integrated:boolean
 		integrated_disabled:boolean
-		secret : StripeSecretType
+		secret : StripeSecretType,
+		webhook_secret : StripeSecretType
 	}
 
 	const emit = defineEmits(['remove_stripe']);
@@ -57,7 +60,11 @@
 		integrated : false,
 		integrated_disabled : false,
 		secret : {
-			error : 'Please enter stripe secret key',
+			error : 'Please enter stripe API secret key',
+			value : ''
+		},
+		webhook_secret : {
+			error : 'Please enter stripe webhook secret key',
 			value : ''
 		}
 	});
@@ -67,6 +74,7 @@
 	};
 
 	const stripe_secret_ref = ref<StripeFieldvalidation | null>(null);
+	const stripe_webhook_secret_ref = ref<StripeFieldvalidation | null>(null);
 	const router = useRouter();
 
 	watch(() => data.secret.value, () : void => {
@@ -74,6 +82,11 @@
 			data.secret.error = '';
 			if(!stripe_secret_ref?.value?.validateText()){
 				data.secret.error = 'Please enter stripe secret key';
+			}
+
+			data.webhook_secret.error = '';
+			if(!stripe_webhook_secret_ref?.value?.validateText()){
+				data.webhook_secret.error = 'Please enter stripe webhook secret key';
 			}
 		});
 	});
@@ -84,8 +97,9 @@
 
 		const response = await api.get('manage-stripe-settings');
 		data.secret.value = response.data.secret;
+		data.webhook_secret.value = response.data.webhook_secret;
 
-		if(response.data.secret !== ''){
+		if(response.data.secret !== '' && response.data.webhook_secret !== ''){
 			data.integrated = true;
 		}
 		
@@ -97,15 +111,17 @@
 		data.secret.error = '';
 
 		const valid_secret = stripe_secret_ref.value?.validateText() ?? false;
+		const valid_webhook_secret = stripe_webhook_secret_ref.value?.validateText() ?? false;
 		
 		data.btn_disabled = true;
 		
-		if(valid_secret){
+		if(valid_secret && valid_webhook_secret){
 
 			try{
 
 				await api.post('manage-stripe-settings', {
-					secret : data.secret.value
+					secret : data.secret.value,
+					webhook_secret : data.webhook_secret.value
 				});
 
 				router.push('/settings/payments/integrations');
@@ -120,10 +136,11 @@
 			data.btn_disabled = false;
 
 			data.secret.error = 'Please enter stripe secret key';
+			data.webhook_secret.error = 'Please enter stripe webhook secret key';
 
 			toastEvents.emit('toast', {
 				type : 'error',
-				message : 'Please enter stripe secret key'
+				message : 'Please fill in all required fields'
 			});
 
 		}
