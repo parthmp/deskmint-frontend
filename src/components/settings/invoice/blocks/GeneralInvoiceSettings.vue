@@ -29,13 +29,6 @@
 					</div>
 				</div>
 
-				<div class="mt-[20px]">
-					<div class="flex gap-2">
-						<span><input-switch v-model="data.e_invoice_value"></input-switch></span>
-						<span @click="data.e_invoice_value = !data.e_invoice_value">&nbsp;E invoice on/off</span>
-					</div>
-				</div>
-
 				<input-button btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
 				<div class="clear-both"></div>
 			</form>
@@ -48,7 +41,6 @@
 	import { nextTick, onMounted, reactive, ref, watch } from 'vue';
 	import InputSelect from '../../../inputs/InputSelect.vue';
 	import InputNumber from '../../../inputs/InputNumber.vue';
-	import InputSwitch from '../../../inputs/InputSwitch.vue';
 	import InputColor from '../../../inputs/InputColor.vue';
 	import InputButton from '../../../inputs/InputButton.vue';
 	import api from '../../../../helpers/api';
@@ -56,15 +48,15 @@
 	import { toastEvents } from '../../../../events/toastEvents';
 
 	import GeneralInvoiceSettingsSkeleton from '../../../skeletons/GeneralInvoiceSettingsSkeleton.vue';
+	import type { TextFieldType } from '../../../../types/InputTypes.ts';
 
 	/* intarfaces */
 	interface GeneralInvoiceSettingsInterface{
 		invoice_templates: Array<object>,
-		template: object,
+		template: TextFieldType,
 		font_sizes: Array<object>,
-		font_size: object,
-		logo_size: object,
-		e_invoice_value:boolean,
+		font_size: TextFieldType,
+		logo_size: TextFieldType,
 		primary_color:string,
 		secondary_color:string,
 		btn_disabled:boolean,
@@ -99,7 +91,6 @@
 			value: '',
 			error: 'Please enter logo size'
 		},
-		e_invoice_value : false,
 		primary_color: '#e7e7e7',
 		secondary_color: '#118B65',
 		btn_disabled: false,
@@ -156,7 +147,6 @@
 			data.logo_size.value = response.data.settings.logo_size+'';
 			data.primary_color = response.data.settings.primary_color;
 			data.secondary_color = response.data.settings.secondary_color;
-			data.e_invoice_value = response.data.settings.e_invoice_on;
 			data.data_loading = false;
 		}).catch(error => {
 
@@ -174,7 +164,6 @@
 				logo_size : data.logo_size.value,
 				primary_color : data.primary_color,
 				secondary_color : data.secondary_color,
-				e_invoice:data.e_invoice_value
 			}).then(response => {
 				
 			}).catch(error => {

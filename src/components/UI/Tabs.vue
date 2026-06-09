@@ -3,7 +3,7 @@
 		<ul :class="{'flex gap-2 flex-col xl:flex-row': horizontal, 'col-span-12 xl:col-span-2':!horizontal}">
 			<li v-for="(option, key) in options" :key="key">
 				
-				<a v-if="!routes_available" class="block border-1 border-solid border-transparent pl-4 lg:pl-8 pt-2 pr-4 lg:pr-8 pb-2 rounded-lg lg:rounded-none bg-deskmint-green-light transition-all duration-300" :class="{'lg:border-b-0! tab-active-h': (key === local_active_tab_index && horizontal), 'hover:bg-transparent hover:border-deskmint-green-light': is_item_can_be_active(key), 'cursor-not-allowed': !is_item_can_be_active(key), 'mb-[10px] lg:rounded-lg!':!horizontal, 'lg:rounded-t-lg! border-b-0':horizontal, 'tab-active-v':  (key === local_active_tab_index && !horizontal)}" href="javascript:;" @click="setActiveTab(key)">{{ option }}</a>
+				<a v-if="!routes_available" class="block border-1 border-solid border-transparent pl-4 lg:pl-8 pt-2 pr-4 lg:pr-8 pb-2 rounded-lg lg:rounded-none bg-deskmint-green-light transition-all duration-300" :class="{'lg:border-b-0! tab-active-h': (+key === +local_active_tab_index && horizontal), 'hover:bg-transparent hover:border-deskmint-green-light': is_item_can_be_active(key), 'cursor-not-allowed': !is_item_can_be_active(key), 'mb-[10px] lg:rounded-lg!':!horizontal, 'lg:rounded-t-lg! border-b-0':horizontal, 'tab-active-v':  (key === local_active_tab_index && !horizontal)}" href="javascript:;" @click="setActiveTab(key)">{{ option }}</a>
 
 				<router-link :to="routes_path+'/'+option.split(' ').join('-').toLowerCase()" v-if="routes_available" class="block border-1 border-solid border-transparent pl-4 lg:pl-8 pt-2 pr-4 lg:pr-8 pb-2 rounded-lg lg:rounded-none bg-deskmint-green-light transition-all duration-300" :class="{'lg:border-b-0! tab-active-h': (key === local_active_tab_index && horizontal), 'hover:bg-transparent hover:border-deskmint-green-light': is_item_can_be_active(key), 'cursor-not-allowed': !is_item_can_be_active(key), 'mb-[10px] lg:rounded-lg!':!horizontal, 'lg:rounded-t-lg! border-b-0':horizontal, 'tab-active-v':  isRouteActive(option)}">{{ option }}</router-link>
 
@@ -57,6 +57,7 @@
 					this.activated_indexes.push(this.local_active_tab_index);
 					this.is_locked = false;
 				}
+				
 			}
 		},
 		computed: {
