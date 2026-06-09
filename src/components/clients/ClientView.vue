@@ -14,6 +14,10 @@
 						<div>
 							<h2 class="text-xl!">Personal info</h2>
 							<br>
+							<div class="lg:col-span-4">
+								<p>Client company name: {{ client_data?.client_info?.client_company_name }}</p>
+							</div>
+							<br>
 							<div class="lg:grid lg:grid-cols-12 gap-5">
 								<div class="lg:col-span-4">
 									<p>First name: {{ client_data?.client_info?.first_name }}</p>
@@ -123,6 +127,21 @@
 							<br>
 						</div>
 						<div>
+							<h2 class="text-xl!">Peppol fields</h2>
+							<br>
+							<div class="lg:grid lg:grid-cols-12 gap-5">
+								<div class="lg:col-span-4 mt-[5px]">
+									<p>Identifier: {{ client_data?.client_info?.peppol_identifier }}</p>
+								</div>
+								<div class="lg:col-span-4 mt-[5px]">
+									<p>Scheme: {{ client_data?.client_info?.peppol_scheme }}</p>
+								</div>
+							</div>
+							
+							<br>
+							<br>
+						</div>
+						<div>
 							<h2 class="text-xl!">Custom fields</h2>
 							<br>
 							<div class="lg:grid lg:grid-cols-12 gap-5">
@@ -161,6 +180,9 @@
 								<div class="lg:col-span-4 mt-[20px]">
 									<p>Industry:  {{ client_data?.client_info?.industry?.industry_name }}</p>
 								</div>
+							</div>
+							<div class="lg:col-span-4 mt-[20px]">
+								<p>E invoice enabled (Peppol):  {{ client_data?.client_info?.e_invoice_enabled === 1 ? 'Yes' : 'No' }}</p>
 							</div>
 							<br>
 							<br>
