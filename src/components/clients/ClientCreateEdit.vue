@@ -221,6 +221,14 @@
 								<input-select :options="industries" :required="true" v-model="client_settings.industry.value" :error="client_settings.industry.error" label="Industry" ref="client_settings_industry"></input-select>
 							</div>
 						</div>
+
+						<div class="mt-[20px]">
+							<div class="flex gap-2">
+								<span><input-switch v-model="client_settings.e_invoice_value"></input-switch></span>
+								<span @click="client_settings.e_invoice_value = !client_settings.e_invoice_value">&nbsp;E invoice on/off (Peppol)</span>
+							</div>
+						</div>
+
 						<input-button btn_text="Save" :disabled="btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
 						<div class="clear-both"></div>
 					</form>
@@ -242,6 +250,7 @@
 	import InputText from '../inputs/InputText.vue';
 	import InputButton from '../inputs/InputButton.vue';
 	import InputTelephone from '../inputs/InputTelephone.vue';
+	import InputSwitch from '../inputs/InputSwitch.vue';
 	import InputURL from '../inputs/InputURL.vue';
 	import InputEmail from '../inputs/InputEmail.vue';
 	import { IconTrash } from '@tabler/icons-vue';
@@ -263,22 +272,30 @@
 
 	import ClientCreateEditSkeleton from '../skeletons/ClientCreateEditSkeleton.vue';
 
+	//types
+	import type { ClientPersonalInfo } from '../../types/Client.ts';
+	import type { Country } from '../../types/Country.ts';
+	import type { ClientContactInfo } from '../../types/Client.ts';
+	import type { ClientBillingInfo } from '../../types/Client.ts';
+	import type { ClientShippngInfo } from '../../types/Client.ts';
+	import type { ClientSettings } from '../../types/Client.ts';
+
 	export interface ClientCreateInterface{
 		data_loading_for_edit:boolean,
 		btn_disabled:boolean,
 		fields: Array<object>,
-		countries: Array<object>,
+		countries: Array<Country>,
 		tab_options: Array<string>,
 		tab_counts: Array<number>,
 		active_tab_index: number,
-		client_personal_info: object,
-		client_contact_info: Array<object>
+		client_personal_info: ClientPersonalInfo,
+		client_contact_info: Array<ClientContactInfo>
 		client_contact_info_validation_fields: Array<string>
-		client_billing_info: object,
-		client_shipping_info: object,
+		client_billing_info: ClientBillingInfo,
+		client_shipping_info: ClientShippngInfo,
 		copy_to_shipping: boolean,
 		custom_fields: Array<object>,
-		client_settings:object,
+		client_settings:ClientSettings,
 		currencies: Array<object>
 		reminder_options: Array<object>,
 		size_options: Array<object>,
@@ -309,10 +326,12 @@
 			InputNumber,
 			InputDateTime,
 			InputMultiselect,
-			ClientCreateEditSkeleton
+			ClientCreateEditSkeleton,
+			InputSwitch
 		},
 		data(): ClientCreateInterface{
 			return {
+				
 				data_loading_for_edit:false,
 				btn_disabled: false,
 				fields: [],
@@ -512,7 +531,8 @@
 					industry: {
 						value : '',
 						error : 'Industry is required field'
-					}
+					},
+					e_invoice_value:false
 				},
 				mode: 'create',
 				edit_loaded : false
@@ -636,7 +656,7 @@
 
 			},
 
-			tab1FieldsValidations(tab_info, ref, field, error) : void{
+			tab1FieldsValidations(tab_info:string, ref:string, field:string, error:string) : void{
 				if(this.allowWatchers){
 					if(this.$refs[ref].validate()){
 						this[tab_info][field].error = '';
@@ -900,7 +920,7 @@
 				this.client_contact_info.splice(index, 1);
 			},
 			
-			selectCountry(country_object:object) : void{
+			selectCountry(country_object:{value : ''}) : void{
 				this.$refs.client_billing_info_country.validate();
 				if(Object.keys(country_object).length === 0){
 					this.client_billing_info.country.value = '';
@@ -1182,6 +1202,7 @@
 					this.client_settings.send_reminder.value = client_info.send_reminders+'';
 					this.client_settings.size.value = client_info.size+'';
 					this.client_settings.industry.value = client_info.industry_id+'';
+					this.client_settings.e_invoice_value = parseInt(client_info.e_invoice_enabled) === 1;
 
 					this.peppol.identifier = client_info.peppol_identifier+'';
 					this.peppol.scheme = client_info.peppol_scheme+'';

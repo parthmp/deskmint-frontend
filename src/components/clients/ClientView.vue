@@ -187,7 +187,7 @@
 	import InputButton from '../inputs/InputButton.vue';
 
 
-	export interface ClientViewInterface{
+	interface ClientViewInterface{
 		tab_options: Array<string>,
 		tabs_horizontal: boolean,
 		client_data: object,
