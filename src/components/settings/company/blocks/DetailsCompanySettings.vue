@@ -36,6 +36,15 @@
 				</div>
 			</div>
 
+			<div class="lg:grid lg:grid-cols-12 gap-5 mt-[20px]">
+				<div class="lg:col-span-6">
+					<input-text label="Company identifier (Peppol)" :required="true" v-model="data.company_identifier.value" :error="data.company_identifier.error"  placeholder="Enter company identifier" ref="company_settings_company_identifier"></input-text>
+				</div>
+				<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
+					<input-text label="Scheme (Peppol)" :required="true" v-model="data.scheme.value" :error="data.scheme.error"  placeholder="Enter scheme" ref="company_settings_scheme"></input-text>
+				</div>
+			</div>
+
 			<input-button label="Save" icon="IconCheck" :disabled="data.btn_disabled" class="lg:float-end"></input-button>
 			<div class="clear-both"></div>
 
@@ -58,20 +67,31 @@
 	import api from '../../../../helpers/api';
 	import { toastEvents } from '../../../../events/toastEvents';
 
+	type TextFieldType = {
+		value : string,
+		error : string
+	};
+
+	type OptionFieldType = {
+		text : string,
+		value : string
+	};
 
 	interface DetailsCompanySettingsInterface{
 		loading : boolean,
 		btn_disabled:boolean,
-		company_name: object,
+		company_name: TextFieldType,
+		company_identifier: TextFieldType,
+		scheme: TextFieldType,
 		company_id: string,
 		gst: string,
 		classification: string,
-		classification_options: Array<object>,
+		classification_options: Array<OptionFieldType>,
 		website: string,
 		email: string,
 		phone: string,
 		size: string,
-		size_options: Array<object>
+		size_options: Array<OptionFieldType>
 	}
 
 
@@ -81,7 +101,7 @@
 
 	/* refs */
 	const company_settings_company_name = ref<InputComponent | null>(null);
-
+	
 	/* data */
 	const data = reactive<DetailsCompanySettingsInterface>({
 		loading : false,
@@ -89,6 +109,14 @@
 		company_name : {
 			value : '',
 			error: 'Please enter company name'
+		},
+		company_identifier : {
+			value : '',
+			error: 'Please enter company identifier'
+		},
+		scheme : {
+			value : '',
+			error: 'Please enter scheme'
 		},
 		company_id : '',
 		gst : '',
@@ -171,8 +199,10 @@
 		if(company_settings_company_name?.value?.validate()){
 
 			api.post('manage-company-settings-details', {
-
+				
 				company_name : data.company_name.value,
+				company_identifier : data.company_identifier.value,
+				scheme : data.scheme.value,
 				size : data.size,
 				id_number : data.company_id,
 				gst : data.gst,
@@ -188,6 +218,7 @@
 			});
 
 		}else{
+			data.btn_disabled = false;
 			toastEvents.emit('toast', {
 				type:'error',
 				message : 'Please enter company name'
@@ -199,7 +230,10 @@
 	const fetchCompanyDetails = () : void => {
 		data.loading = true;
 		api.get('manage-company-settings-details').then(response => {
+			
 			data.company_name.value = response.data.company_name;
+			data.company_identifier.value = response.data.company_identifier;
+			data.scheme.value = response.data.scheme;
 			data.size = response.data.size;
 			data.company_id = response.data.id_number ?? '';
 			data.gst = response.data.gst_vat_number ?? '';
