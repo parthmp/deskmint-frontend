@@ -35,6 +35,8 @@
 	import { useInvoiceProducts } from '../../composables/invoice/useInvoiceProducts';
 	import InvoicePage from './blocks/InvoicePage.vue';
 	import { useInvoiceReset } from '../../composables/invoice/useInvoiceReset';
+	import { useRouter } from 'vue-router';
+	
 
 	interface InvoiceCreateEditInterface{
 		active_tab_index : number,
@@ -54,6 +56,8 @@
 		validateSettings: () => boolean,
 	};
 
+	const router = useRouter();
+
 
 	const tab_options : Array<string> = ['Invoice Details', 'Custom Fields', 'Settings'];
 
@@ -66,7 +70,7 @@
 		active_tab_index: 0,
 		custom_fields : [],
 		payment_method : {
-			value : 'cash',
+			value : '',
 			error : ''
 		},
 		send_invoice_in_email : true,
@@ -150,12 +154,14 @@
 				send_invoice_in_email : additional_data.send_invoice_in_email
 			};
 			
-			const response = await api.post('manage-invoices', {
+			await api.post('manage-invoices', {
 				data:data,
 				custom_fields:additional_data.custom_fields,
 				settings : post_settings,
 				timezone_offset_minutes : timezone_offset_minutes
 			});
+
+			router.push('/invoices');
 			
 		}catch(e){
 			additional_data.active_tab_index = e.response.data.tab_switch;
