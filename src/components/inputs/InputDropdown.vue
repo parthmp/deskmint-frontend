@@ -4,7 +4,7 @@
 		<button
 			id="dropdown_default"
 			ref="triggerBtn"
-			class="transition-all duration-300 flex gap-1 items-center  py-[7px] px-[15px] rounded-lg w-full lg:w-[initial] cursor-pointer hover:bg-deskmint-original-dark-plus hover:text-deskmint-cyan-light dark:text-default-text!"
+			class="transition-all duration-300 flex gap-1 items-center  py-[7px] px-[15px] rounded-lg w-full lg:w-[initial] cursor-pointer hover:bg-deskmint-green-light hover:text-deskmint-original-dark-plus dark:hover:text-deskmint-green"
 			type="button"
 			@click="toggleMenu"
 		>
@@ -30,7 +30,7 @@
 							
 							<a href="javascript:;"
 								@click="updatePerPage(option)"
-								class="hover:text-deskmint-cyan-light! dark:text-default-text hover:bg-deskmint-cyan dark:hover:text-default-text! rounded-lg">
+								class="capitalize-first hover:bg-deskmint-green-light hover:text-deskmint-original-dark-plus! dark:hover:text-deskmint-green! rounded-lg">
 								{{ option }}
 							</a>
 						</li>
@@ -53,6 +53,9 @@
 	.dropdown_ul li {
 		@apply transition-all duration-300;
 	}
+	.capitalize-first::first-letter {
+		text-transform: uppercase;
+	}
 </style>
 
 <script lang="ts">
@@ -71,7 +74,7 @@
 
 		name: 'InputDropdown',
 
-		props: ['options', 'modelValue'],
+		props: ['options', 'modelValue', 'row'],
 
 		components: {
 			IconChevronDown,
@@ -125,6 +128,10 @@
 			updatePerPage(pp: number): void {
 				this.$emit('update:modelValue', pp);
 				this.$emit('changed', pp);
+				this.$emit('action', {
+					action : pp,
+					row : this.row
+				});
 				this.show_menu = false;
 			},
 
