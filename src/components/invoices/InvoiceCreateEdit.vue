@@ -3,17 +3,17 @@
     	<div class="card">
 			 <h1 class="text-2xl!">Create an invoice</h1>
 			 <br>
-			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="additional_data.active_tab_index" :disable_further="true" @tab-changed="changedActiveTabValue">
+			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue">
 				<template v-slot:tab-0>
 					<invoice-page ref="invoice_page_validation" @validated="handleInvoicePageValidated"></invoice-page>
 				</template>
 				<template v-slot:tab-1>
 					<div>
-						<CustomFieldsRenderer v-model="additional_data.custom_fields" @validated="handleCustomFieldsValidated" ref="custom_fields_tab_ref"></CustomFieldsRenderer>
+						<CustomFieldsRenderer v-model="a_data.custom_fields" @validated="handleCustomFieldsValidated" ref="custom_fields_tab_ref"></CustomFieldsRenderer>
 					</div>
 				</template>
 				<template v-slot:tab-2>
-					<SettingsTab :btn_disabled="additional_data.btn_disabled" v-model:payment_method="additional_data.payment_method" v-model:send_invoice_in_email="additional_data.send_invoice_in_email" v-model:gateways="additional_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
+					<SettingsTab :btn_disabled="a_data.btn_disabled" v-model:payment_method="a_data.payment_method" v-model:send_invoice_in_email="a_data.send_invoice_in_email" v-model:gateways="a_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
 				</template>
 			 </tabs>
 		</div>
@@ -35,7 +35,7 @@
 	import { useInvoiceProducts } from '../../composables/invoice/useInvoiceProducts';
 	import InvoicePage from './blocks/InvoicePage.vue';
 	import { useInvoiceReset } from '../../composables/invoice/useInvoiceReset';
-	import { useRouter } from 'vue-router';
+	import { useRoute, useRouter } from 'vue-router';
 	
 
 	interface InvoiceCreateEditInterface{
@@ -47,7 +47,8 @@
 		},
 		send_invoice_in_email: boolean,
 		gateways: Array<string>,
-		btn_disabled: boolean
+		btn_disabled: boolean,
+		mode: string
 	}
 
 	type refType = {
@@ -57,6 +58,7 @@
 	};
 
 	const router = useRouter();
+	const route = useRoute();
 
 
 	const tab_options : Array<string> = ['Invoice Details', 'Custom Fields', 'Settings'];
@@ -66,7 +68,7 @@
 	const d = new Date();
 	const timezone_offset_minutes = d.getTimezoneOffset();
 
-	const additional_data = reactive<InvoiceCreateEditInterface>({
+	const a_data = reactive<InvoiceCreateEditInterface>({
 		active_tab_index: 0,
 		custom_fields : [],
 		payment_method : {
@@ -75,7 +77,8 @@
 		},
 		send_invoice_in_email : true,
 		gateways : [],
-		btn_disabled : false
+		btn_disabled : false,
+		mode : 'create'
 	});
 
 	const { addNewProductRow } = useInvoiceProducts();
@@ -102,8 +105,8 @@
 			data.product_columns_slices.push(data.product_columns.slice(6, 9));
 		}
 
-		additional_data.custom_fields = response.data.custom_fields;
-		additional_data.gateways = response.data.gateways;
+		a_data.custom_fields = response.data.custom_fields;
+		a_data.gateways = response.data.gateways;
 
 		
 		addNewProductRow();
@@ -126,18 +129,18 @@
 			});
 		}
 
-		additional_data.active_tab_index = tab_index;
+		a_data.active_tab_index = tab_index;
 	}
 	
 	const handleCustomFieldsValidated = (is_valid: boolean) => {
 		if(is_valid){
-			additional_data.active_tab_index = 2;
+			a_data.active_tab_index = 2;
 		}
 	}
 
 	const handleInvoicePageValidated = (is_valid: boolean) : void => {
 		if(is_valid){
-			additional_data.active_tab_index = 1;
+			a_data.active_tab_index = 1;
 		}
 	}
 	
@@ -146,17 +149,17 @@
 		/**
 		 * switch tabs by validating server side.
 		 * */
-		additional_data.btn_disabled = true;
+		a_data.btn_disabled = true;
 		try{
 
 			const post_settings = {
-				payment_method : additional_data.payment_method.value,
-				send_invoice_in_email : additional_data.send_invoice_in_email
+				payment_method : a_data.payment_method.value,
+				send_invoice_in_email : a_data.send_invoice_in_email
 			};
 			
 			await api.post('manage-invoices', {
 				data:data,
-				custom_fields:additional_data.custom_fields,
+				custom_fields:a_data.custom_fields,
 				settings : post_settings,
 				timezone_offset_minutes : timezone_offset_minutes
 			});
@@ -164,15 +167,22 @@
 			router.push('/invoices');
 			
 		}catch(e){
-			additional_data.active_tab_index = e.response.data.tab_switch;
+			a_data.active_tab_index = e.response.data.tab_switch;
 		}finally{
-			additional_data.btn_disabled = false;
+			a_data.btn_disabled = false;
 		}
 
 	}
 
+	const fetchInvoice = () => {
+		//fetch invoice.
+	}
+
 	onMounted(() => {
 		fetchInitialData();
+		if(route.path.includes('edit')){
+			a_data.mode = 'edit';
+		}
 	})
 
 	onUnmounted(() : void => {
