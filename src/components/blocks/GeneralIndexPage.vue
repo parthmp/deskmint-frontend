@@ -43,7 +43,7 @@
 			<input-button class="lg:float-end" btn_text="Add New" :url="'../'+slug+'/create'" icon="IconPlus"></input-button>
 			<div class="lg:clear-both"></div>
 			<br>
-			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" :url_slug="slug" :row_actions="actions" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
+			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" :url_slug="slug" :row_actions="actions" @action="handleAction" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
 		</span>
 		
     </div>
@@ -206,6 +206,10 @@
 				this.show_popup = true;
 				this.arrange_columns_loading = true;
 				this.fetchArrangedColumns();
+			},
+
+			handleAction(obj:object) : void {
+				this.$emit('action', obj);
 			}
 
 		},

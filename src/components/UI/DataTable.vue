@@ -701,6 +701,8 @@ export default defineComponent({
 					this.$router.push('/'+this.url_slug+'/edit/'+obj.row.id);
 				}else if(obj.action.toLowerCase() === 'delete'){
 					this.handleDelete(+obj.row.id);
+				}else{
+					this.$emit('action', obj);
 				}
 			}
 	},
