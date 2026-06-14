@@ -42,10 +42,11 @@
 					<tr v-for="(row, ri) in local_table_data.rows" :key="ri">
 						<td v-if="checkbox_actions?.length > 0"><input-checkbox v-model="row.selected"></input-checkbox></td>
 						<td v-for="(column2, ci2) in local_table_data.columns" :key="ci2">
-							<span v-if="column2.label === 'actions'" v-for="action in row_actions" :key="action">
-								<router-link :to="'/'+url_slug+'/edit/'+row.id" class="transition-all duration-300 inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg text-blue-500!" v-if="action === 'edit'"><IconEdit class="inline-block" :size="20"></IconEdit></router-link>
+							<span v-if="column2.label === 'actions'">
+								<div class="mt-[10px] mt-[0px]!" v-if="checkbox_actions?.length > 0"><input-dropdown :options="checkbox_actions" @changed="handleCheckboxActions"></input-dropdown></div>
+								<!-- <router-link :to="'/'+url_slug+'/edit/'+row.id" class="transition-all duration-300 inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg text-blue-500!" v-if="action === 'edit'"><IconEdit class="inline-block" :size="20"></IconEdit></router-link>
 								<a href="javascript:;" class="transition-all duration-300 ml-[10px] inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg text-red-500!" v-if="action === 'delete'" @click="handleDelete(row.id)"><IconTrash :size="22"></IconTrash></a>
-								<router-link :to="'/'+url_slug+'/view/'+row.id" class="transition-all duration-300 inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg mr-[10px]" v-if="action === 'view'"><IconEye class="inline-block" :size="20"></IconEye></router-link>
+								<router-link :to="'/'+url_slug+'/view/'+row.id" class="transition-all duration-300 inline-flex items-center justify-center w-[35px] h-[35px] rounded-lg mr-[10px]" v-if="action === 'view'"><IconEye class="inline-block" :size="20"></IconEye></router-link> -->
 							</span>
 							<span v-if="!Array.isArray(row[column2.label])">
 								<span v-if="typeof row[column2.label] === 'object'">
