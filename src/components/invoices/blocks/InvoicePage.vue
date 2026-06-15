@@ -165,7 +165,7 @@
 	}
 
 	const isValid = () : boolean => {
-		console.log(data.product_rows);
+		
 		let validated = true;
 
 		validated = invoice_details_ref?.value?.validateInvoiceDetails() ?? false;

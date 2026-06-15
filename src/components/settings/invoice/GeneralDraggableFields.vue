@@ -85,11 +85,13 @@
 		if(temp_index !== -1){
 			data.dropdown_fields.splice(temp_index, 1);
 		}
-
+		
 	}
 
 	const saveDetailsSettings = () : void => {
+	
 		data.btn_disabled = true;
+		
 		api.post(props.url, {
 			rows : data.rows	
 		}).then(response => {

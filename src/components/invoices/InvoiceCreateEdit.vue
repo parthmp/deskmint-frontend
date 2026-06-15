@@ -48,7 +48,8 @@
 		send_invoice_in_email: boolean,
 		gateways: Array<string>,
 		btn_disabled: boolean,
-		mode: string
+		mode: string,
+		invoice_id: number
 	}
 
 	type refType = {
@@ -78,7 +79,8 @@
 		send_invoice_in_email : true,
 		gateways : [],
 		btn_disabled : false,
-		mode : 'create'
+		mode : 'create',
+		invoice_id : 0
 	});
 
 	const { addNewProductRow } = useInvoiceProducts();
@@ -174,14 +176,48 @@
 
 	}
 
-	const fetchInvoice = () => {
-		//fetch invoice.
+	const fetchInvoice = async (invoice_id : number) : Promise<void> => {
+
+		const timezone_offset_minutes = d.getTimezoneOffset();
+
+		const response = await api.get('manage-invoices/'+invoice_id, {
+			params : {
+				timezone_offset_minutes:timezone_offset_minutes
+			}
+		});
+
+		data.invoice_details.client.value = response.data.invoice.first_name + ' ' + response.data.invoice.last_name;
+		data.invoice_details.client.client_id = response.data.invoice.client_id+'';
+		data.invoice_details.currency_id = response.data.invoice.currency_id;
+		data.invoice_details.currency_code = response.data.invoice.currency_code;
+		data.invoice_details.invoice_date.value = response.data.invoice.invoice_date;
+
+		data.invoice_details.due_date.value = response.data.invoice.due_date;
+		data.invoice_details.invoice_number.value = response.data.invoice.invoice_number;
+		data.invoice_details.po_number = response.data.invoice.po_number;
+		data.invoice_details.global_discount_type = (response.data.invoice.discount_type === 1) ? 'percentage' : 'amount';
+		
+		setTimeout(() => {
+			
+			data.invoice_details.global_discount = response.data.invoice.discount;
+			data.global_discount_amount = response.data.invoice.discount_amount;
+
+			// data.global_subtotal = response.data.invoice.subtotal;
+			// data.global_total = response.data.invoice.total;
+			// data.global_tax_amount = response.data.invoice.tax_amount;
+
+		}, 10);
+		
+		data.invoice_terms = response.data.invoice.invoice_terms;
+		
 	}
 
 	onMounted(() => {
 		fetchInitialData();
 		if(route.path.includes('edit')){
 			a_data.mode = 'edit';
+			a_data.invoice_id = +route.params.id;
+			fetchInvoice(a_data.invoice_id);
 		}
 	})
 
