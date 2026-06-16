@@ -31,10 +31,14 @@
 						<div class="h-[40px] animate-[pulse_1s_ease-in-out_infinite] bg-deskmint-loading rounded-lg w-full"></div>
 					</div>
 				</div>
-				<div class="h-[40px] animate-[pulse_1s_ease-in-out_infinite] bg-deskmint-loading rounded-lg w-full lg:w-[150px] lg:float-end mt-[25px]"></div>
-				<div class="clear-both"></div>
+				<div v-if="typeof blocks === 'undefined'" class="h-[40px] animate-[pulse_1s_ease-in-out_infinite] bg-deskmint-loading rounded-lg w-full lg:w-[150px] lg:float-end mt-[25px]"></div>
+				<div v-if="typeof blocks === 'undefined'" class="clear-both"></div>
 			</div>
-
+			
+			<div v-for="(block, key) in blocks" :key="key" class="mt-[20px] h-40 animate-[pulse_1s_ease-in-out_infinite] bg-deskmint-loading rounded-lg w-full">
+			</div>
+			<div v-if="typeof blocks !== 'undefined'" class="h-[40px] animate-[pulse_1s_ease-in-out_infinite] bg-deskmint-loading rounded-lg w-full lg:w-[150px] lg:float-end mt-[25px]"></div>
+			<div v-if="typeof blocks !== 'undefined'" class="clear-both"></div>
 			
 		</div>
 	</span>
@@ -48,7 +52,8 @@
 	export default defineComponent({
 		name : 'ClientCreateEditSkeleton',
 		props: {
-			rows:Number
+			rows:Number,
+			blocks : Number
 		},
 		components : {
 

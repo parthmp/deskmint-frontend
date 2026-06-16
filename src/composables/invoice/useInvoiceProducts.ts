@@ -79,6 +79,7 @@ export function useInvoiceProducts(){
 		product_row.tax_amount = 0;
 		
 		data.product_rows.push(product_row);
+		console.log(data.product_rows);
 
 	}
 

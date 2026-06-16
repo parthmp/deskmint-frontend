@@ -3,7 +3,8 @@
     	<div class="card">
 			 <h1 class="text-2xl!">Create an invoice</h1>
 			 <br>
-			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue">
+			 <client-create-edit-skeleton :blocks="3" v-if="!a_data.fetched"></client-create-edit-skeleton>
+			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue" v-if="a_data.fetched">
 				<template v-slot:tab-0>
 					<invoice-page ref="invoice_page_validation" @validated="handleInvoicePageValidated"></invoice-page>
 				</template>
@@ -36,6 +37,8 @@
 	import InvoicePage from './blocks/InvoicePage.vue';
 	import { useInvoiceReset } from '../../composables/invoice/useInvoiceReset';
 	import { useRoute, useRouter } from 'vue-router';
+
+	import ClientCreateEditSkeleton from '../skeletons/ClientCreateEditSkeleton.vue';
 	
 
 	interface InvoiceCreateEditInterface{
@@ -49,7 +52,8 @@
 		gateways: Array<string>,
 		btn_disabled: boolean,
 		mode: string,
-		invoice_id: number
+		invoice_id: number,
+		fetched: boolean
 	}
 
 	type refType = {
@@ -80,7 +84,8 @@
 		gateways : [],
 		btn_disabled : false,
 		mode : 'create',
-		invoice_id : 0
+		invoice_id : 0,
+		fetched : false
 	});
 
 	const { addNewProductRow } = useInvoiceProducts();
@@ -102,6 +107,7 @@
 
 		data.invoice_details.invoice_number.value = response.data.invoice_number;
 		data.product_columns = response.data.product_columns;
+		console.log(data.product_columns);
 		data.product_columns_slices.push(data.product_columns.slice(0, 6));
 		if(data.product_columns.length > 6){
 			data.product_columns_slices.push(data.product_columns.slice(6, 9));
@@ -112,6 +118,12 @@
 
 		
 		addNewProductRow();
+
+		if(a_data.mode === 'create'){
+			a_data.fetched = true;
+		}else{
+			fetchInvoice(a_data.invoice_id);
+		}
 
 	}
 	
@@ -209,16 +221,18 @@
 		}, 10);
 		
 		data.invoice_terms = response.data.invoice.invoice_terms;
+		a_data.fetched = true;
 		
 	}
 
 	onMounted(() => {
-		fetchInitialData();
+		
 		if(route.path.includes('edit')){
 			a_data.mode = 'edit';
 			a_data.invoice_id = +route.params.id;
-			fetchInvoice(a_data.invoice_id);
 		}
+		fetchInitialData();
+		
 	})
 
 	onUnmounted(() : void => {
