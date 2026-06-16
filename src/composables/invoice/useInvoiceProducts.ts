@@ -41,6 +41,7 @@ export function useInvoiceProducts(){
 
 		const product_row:rowType = {
 			id : Date.now() + '_' + Math.random().toString(36).slice(2),
+			row_uuid : crypto.randomUUID(),
 			row_index: row_index
 		};
 
