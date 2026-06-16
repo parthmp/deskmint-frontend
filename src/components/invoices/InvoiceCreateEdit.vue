@@ -1,7 +1,8 @@
 <template>
 	<section class="main-content">
     	<div class="card">
-			 <h1 class="text-2xl!">Create an invoice</h1>
+			 <h1 class="text-2xl!" v-if="a_data.mode === 'create'">Create an invoice</h1>
+			 <h1 class="text-2xl!" v-if="a_data.mode === 'edit'">Edit invoice</h1>
 			 <br>
 			 <client-create-edit-skeleton :blocks="3" v-if="!a_data.fetched"></client-create-edit-skeleton>
 			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue" v-if="a_data.fetched">
@@ -218,8 +219,6 @@
 			product_rows.forEach(ele => {
 				addNewProductRow(ele);
 			});
-
-			//a_data.custom_fields = response.data.custom_fields;
 			
 			const saved_values = response.data.custom_fields; // raw edit values
 			
@@ -236,6 +235,9 @@
 			data.global_tax_amount = response.data.invoice.tax_amount;
 
 		}, 10);
+
+		a_data.payment_method.value = response.data.invoice.payment_method.toString();
+		a_data.send_invoice_in_email = false;
 		
 		data.invoice_terms = response.data.invoice.invoice_terms;
 		a_data.fetched = true;
