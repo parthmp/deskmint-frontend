@@ -33,55 +33,60 @@ export function useInvoiceProducts(){
 	const data = useInvoiceStore();
 	const { calculateGlobalTotals, calculateItemCost } = useInvoiceMath();
 
-	const addNewProductRow = () : void => {
+	const addNewProductRow = (obj:rowType|null = null) : void => {
 
-		/* create an object to push */
+		if(obj){
+			data.product_rows.push(obj);
+		}else{
+			/* create an object to push */
 
-		let row_index = data.product_rows.length;
+			let row_index = data.product_rows.length;
 
-		const product_row:rowType = {
-			id : Date.now() + '_' + Math.random().toString(36).slice(2),
-			row_uuid : crypto.randomUUID(),
-			row_index: row_index
-		};
+			const product_row:rowType = {
+				id : Date.now() + '_' + Math.random().toString(36).slice(2),
+				row_uuid : crypto.randomUUID(),
+				row_index: row_index
+			};
 
-		
-		for(let row of data.product_columns){
+			
+			for(let row of data.product_columns){
 
-			if(row.type == 'custom' && row?.tax === true){
-				const key = 'custom_tax_' + common.replaceWithUnderscores(row?.text);
-				product_row[key] = +row.tax_rate;
+				if(row.type == 'custom' && row?.tax === true){
+					const key = 'custom_tax_' + common.replaceWithUnderscores(row?.text);
+					product_row[key] = +row.tax_rate;
 
-			}else if(row.type == 'custom' && row?.tax === false){
+				}else if(row.type == 'custom' && row?.tax === false){
 
-				product_row['normal_'+common.replaceWithUnderscores(row?.text)] = '';
+					product_row['normal_'+common.replaceWithUnderscores(row?.text)] = '';
 
-			}else{
-
-				let modified_row_value = row.value;
-				if(row.value === 'unit_cost'){
-					modified_row_value = 'unit_price';
-				}
-
-				if(row.value == 'tax' || row.value == 'line_total'){
-					
-					product_row[modified_row_value] = 0;
 				}else{
-					product_row[modified_row_value] = '';
+
+					let modified_row_value = row.value;
+					if(row.value === 'unit_cost'){
+						modified_row_value = 'unit_price';
+					}
+
+					if(row.value == 'tax' || row.value == 'line_total'){
+						
+						product_row[modified_row_value] = 0;
+					}else{
+						product_row[modified_row_value] = '';
+					}
+
 				}
+				
 
 			}
-			
 
+			product_row.product_id = '';
+			product_row.line_subtotal = 0;
+			product_row.tax_amount = 0;
+			
+			data.product_rows.push(product_row);
 		}
 
-		product_row.product_id = '';
-		product_row.line_subtotal = 0;
-		product_row.tax_amount = 0;
 		
-		data.product_rows.push(product_row);
-		console.log(data.product_rows);
-
+		
 	}
 
 	const removeProductRow = (row:object) : void => {

@@ -151,8 +151,8 @@
 		const product_ids = [];
 
 		for(let row of rows){
-			if(row?.product_id.trim() !== ''){
-				product_ids.push(row?.product_id.trim());
+			if(row?.product_id.toString().trim() !== ''){
+				product_ids.push(row?.product_id.toString().trim());
 			}
 		}
 

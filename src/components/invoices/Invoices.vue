@@ -8,7 +8,7 @@
 	import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
 
 	const handleAction = (obj:object) => {
-		console.log(obj);
+		//console.log(obj);
 	}
 
 </script>

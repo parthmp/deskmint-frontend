@@ -107,7 +107,7 @@
 
 		data.invoice_details.invoice_number.value = response.data.invoice_number;
 		data.product_columns = response.data.product_columns;
-		console.log(data.product_columns);
+		
 		data.product_columns_slices.push(data.product_columns.slice(0, 6));
 		if(data.product_columns.length > 6){
 			data.product_columns_slices.push(data.product_columns.slice(6, 9));
@@ -117,9 +117,8 @@
 		a_data.gateways = response.data.gateways;
 
 		
-		addNewProductRow();
-
 		if(a_data.mode === 'create'){
+			addNewProductRow();
 			a_data.fetched = true;
 		}else{
 			fetchInvoice(a_data.invoice_id);
@@ -208,15 +207,33 @@
 		data.invoice_details.invoice_number.value = response.data.invoice.invoice_number;
 		data.invoice_details.po_number = response.data.invoice.po_number;
 		data.invoice_details.global_discount_type = (response.data.invoice.discount_type === 1) ? 'percentage' : 'amount';
+
+		const product_rows = response.data.product_rows;
 		
 		setTimeout(() => {
 			
 			data.invoice_details.global_discount = response.data.invoice.discount;
 			data.global_discount_amount = response.data.invoice.discount_amount;
 
-			// data.global_subtotal = response.data.invoice.subtotal;
-			// data.global_total = response.data.invoice.total;
-			// data.global_tax_amount = response.data.invoice.tax_amount;
+			product_rows.forEach(ele => {
+				addNewProductRow(ele);
+			});
+
+			//a_data.custom_fields = response.data.custom_fields;
+			
+			const saved_values = response.data.custom_fields; // raw edit values
+			
+			a_data.custom_fields = a_data.custom_fields.map(field => {
+				const saved = saved_values.find(s => s.invoices_custom_field_id === field.id);
+				if(saved){
+					field.value = saved.field_value;
+				}
+				return field;
+			});
+
+			data.global_subtotal = response.data.invoice.subtotal;
+			data.global_total = response.data.invoice.total;
+			data.global_tax_amount = response.data.invoice.tax_amount;
 
 		}, 10);
 		
