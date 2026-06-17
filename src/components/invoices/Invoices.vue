@@ -4,32 +4,36 @@
 
 <script lang="ts" setup>
 	
-	/* using compositon API */
-	import { onMounted, reactive } from 'vue';
-	import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
+/* using compositon API */
+import { onMounted, reactive } from 'vue';
+import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
 import api from '../../helpers/api.ts';
+import { toastEvents } from '../../events/toastEvents.ts';
 
-	type actionObject = {
-		action:string,
-		row : {
-			company_id : number,
-			id : number
-		}
-	};
-
-	const data = reactive<{time_offset_minutes:number}>({
-		time_offset_minutes : 0
-	});
-
-	const handleAction = (obj:actionObject) => {
-		console.log(obj);
-		if(obj.action.toLowerCase() === 'send invoice'){
-			sendInvoice(obj.row.company_id, obj.row.id);
-		}
+type actionObject = {
+	action:string,
+	row : {
+		company_id : number,
+		id : number
 	}
+};
 
-	const sendInvoice = async (company_id : number, id : number) : Promise<void> => {
+const data = reactive<{time_offset_minutes:number}>({
+	time_offset_minutes : 0
+});
 
+const handleAction = (obj:actionObject) => {
+	console.log(obj);
+	if(obj.action.toLowerCase() === 'send invoice'){
+		sendInvoice(obj.row.company_id, obj.row.id);
+	}else if(obj.action.toLowerCase() === 'download pdf'){
+		downloadPDF(obj.row.company_id, obj.row.id);
+	}
+}
+
+const sendInvoice = async (company_id : number, id : number) : Promise<void> => {
+
+	try{
 		await api.get('manage-invoices/send-invoice', {
 			params : {
 				company_id : company_id,
@@ -37,12 +41,38 @@ import api from '../../helpers/api.ts';
 				time_offset_minutes : data.time_offset_minutes
 			}
 		});
-
+	}catch(e){
+		
 	}
+	
+}
 
-	onMounted(() => {
-		const d = new Date();
-		data.time_offset_minutes = d.getTimezoneOffset();
-	});
+const downloadPDF = async (company_id : number, id : number) : Promise<void> => {
+	try{
+		const response = await api.get('manage-invoices/download-pdf', {
+			params : {
+				company_id : company_id,
+				invoice_id : id,
+				time_offset_minutes : data.time_offset_minutes
+			}
+		});
+		toastEvents.emit('toast', {
+			type: 'success',
+			message: 'Downloading...'
+		});
+	
+		const a = document.createElement('a');
+		a.href = response.data.url;
+		a.click();
+
+	}catch(e){
+		
+	}
+}
+
+onMounted(() => {
+	const d = new Date();
+	data.time_offset_minutes = d.getTimezoneOffset();
+});
 
 </script>
