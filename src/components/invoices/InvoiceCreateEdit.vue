@@ -171,12 +171,19 @@
 				send_invoice_in_email : a_data.send_invoice_in_email
 			};
 			
-			await api.post('manage-invoices', {
-				data:data,
-				custom_fields:a_data.custom_fields,
-				settings : post_settings,
-				timezone_offset_minutes : timezone_offset_minutes
-			});
+			const post_data = {
+								data:data,
+								custom_fields:a_data.custom_fields,
+								settings : post_settings,
+								timezone_offset_minutes : timezone_offset_minutes
+							};
+
+			if(a_data.mode === 'create'){
+				await api.post('manage-invoices', post_data);
+			}else{
+				await api.patch('manage-invoices/'+a_data.invoice_id, post_data);
+			}
+			
 
 			router.push('/invoices');
 			

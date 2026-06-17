@@ -31,12 +31,13 @@
 		</div>
 		<div class="lg:col-span-4 mt-[20px]">
 			<div class="lg:grid lg:grid-cols-12 lg:gap-2">
-				<div class="lg:col-span-6">
-					<input-number label="Discount" v-model="details.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
-				</div>
 				<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
 					<input-select label="Discount type" v-model="details.global_discount_type" :required="false" :options="discount_options"></input-select>
 				</div>
+				<div class="lg:col-span-6">
+					<input-number label="Discount" v-model="details.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
+				</div>
+				
 				
 			</div>
 			

@@ -34,13 +34,14 @@ export function useInvoiceProducts(){
 	const { calculateGlobalTotals, calculateItemCost } = useInvoiceMath();
 
 	const addNewProductRow = (obj:rowType|null = null) : void => {
-
+		let row_index = 0;
 		if(obj){
 			data.product_rows.push(obj);
+			row_index = data.product_rows.length;
 		}else{
 			/* create an object to push */
 
-			let row_index = data.product_rows.length;
+			row_index = data.product_rows.length;
 
 			const product_row:rowType = {
 				id : Date.now() + '_' + Math.random().toString(36).slice(2),

@@ -78,7 +78,7 @@
 					</draggable>
 				</div>
 				<div class="clear-both"></div>
-				<input-button @click.prevent="addNewProductRow" type="button" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
+				<input-button @click.prevent="addProductRow" type="button" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
 				<div class="clear-both"></div>
 				<br>
 				<div class="lg:grid lg:grid-cols-12 lg:gap-5">
@@ -162,6 +162,10 @@
 
 		return true;
 
+	}
+
+	const addProductRow = () => {
+		addNewProductRow();
 	}
 
 	const isValid = () : boolean => {
