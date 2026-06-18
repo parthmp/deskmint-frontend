@@ -72,7 +72,7 @@ const downloadPDF = async (company_id : number, id : number) : Promise<void> => 
 
 onMounted(() => {
 	const d = new Date();
-	data.time_offset_minutes = d.getTimezoneOffset();
+	data.time_offset_minutes = -(d.getTimezoneOffset());
 });
 
 </script>

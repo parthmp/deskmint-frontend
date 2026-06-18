@@ -72,7 +72,7 @@
 	const data = useInvoiceStore();
 
 	const d = new Date();
-	const timezone_offset_minutes = d.getTimezoneOffset();
+	const timezone_offset_minutes = -(d.getTimezoneOffset());
 
 	const a_data = reactive<InvoiceCreateEditInterface>({
 		active_tab_index: 0,
@@ -197,7 +197,7 @@
 
 	const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 
-		const timezone_offset_minutes = d.getTimezoneOffset();
+		const timezone_offset_minutes = -(d.getTimezoneOffset());
 
 		const response = await api.get('manage-invoices/'+invoice_id, {
 			params : {
