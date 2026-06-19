@@ -48,6 +48,7 @@ import ProductColumnsAdditionalFields from '../src/components/settings/invoice/b
 import TotalFieldsInvoiceSettings from '../src/components/settings/invoice/blocks/TotalFieldsInvoiceSettings.vue';
 import Invoices from '../src/components/invoices/Invoices.vue';
 import InvoiceCreateEdit from '../src/components/invoices/InvoiceCreateEdit.vue';
+import InvoiceView from '../src/components/invoices/InvoiceView.vue';
 
 //const InvoiceCreateEdit = () => import('../src/components/invoices/InvoiceCreateEdit.vue');
 
@@ -286,6 +287,11 @@ const routes = [
 			{
 				path: '/invoices/edit/:id',
 				component: InvoiceCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/view/:id',
+				component: InvoiceView,
 				meta: { requires_auth: true }
 			},
 			{
