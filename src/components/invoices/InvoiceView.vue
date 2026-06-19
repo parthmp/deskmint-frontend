@@ -44,7 +44,7 @@
 								<div v-for="(product_column_slice, index2) in data.product_columns_slices" :key="index2" class="min-w-0">
 									
 									
-									<div class="grid gap-4 mt-2" :class="{'grid-cols-6' : index2 === 0, 'grid-cols-3' : index2 === 1}">
+									<div class="lg:grid lg:gap-4 mt-2" :class="{'lg:grid-cols-6' : index2 === 0, 'grid-cols-3' : index2 === 1}">
 										
 										<div v-for="(product_column, column_index) in product_column_slice" :key="column_index">
 											
