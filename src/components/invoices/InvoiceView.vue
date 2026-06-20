@@ -1,7 +1,8 @@
 <template>
 	<section class="main-content">
     	<div class="card">
-			<div>
+			<invoice-view-skeleton v-if="data.loading"></invoice-view-skeleton>
+			<div v-if="!data.loading">
 				<h1 class="text-2xl!">View Invoice</h1>
 				<input-button class="lg:float-start" btn_text="Back" url="/invoices" icon="IconCaretLeft"></input-button>
 				<div class="clear-both"></div>
@@ -155,6 +156,7 @@ import { useRoute } from 'vue-router';
 import api from '../../helpers/api';
 import InputButton from '../inputs/InputButton.vue';
 import common from '../../helpers/common';
+import InvoiceViewSkeleton from '../skeletons/InvoiceViewSkeleton.vue';
 
 type ClientDetails = {
 	client: string,
@@ -210,7 +212,8 @@ interface InvoiceViewInterface{
 	payment_method: number,
 	payment_method_str: string,
 	invoice_terms: string,
-	product_rows: Array<productRow>
+	product_rows: Array<productRow>,
+	loading:boolean
 }
 
 const route = useRoute();
@@ -240,20 +243,20 @@ const data = reactive<InvoiceViewInterface>({
 	payment_method : 0,
 	payment_method_str : '',
 	invoice_terms : '',
-	product_rows: []
+	product_rows: [],
+	loading : false
 
 });
 
 
 const fetchInitialData = async () : Promise<void> =>  {
-
+	data.loading = true;
 	const response = await api.get('manage-invoices/fetch-initial-data', {
 		params : {
 			timezone_offset_minutes : data.timezone_offset_minutes
 		}
 	});
 
-	//data.invoice_details. = response.data.invoice_number;
 	data.product_columns = response.data.product_columns;
 	
 	data.product_columns_slices.push(data.product_columns.slice(0, 6));
@@ -262,10 +265,6 @@ const fetchInitialData = async () : Promise<void> =>  {
 	}
 
 	data.custom_fields = response.data.custom_fields;
-	//a_data.gateways = response.data.gateways;
-	console.log(data.custom_fields);
-				
-	
 	
 	fetchInvoice(data.invoice_id);
 	
@@ -359,7 +358,7 @@ const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 		//data.send_invoice_in_email = false;
 		
 		data.invoice_terms = response.data.invoice.invoice_terms;
-		//data.fetched = true;
+		data.loading = false;
 		
 		
 	}
