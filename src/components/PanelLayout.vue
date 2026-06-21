@@ -300,7 +300,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport, IconMail, IconCoin } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport, IconMail, IconCoin, IconDatabaseDollar } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -365,7 +365,8 @@ export default defineComponent({
 		IconBuildingFactory:IconBuildingFactory,
 		IconFileReport:IconFileReport,
 		IconCoin:IconCoin,
-		IconMail:IconMail
+		IconMail:IconMail,
+		IconDatabaseDollar:IconDatabaseDollar
 	},
 	data() : PanelData{
 		return {
@@ -430,6 +431,16 @@ export default defineComponent({
 						icon: 'IconFileReport',
 						icon_size: 22,
 						menu_text: 'Recurring Invoices',
+						has_submenu : false,
+						show_submenu : false,
+						is_active: false,
+						submenu: []
+					},
+					{
+						path: '/transactions',
+						icon: 'IconDatabaseDollar',
+						icon_size: 22,
+						menu_text: 'Transactions',
 						has_submenu : false,
 						show_submenu : false,
 						is_active: false,

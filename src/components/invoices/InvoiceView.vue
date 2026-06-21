@@ -325,6 +325,7 @@ const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 				if(saved){
 					
 					if(field.custom_field_type.input_type === 'multiselect'){
+						console.log(saved.field_value);
 						field.value = JSON.parse(saved.field_value ?? []).join(', ');
 					}else if(field.custom_field_type.input_type === 'datetime'){
 						field.value = common.formatDate(saved.field_value);

@@ -230,9 +230,16 @@
 			const saved_values = response.data.custom_fields; // raw edit values
 			
 			a_data.custom_fields = a_data.custom_fields.map(field => {
+				
 				const saved = saved_values.find(s => s.invoices_custom_field_id === field.id);
+				
 				if(saved){
-					field.value = saved.field_value;
+					if(saved.invoices_custom_field.custom_field_type.input_type === 'multiselect'){
+						field.value = JSON.parse(saved.field_value);
+					}else{
+						field.value = saved.field_value;
+					}
+					
 				}
 				return field;
 			});

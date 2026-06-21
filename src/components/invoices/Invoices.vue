@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage invoices" :enable_arranged_columns="true" base_url="manage-invoices" slug="invoices" :actions="['view','edit', 'delete', 'download PDF', 'send invoice']" @action="handleAction"></general-index-page>
+	<general-index-page page_title="Manage invoices" :enable_arranged_columns="true" base_url="manage-invoices" slug="invoices" :actions="['view','edit', 'delete', 'Add Payment', 'download PDF', 'send Invoice']" @action="handleAction"></general-index-page>
 </template>
 
 <script lang="ts" setup>
@@ -9,6 +9,9 @@ import { onMounted, reactive } from 'vue';
 import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
 import api from '../../helpers/api.ts';
 import { toastEvents } from '../../events/toastEvents.ts';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 type actionObject = {
 	action:string,
@@ -28,6 +31,8 @@ const handleAction = (obj:actionObject) => {
 		sendInvoice(obj.row.company_id, obj.row.id);
 	}else if(obj.action.toLowerCase() === 'download pdf'){
 		downloadPDF(obj.row.company_id, obj.row.id);
+	}else if(obj.action.toLowerCase() === 'add payment'){
+		//TODO: redirect to the transactions module.
 	}
 }
 
