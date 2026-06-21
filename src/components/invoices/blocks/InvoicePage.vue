@@ -238,7 +238,7 @@
 	}
 
 	const printRows = () : void => {
-		// console.log(data.product_rows);
+		
 	}
 
 	defineExpose({isValid});

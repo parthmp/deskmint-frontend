@@ -23,7 +23,7 @@ const data = reactive<{time_offset_minutes:number}>({
 });
 
 const handleAction = (obj:actionObject) => {
-	console.log(obj);
+
 	if(obj.action.toLowerCase() === 'send invoice'){
 		sendInvoice(obj.row.company_id, obj.row.id);
 	}else if(obj.action.toLowerCase() === 'download pdf'){

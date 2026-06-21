@@ -35,7 +35,7 @@ export function useInvoiceMath(){
 	watch(() => data.product_rows, (rows) : void => {
 		
 		rows.forEach((row) => {
-			//console.log(row);
+			
 			nextTick(() => {
 				for (const key in row) {
 					if(key.startsWith("custom_tax_") || key === 'tax'){

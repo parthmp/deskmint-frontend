@@ -325,7 +325,7 @@ const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 				if(saved){
 					
 					if(field.custom_field_type.input_type === 'multiselect'){
-						field.value = JSON.parse(saved.field_value).join(', ');
+						field.value = JSON.parse(saved.field_value ?? []).join(', ');
 					}else if(field.custom_field_type.input_type === 'datetime'){
 						field.value = common.formatDate(saved.field_value);
 					}else if(field.custom_field_type.input_type === 'date'){
@@ -345,7 +345,7 @@ const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 		//}, 10);
 
 		data.payment_method = +response.data.invoice.payment_method;
-		console.log(data.payment_method);
+			
 		if(data.payment_method == 1){
 			data.payment_method_str = 'Cash';
 		}else if(data.payment_method == 2){

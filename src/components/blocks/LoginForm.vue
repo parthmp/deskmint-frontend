@@ -195,15 +195,7 @@ import api from '../../helpers/api';
 									this.$emit('two_factor_auth_event', response.data);
 
 								}else{
-									/*
-									let key = 'access_token';
-									let value = response.data.token;
-									SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));
-
-									key = 'refresh_token';
-									value = response.data.refresh_token;
-									SecureStoragePlugin.set({ key, value }).then((success) => console.log(success));*/
-
+									
 									(async () => {
 									try {
 											await setAccessToken(response.data.token);
