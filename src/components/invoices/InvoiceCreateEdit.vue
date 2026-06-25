@@ -111,8 +111,12 @@
 		
 		data.product_columns_slices.push(data.product_columns.slice(0, 6));
 		if(data.product_columns.length > 6){
-			data.product_columns_slices.push(data.product_columns.slice(6, 9));
+			data.product_columns_slices.push(data.product_columns.slice(6, 10));
 		}
+
+		// if(data.product_columns.length > 9){
+		// 	data.product_columns_slices.push(data.product_columns.slice(8, 1));
+		// }
 
 		a_data.custom_fields = response.data.custom_fields;
 		a_data.gateways = response.data.gateways;

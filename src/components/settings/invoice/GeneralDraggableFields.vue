@@ -77,7 +77,7 @@
 
 		let temp_object = object;
 		
-		object.id = data.rows.length + 5;
+		object.id = new Date().getTime().toString();
 		data.rows.push(object);
 		data.dropdown_value = '';
 

@@ -20,7 +20,7 @@
 										<div v-for="(product_column_slice, index2) in data.product_columns_slices" :key="index" class="min-w-0">
 											
 											
-											<div class="grid gap-4 mt-2" :class="{'grid-cols-6' : index2 === 0, 'grid-cols-3' : index2 === 1}">
+											<div class="grid gap-4 mt-2" :class="{'grid-cols-6' : index2 === 0, 'grid-cols-4' : index2 === 1}">
 												
 												<div v-for="(product_column, column_index) in product_column_slice" :key="column_index">
 													
@@ -55,6 +55,10 @@
 														<input-text class="w-full" :label="product_column?.text" v-model="element['normal_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text"></input-text>
 													</div>
 													
+													<!-- Tax Field -->
+													<div v-if="product_column.value == 'discount'">
+														<input-number :step="0.01" label="Discount %" v-model="element.discount" :min="0" :max="100" placeholder="Discount %" class="w-full"></input-number>
+													</div>
 													
 													<!-- Tax Field -->
 													<div v-if="product_column.value == 'tax'">
@@ -66,7 +70,7 @@
 														TOTAL<br>
 														{{ element.line_total }} {{ data.invoice_details.currency_code }}
 													</div>
-												
+													
 												</div>
 											</div>
 										</div>
@@ -86,9 +90,11 @@
 						<input-textarea label="Invoice terms" placeholder="Invoice terms" v-model="data.invoice_terms" :rows="4"></input-textarea>
 					</div>
 					<div class="lg:col-span-3">
-						<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal }} {{ data.invoice_details.currency_code }}</p>
+						<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal_whole }} {{ data.invoice_details.currency_code }}</p>
+						<p class="text-xl! mb-[5px]">Discount amount (Pre tax): {{ data.discount_amount_pre_tax }} {{ data.invoice_details.currency_code }}</p>
+						<p class="text-xl! mb-[5px]">Taxable amount : {{ data.taxable_amount }} {{ data.invoice_details.currency_code }}</p>
 						<p class="text-xl! mb-[5px]">Tax : {{ data.global_tax_amount }} {{ data.invoice_details.currency_code }}</p>
-						<p class="text-xl! mb-[5px]">Discount amount: {{ data.global_discount_amount }} {{ data.invoice_details.currency_code }}</p>
+						<p class="text-xl! mb-[5px]">Discount amount (Post tax): {{ data.global_discount_amount }} {{ data.invoice_details.currency_code }}</p>
 						<p class="text-xl! mb-[5px]">Total : {{ data.global_total }} {{ data.invoice_details.currency_code }}</p>
 						<p class="text-xl! mb-[5px]">Balance due : {{ data.global_total }} {{ data.invoice_details.currency_code }}</p>
 					</div>

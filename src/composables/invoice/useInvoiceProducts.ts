@@ -9,6 +9,8 @@ type rowType = {
 	line_subtotal?: number,
 	tax_amount?: number,
 	tax_rate?: number
+	discount?: number
+	discount_amount?: number
 	
 	[key: `custom_tax_${string}`]: number | string,
 	[key: `normal_${string}`]: number | string,
@@ -82,6 +84,8 @@ export function useInvoiceProducts(){
 			product_row.product_id = '';
 			product_row.line_subtotal = 0;
 			product_row.tax_amount = 0;
+			product_row.discount = 0;
+			product_row.discount_amount = 0;
 			
 			data.product_rows.push(product_row);
 		}

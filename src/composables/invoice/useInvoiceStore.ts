@@ -57,6 +57,9 @@ interface InvoiceCreateEditInterface{
 	}>,
 	product_id : string,
 	global_subtotal: string,
+	global_subtotal_whole: string,
+	taxable_amount: string,
+	discount_amount_pre_tax: string,
 	global_total : string,
 	global_tax_amount : string,
 	invoice_terms: string
@@ -91,12 +94,15 @@ const data = reactive<InvoiceCreateEditInterface>({
 		currency_code : '',
 	},
 	global_discount_amount: '0.00',
+	discount_amount_pre_tax: '0.00',
 	product_columns : [],
 	product_columns_slices : [],
 	product_rows : [],
 	product_id : '',
 	
 	global_subtotal : '0.00',
+	global_subtotal_whole : '0.00',
+	taxable_amount : '0.00',
 	global_total : '0.00',
 	global_tax_amount : '0.00',
 	invoice_terms: ''

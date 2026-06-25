@@ -32,10 +32,10 @@
 		<div class="lg:col-span-4 mt-[20px]">
 			<div class="lg:grid lg:grid-cols-12 lg:gap-2">
 				<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
-					<input-select label="Discount type" v-model="details.global_discount_type" :required="false" :options="discount_options"></input-select>
+					<input-select label="Discount type (Post tax)" v-model="details.global_discount_type" :required="false" :options="discount_options"></input-select>
 				</div>
 				<div class="lg:col-span-6">
-					<input-number label="Discount" v-model="details.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
+					<input-number label="Discount (Post tax)" v-model="details.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
 				</div>
 				
 				
@@ -55,6 +55,7 @@
 	import InputText from '../../inputs/InputText.vue';
 	import InputNumber from '../../inputs/InputNumber.vue';
 	import InputSelect from '../../inputs/InputSelect.vue';
+import { useInvoiceStore } from '../../../composables/invoice/useInvoiceStore.ts';
 	
 	interface InputComponent{
   		validate: () => boolean
@@ -101,6 +102,7 @@
 	};
 
 	const details = defineModel<InvoiceDetailsType>({required : true});
+	const data = useInvoiceStore();
 
 	const invoice_date_ref = ref<InputComponent | null>(null);
 	const due_date_ref = ref<InputComponent | null>(null);
@@ -121,6 +123,10 @@
 		nextTick(() => {
 			if(details.value.global_discount_type === 'percentage' && details.value.global_discount > 100){
 				details.value.global_discount = 100;
+			}else{
+				//if(details.value.global_discount > +data.global_total){
+					//details.value.global_discount = parseFloat(data.global_total);
+				//}
 			}
 		});
 	});
