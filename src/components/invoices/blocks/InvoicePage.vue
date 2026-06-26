@@ -86,10 +86,10 @@
 				<div class="clear-both"></div>
 				<br>
 				<div class="lg:grid lg:grid-cols-12 lg:gap-5">
-					<div class="lg:col-span-9">
+					<div class="lg:col-span-8">
 						<input-textarea label="Invoice terms" placeholder="Invoice terms" v-model="data.invoice_terms" :rows="4"></input-textarea>
 					</div>
-					<div class="lg:col-span-3">
+					<div class="lg:col-span-4">
 						<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal_whole }} {{ data.invoice_details.currency_code }}</p>
 						<p class="text-xl! mb-[5px]">Discount amount (Pre tax): {{ data.discount_amount_pre_tax }} {{ data.invoice_details.currency_code }}</p>
 						<p class="text-xl! mb-[5px]">Taxable amount : {{ data.taxable_amount }} {{ data.invoice_details.currency_code }}</p>

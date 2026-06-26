@@ -32,7 +32,7 @@
 								<p>PO number: {{ data.invoice_details.po_number }}</p>
 							</div>
 							<div class="lg:col-span-4 mt-[20px]">
-								<p>Discount type: {{ (data.invoice_details.discount_type === 2) ? 'Amount' : 'Percentage' }} - ({{data.invoice_details.discount_amount}} {{data.invoice_details.currency_code}})</p>
+								<p>Discount type(Post tax): {{ data.invoice_details.global_discount_type }} - ({{data.invoice_details.discount_amount_post_tax}} {{data.invoice_details.currency_code}})</p>
 							</div>
 						</div>
 						<br>
@@ -69,6 +69,11 @@
 											<div v-if="product_column.value == 'quantity'">
 												{{ product_column.text }} : {{ product_row.quantity }}
 											</div>
+
+											<!-- discount Field -->
+											<div v-if="product_column.value == 'discount'">
+												{{ product_column.text }} : {{ product_row.discount }}
+											</div>
 											
 											
 											
@@ -103,18 +108,20 @@
 						</div>
 						<br>
 						<div class="lg:grid lg:grid-cols-12 lg:gap-5">
-						<div class="lg:col-span-9">
+						<div class="lg:col-span-8">
 							<div>
 								<p>Terms</p>
 								<p>{{ data.invoice_terms }}</p>
 							</div>
 						</div>
-						<div class="lg:col-span-3">
+						<div class="lg:col-span-4">
 							<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal }} {{ data.invoice_details.currency_code }}</p>
+							<p class="text-xl! mb-[5px]">Discount amount (Pre tax): {{ data.invoice_details.discount_amount_pre_tax }} {{ data.invoice_details.currency_code }}</p>
+							<p class="text-xl! mb-[5px]">Taxable amount : {{ data.taxable_amount }} {{ data.invoice_details.currency_code }}</p>
 							<p class="text-xl! mb-[5px]">Tax : {{ data.global_tax_amount }} {{ data.invoice_details.currency_code }}</p>
-							<p class="text-xl! mb-[5px]">Discount amount: {{ data.global_discount_amount }} {{ data.invoice_details.currency_code }}</p>
+							<p class="text-xl! mb-[5px]">Discount amount (Post tax): {{ data.invoice_details.discount_amount_post_tax }} {{ data.invoice_details.currency_code }}</p>
 							<p class="text-xl! mb-[5px]">Total : {{ data.global_total }} {{ data.invoice_details.currency_code }}</p>
-							<p class="text-xl! mb-[5px]">Balance due : {{ data.global_total }} {{ data.invoice_details.currency_code }}</p>
+							<p class="text-xl! mb-[5px]">Balance due : {{ data.invoice_details.balance_due }} {{ data.invoice_details.currency_code }}</p>
 						</div>
 					</div>
 					</div>
@@ -157,6 +164,7 @@ import api from '../../helpers/api';
 import InputButton from '../inputs/InputButton.vue';
 import common from '../../helpers/common';
 import InvoiceViewSkeleton from '../skeletons/InvoiceViewSkeleton.vue';
+import Decimal from 'decimal.js';
 
 type ClientDetails = {
 	client: string,
@@ -168,7 +176,9 @@ type ClientDetails = {
 	discount_amount : number,
 	currency_code : string,
 	global_discount_type : string,
-	global_discount : number,
+	discount_amount_post_tax : string,
+	discount_amount_pre_tax : string,
+	balance_due : string,
 };
 
 type ColumnSlice = {
@@ -209,6 +219,7 @@ interface InvoiceViewInterface{
 	global_subtotal: number,
 	global_total: number,
 	global_tax_amount: number,
+	taxable_amount: string,
 	payment_method: number,
 	payment_method_str: string,
 	invoice_terms: string,
@@ -234,12 +245,15 @@ const data = reactive<InvoiceViewInterface>({
 		discount_amount : -1,
 		currency_code : '',
 		global_discount_type : '',
-		global_discount: 0	
+		discount_amount_post_tax: '0',
+		discount_amount_pre_tax: '0',
+		balance_due: '0'	
 	},
 	global_discount_amount : 0,
 	global_subtotal : 0,
 	global_total : 0,
 	global_tax_amount : 0,
+	taxable_amount : '0',
 	payment_method : 0,
 	payment_method_str : '',
 	invoice_terms : '',
@@ -298,12 +312,14 @@ const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 		data.invoice_details.client = response.data.invoice.first_name + ' ' + response.data.invoice.last_name;
 		data.invoice_details.currency_code = response.data.invoice.currency_code;
 		data.invoice_details.invoice_date = response.data.invoice.invoice_date;
-		data.invoice_details.discount_amount = response.data.invoice.discount_amount;
+		data.invoice_details.discount_amount_post_tax = (new Decimal(+response.data.invoice.discount_amount_post_tax).toFixed(2));
+		data.invoice_details.discount_amount_pre_tax = (new Decimal(response.data.invoice.discount_amount_pre_tax).toFixed(2));
+		data.invoice_details.balance_due = (new Decimal(+response.data.invoice.balance_due).toFixed(2));
 
 		data.invoice_details.due_date = response.data.invoice.due_date;
 		data.invoice_details.invoice_number = response.data.invoice.invoice_number;
 		data.invoice_details.po_number = response.data.invoice.po_number;
-		data.invoice_details.global_discount_type = (response.data.invoice.discount_type === 1) ? 'percentage' : 'amount';
+		data.invoice_details.global_discount_type = (response.data.invoice.discount_type === 1) ? 'Percentage' : 'Amount';
 
 		const product_rows = response.data.product_rows;
 		
@@ -313,9 +329,14 @@ const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 			data.invoice_details.global_discount = response.data.invoice.discount;
 			data.global_discount_amount = response.data.invoice.discount_amount;
 
+			let taxable_amount_local = Decimal(0);
+
 			product_rows.forEach((ele:productRow) => {
 				addNewProductRowView(ele);
+				taxable_amount_local = taxable_amount_local.add(ele.line_subtotal);
 			});
+
+			data.taxable_amount = taxable_amount_local.toFixed(2);
 			
 			const saved_values = response.data.custom_fields; // raw edit values
 			
