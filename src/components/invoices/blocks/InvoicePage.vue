@@ -90,7 +90,9 @@
 						<input-textarea label="Invoice terms" placeholder="Invoice terms" v-model="data.invoice_terms" :rows="4"></input-textarea>
 					</div>
 					<div class="lg:col-span-4">
-						<p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal_whole }} {{ data.invoice_details.currency_code }}</p>
+						<!-- <p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal_whole }} {{ data.invoice_details.currency_code }}</p> -->
+						<!-- <p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal }} {{ data.invoice_details.currency_code }}</p> -->
+						<p class="text-xl! mb-[5px]">Subtotal : {{ (parseFloat(data.global_subtotal) + parseFloat(data.discount_amount_pre_tax)).toFixed(2) }} {{ data.invoice_details.currency_code }}</p>
 						<p class="text-xl! mb-[5px]">Discount amount (Pre tax): {{ data.discount_amount_pre_tax }} {{ data.invoice_details.currency_code }}</p>
 						<p class="text-xl! mb-[5px]">Taxable amount : {{ data.taxable_amount }} {{ data.invoice_details.currency_code }}</p>
 						<p class="text-xl! mb-[5px]">Tax : {{ data.global_tax_amount }} {{ data.invoice_details.currency_code }}</p>
