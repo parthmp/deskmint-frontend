@@ -62,7 +62,7 @@
 											
 											<!-- Unit Cost Field -->
 											<div v-if="product_column.value == 'unit_cost'">
-												{{ product_column.text }} : {{ product_row.unit_price.toFixed(2) }}
+												{{ product_column.text }} : {{ product_row.unit_price }}
 											</div>
 											
 											<!-- Quantity Field -->
@@ -346,7 +346,6 @@ const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 				if(saved){
 					
 					if(field.custom_field_type.input_type === 'multiselect'){
-						console.log(saved.field_value);
 						field.value = JSON.parse(saved.field_value ?? []).join(', ');
 					}else if(field.custom_field_type.input_type === 'datetime'){
 						field.value = common.formatDate(saved.field_value);

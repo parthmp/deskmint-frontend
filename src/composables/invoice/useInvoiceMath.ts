@@ -17,6 +17,8 @@ type rowType = {
 
     type?: string,
     tax?: boolean,
+	_tax_amount_precise?: string,
+	_line_total_precise?: string,
 
     [key: `custom_tax_${string}`]: number | string | Decimal | undefined,
     [key: `normal_${string}`]: number | string | Decimal | undefined,
@@ -67,23 +69,39 @@ export function useInvoiceMath(){
 		let taxable_amount = new Decimal(0);
 		let global_subtotal_whole = new Decimal(0);
 
-		for(const row of data.product_rows){
+		// for(const row of data.product_rows){
 			
-			const subtotal = new Decimal(+row.line_subtotal || 0);
-			const tax = new Decimal(+row.tax_amount || 0);
-			const line_total = subtotal.add(+tax);
-			const discount_amount = new Decimal(+row.discount_amount || 0);
+		// 	const subtotal = new Decimal(+row.line_subtotal || 0);
+		// 	const tax = new Decimal(+row.tax_amount || 0);
+		// 	//const line_total = subtotal.add(+tax);
+		// 	const line_total = new Decimal(+row.line_total || 0);
+		// 	const discount_amount = new Decimal(+row.discount_amount || 0);
 			
-			global_subtotal = global_subtotal.add(subtotal);
-			global_subtotal_whole = global_subtotal.add(subtotal);
-			global_tax = global_tax.add(tax);
-			global_total = global_total.add(line_total);
-			taxable_amount = taxable_amount.add(subtotal);
+		// 	global_subtotal = global_subtotal.add(subtotal);
+		// 	global_subtotal_whole = global_subtotal.add(subtotal);
+		// 	global_tax = global_tax.add(tax);
+		// 	global_total = global_total.add(line_total);
+		// 	taxable_amount = taxable_amount.add(subtotal);
 
-			discount_amount_pre_tax = discount_amount_pre_tax.add(discount_amount);
-			global_subtotal_whole = global_subtotal.add(discount_amount);
+		// 	discount_amount_pre_tax = discount_amount_pre_tax.add(discount_amount);
+		// 	global_subtotal_whole = global_subtotal.add(discount_amount);
 			
-		}
+		// }
+
+		for(const row of data.product_rows){
+    const subtotal = new Decimal(+row.line_subtotal || 0);
+    const tax = new Decimal(row._tax_amount_precise as string || +row.tax_amount || 0);
+    const line_total = new Decimal(row._line_total_precise as string || +row.line_total || 0);
+    const discount_amount = new Decimal(+row.discount_amount || 0);
+    
+    global_subtotal = global_subtotal.add(subtotal);
+    global_subtotal_whole = global_subtotal.add(subtotal);
+    global_tax = global_tax.add(tax);
+    global_total = global_total.add(line_total);
+    taxable_amount = taxable_amount.add(subtotal);
+    discount_amount_pre_tax = discount_amount_pre_tax.add(discount_amount);
+    global_subtotal_whole = global_subtotal.add(discount_amount);
+}
 
 		data.global_subtotal = global_subtotal.toFixed(2);
 		data.global_tax_amount = global_tax.toFixed(2);
@@ -139,31 +157,37 @@ export function useInvoiceMath(){
 				let line_subtotal = quantity.mul(unit_price);
 				
 				if(discount.greaterThan(0)){
-					discount_amount = discount_amount.add(line_subtotal.mul(discount.div(100)));
+					discount_amount = new Decimal(line_subtotal.mul(discount.div(100)).toFixed(4));
 					line_subtotal = line_subtotal.sub(discount_amount);
 				}
-				raw_row.line_subtotal = line_subtotal.toNumber();
 				
-
-				raw_row.discount_amount = discount_amount.toNumber();
+				raw_row.discount_amount = +discount_amount.toFixed(2);
 
 				// calculate total tax for the line
 				let tax_amount = new Decimal(0);
-				
+
 				for (const key in raw_row) {
 					if(key.startsWith("custom_tax_") || key === 'tax'){
 						const tax_percent = new Decimal(raw_row[key] || 0);
-						tax_amount = tax_amount.add(line_subtotal.mul(tax_percent.div(100)));
+						const rate = new Decimal(tax_percent.div(100).toFixed(4));
+						const individual_tax = new Decimal(line_subtotal.mul(rate).toFixed(4));
+						tax_amount = tax_amount.add(individual_tax);
 					}
 				}
 
-				raw_row.tax_amount = tax_amount.toNumber();
+				raw_row.tax_amount = +tax_amount.toFixed(2);
 
-				// line_total = subtotal + tax
 				const lineTotal = line_subtotal.add(tax_amount);
-				raw_row.line_total = lineTotal.toFixed(2);
 
+				raw_row.line_total = lineTotal.toFixed(2);
+				raw_row.line_subtotal = +line_subtotal.toFixed(2);
+
+				raw_row._tax_amount_precise = tax_amount.toString();
+				raw_row._line_total_precise = lineTotal.toString();
+
+				
 			}
+
 			Object.assign(row, raw_row);
 			
 		}
