@@ -95,6 +95,7 @@
 	const fetchCompanyLogo = () : void => {
 		data.loading = true;
 		api.get('manage-company-settings-logo').then(response => {
+			
 			data.image_path = response.data.url
 			
 		}).catch(error => {}).finally(() => { data.loading = false; });

@@ -89,19 +89,19 @@ export function useInvoiceMath(){
 		// }
 
 		for(const row of data.product_rows){
-    const subtotal = new Decimal(+row.line_subtotal || 0);
-    const tax = new Decimal(row._tax_amount_precise as string || +row.tax_amount || 0);
-    const line_total = new Decimal(row._line_total_precise as string || +row.line_total || 0);
-    const discount_amount = new Decimal(+row.discount_amount || 0);
-    
-    global_subtotal = global_subtotal.add(subtotal);
-    global_subtotal_whole = global_subtotal.add(subtotal);
-    global_tax = global_tax.add(tax);
-    global_total = global_total.add(line_total);
-    taxable_amount = taxable_amount.add(subtotal);
-    discount_amount_pre_tax = discount_amount_pre_tax.add(discount_amount);
-    global_subtotal_whole = global_subtotal.add(discount_amount);
-}
+			const subtotal = new Decimal(+row.line_subtotal || 0);
+			const tax = new Decimal(row._tax_amount_precise as string || +row.tax_amount || 0);
+			const line_total = new Decimal(row._line_total_precise as string || +row.line_total || 0);
+			const discount_amount = new Decimal(+row.discount_amount || 0);
+			
+			global_subtotal = global_subtotal.add(subtotal);
+			global_subtotal_whole = global_subtotal.add(subtotal);
+			global_tax = global_tax.add(tax);
+			global_total = global_total.add(line_total);
+			taxable_amount = taxable_amount.add(subtotal);
+			discount_amount_pre_tax = discount_amount_pre_tax.add(discount_amount);
+			global_subtotal_whole = global_subtotal.add(discount_amount);
+		}
 
 		data.global_subtotal = global_subtotal.toFixed(2);
 		data.global_tax_amount = global_tax.toFixed(2);
