@@ -73,7 +73,9 @@
 			if(data.parent) {
 				data.parent.style.background = color.rgbaString;
 			}
-			emit("update:modelValue", color.hex);	
+			//emit("update:modelValue", color.hex);
+			emit("update:modelValue", color.hex.slice(0, 7));
+	
 		};
 	}
 
