@@ -266,7 +266,7 @@
 	}
 
 	onMounted(() => {
-		
+		data.locked = false;
 		if(route.path.includes('edit')){
 			a_data.mode = 'edit';
 			a_data.invoice_id = +route.params.id;
