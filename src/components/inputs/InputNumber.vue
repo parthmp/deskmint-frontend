@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="random_field_id">{{ local_field_name }}</label>
-		<input type="number" :step="local_step" :min="local_min" :max="local_max" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="random_field_id" @input="EmitModel" :class="{'red-input-order': highlight_error}">
+		<input type="number" :disabled="local_disabled" :step="local_step" :min="local_min" :max="local_max" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="random_field_id" @input="EmitModel" :class="{'red-input-order': highlight_error, 'dark:bg-neutral-900! bg-neutral-200! cursor-not-allowed!' : local_disabled}">
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">Please enter valid number</span>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
@@ -21,7 +21,8 @@
 		local_placeholder: string,
 		local_min: number,
 		local_max: number,
-		local_step: number
+		local_step: number,
+		local_disabled: boolean
 	}
 
 	import common from '../../helpers/common';
@@ -31,7 +32,7 @@
 	export default defineComponent({
 
 		name : 'InputNumber',
-		props: ['modelValue', 'required', 'error', 'field_name', 'placeholder', 'min', 'max', 'step', 'label'],
+		props: ['modelValue', 'required', 'error', 'field_name', 'placeholder', 'min', 'max', 'step', 'label', 'disabled'],
 
 		data() : InputNumberInterface {
 			return {
@@ -46,7 +47,8 @@
 				local_placeholder: '',
 				local_min: 0,
 				local_max: 99999999999999,
-				local_step : 1
+				local_step : 1,
+				local_disabled: false
 			};
 		},
 
@@ -65,6 +67,11 @@
 			},
 			modelValue() : void{
 				this.fillMe();
+			},
+			disabled() : void {
+				if(common.isset(this.disabled)){
+					this.local_disabled = this.disabled;
+				}
 			}
 		},
 
@@ -168,6 +175,10 @@
 			
 			if(common.isset(this.label)){
 				this.local_field_name = this.label+'';
+			}
+
+			if(common.isset(this.disabled)){
+				this.local_disabled = this.disabled;
 			}
 		
 		}

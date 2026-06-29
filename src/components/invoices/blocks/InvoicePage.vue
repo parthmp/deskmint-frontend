@@ -13,7 +13,7 @@
 								
 								<div class="rounded-lg p-5 shadow-sm bg-deskmint-sage-green mt-5 relative" :key="index">
 									<IconGrain class="absolute left-0 top-0 drag-handle block"></IconGrain>
-									<IconTrash class="float-end text-red-500! cursor-pointer" @click.prevent="removeProductRow(element)"></IconTrash>
+									<IconTrash class="float-end text-red-500! cursor-pointer" v-if="!data.locked" @click.prevent="removeProductRow(element)"></IconTrash>
 									<div class="clear-both"></div>
 									<div class="">
 										
@@ -26,43 +26,43 @@
 													
 													
 													<div v-if="product_column.value == 'item'">
-														<input-auto-complete label="Item" v-model="element.item" @selected="(selected_item:Row) => handleProductSelect(selected_item, element)" :error="data.invoice_details.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
+														<input-auto-complete :disabled="data.locked" label="Item" v-model="element.item" @selected="(selected_item:Row) => handleProductSelect(selected_item, element)" :error="data.invoice_details.client.error" endpoint="manage-invoices/fetch-products" :required="true" placeholder="Item" :options="data.clients"></input-auto-complete>
 													</div>
 													
 													
 													<!-- Description Field -->
 													<div v-if="product_column.value == 'description'">
-														<input-textarea :rows="1" label="Description" v-model="element.description" placeholder="Description" class="w-full"></input-textarea>
+														<input-textarea :rows="1" :disabled="data.locked" label="Description" v-model="element.description" placeholder="Description" class="w-full"></input-textarea>
 													</div>
 													
 													<!-- Unit Cost Field -->
 													<div v-if="product_column.value == 'unit_cost'">
-														<input-number :step="0.01" label="Unit cost" v-model="element.unit_price" placeholder="Unit cost" class="w-full"></input-number>
+														<input-number :step="0.01" label="Unit cost" :disabled="data.locked" v-model="element.unit_price" placeholder="Unit cost" class="w-full"></input-number>
 													</div>
 													
 													<!-- Quantity Field -->
 													<div v-if="product_column.value == 'quantity'">
-														<input-number :step="1" label="Quantity" v-model="element.quantity" placeholder="Quantity" class="w-full"></input-number>
+														<input-number :step="1" label="Quantity" :disabled="data.locked" v-model="element.quantity" placeholder="Quantity" class="w-full"></input-number>
 													</div>
 													
 													
 													
 													<!-- Custom Field -->
 													<div v-if="product_column.type == 'custom' && product_column?.tax === true">
-														<input-number :step="0.01" :label="product_column?.text" :min="0" :max="100" v-model="element['custom_tax_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text" class="w-full"></input-number>
+														<input-number :step="0.01" :disabled="data.locked" :label="product_column?.text" :min="0" :max="100" v-model="element['custom_tax_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text" class="w-full"></input-number>
 													</div>
 													<div v-if="product_column.type == 'custom' && product_column?.tax === false">
-														<input-text class="w-full" :label="product_column?.text" v-model="element['normal_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text"></input-text>
+														<input-text class="w-full" :disabled="data.locked" :label="product_column?.text" v-model="element['normal_'+common.replaceWithUnderscores(product_column?.text)]" :placeholder="product_column?.text"></input-text>
 													</div>
 													
 													<!-- Tax Field -->
 													<div v-if="product_column.value == 'discount'">
-														<input-number :step="0.01" label="Discount %" v-model="element.discount" :min="0" :max="100" placeholder="Discount %" class="w-full"></input-number>
+														<input-number :step="0.01" :disabled="data.locked" label="Discount %" v-model="element.discount" :min="0" :max="100" placeholder="Discount %" class="w-full"></input-number>
 													</div>
 													
 													<!-- Tax Field -->
 													<div v-if="product_column.value == 'tax'">
-														<input-number :step="0.01" label="Tax %" v-model="element.tax" :min="0" :max="100" placeholder="Tax %" class="w-full"></input-number>
+														<input-number :step="0.01" :disabled="data.locked" label="Tax %" v-model="element.tax" :min="0" :max="100" placeholder="Tax %" class="w-full"></input-number>
 													</div>
 													
 													<!-- Line Total Display -->
@@ -82,12 +82,12 @@
 					</draggable>
 				</div>
 				<div class="clear-both"></div>
-				<input-button @click.prevent="addProductRow" type="button" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
+				<input-button v-if="!data.locked" @click.prevent="addProductRow" type="button" label="Add" icon="IconPlus" class="lg:float-start"></input-button>
 				<div class="clear-both"></div>
 				<br>
 				<div class="lg:grid lg:grid-cols-12 lg:gap-5">
 					<div class="lg:col-span-8">
-						<input-textarea label="Invoice terms" placeholder="Invoice terms" v-model="data.invoice_terms" :rows="4"></input-textarea>
+						<input-textarea :disabled="data.locked" label="Invoice terms" placeholder="Invoice terms" v-model="data.invoice_terms" :rows="4"></input-textarea>
 					</div>
 					<div class="lg:col-span-4">
 						<!-- <p class="text-xl! mb-[5px]">Subtotal : {{ data.global_subtotal_whole }} {{ data.invoice_details.currency_code }}</p> -->

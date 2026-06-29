@@ -7,8 +7,9 @@
 			v-model="input_value" 
 			class="form-control" 
 			:id="text_id" 
+			:disabled="local_disabled"
 			@input="filterOptions" 
-			:class="{'red-input-order': (local_error !== '' && local_show_errors)}" 
+			:class="{'red-input-order': (local_error !== '' && local_show_errors), 'dark:bg-neutral-900! bg-neutral-200! cursor-not-allowed!' : local_disabled}" 
 			@keydown="handleKeydown"
 			ref="inputRef"
 			@focus="updateDropdownPosition"
@@ -50,7 +51,7 @@
 		is_valid: boolean,
 		local_error: string,
 		local_show_errors: boolean,
-		local_label: string
+		local_label: string,
 		local_placeholder: string,
 		copy_options: Array<object>,
 		show_dropdown:boolean,
@@ -59,7 +60,8 @@
 		current_selected : object,
 		ajax_loading: boolean,
 		ajax_loading_text: string,
-		dropdown_style: object
+		dropdown_style: object,
+		local_disabled: boolean
 	}
 
 	import api from '../../helpers/api';
@@ -101,11 +103,15 @@
 			},
 			addnew : {
 				type:String
+			},
+			disabled : {
+				type:Boolean
 			}
 		},
 
 		data() : InputTextInterface {
 			return {
+				local_disabled: '',
 				input_value: '',
 				input_required: false,
 				is_valid : true,
@@ -120,7 +126,8 @@
 				current_selected: {},
 				ajax_loading: false,
 				ajax_loading_text: '',
-				dropdown_style: {}
+				dropdown_style: {},
+				local_disabled: false
 			};
 		},
 
@@ -152,6 +159,11 @@
 				} else {
 					window.removeEventListener('scroll', this.updateDropdownPosition, true);
 					window.removeEventListener('resize', this.updateDropdownPosition);
+				}
+			},
+			disabled() : void {
+				if(common.isset(this.disabled)){
+					this.local_disabled = this.disabled;
 				}
 			}
 		},
@@ -349,6 +361,10 @@
 
 			if(common.isset(this.show_errors)){
 				this.local_show_errors = this.show_errors;
+			}
+
+			if(common.isset(this.disabled)){
+				this.local_disabled = this.disabled;
 			}
 		},
 

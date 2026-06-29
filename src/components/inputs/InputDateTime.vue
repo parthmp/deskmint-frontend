@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<vue-date-picker :range="range" :id="text_id" :left="true" :placeholder="local_placeholder" v-model="input_value" :time-picker="time_picker_only" :enable-time-picker="time_picker" :is-24="false" :format="datetime_format" position="left" @update:model-value="EmitModel" :class="{'red-input-order-div': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors))}"></vue-date-picker>
+		<vue-date-picker :disabled="local_disabled" :range="range" :id="text_id" :left="true" :placeholder="local_placeholder" v-model="input_value" :time-picker="time_picker_only" :enable-time-picker="time_picker" :is-24="false" :format="datetime_format" position="left" @update:model-value="EmitModel" :class="{'red-input-order-div': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors)), 'dark:bg-neutral-900! bg-neutral-200! cursor-not-allowed!' : local_disabled}"></vue-date-picker>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
@@ -22,6 +22,7 @@
 		time_picker_only:boolean,
 		datetime_format: string,
 		range: any,
+		local_disabled: boolean
 	}
 
 	import common from '../../helpers/common';
@@ -36,7 +37,7 @@
 
 		name : 'InputDateTime',
 
-		props : ['modelValue', 'required', 'error', 'label', 'mode', 'placeholder'],
+		props : ['modelValue', 'required', 'error', 'label', 'mode', 'placeholder', 'disabled'],
 
 		data() : InputDateTimeInterface{
 			return {
@@ -50,7 +51,8 @@
 				time_picker: true,
 				time_picker_only: true,
 				datetime_format: 'dd-MMM-yyyy p',
-				range: false
+				range: false,
+				local_disabled : false
 			};
 		},
 
@@ -72,6 +74,11 @@
 
 			modelValue() : void{
 				this.setModelValue();
+			},
+			disabled() : void {
+				if(common.isset(this.disabled)){
+					this.local_disabled = this.disabled;
+				}
 			}
 		},
 
@@ -282,6 +289,10 @@
 
 			if(common.isset(this.placeholder)){
 				this.local_placeholder = this.placeholder || '';
+			}
+
+			if(common.isset(this.disabled)){
+				this.local_disabled = this.disabled;
 			}
 
 			this.modding();

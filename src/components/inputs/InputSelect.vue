@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<select :id="text_id" v-model="input_value" @change="emitChanged" @input="EmitModel" :class="{'red-input-order': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors))}">
+		<select :disabled="local_disabled" :id="text_id" v-model="input_value" @change="emitChanged" @input="EmitModel" :class="{'red-input-order': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors)), 'dark:bg-neutral-900! bg-neutral-200! cursor-not-allowed!' : local_disabled}">
 			<option v-if="local_placeholder !== ''" value="">{{ local_placeholder }}</option>
 			<option v-for="(option, z) in options" :key="z" :value="option.value+''">{{ option.text+'' }}</option>
 		</select>
@@ -20,6 +20,7 @@
 		show_errors: boolean,
 		local_label: string
 		local_placeholder: string
+		local_disabled:boolean
 	}
 
 	import common from '../../helpers/common';
@@ -51,7 +52,10 @@
 			},
 			options:{
 				type:Array<Object>
-			}
+			},
+			disabled : {
+				type:Boolean
+			},
 		},
 
 		data() : InputSelectInterface {
@@ -62,7 +66,8 @@
 				local_error : '',
 				show_errors: false,
 				local_label: '',
-				local_placeholder:''
+				local_placeholder:'',
+				local_disabled: false
 			};
 		},
 
@@ -80,6 +85,11 @@
 			},
 			modelValue() : void{
 				this.fillMe();
+			},
+			disabled() : void {
+				if(common.isset(this.disabled)){
+					this.local_disabled = this.disabled;
+				}
 			}
 		},
 
@@ -169,6 +179,9 @@
 
 			if(common.isset(this.placeholder)){
 				this.local_placeholder = this.placeholder+'';
+			}
+			if(common.isset(this.disabled)){
+				this.local_disabled = this.disabled;
 			}
 		}
 

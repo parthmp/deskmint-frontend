@@ -3,7 +3,7 @@
 		<div class="lg:col-span-4">
 			<div class="grid grid-cols-12 gap-2">
 				<div class="col-span-9">
-					<input-auto-complete label="Client" v-model="details.client.value" @selected="handleClientSelect" :error="details.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="details.clients" :show_errors="details.client.show_errors"></input-auto-complete>
+					<input-auto-complete label="Client" :disabled="data.locked" v-model="details.client.value" @selected="handleClientSelect" :error="details.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="details.clients" :show_errors="details.client.show_errors"></input-auto-complete>
 				
 				</div>
 				<div class="col-span-3">
@@ -15,27 +15,27 @@
 			</div>
 		</div>
 		<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-			<input-date-time mode="date" label="Invoice date" v-model="details.invoice_date.value" :error="details.invoice_date.error" :required="true" ref="invoice_date_ref" placeholder="Select invoice date"></input-date-time>
+			<input-date-time mode="date" label="Invoice date" :disabled="data.locked" v-model="details.invoice_date.value" :error="details.invoice_date.error" :required="true" ref="invoice_date_ref" placeholder="Select invoice date"></input-date-time>
 		</div>
 		<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-			<input-date-time mode="date" label="Due date" v-model="details.due_date.value" :error="details.due_date.error" :required="true" placeholder="Select due date" ref="due_date_ref"></input-date-time>
+			<input-date-time mode="date" label="Due date" v-model="details.due_date.value" :disabled="data.locked" :error="details.due_date.error" :required="true" placeholder="Select due date" ref="due_date_ref"></input-date-time>
 		</div>
 	</div>
 
 	<div class="lg:grid lg:grid-cols-12 lg:gap-5">
 		<div class="lg:col-span-4 mt-[20px]">
-			<input-text label="Invoice number" v-model="details.invoice_number.value" :error="details.invoice_number.error" :required="true" placeholder="Invoice number" ref="invoice_number_ref"></input-text>
+			<input-text label="Invoice number" v-model="details.invoice_number.value" :disabled="data.locked" :error="details.invoice_number.error" :required="true" placeholder="Invoice number" ref="invoice_number_ref"></input-text>
 		</div>
 		<div class="lg:col-span-4 mt-[20px]">
-			<input-text label="PO number" v-model="details.po_number" :required="false" placeholder="PO number"></input-text>
+			<input-text label="PO number" v-model="details.po_number" :disabled="data.locked" :required="false" placeholder="PO number"></input-text>
 		</div>
 		<div class="lg:col-span-4 mt-[20px]">
 			<div class="lg:grid lg:grid-cols-12 lg:gap-2">
 				<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
-					<input-select label="Discount type (Post tax)" v-model="details.global_discount_type" :required="false" :options="discount_options"></input-select>
+					<input-select label="Discount type (Post tax)" :disabled="data.locked" v-model="details.global_discount_type" :required="false" :options="discount_options"></input-select>
 				</div>
 				<div class="lg:col-span-6">
-					<input-number label="Discount (Post tax)" v-model="details.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
+					<input-number label="Discount (Post tax)" :disabled="data.locked" v-model="details.global_discount" :required="false" placeholder="Discount" :step="0.01"></input-number>
 				</div>
 				
 				

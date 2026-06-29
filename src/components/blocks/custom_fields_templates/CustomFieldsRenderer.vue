@@ -5,38 +5,38 @@
 				<div v-for="(field, key) in custom_fields" :key="key" :class="{'lg:col-span-12' : (field.span === 12), 'lg:col-span-6' : (field.span === 6), 'lg:col-span-4' : (field.span === 4)}">
 					
 					<div v-if="field.custom_field_type.input_type === 'text'">
-						<input-text :required="field.required" :label="field.label" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-text>
+						<input-text :required="field.required" :disabled="cf_data.local_disabled" :label="field.label" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-text>
 					</div>
 					<div v-if="field.custom_field_type.input_type === 'textarea'">
-						<input-textarea :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-textarea>
+						<input-textarea :label="field.label" :disabled="cf_data.local_disabled" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-textarea>
 					</div>
 					<div v-if="field.custom_field_type.input_type === 'email'">
-						<input-email :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-email>
+						<input-email :label="field.label" :disabled="cf_data.local_disabled" :required="field.required" :prop_placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-email>
 					</div>
 					<div v-if="field.custom_field_type.input_type === 'select'">
-						<input-select :label="field.label" :options="field.type_params" :prop_placeholder="field.placeholder" :required="field.required" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-select>
+						<input-select :label="field.label" :disabled="cf_data.local_disabled" :options="field.type_params" :prop_placeholder="field.placeholder" :required="field.required" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-select>
 					</div>
 					<div v-if="field.custom_field_type.input_type === 'number'">
-						<input-number :field_name="field.label" :required="field.required" :placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-number>
+						<input-number :field_name="field.label" :disabled="cf_data.local_disabled" :required="field.required" :placeholder="field.placeholder" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-number>
 					</div>
 					<div v-if="field.custom_field_type.input_type === 'date'">
-						<input-date-time mode="date" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => setFieldRef(field.ref, el)"></input-date-time>
+						<input-date-time mode="date" :disabled="cf_data.local_disabled" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => setFieldRef(field.ref, el)"></input-date-time>
 					</div>
 
 					<div v-if="field.custom_field_type.input_type === 'time'">
-						<input-date-time mode="time" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => setFieldRef(field.ref, el)"></input-date-time>
+						<input-date-time mode="time" :disabled="cf_data.local_disabled" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => setFieldRef(field.ref, el)"></input-date-time>
 					</div>
 
 					<div v-if="field.custom_field_type.input_type === 'datetime'">
-						<input-date-time mode="datetime" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => setFieldRef(field.ref, el)"></input-date-time>
+						<input-date-time mode="datetime" :disabled="cf_data.local_disabled" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => setFieldRef(field.ref, el)"></input-date-time>
 					</div>
 
 					<div v-if="field.custom_field_type.input_type === 'telephone'">
-						<input-telephone mode="telephone" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => setFieldRef(field.ref, el)"></input-telephone>
+						<input-telephone mode="telephone" :disabled="cf_data.local_disabled" :label="field.label" :required="field.required" :prop_placeholder="field.placeholder" :error="field.error" v-model="field.value" :ref="el => setFieldRef(field.ref, el)"></input-telephone>
 					</div>
 
 					<div v-if="field.custom_field_type.input_type === 'multiselect'">
-						<input-multiselect :label="field.label" :options="field.type_params" :required="field.required" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-multiselect>
+						<input-multiselect :disabled="cf_data.local_disabled" :label="field.label" :options="field.type_params" :required="field.required" v-model="field.value" :error="field.error" :ref="el => setFieldRef(field.ref, el)"></input-multiselect>
 					</div>
 					
 				</div>
@@ -52,7 +52,7 @@
 
 <script lang="ts" setup>
 
-	import { ref, watch, type Ref } from 'vue';
+	import { onMounted, reactive, ref, watch, type Ref } from 'vue';
 	import InputText from '../../inputs/InputText.vue';
 	import InputTextarea from '../../inputs/InputTextarea.vue';
 	import InputEmail from '../../inputs/InputEmail.vue';
@@ -67,6 +67,12 @@
 
 	// Props - just receive the array directly, no duplication
 	const custom_fields = defineModel<Array<any>>({ required: true });
+
+	const cf_data = reactive({
+		local_disabled : false
+	});
+
+	const props = defineProps(['disabled']);
 
 	// Emit for validation result
 	const emit = defineEmits<{
@@ -96,6 +102,14 @@
 			}
 		});
 	}, { deep: false });
+
+	watch(props.disabled, () => {
+		if(props.disabled){
+			cf_data.local_disabled = true;
+		}else{
+			cf_data.local_disabled = false;
+		}
+	});
 
 	// Validation method
 	const validateFields = (): boolean => {
@@ -138,6 +152,14 @@
 		const is_valid = validateFields();
 		emit('validated', is_valid);
 	}
+
+	onMounted(() => {
+		if(props.disabled){
+			cf_data.local_disabled = true;
+		}else{
+			cf_data.local_disabled = false;
+		}
+	});
 
 	// Expose validation method so parent can call it
 	defineExpose({ 

@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<input type="text" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="text_id" @input="EmitModel" :class="{'red-input-order': (local_error !== '' && show_errors)}">
+		<input type="text" :disabled="local_disabled" :placeholder="local_placeholder" v-model="input_value" class="form-control" :id="text_id" @input="EmitModel" :class="{'red-input-order': (local_error !== '' && show_errors), 'dark:bg-neutral-900! bg-neutral-200! cursor-not-allowed!' : local_disabled}">
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
@@ -15,7 +15,8 @@
 		local_error: string,
 		show_errors: boolean,
 		local_label: string
-		local_placeholder: string
+		local_placeholder: string,
+		local_disabled: boolean
 	}
 
 	import common from '../../helpers/common';
@@ -47,7 +48,10 @@
 			},
 			show_errors_prop : {
 				type:Boolean
-			}
+			},
+			disabled : {
+				type:Boolean
+			},
 		},
 
 		data() : InputTextInterface {
@@ -58,7 +62,8 @@
 				local_error : '',
 				show_errors: false,
 				local_label: '',
-				local_placeholder:''
+				local_placeholder:'',
+				local_disabled : false
 			};
 		},
 
@@ -81,6 +86,11 @@
 			show_errors_prop() : void{
 				if(common.isset(this.show_errors_prop)){
 					this.show_errors = this.show_errors_prop ?? false;
+				}
+			},
+			disabled() : void {
+				if(common.isset(this.disabled)){
+					this.local_disabled = this.disabled;
 				}
 			}
 		},
@@ -172,6 +182,9 @@
 
 			if(common.isset(this.show_errors_prop)){
 				this.show_errors = this.show_errors_prop ?? false;
+			}
+			if(common.isset(this.disabled)){
+				this.local_disabled = this.disabled;
 			}
 		}
 

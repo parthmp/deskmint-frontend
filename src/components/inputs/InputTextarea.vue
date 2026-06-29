@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<textarea v-model="input_value" class="form-control" :rows="local_rows" :id="text_id" @input="EmitModel" :placeholder="local_placeholder" :class="{'red-input-order': (local_error !== '' && show_errors)}"></textarea>
+		<textarea v-model="input_value" :disabled="local_disabled" class="form-control" :rows="local_rows" :id="text_id" @input="EmitModel" :placeholder="local_placeholder" :class="{'red-input-order': (local_error !== '' && show_errors), 'dark:bg-neutral-900! bg-neutral-200! cursor-not-allowed!' : local_disabled}"></textarea>
 		<span v-if="(local_error !== '' && show_errors)" class="text-red-500! text-[14px]! block">{{ error }}</span>
 	</div>
 </template>
@@ -16,7 +16,8 @@
 		show_errors: boolean,
 		local_label: string
 		local_placeholder: string
-		local_rows: number
+		local_rows: number,
+		local_disabled: boolean
 	}
 
 	import common from '../../helpers/common';
@@ -48,6 +49,9 @@
 			},
 			rows : {
 				type : Number
+			},
+			disabled : {
+				type : Boolean
 			}
 		},
 
@@ -60,8 +64,9 @@
 				show_errors: false,
 				local_label: '',
 				local_placeholder:'',
-				local_rows : 2
-			};
+				local_rows : 2,
+				local_disabled: false
+			}
 		},
 
 		components: {
@@ -81,6 +86,11 @@
 			},
 			modelValue() : void{
 				this.fillMe();
+			},
+			disabled() : void {
+				if(common.isset(this.disabled)){
+					this.local_disabled = this.disabled;
+				}
 			}
 		},
 
@@ -164,6 +174,9 @@
 			}
 			if(common.isset(this.rows)){
 				this.local_rows = this.rows || 2;
+			}
+			if(common.isset(this.disabled)){
+				this.local_disabled = this.disabled;
 			}
 		}
 

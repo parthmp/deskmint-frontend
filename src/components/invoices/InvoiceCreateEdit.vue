@@ -3,6 +3,8 @@
     	<div class="card">
 			 <h1 class="text-2xl!" v-if="a_data.mode === 'create'">Create an invoice</h1>
 			 <h1 class="text-2xl!" v-if="a_data.mode === 'edit'">Edit invoice</h1>
+			 
+			 <p v-if="data.locked" class="font-bold dark:text-red-400! text-red-500!">This invoice has payments attached to it, so you can not edit it.</p>
 			 <br>
 			 <client-create-edit-skeleton :blocks="3" v-if="!a_data.fetched"></client-create-edit-skeleton>
 			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue" v-if="a_data.fetched">
@@ -11,11 +13,11 @@
 				</template>
 				<template v-slot:tab-1>
 					<div>
-						<CustomFieldsRenderer v-model="a_data.custom_fields" @validated="handleCustomFieldsValidated" ref="custom_fields_tab_ref"></CustomFieldsRenderer>
+						<CustomFieldsRenderer :disabled="data.locked" v-model="a_data.custom_fields" @validated="handleCustomFieldsValidated" ref="custom_fields_tab_ref"></CustomFieldsRenderer>
 					</div>
 				</template>
 				<template v-slot:tab-2>
-					<SettingsTab :btn_disabled="a_data.btn_disabled" v-model:payment_method="a_data.payment_method" v-model:send_invoice_in_email="a_data.send_invoice_in_email" v-model:gateways="a_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
+					<SettingsTab :btn_disabled="a_data.btn_disabled" :disabled="data.locked" v-model:payment_method="a_data.payment_method" v-model:send_invoice_in_email="a_data.send_invoice_in_email" v-model:gateways="a_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
 				</template>
 			 </tabs>
 		</div>
@@ -209,6 +211,7 @@
 			}
 		});
 
+		data.locked = response.data.locked;
 		data.invoice_details.client.value = response.data.invoice.first_name + ' ' + response.data.invoice.last_name;
 		data.invoice_details.client.client_id = response.data.invoice.client_id+'';
 		data.invoice_details.currency_id = response.data.invoice.currency_id;

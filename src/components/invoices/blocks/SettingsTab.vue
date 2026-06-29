@@ -6,18 +6,19 @@
 				:options="payment_methods" 
 				placeholder="Select payment method" 
 				:required="true" 
+				:disabled="data.local_disabled"
 				v-model="payment_method.value" 
-				:error="payment_method.error" 
+				:error="payment_method.error"
 				ref="payment_method_ref"
 			/>
 			<br>
-			<span class="flex gap-5 items-center">
+			<span v-if="!data.local_disabled" class="flex gap-5 items-center">
 				<input-switch v-model="send_invoice_in_email" />
 				<span @click.prevent="send_invoice_in_email = !send_invoice_in_email">
 					Send email with invoice
 				</span>
 			</span>
-			<input-button :disabled="data.btn_disabled_local" btn_text="Save" icon="iconCheck" class="lg:float-end" />
+			<input-button v-if="!data.local_disabled" :disabled="data.btn_disabled_local" btn_text="Save" icon="iconCheck" class="lg:float-end" />
 			<div class="clear-both"></div>
 		</form>
 	</div>
@@ -42,12 +43,16 @@
 	});
 
 	const data = reactive({
-		btn_disabled_local : false
+		btn_disabled_local : false,
+		local_disabled : false
 	});
 
 	const props = defineProps({
 		btn_disabled : {
 			type:Boolean
+		},
+		disabled : {
+			type : Boolean
 		}
 	});
 
@@ -74,6 +79,14 @@
 		data.btn_disabled_local = props.btn_disabled ?? false;
 	});
 
+	watch(props.disabled, () => {
+		if(props.disabled){
+			data.local_disabled = true;
+		}else{
+			data.local_disabled = false;
+		}
+	});
+
 	const validateSettings = (): boolean => {
 		payment_method.value.error = '';
 		
@@ -89,6 +102,14 @@
 		const is_valid = validateSettings();
 		emit('validated', is_valid);
 	}
+
+	onMounted(() => {
+		if(props.disabled){
+			data.local_disabled = true;
+		}else{
+			data.local_disabled = false;
+		}
+	});
 
 	// Expose validation method so parent can call it
 	defineExpose({ 

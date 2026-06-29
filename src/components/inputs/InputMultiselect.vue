@@ -1,7 +1,7 @@
 <template>
 	<div class="form-group">
 		<label :for="text_id">{{ local_label }}</label>
-		<select multiple="true" :id="text_id" v-model="input_value" @change="EmitModel" class="styled-scrollbar" :class="{'red-input-order': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors))}">
+		<select :disabled="local_disabled" multiple="true" :id="text_id" v-model="input_value" @change="EmitModel" class="styled-scrollbar" :class="{'red-input-order': ((local_error !== '' && show_errors) || (!is_valid && local_error === '' && show_errors)), 'dark:bg-neutral-900! bg-neutral-200! cursor-not-allowed!' : local_disabled}">
 			<option v-for="(option, z) in options" :key="z" :value="option.value+''">{{ option.text+'' }}</option>
 		</select>
 		<span v-if="(!is_valid && local_error === '' && show_errors)" class="text-red-500! text-[14px]! block">{{ local_label }} is a required field.</span>
@@ -18,7 +18,8 @@
 		local_error: string,
 		show_errors: boolean,
 		local_label: string
-		local_placeholder: string
+		local_placeholder: string,
+		local_disabled: boolean
 	}
 
 	import common from '../../helpers/common';
@@ -44,6 +45,9 @@
 			},
 			options:{
 				type:Array<Object>
+			},
+			disabled: {
+				type:Boolean
 			}
 		},
 
@@ -55,7 +59,8 @@
 				local_error : '',
 				show_errors: false,
 				local_label: '',
-				local_placeholder:''
+				local_placeholder:'',
+				local_disabled: false
 			};
 		},
 
@@ -70,6 +75,11 @@
 					this.local_error = this.error || '';
 				}
 			
+			},
+			disabled() : void {
+				if(common.isset(this.disabled)){
+					this.local_disabled = this.disabled;
+				}
 			}
 		},
 
@@ -149,7 +159,9 @@
 			if(common.isset(this.label)){
 				this.local_label = this.label+'';
 			}
-
+			if(common.isset(this.disabled)){
+				this.local_disabled = this.disabled;
+			}
 		}
 
 	});
