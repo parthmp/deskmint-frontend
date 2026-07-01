@@ -1,8 +1,8 @@
 <template>
-	<section class="main-content">
-    <div class="card">
+	<section :class="{'main-content' : !compact}">
+    <div class="card" :class="{'p-0!' : compact}">
         <h1 class="text-2xl!">{{ page_title }}</h1>
-        <br>
+        <br v-if="!compact">
         <skeleton-table v-if="data_loading" :rows="10"></skeleton-table>
 		
 		<input-button v-if="enable_arranged_columns" class="lg:float-start mb-5 lg:mb-0" btn_text="Arrange columns" icon="IconColumns3" @click="showPopup"></input-button>
@@ -40,7 +40,7 @@
 			</div>
 		</popup>
 		<span v-if="!data_loading" class="">
-			<input-button class="lg:float-end" btn_text="Add New" :url="'../'+slug+'/create'" icon="IconPlus"></input-button>
+			<input-button v-if="!compact" class="lg:float-end" btn_text="Add New" :url="'../'+slug+'/create'" icon="IconPlus"></input-button>
 			<div class="lg:clear-both"></div>
 			<br>
 			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" :url_slug="slug" :row_actions="actions" @action="handleAction" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
@@ -97,7 +97,7 @@
 			InputSwitch,
 			ArrangeColumnsSkeleton
 		},
-		props: ['page_title', 'enable_arranged_columns', 'base_url', 'slug', 'actions'],
+		props: ['page_title', 'enable_arranged_columns', 'base_url', 'slug', 'actions', 'compact'],
 		data(): ClientsInterface{
 			return {
 				data_loading : false,

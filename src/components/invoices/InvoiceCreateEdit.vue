@@ -216,6 +216,7 @@
 		data.invoice_details.client.client_id = response.data.invoice.client_id+'';
 		data.invoice_details.currency_id = response.data.invoice.currency_id;
 		data.invoice_details.currency_code = response.data.invoice.currency_code;
+		//data.invoice_details.invoice_date.value = new Date(response.data.invoice.invoice_date.replace(' ', 'T') + 'Z');
 		data.invoice_details.invoice_date.value = response.data.invoice.invoice_date;
 
 		data.invoice_details.due_date.value = response.data.invoice.due_date;

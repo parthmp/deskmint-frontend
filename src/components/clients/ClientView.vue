@@ -7,8 +7,8 @@
 			<div class="clear-both"></div>
        
 			<br>
-			<tabs :horizontal="tabs_horizontal" :options="tab_options">
-				<template v-slot:tab-0>
+			<!-- <tabs :horizontal="tabs_horizontal" :options="tab_options">
+				<template v-slot:tab-0> -->
 					<client-view-info-skeleton v-if="data_loading"></client-view-info-skeleton>
 					<div v-if="!data_loading">
 						<div>
@@ -188,11 +188,11 @@
 							<br>
 						</div>
 					</div>
-				</template>
+				<!-- </template>
 				<template v-slot:tab-1>
-					<div>Client invoices goes here</div>
+					<general-index-page page_title="Client invoices" :enable_arranged_columns="false" :compact="true" :base_url="`manage-clients/invoices/${client_id}`" slug="invoices" :actions="['view','edit', 'delete', 'Add Payment', 'download PDF', 'send Invoice']"></general-index-page>
 				</template>
-			</tabs>
+			</tabs> -->
 		</div>
 	</section>
 </template>
@@ -207,6 +207,7 @@
 	import common from '../../helpers/common';
 	import ClientViewInfoSkeleton from '../skeletons/ClientViewInfoSkeleton.vue';
 	import InputButton from '../inputs/InputButton.vue';
+	import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
 
 
 	interface ClientViewInterface{
@@ -214,7 +215,8 @@
 		tabs_horizontal: boolean,
 		client_data: object,
 		data_loading:boolean,
-		custom_fields: Array<object>
+		custom_fields: Array<object>,
+		client_id : number
 	}
 
 	export default defineComponent({
@@ -222,7 +224,8 @@
 		components : {
 			Tabs,
 			ClientViewInfoSkeleton,
-			InputButton
+			InputButton,
+			GeneralIndexPage
 		},
 		data(): ClientViewInterface{
 			return {
@@ -230,7 +233,8 @@
 				tabs_horizontal: false,
 				client_data: {},
 				data_loading: false,
-				custom_fields: []
+				custom_fields: [],
+				client_id : 0
 			}
 		},
 		methods : {
@@ -296,7 +300,8 @@
 			
 		},
 		mounted : function(){
-			this.fetchClientData(this.$route.params.id);
+			this.client_id = this.$route.params.id;
+			this.fetchClientData(this.client_id);
 		}
 
 	});
