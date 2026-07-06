@@ -702,6 +702,7 @@ export default defineComponent({
 				}else if(obj.action.toLowerCase() === 'delete'){
 					this.handleDelete(+obj.row.id);
 				}else{
+					
 					this.$emit('action', obj);
 				}
 			}

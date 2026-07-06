@@ -27,12 +27,36 @@
 							v-for="(option, i) in options"
 							:key="i"
 							class="group">
+							<span v-if="typeof option === 'object'">
+								<span v-if="typeof row[option.mapped] === 'object'">
+									<span v-for="(value, key) in option.labels" :key="key">
+										<a v-if="row[option.mapped].value == option.labels[key]" href="javascript:;"
+											@click="updatePerPage(key, { [option.mapped] : option.labels[key] })"
+											class="capitalize-first hover:bg-deskmint-green-light hover:text-deskmint-original-dark-plus! dark:hover:text-deskmint-green! rounded-lg">
+											{{ key }}
+										</a>
+									</span>
+									
+								</span>
+								<span v-else>
+									<span v-for="(value, key) in option.labels" :key="key">
+										<a v-if="row[option.mapped] == option.labels[key]" href="javascript:;"
+											@click="updatePerPage(key)"
+											class="capitalize-first hover:bg-deskmint-green-light hover:text-deskmint-original-dark-plus! dark:hover:text-deskmint-green! rounded-lg">
+											{{ key }}
+										</a>
+									</span>
+								</span>
+								
+							</span>
+							<span v-else>
+								<a href="javascript:;"
+									@click="updatePerPage(option)"
+									class="capitalize-first hover:bg-deskmint-green-light hover:text-deskmint-original-dark-plus! dark:hover:text-deskmint-green! rounded-lg">
+									{{ option }}
+								</a>
+							</span>
 							
-							<a href="javascript:;"
-								@click="updatePerPage(option)"
-								class="capitalize-first hover:bg-deskmint-green-light hover:text-deskmint-original-dark-plus! dark:hover:text-deskmint-green! rounded-lg">
-								{{ option }}
-							</a>
 						</li>
 					</ul>
 				</div>
@@ -125,12 +149,13 @@
 				};
 			},
 
-			updatePerPage(pp: number): void {
+			updatePerPage(pp: number, obj : object = {}): void {
 				this.$emit('update:modelValue', pp);
 				this.$emit('changed', pp);
 				this.$emit('action', {
 					action : pp,
-					row : this.row
+					row : this.row,
+					obj: obj
 				});
 				this.show_menu = false;
 			},
