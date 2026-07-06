@@ -4,7 +4,8 @@
 			 <h1 class="text-2xl!" v-if="a_data.mode === 'create'">Create an invoice</h1>
 			 <h1 class="text-2xl!" v-if="a_data.mode === 'edit'">Edit invoice</h1>
 			 
-			 <p v-if="data.locked" class="font-bold dark:text-red-400! text-red-500!">This invoice has payments attached to it, so you can not edit it.</p>
+			 <p v-if="data.locked && !data.cancelled" class="font-bold dark:text-red-400! text-red-500!">This invoice has payments attached to it, so you can not edit it.</p>
+			 <p v-if="data.locked && data.cancelled" class="font-bold dark:text-red-400! text-red-500!">This invoice has been cancelled, so you can not edit it.</p>
 			 <br>
 			 <client-create-edit-skeleton :blocks="3" v-if="!a_data.fetched"></client-create-edit-skeleton>
 			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue" v-if="a_data.fetched">
@@ -212,6 +213,7 @@
 		});
 
 		data.locked = response.data.locked;
+		data.cancelled = response.data.cancelled;
 		data.invoice_details.client.value = response.data.invoice.first_name + ' ' + response.data.invoice.last_name;
 		data.invoice_details.client.client_id = response.data.invoice.client_id+'';
 		data.invoice_details.currency_id = response.data.invoice.currency_id;
@@ -268,6 +270,7 @@
 
 	onMounted(() => {
 		data.locked = false;
+		data.cancelled = false;
 		if(route.path.includes('edit')){
 			a_data.mode = 'edit';
 			a_data.invoice_id = +route.params.id;

@@ -63,7 +63,8 @@ interface InvoiceCreateEditInterface{
 	global_total : string,
 	global_tax_amount : string,
 	invoice_terms: string
-	locked: boolean
+	locked: boolean,
+	cancelled: boolean
 }
 
 const data = reactive<InvoiceCreateEditInterface>({
@@ -107,7 +108,8 @@ const data = reactive<InvoiceCreateEditInterface>({
 	global_total : '0.00',
 	global_tax_amount : '0.00',
 	invoice_terms: '',
-	locked : false
+	locked : false,
+	cancelled : false
 });
 
 export function useInvoiceStore(){
