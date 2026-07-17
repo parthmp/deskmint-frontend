@@ -60,6 +60,7 @@ import PaymentsSettingsRender from '../src/components/settings/payments/Payments
 import PaymentSettingsPayPal from '../src/components/settings/payments/blocks/PaymentSettingsPayPal.vue';
 import PaymentSettingsStripe from '../src/components/settings/payments/blocks/PaymentSettingsStripe.vue';
 import PaymentSettingsGateways from '../src/components/settings/payments/blocks/PaymentSettingsGateways.vue';
+import Transactions from '../src/components/transactions/Transactions.vue';
 
 const routes = [
 	{
@@ -292,6 +293,11 @@ const routes = [
 			{
 				path: '/invoices/view/:id',
 				component: InvoiceView,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/transactions',
+				component: Transactions,
 				meta: { requires_auth: true }
 			},
 			{
