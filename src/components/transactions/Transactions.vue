@@ -22,8 +22,7 @@ const data = reactive<{time_offset_minutes:number}>({
 const void_data = {
 
 	labels: {
-		void : 3,
-		unvoid : 4,
+		void: 3
 	},
 	mapped : 'status'
 
@@ -34,7 +33,7 @@ const handleAction = (obj:actionObject) => {
 	if(obj.row.payment_method.text.toLowerCase() !== 'cash' && obj.row.payment_method.text.toLowerCase() !== 'netbanking'){
 		toastEvents.emit('toast', {
 			type: 'error',
-			message : 'You can only void/unvoid offline transactions'
+			message : 'You can only void offline transactions'
 		});
 	}else{
 		//console.log(obj);

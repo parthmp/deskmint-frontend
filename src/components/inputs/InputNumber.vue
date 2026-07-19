@@ -83,7 +83,7 @@
 
 		methods: {
 			fillMe() : void{
-				this.input_value = parseFloat(this.modelValue);
+				this.input_value = parseFloat(this.modelValue+'');
 				if(common.isset(this.step)){
 					this.local_step = this.step;
 				}
@@ -116,9 +116,9 @@
 					this.is_valid = true;
 				}
 				
-				//this.input_value = this.sanitizeInput(this.input_value);
-				this.$emit('update:modelValue', this.input_value);
-				
+				//commented this out because of side effects
+				//this.$emit('update:modelValue', this.input_value);
+			
 				this.$emit('is-valid', this.is_valid);
 				return this.is_valid;
 				
