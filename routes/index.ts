@@ -61,6 +61,7 @@ import PaymentSettingsPayPal from '../src/components/settings/payments/blocks/Pa
 import PaymentSettingsStripe from '../src/components/settings/payments/blocks/PaymentSettingsStripe.vue';
 import PaymentSettingsGateways from '../src/components/settings/payments/blocks/PaymentSettingsGateways.vue';
 import Transactions from '../src/components/transactions/Transactions.vue';
+import TransactionCreate from '../src/components/transactions/TransactionCreate.vue';
 
 const routes = [
 	{
@@ -298,6 +299,11 @@ const routes = [
 			{
 				path: '/transactions',
 				component: Transactions,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/transactions/create',
+				component: TransactionCreate,
 				meta: { requires_auth: true }
 			},
 			{
