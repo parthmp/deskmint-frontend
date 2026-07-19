@@ -67,6 +67,7 @@
 			},
 			modelValue() : void{
 				this.fillMe();
+				
 			},
 			disabled() : void {
 				if(common.isset(this.disabled)){
@@ -95,6 +96,7 @@
 				
 				if(this.input_required === true){
 					let temp_value = this.input_value;
+					
 					if(isNaN(temp_value)){
 						this.is_valid = false;
 						this.show_errors = true;

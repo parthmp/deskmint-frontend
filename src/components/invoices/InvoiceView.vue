@@ -4,9 +4,7 @@
 			<invoice-view-skeleton v-if="data.loading"></invoice-view-skeleton>
 			<div v-if="!data.loading">
 				<h1 class="text-2xl!">View Invoice</h1>
-				<input-button class="lg:float-start" btn_text="Back" url="/invoices" icon="IconCaretLeft"></input-button>
-				<div class="clear-both"></div>
-				<br>
+				<back-button></back-button>
 				<div class="lg:grid lg:grid-cols-12 lg:gap-4">
 					<div class="lg:col-span-4">
 						<p v-for="(item, z) in data.client" :key=z class="mt-3">
@@ -62,6 +60,7 @@ import { useRoute } from 'vue-router';
 import api from '../../helpers/api';
 import InputButton from '../inputs/InputButton.vue';
 import InvoiceViewSkeleton from '../skeletons/InvoiceViewSkeleton.vue';
+import BackButton from '../blocks/BackButton.vue';
 
 const route = useRoute();
 

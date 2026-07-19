@@ -43,7 +43,7 @@ const handleAction = (obj:actionObject) => {
 	}else if(obj.action.toLowerCase() === 'download pdf'){
 		downloadPDF(obj.row.company_id, obj.row.id);
 	}else if(obj.action.toLowerCase() === 'add payment'){
-		//TODO: redirect to the transactions module.
+		router.push(`/transactions/create/${obj.row.id}`);
 	}else if(obj.action.toLowerCase() === 'cancel'){
 		obj.row.status.value = 2;
 		obj.row.status.highlight = 'error';

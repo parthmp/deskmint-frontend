@@ -307,6 +307,11 @@ const routes = [
 				meta: { requires_auth: true }
 			},
 			{
+				path: '/transactions/create/:id',
+				component: TransactionCreate,
+				meta: { requires_auth: true }
+			},
+			{
 				path: '/settings/email/content',
 				component: EmailSettingsRender,
 				meta: { requires_auth: true },

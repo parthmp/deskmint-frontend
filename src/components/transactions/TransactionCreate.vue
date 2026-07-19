@@ -2,11 +2,15 @@
 	<section class="main-content">
     	<div class="card">
 			<h1 class="text-2xl!">Create a transaction</h1>
-			<br>
-			<form @submit.prevent="handleSubmit">
+			
+			<back-button></back-button>
+
+			<transaction-create-skeleton v-if="data.loading"></transaction-create-skeleton>
+
+			<form v-if="!data.loading" @submit.prevent="handleSubmit">
 				<div class="lg:grid lg:grid-cols-12 lg:gap-4">
 					<div class="lg:col-span-4">
-						<input-auto-complete label="Invoice #" v-model="data.invoice_number.value" @selected="handleInvoiceSelect" :error="data.invoice_number.error" endpoint="manage-transactions/fetch-invoices" :required="true" placeholder="Invoice #" :options="data.invoices" ref="invoice_number_ref"></input-auto-complete>
+						<input-auto-complete :show_errors="data.invoice_number.show_errors" label="Invoice #" v-model="data.invoice_number.value" @selected="handleInvoiceSelect" :error="data.invoice_number.error" endpoint="manage-transactions/fetch-invoices" :required="true" placeholder="Invoice #" :options="data.invoices" ref="invoice_number_ref"></input-auto-complete>
 					</div>
 					<div class="lg:col-span-4">
 						<input-number label="Amount" v-model="data.amount.value" :error="data.amount.error" :required="true" placeholder="Amount" step="0.01" ref="amount_ref"></input-number>
@@ -41,18 +45,21 @@ import InputButton from '../inputs/InputButton.vue';
 import { toastEvents } from '../../events/toastEvents';
 import Decimal from 'decimal.js';
 import { nextTick } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import BackButton from '../blocks/BackButton.vue';
+import TransactionCreateSkeleton from '../skeletons/TransactionCreateSkeleton.vue';
 
 interface TransactionCreateInterface{
 	payment_methods : Array<Array<{identifier : string, label: string}>>,
-	invoice_number : {error : string, value : string, invoice_id:string},
+	invoice_number : {error : string, value : string, invoice_id:string, show_errors:boolean},
 	amount : TextFieldType,
 	payment_method : TextFieldType,
 	gateway_fees : TextFieldType,
 	received_amount : TextFieldType,
 	invoices : Array<object>,
 	loading : boolean,
-	disabled : boolean
+	disabled : boolean,
+	init_invoice_id: number
 }
 
 interface InputComponent{
@@ -60,13 +67,15 @@ interface InputComponent{
 }
 
 const router = useRouter();
+const route = useRoute();
 
 const data = reactive<TransactionCreateInterface>({
 	payment_methods : [],
 	invoice_number : {
 		error : 'Please select an invoice #',
 		value : '',
-		invoice_id : '0'
+		invoice_id : '0',
+		show_errors : false
 	},
 	amount : {
 		error : 'Enter the amount',
@@ -78,7 +87,7 @@ const data = reactive<TransactionCreateInterface>({
 	},
 	received_amount : {
 		error : 'Enter the received amount',
-		value : ''
+		value : '0'
 	},
 	payment_method : {
 		error : 'Select payment method',
@@ -86,14 +95,14 @@ const data = reactive<TransactionCreateInterface>({
 	},
 	invoices : [],
 	loading : false,
-	disabled : false
+	disabled : false,
+	init_invoice_id : 0
 });
 
 const suppress_watch = reactive({ received_amount: false, gateway_fees: false });
 	
 
 /* refs */
-const invoice_number_ref = ref<InputComponent | null>(null);
 const amount_ref = ref<InputComponent | null>(null);
 const gateway_fees_ref = ref<InputComponent | null>(null);
 const received_amount_ref = ref<InputComponent | null>(null);
@@ -213,11 +222,33 @@ const calculateAmounts = () : void => {
 	forceSetReceivedAmount(received_amount_new);
 }
 
-const fetchInit = async () : Promise<void>  => {
+const fetchInit = async (id : number) : Promise<void>  => {
+	
+	data.loading = true;
 	try{
-		const response = await api.get('manage-transactions/fetch-init');
+		let url = 'manage-transactions/fetch-init';
+		if(!isNaN(id)){
+			url = url+'?id='+id;
+		}
+		const response = await api.get(url);
+		
 		data.payment_methods = response.data.offline_payment_methods;
-	}catch(e){}
+		
+		if(response.data.invoice_data){
+			nextTick(() => {
+				data.invoice_number = response.data.invoice_data;
+				data.invoice_number.error = '';
+			});
+			
+		}
+		
+		data.loading = false;
+		
+	}catch(e){
+
+	}finally{
+		
+	}
 	
 }
 
@@ -231,14 +262,20 @@ const handleSubmit = async () : Promise<void> => {
 	data.received_amount.error = '';
 	data.payment_method.error = '';
 
-	let invoice_number_v = invoice_number_ref.value?.validate() ?? false;
+	let invoice_number_v = false;
+	data.invoice_number.show_errors = false;
+	
 	let amount_v = amount_ref.value?.validate() ?? false;
 	let gateway_fees_v = gateway_fees_ref.value?.validate() ?? false;
 	let received_amount_v = received_amount_ref.value?.validate() ?? false;
 	let payment_method_v = payment_method_ref.value?.validate() ?? false;
-
-	if(!invoice_number_v){
+	
+	if(data.invoice_number.invoice_id+'' !== '' && parseInt(data.invoice_number.invoice_id) !== 0 && !isNaN(+data.invoice_number.invoice_id)){
+		invoice_number_v = true;
+	}else{
+		data.invoice_number.value = '';
 		data.invoice_number.error = 'Please select an invoice #';
+		data.invoice_number.show_errors = true;
 	}
 
 	if(!amount_v){
@@ -275,7 +312,12 @@ const handleSubmit = async () : Promise<void> => {
 				received_amount : data.received_amount.value,
 				payment_method : data.payment_method.value
 			});
-			router.push('/transactions');
+			if(data.init_invoice_id !== 0){
+				router.push('/invoices');
+			}else{
+				router.push('/transactions');
+			}
+			
 		}catch(e){
 
 		}finally{
@@ -291,8 +333,7 @@ const handleSubmit = async () : Promise<void> => {
 
 }
 
-const handleInvoiceSelect = (ev) => {
-
+const handleInvoiceSelect = (ev : {value : string, text : string}) => {
 	data.invoice_number.invoice_id = '';
 	if(ev.value){
 		//data.invoice_number.text = ev.value+'';
@@ -303,7 +344,12 @@ const handleInvoiceSelect = (ev) => {
 }
 
 onMounted(() => {
-	fetchInit();
+	data.init_invoice_id = +route.params.id;
+	if(isNaN(data.init_invoice_id)){
+		data.init_invoice_id = 0;
+	}
+	
+	fetchInit(data.init_invoice_id);
 })
 
 </script>
