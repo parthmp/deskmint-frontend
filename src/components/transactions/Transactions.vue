@@ -28,27 +28,48 @@ const void_data = {
 
 };
 
+type objType = {
+	row : {
+		id:number,
+		payment_method : {
+			text : string
+		},
+		status : {
+			highlight : string,
+			text : string
+		}
+	},
+	
+	action: string
+};
 
-const handleAction = (obj:actionObject) => {
+const handleAction = (obj:objType) => {
 	if(obj.row.payment_method.text.toLowerCase() !== 'cash' && obj.row.payment_method.text.toLowerCase() !== 'netbanking'){
 		toastEvents.emit('toast', {
 			type: 'error',
 			message : 'You can only void offline transactions'
 		});
 	}else{
-		//console.log(obj);
 		if(obj.action.toLowerCase() === 'void'){
-			// console.log(obj.row);
-			// obj.row.status.value = 2;
-			// obj.row.status.highlight = 'error';
-			// obj.row.status.text = 'Cancelled';
-			// toggleInvoiceCancel(obj.row.id, 2);
+			obj.row.status.highlight = 'error';
+			obj.row.status.text = 'Void';
+			voidTransaction(+obj.row.id);
 		}
 	}
 	
 }
 
+const voidTransaction = async (id:number) : Promise<void> => {
 
+	try{
+		api.patch('manage-transactions/void-transaction', {
+			id : id
+		});
+	}catch(e){
+
+	}
+
+}
 
 onMounted(() => {
 	const d = new Date();

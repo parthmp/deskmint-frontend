@@ -3,8 +3,8 @@
 		<div class="card">
 			<h1 class="text-2xl!">View transaction</h1>
 			<transaction-view-skeleton v-if="data.loading"></transaction-view-skeleton>
-			<div v-if="!data.loading">
-				<br>
+			<div v-if="!data.loading" class="mt-[20px]">
+				<back-button></back-button>
 				<div class="lg:grid lg:grid-cols-12 gap-5">
 					<div class="lg:col-span-4">
 						<p>ID: {{ data.transaction.id }}</p>
@@ -83,6 +83,7 @@ import { useRoute } from 'vue-router';
 import api from '../../helpers/api';
 import common from '../../helpers/common';
 import TransactionViewSkeleton from '../skeletons/TransactionViewSkeleton.vue';
+import BackButton from '../blocks/BackButton.vue';
 
 const route = useRoute();
 
