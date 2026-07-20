@@ -164,9 +164,11 @@ export default {
 		return true;
 	},
 
-	formatDate(dateString:string, dateonly = false) : string{
-
-		const date = new Date(dateString); // converts UTC → local automatically
+	formatDate(date_string:string|null, dateonly = false) : string{
+		if(!date_string){
+			return '';
+		}
+		const date = new Date(date_string); // converts UTC → local automatically
 
 		const day = String(date.getDate()).padStart(2, '0');
 		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 

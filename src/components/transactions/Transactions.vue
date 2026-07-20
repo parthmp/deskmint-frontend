@@ -43,11 +43,6 @@ const handleAction = (obj:actionObject) => {
 			// obj.row.status.highlight = 'error';
 			// obj.row.status.text = 'Cancelled';
 			// toggleInvoiceCancel(obj.row.id, 2);
-		}else if(obj.action.toLowerCase() === 'unvoid'){
-			// obj.row.status.value = 1;
-			// obj.row.status.highlight = 'info';
-			// obj.row.status.text = 'Pending';
-			// toggleInvoiceCancel(obj.row.id, 1);
 		}
 	}
 	
