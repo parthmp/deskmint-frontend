@@ -7,7 +7,7 @@
 		
 		<input-button v-if="enable_arranged_columns" class="lg:float-start mb-5 lg:mb-0" btn_text="Arrange columns" icon="IconColumns3" @click="showPopup"></input-button>
 		
-		<popup v-if="enable_arranged_columns" :show_popup="show_popup" @closed="closePopup" header="Arrange columns">
+		<popup v-if="enable_arranged_columns" :show_popup="show_popup" @closed="closePopup" header="Columns">
 			<div>
 				<div class="mt-4 overflow-auto max-h-[550px] styled-scrollbar">
 					<p class="mb-5">Drag and drop to arrange columns, use switches to show/hide and enable/disable column search.</p>
@@ -40,7 +40,9 @@
 			</div>
 		</popup>
 		<span v-if="!data_loading" class="">
-			<input-button v-if="!compact" class="lg:float-end" btn_text="Add New" :url="'../'+slug+'/create'" icon="IconPlus"></input-button>
+			<span v-if="local_add_new">
+				<input-button v-if="!compact" class="lg:float-end" btn_text="Add New" :url="'../'+slug+'/create'" icon="IconPlus"></input-button>
+			</span>
 			<div class="lg:clear-both"></div>
 			<br>
 			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="['Delete', 'Export CSV']" @deleted_rows="handleMultipleDelete" :static="false" :url_slug="slug" :row_actions="actions" @action="handleAction" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
@@ -82,7 +84,8 @@
 		show_popup: boolean,
 		columns: Array<object>,
 		btn_disabled: boolean,
-		arrange_columns_loading: boolean
+		arrange_columns_loading: boolean,
+		local_add_new: boolean
 	}
 	
 	export default defineComponent({
@@ -97,7 +100,7 @@
 			InputSwitch,
 			ArrangeColumnsSkeleton
 		},
-		props: ['page_title', 'enable_arranged_columns', 'base_url', 'slug', 'actions', 'compact'],
+		props: ['page_title', 'enable_arranged_columns', 'base_url', 'slug', 'actions', 'compact', 'add_new'],
 		data(): ClientsInterface{
 			return {
 				data_loading : false,
@@ -111,13 +114,23 @@
 				show_popup: false,
 				columns: [],
 				btn_disabled: false,
-				arrange_columns_loading: false
+				arrange_columns_loading: false,
+				local_add_new : true
 			}
 		},
 		watch: {
-			
+			local_add_new(n){
+				this.setAddNew();
+			}
 		},
 		methods : {
+			
+			setAddNew() : void {
+				if(typeof this.add_new !== 'undefined'){
+					this.local_add_new = this.add_new;
+				}
+			},
+
 			fetchClients(page_data = '') : void{
 				
 				if(page_data === ''){
@@ -214,6 +227,7 @@
 
 		},
 		mounted : function(){
+			this.setAddNew();
 			this.fetchClients();
 		}
 
