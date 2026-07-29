@@ -28,7 +28,7 @@
 						<input-password :required="true" v-model="confirm_password" ref="confirm_password" label="Confirm Password"></input-password>
 					</div>
 				</div>
-
+				<!-- <login-settings-block @data="handleData" type="local" @loading="handleLoading"></login-settings-block> -->
 				<input-button btn_text="Save" :disabled="btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
 				<div class="clear-both"></div>
 
@@ -46,7 +46,7 @@
 	import InputText from '../inputs/InputText.vue';
 	import InputEmail from '../inputs/InputEmail.vue';
 	import InputPassword from '../inputs/InputPassword.vue';
-	
+	import LoginSettingsBlock from '../settings/login/LoginSettingsBlock.vue';
 	import { defineComponent } from 'vue';
 	import { toastEvents } from '../../events/toastEvents';
 	import api from '../../helpers/api';

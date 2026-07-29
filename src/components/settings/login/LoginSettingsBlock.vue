@@ -21,7 +21,7 @@
 		<div class="lg:col-span-6">
 			<input-number label="Allowed login attempts" v-model="data.login_limits_attempts" placeholder="Enter number of attempts" step="1" min="1"></input-number>
 		</div>
-		<div class="lg:col-span-6">
+		<div class="lg:col-span-6 lg:mt-0 mt-[25px]">
 			<input-number label="Lock minutes if failed attempts exceeded" v-model="data.login_limits_minutes" placeholder="Enter number of minutes" step="1" min="1"></input-number>
 		</div>
 	</div>
@@ -32,11 +32,13 @@ import { onMounted, reactive, watch } from 'vue';
 import InputNumber from '../../inputs/InputNumber.vue';
 import InputSwitch from '../../inputs/InputSwitch.vue';
 import api from '../../../helpers/api.ts';
+import type { LoginBlockSettings } from '../../../types/LoginSettings.ts';
+
 
 const emit = defineEmits(['loading', 'data']);
 const props = defineProps(['type']);
 
-const data = reactive({
+const data = reactive<LoginBlockSettings>({
 	login_limits_flag : false,
 	two_factor_auth_flag : false,
 	login_email_flag : false,
@@ -47,16 +49,16 @@ const data = reactive({
 	local_type: 'global'
 });
 
-watch(props.type, () => {
+watch(props.type, () : void => {
 	setType();
 });
 
-watch(data, () => {
+watch(data, () : void  => {
 	emit('data', data);
 }, {deep : true});
 
 
-const fetchInit = async () => {
+const fetchInit = async () : Promise<void> => {
 
 	data.loading = true;
 	emit('loading', data.loading);
@@ -79,7 +81,7 @@ const fetchInit = async () => {
 
 }
 
-const setType = () => {
+const setType = ()  : void => {
 	if(typeof props.type !== 'undefined' && props.type !== null){
 		data.local_type = props.type === 'local' ? 'local' : 'global';
 	}

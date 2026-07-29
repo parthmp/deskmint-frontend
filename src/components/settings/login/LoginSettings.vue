@@ -3,6 +3,7 @@
 		<div class="card">
 			<h1 class="text-2xl!">Login Settings</h1>
 			&nbsp;
+			<login-settings-skeleton v-show="data.loading"></login-settings-skeleton>
 			<form v-show="!data.loading" @submit.prevent="handleSubmit">
 				<login-settings-block @data="handleData" type="global" @loading="handleLoading"></login-settings-block>
 				<div class="mt-[25px]">
@@ -16,12 +17,14 @@
 </template>
 <script lang="ts" setup>
 
-import { onMounted, reactive } from 'vue';
+import { reactive } from 'vue';
 import InputButton from '../../inputs/InputButton.vue';
 import LoginSettingsBlock from './LoginSettingsBlock.vue';
 import api from '../../../helpers/api.ts';
+import type { LoginSettings } from '../../../types/LoginSettings.ts';
+import LoginSettingsSkeleton from '../../skeletons/LoginSettingsSkeleton.vue';
 
-const data = reactive({
+const data = reactive<LoginSettings>({
 	login_limits_flag : false,
 	two_factor_auth_flag : false,
 	login_email_flag : false,
@@ -31,7 +34,7 @@ const data = reactive({
 	loading: false
 });
 
-const handleSubmit = async () => {
+const handleSubmit = async () : Promise<void> => {
 	
 	data.btn_disabled = true;
 
@@ -45,7 +48,7 @@ const handleSubmit = async () => {
 
 }
 
-const handleData = (data_obj) => {
+const handleData = (data_obj:LoginSettings) => {
 	data.login_limits_flag = data_obj.login_limits_flag;
 	data.two_factor_auth_flag = data_obj.two_factor_auth_flag;
 	data.login_email_flag = data_obj.login_email_flag;
