@@ -10,8 +10,8 @@
         <br>
         <p>Note: Leave password fields blank if you do not want to change the password</p>
 		<br>
-		<skeleton-edit-admin v-if="loading"></skeleton-edit-admin>
-		<form v-if="!loading" @submit.prevent="createAdmin" class="form">
+		<skeleton-edit-admin v-if="settings_loading || loading"></skeleton-edit-admin>
+		<form v-show="!loading && !settings_loading" @submit.prevent="createAdmin" class="form">
 
 			<div class="grid grid-cols-12 gap-5">
 				<div class="col-span-12 lg:col-span-6">
@@ -30,7 +30,9 @@
 					<input-password :required="require_password" v-model="confirm_password" ref="confirm_password" label="Confirm Password"></input-password>
 				</div>
 			</div>
-
+			<div class="mt-[30px]">
+				<login-settings-block @data="handleData" :get_id="true" type="local" @loading="handleLoading"></login-settings-block>
+			</div>
 			<input-button btn_text="Save" :disabled="btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
 			<div class="clear-both"></div>
 
@@ -49,11 +51,13 @@
 	import InputEmail from '../inputs/InputEmail.vue';
 	import InputPassword from '../inputs/InputPassword.vue';
 	
-	import { defineComponent } from 'vue';
+	import { defineComponent, nextTick } from 'vue';
 	import { toastEvents } from '../../events/toastEvents';
 	import api from '../../helpers/api';
 
 	import SkeletonEditAdmin from '../skeletons/SkeletonEditAdmin.vue';
+	import type { LoginSettings } from '../../types/LoginSettings.ts';
+	import LoginSettingsBlock from '../settings/login/LoginSettingsBlock.vue';
 	
 	export interface AdminCreateInterface{
 		name:object,
@@ -62,7 +66,14 @@
 		confirm_password: string,
 		btn_disabled:boolean,
 		loading: boolean,
-		require_password: boolean
+		require_password: boolean,
+		login_limits_flag:boolean,
+		two_factor_auth_flag:boolean,
+		login_email_flag:boolean,
+		login_limits_attempts:number,
+		login_limits_minutes:number,
+		settings_loading : boolean,
+		suppressed_watcher : boolean
 	}
 	
 	export default defineComponent({
@@ -72,7 +83,8 @@
 			InputEmail,
 			InputPassword,
 			InputText,
-			SkeletonEditAdmin
+			SkeletonEditAdmin,
+			LoginSettingsBlock
 		},
 		data() : AdminCreateInterface{
 			return {
@@ -85,27 +97,38 @@
 				confirm_password: '',
 				btn_disabled: false,
 				loading: false,
-				require_password: false
+				require_password: false,
+				login_limits_flag : false,
+				two_factor_auth_flag : false,
+				login_email_flag : false,
+				login_limits_attempts : 1,
+				login_limits_minutes : 1,
+				settings_loading : false,
+				suppressed_watcher : false
 			}
 		},
 		watch: {
 			"name.value"(): void {
 
-				
-				let name_validated = this.$refs?.name?.validate();
+				if(this.suppressed_watcher){
+					let name_validated = this.$refs?.name?.validate();
 
-				if(name_validated){
-					this.name.error = '';
-				}else{
-					this.name.error = 'Please enter your name';
+					if(name_validated){
+						this.name.error = '';
+					}else{
+						this.name.error = 'Please enter your name';
+					}
 				}
+				
+				
 				
 				
 				
 			},
 			"email"(): void {
-				
-				this.$refs?.email?.validate();
+				if(this.suppressed_watcher){
+					this.$refs?.email?.validate();
+				}
 				
 			},
 			"password"(): void {
@@ -131,7 +154,17 @@
 			}
 		},
 		methods : {
+			handleData(data_obj:LoginSettings) : void {
+				this.login_limits_flag = data_obj.login_limits_flag;
+				this.two_factor_auth_flag = data_obj.two_factor_auth_flag;
+				this.login_email_flag = data_obj.login_email_flag;
+				this.login_limits_attempts = data_obj.login_limits_attempts;
+				this.login_limits_minutes = data_obj.login_limits_minutes;
+			},
 
+			handleLoading(loading:boolean) : void {
+				this.settings_loading = loading;
+			},
 			createAdmin() : void{
 
 				this.btn_disabled = true;
@@ -175,7 +208,12 @@
 						name: this.name.value,
 						email: this.email,
 						password: this.password,
-						confirm_password: this.confirm_password
+						confirm_password: this.confirm_password,
+						login_limits_flag : this.login_limits_flag,
+						two_factor_auth_flag : this.two_factor_auth_flag,
+						login_email_flag : this.login_email_flag,
+						login_limits_attempts : this.login_limits_attempts,
+						login_limits_minutes : this.login_limits_minutes
 					}).then(() => {
 						this.btn_disabled = false;
 						this.$router.push('/admins');
@@ -225,18 +263,22 @@
 			}
 
 		},
-		mounted : function(){
+		mounted : async function(){
 			
 			this.loading = true;
 			
-			api.get('manage-admins/'+this.$route.params.id).then((response) => {
+			await api.get('manage-admins/'+this.$route.params.id).then((response) => {
 				
 				let rd = response.data;
 				this.name.value = rd.name;
+				this.name.error = '';
 				this.email = rd.email;
 				this.loading = false;
+				nextTick(() => {
+					this.suppressed_watcher = true;
+				});
+				
 			}).catch((errors) => {});
-
 		}
 
 	});

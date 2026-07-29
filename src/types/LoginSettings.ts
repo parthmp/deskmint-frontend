@@ -9,5 +9,6 @@ export interface LoginSettings {
 }
 
 export interface LoginBlockSettings extends LoginSettings {
-	local_type: string
+	local_type: string,
+	id : number|null
 }

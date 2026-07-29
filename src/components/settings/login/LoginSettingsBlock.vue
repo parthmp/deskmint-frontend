@@ -33,10 +33,12 @@ import InputNumber from '../../inputs/InputNumber.vue';
 import InputSwitch from '../../inputs/InputSwitch.vue';
 import api from '../../../helpers/api.ts';
 import type { LoginBlockSettings } from '../../../types/LoginSettings.ts';
+import { useRoute } from 'vue-router';
 
 
 const emit = defineEmits(['loading', 'data']);
 const props = defineProps(['type']);
+const route = useRoute();
 
 const data = reactive<LoginBlockSettings>({
 	login_limits_flag : false,
@@ -46,7 +48,8 @@ const data = reactive<LoginBlockSettings>({
 	login_limits_minutes : 1,
 	btn_disabled : false,
 	loading: false,
-	local_type: 'global'
+	local_type: 'global',
+	id : null
 });
 
 watch(props.type, () : void => {
@@ -64,7 +67,8 @@ const fetchInit = async () : Promise<void> => {
 	emit('loading', data.loading);
 	const response = await api.get('manage-login-settings', {
 		params : {
-			type : data.local_type
+			type : data.local_type,
+			id : data.id
 		}
 	});
 
@@ -89,6 +93,9 @@ const setType = ()  : void => {
 
 onMounted(() => {
 	setType();
+	if(!isNaN(+route.params.id)){
+		data.id = +route.params.id;
+	}
 	fetchInit();
 });
 

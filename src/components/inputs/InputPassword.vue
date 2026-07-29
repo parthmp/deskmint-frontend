@@ -122,7 +122,7 @@
 					this.is_valid = true;
 				}
 			
-				this.$emit('update:modelValue', this.input_value);
+				//this.$emit('update:modelValue', this.input_value);
 				this.$emit('is-valid', this.is_valid);
 				return this.is_valid;
 				
