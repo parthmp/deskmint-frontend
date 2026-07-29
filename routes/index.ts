@@ -62,6 +62,7 @@ import PaymentSettingsStripe from '../src/components/settings/payments/blocks/Pa
 import PaymentSettingsGateways from '../src/components/settings/payments/blocks/PaymentSettingsGateways.vue';
 import Transactions from '../src/components/transactions/Transactions.vue';
 import TransactionView from '../src/components/transactions/TransactionView.vue';
+import LoginSettings from '../src/components/settings/login/LoginSettings.vue';
 
 const routes = [
 	{
@@ -241,6 +242,11 @@ const routes = [
 						meta: { requires_auth: true }
 					}
 				]
+			},
+			{
+				path: '/settings/login',
+				component: LoginSettings,
+				meta: { requires_auth: true }
 			},
 			{
 				path: '/settings/company/details',
