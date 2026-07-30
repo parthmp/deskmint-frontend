@@ -9,12 +9,7 @@
 					<div class="lg:col-span-4">
 						<p>ID: {{ data.transaction.id }}</p>
 					</div>
-					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-						<p>Invoice ID: {{ data.transaction.invoice_id }}</p>
-					</div>
-					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-						<p>Invoice #: {{ data.transaction.invoice_number }}</p>
-					</div>
+					
 				</div>
 				<div class="lg:grid lg:grid-cols-12 gap-5 mt-[20px]">
 					<div class="lg:col-span-4">
@@ -29,7 +24,7 @@
 				</div>
 				<div class="lg:grid lg:grid-cols-12 gap-5 mt-[20px]">
 					<div class="lg:col-span-4">
-						<p>Payment method: {{ data.transaction.payment_method }}</p>
+						<p>Payment method: {{ data.transaction.payment_gateway }}</p>
 					</div>
 					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
 						<p>Mode: {{ data.transaction.mode }}</p>
@@ -53,17 +48,13 @@
 					<div class="lg:col-span-4">
 						<p>Echeck: {{ data.transaction.is_echeck }}</p>
 					</div>
-					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
-						<p>Voided by: {{ data.transaction.voided_by_name }}</p>
-					</div>
+					
 					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
 						<p>Paid at: {{ data.transaction.paid_at }}</p>
 					</div>
 				</div>
 				<div class="lg:grid lg:grid-cols-12 gap-5 mt-[20px]">
-					<div class="lg:col-span-4">
-						<p>Voided at: {{ data.transaction.voided_at }}</p>
-					</div>
+					
 					<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
 						<p>Added on: {{ data.transaction.created_at }}</p>
 					</div>
@@ -94,7 +85,7 @@ type Transaction = {
 	amount : number,
 	gateway_fees_amount : number,
 	received_amount : number,
-	payment_method : string,
+	payment_gateway : string,
 	mode : string,
 	token_id_identifier : string,
 	is_approved : string,
@@ -124,7 +115,7 @@ const data = reactive<TransactionViewInterface>({
 		amount : 0,
 		gateway_fees_amount : 0,
 		received_amount : 0,
-		payment_method : '',
+		payment_gateway : '',
 		mode : '',
 		token_id_identifier : '',
 		is_approved : '',
