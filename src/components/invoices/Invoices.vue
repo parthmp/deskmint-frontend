@@ -41,11 +41,14 @@ const cancel_data = {
 const handleAction = (obj:actionObject) => {
 	
 	if(obj.action.toLowerCase() === 'send invoice'){
-		obj.row.status.value = 2;
-		obj.row.status.text = 'Sent';
-		obj.row.status.highlight = 'success';
-		const sql_datetime = common.toLocalSqlDatetime();
-		obj.row.sent_at = common.formatDate(sql_datetime, false);
+		if(obj.row.status.value == 1){
+			obj.row.status.value = 2;
+			obj.row.status.text = 'Sent';
+			obj.row.status.highlight = 'success';
+			const sql_datetime = common.toLocalSqlDatetime();
+			obj.row.sent_at = common.formatDate(sql_datetime, false);
+		}
+		
 		sendInvoice(obj.row.company_id, obj.row.id);
 	}else if(obj.action.toLowerCase() === 'download pdf'){
 		downloadPDF(obj.row.company_id, obj.row.id);
