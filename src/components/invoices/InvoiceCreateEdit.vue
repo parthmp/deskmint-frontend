@@ -18,7 +18,7 @@
 					</div>
 				</template>
 				<template v-slot:tab-2>
-					<SettingsTab :btn_disabled="a_data.btn_disabled" :disabled="data.locked" v-model:payment_method="a_data.payment_method" v-model:send_invoice_in_email="a_data.send_invoice_in_email" v-model:gateways="a_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
+					<SettingsTab :btn_disabled="a_data.btn_disabled" :disabled="data.locked" v-model:payment_gateway="a_data.payment_gateway" v-model:send_invoice_in_email="a_data.send_invoice_in_email" v-model:gateways="a_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
 				</template>
 			 </tabs>
 		</div>
@@ -48,7 +48,7 @@
 	interface InvoiceCreateEditInterface{
 		active_tab_index : number,
 		custom_fields : Array<object>,
-		payment_method : {
+		payment_gateway : {
 			value:string,
 			error:string
 		},
@@ -80,7 +80,7 @@
 	const a_data = reactive<InvoiceCreateEditInterface>({
 		active_tab_index: 0,
 		custom_fields : [],
-		payment_method : {
+		payment_gateway : {
 			value : '',
 			error : ''
 		},
@@ -174,7 +174,7 @@
 		try{
 
 			const post_settings = {
-				payment_method : a_data.payment_method.value,
+				payment_gateway : a_data.payment_gateway.value,
 				send_invoice_in_email : a_data.send_invoice_in_email
 			};
 			
@@ -260,7 +260,7 @@
 
 		}, 10);
 
-		a_data.payment_method.value = response.data.invoice.payment_method.toString();
+		a_data.payment_gateway.value = response.data.invoice.payment_gateway.toString();
 		a_data.send_invoice_in_email = false;
 		
 		data.invoice_terms = response.data.invoice.invoice_terms;

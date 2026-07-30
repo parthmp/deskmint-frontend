@@ -1,14 +1,14 @@
 <template>
 	<div>
 		<form @submit.prevent="handleSubmit">
-			<input-select 
-				label="Payment method" 
-				:options="payment_methods" 
-				placeholder="Select payment method" 
+			<input-select
+				label="Payment gateway" 
+				:options="payment_gateways" 
+				placeholder="Select payment gateway" 
 				:required="true" 
 				:disabled="data.local_disabled"
-				v-model="payment_method.value" 
-				:error="payment_method.error"
+				v-model="payment_gateway.value" 
+				:error="payment_gateway.error"
 				ref="payment_method_ref"
 			/>
 			<br>
@@ -36,7 +36,7 @@
 	}
 
 	// Use defineModel for two-way binding
-	const payment_method = defineModel('payment_method', { required: true });
+	const payment_gateway = defineModel('payment_gateway', { required: true });
 	const gateways = defineModel('gateways', { required: false });
 	const send_invoice_in_email = defineModel('send_invoice_in_email', { 
 		default: true 
@@ -63,7 +63,7 @@
 
 	const payment_method_ref = ref<InputComponent | null>(null);
 
-	const payment_methods = [
+	const payment_gateways = [
 		// {
 		// 	text: 'Cash',
 		// 	value: 'cash'
@@ -87,11 +87,20 @@
 		}
 	});
 
+	watch(() => payment_gateway.value.value, () => {
+		payment_gateway.value.error = '';
+
+		if(!payment_method_ref.value?.validate()){
+			payment_gateway.value.error = 'Please select a payment gateway';
+		}
+	});
+
 	const validateSettings = (): boolean => {
-		payment_method.value.error = '';
+		payment_gateway.value.error = '';
 		
 		if(!payment_method_ref.value?.validate()){
-			payment_method.value.error = 'Please select a payment method';
+			
+			payment_gateway.value.error = 'Please select a payment gateway';
 			return false;
 		}
 		
