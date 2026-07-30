@@ -10,6 +10,7 @@ import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
 import api from '../../helpers/api.ts';
 import { toastEvents } from '../../events/toastEvents.ts';
 import { useRouter } from 'vue-router';
+import common from '../../helpers/common.ts';
 
 const router = useRouter();
 
@@ -28,32 +29,49 @@ const data = reactive<{time_offset_minutes:number}>({
 const cancel_data = {
 
 	labels: {
-		cancel : 1,
-		uncancel : 2,
+		cancel : [1,2],
+		uncancel : 3,
 	},
 	mapped : 'status'
 
 };
 
 
+
 const handleAction = (obj:actionObject) => {
-	//console.log(obj);
+	
 	if(obj.action.toLowerCase() === 'send invoice'){
+		obj.row.status.value = 2;
+		obj.row.status.text = 'Sent';
+		obj.row.status.highlight = 'success';
+		const sql_datetime = common.toLocalSqlDatetime();
+		obj.row.sent_at = common.formatDate(sql_datetime, false);
 		sendInvoice(obj.row.company_id, obj.row.id);
 	}else if(obj.action.toLowerCase() === 'download pdf'){
 		downloadPDF(obj.row.company_id, obj.row.id);
 	}else if(obj.action.toLowerCase() === 'add payment'){
-		router.push(`/transactions/create/${obj.row.id}`);
+		//TODO: redirect when we have the seperate payment module.
+		//router.push(`/transactions/create/${obj.row.id}`);
 	}else if(obj.action.toLowerCase() === 'cancel'){
-		obj.row.status.value = 2;
+		obj.row.status.value = 3;
 		obj.row.status.highlight = 'error';
 		obj.row.status.text = 'Cancelled';
-		toggleInvoiceCancel(obj.row.id, 2);
+		toggleInvoiceCancel(obj.row.id, 3);
 	}else if(obj.action.toLowerCase() === 'uncancel'){
-		obj.row.status.value = 1;
-		obj.row.status.highlight = 'info';
-		obj.row.status.text = 'Pending';
-		toggleInvoiceCancel(obj.row.id, 1);
+		if(!obj.row.sent_at){
+			obj.row.status.value = 1;
+			obj.row.status.text = 'Draft';
+			obj.row.status.highlight = 'info';
+			toggleInvoiceCancel(obj.row.id, 1);
+		}else{
+			obj.row.status.value = 2;
+			obj.row.status.text = 'Sent';
+			obj.row.status.highlight = 'success';
+			toggleInvoiceCancel(obj.row.id, 2);
+		}
+		
+		
+		
 	}
 }
 
