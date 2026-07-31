@@ -63,6 +63,8 @@ import PaymentSettingsGateways from '../src/components/settings/payments/blocks/
 import Transactions from '../src/components/transactions/Transactions.vue';
 import TransactionView from '../src/components/transactions/TransactionView.vue';
 import LoginSettings from '../src/components/settings/login/LoginSettings.vue';
+import Credits from '../src/components/credits/Credits.vue';
+import CreditsCreateEdit from '../src/components/credits/CreditsCreateEdit.vue';
 
 const routes = [
 	{
@@ -300,6 +302,16 @@ const routes = [
 			{
 				path: '/invoices/view/:id',
 				component: InvoiceView,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/credits',
+				component: Credits,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/credits/create',
+				component: CreditsCreateEdit,
 				meta: { requires_auth: true }
 			},
 			{

@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage invoices" :enable_arranged_columns="true" base_url="manage-invoices" slug="invoices" :actions="['view','edit', 'delete', cancel_data,'Add Payment', 'download PDF', 'send Invoice']" @action="handleAction"></general-index-page>
+	<general-index-page page_title="Manage invoices" :enable_arranged_columns="true" base_url="manage-invoices" slug="invoices" :actions="['view','edit', 'delete', cancel_data,'Add Payment', 'download PDF', 'send Invoice']" @action="handleAction" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
 </template>
 
 <script lang="ts" setup>

@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage Custom Field Types" :enable_arranged_columns="false" base_url="manage-field-types" slug="custom-fields/manage-field-types" :actions="['edit', 'delete']"></general-index-page>
+	<general-index-page page_title="Manage Custom Field Types" :enable_arranged_columns="false" base_url="manage-field-types" slug="custom-fields/manage-field-types" :actions="['edit', 'delete']" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
 </template>
 
 <script lang="ts" setup>

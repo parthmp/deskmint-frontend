@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage Transactions" :add_new="false" :enable_arranged_columns="true" base_url="manage-transactions" slug="transactions" :actions="['view']" @action="handleAction"></general-index-page>
+	<general-index-page page_title="Manage Transactions" :add_new="false" :enable_arranged_columns="true" base_url="manage-transactions" slug="transactions" :actions="['view']" :checkbox_actions="['Export CSV']"></general-index-page>
 </template>
 
 <script lang="ts" setup>

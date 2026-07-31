@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Invoices custom fields" :enable_arranged_columns="false" base_url="invoices-custom-fields" slug="custom-fields/invoices" :actions="['edit', 'delete']"></general-index-page>
+	<general-index-page page_title="Invoices custom fields" :enable_arranged_columns="false" base_url="invoices-custom-fields" slug="custom-fields/invoices" :actions="['edit', 'delete']" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
 </template>
 
 <script lang="ts" setup>

@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage clients" :enable_arranged_columns="true" base_url="manage-clients" slug="clients" :actions="['view','edit', 'delete']"></general-index-page>
+	<general-index-page page_title="Manage clients" :enable_arranged_columns="true" base_url="manage-clients" slug="clients" :actions="['view','edit', 'delete']" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
 </template>
 
 <script lang="ts" setup>
