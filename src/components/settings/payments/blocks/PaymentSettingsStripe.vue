@@ -84,6 +84,12 @@
 				data.secret.error = 'Please enter stripe secret key';
 			}
 
+			
+		});
+	});
+
+	watch(() => data.webhook_secret.value, () : void => {
+		nextTick(() => {
 			data.webhook_secret.error = '';
 			if(!stripe_webhook_secret_ref?.value?.validateText()){
 				data.webhook_secret.error = 'Please enter stripe webhook secret key';
