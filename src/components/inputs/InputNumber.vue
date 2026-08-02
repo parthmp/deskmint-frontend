@@ -73,6 +73,11 @@
 				if(common.isset(this.disabled)){
 					this.local_disabled = this.disabled;
 				}
+			},
+			min() : void {
+				if(common.isset(this.min)){
+					this.local_min = this.min || 0;
+				}
 			}
 		},
 

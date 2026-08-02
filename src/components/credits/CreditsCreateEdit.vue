@@ -1,19 +1,24 @@
 <template>
 	<section class="main-content">
 		<div class="card">
-			<h1 class="text-2xl!">Create credit</h1>
+			<h1 class="text-2xl!" v-if="data.mode === 'create'">Create credit</h1>
+			<h1 class="text-2xl!" v-if="data.mode === 'edit'">Edit credit</h1>
 			<BackButton></BackButton>
+			<p class="text-red-900 mb-2" v-if="data.mode === 'edit' && data.client_currency !== data.credit_currency && data.access">Updating this credit will change its currency from {{ data.credit_currency }} to {{ data.client_currency }} as client's currency had been changed.</p>
+			<p class="text-red-900 mb-2" v-if="data.mode === 'edit' && !data.access">You can not go below {{ data.applied_amount }} to update this entry. {{ data.applied_amount }} amount already applied to invoice(s).</p>
 			<form @submit.prevent="handleSubmit">
 				<div class="grid grid-cols-12">
 					<div class="col-span-12">
-						<input-auto-complete label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients" :show_errors="data.client.show_errors"></input-auto-complete>
+						<input-auto-complete :disabled="!data.access" label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients" :show_errors="data.client.show_errors"></input-auto-complete>
 					</div>
 				</div>
 				<div class="grid grid-cols-12 mt-[25px]">
 					<div class="col-span-12">
-						<input-number label="Amount" v-model="data.amount.value" :error="data.amount.error" placeholder="Enter an amount" :required="true" step="0.01" ref="amount_ref"></input-number>
+						<input-number :min="data.applied_amount" label="Amount" v-model="data.amount.value" :error="data.amount.error" placeholder="Enter an amount" :required="true" step="0.01" ref="amount_ref"></input-number>
 					</div>
 				</div>
+				<h2 class="text-xl! mt-3" v-if="(data.client_currency !== '' && data.mode === 'create') || (data.mode === 'edit' && data.access)">Currency : {{ data.client_currency }}</h2>
+				<h2 class="text-xl! mt-3" v-if="data.mode === 'edit' && !data.access">Currency : {{ data.credit_currency }}</h2>
 				<input-button btn_text="Save" :disabled="data.btn_disabled" icon="IconCheck" class="lg:float-end"></input-button>
 				<div class="clear-both"></div>
 			</form>
@@ -22,11 +27,7 @@
 </template>
 <script lang="ts" setup>
 
-interface InputComponent{
-	validate: () => boolean
-}
-
-import { reactive, ref } from 'vue';
+import { nextTick, onMounted, reactive, ref } from 'vue';
 import InputAutoComplete from '../inputs/InputAutoComplete.vue';
 import BackButton from '../blocks/BackButton.vue';
 import InputNumber from '../inputs/InputNumber.vue';
@@ -34,11 +35,37 @@ import InputButton from '../inputs/InputButton.vue';
 import { watch } from 'vue';
 import { toastEvents } from '../../events/toastEvents.ts';
 import api from '../../helpers/api.ts';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import type { TextFieldType } from '../../types/InputTypes.ts';
+
+interface InputComponent{
+	validate: () => boolean
+}
+
+interface ClientInterface{
+	client : {
+		value : string,
+		error: string,
+		show_errors:boolean,
+		client_id : string
+	},
+	amount : TextFieldType,
+	clients : Array<{value : string, text:string}>,
+	btn_disabled:boolean,
+	currency_id:number,
+	credit_id:number,
+	mode: string,
+	loading: boolean,
+	client_currency: string,
+	credit_currency: string,
+	access:boolean,
+	applied_amount : number
+}
 
 const router = useRouter();
+const route = useRoute();
 
-const data = reactive({
+const data = reactive<ClientInterface>({
 	client: {
 		value : '',
 		error : 'Please select a client',
@@ -51,13 +78,20 @@ const data = reactive({
 	},
 	clients: [],
 	btn_disabled : false,
-	currency_id : 0
+	currency_id : 0,
+	credit_id : 0,
+	mode : 'create',
+	loading : false,
+	client_currency: '',
+	credit_currency : '',
+	access : true,
+	applied_amount: 0
 	
 });
 
 const amount_ref = ref<InputComponent>();
 
-watch(() => data.client.client_id, () => {
+watch(() => data.client.client_id, () : void => {
 	data.client.error = '',
 	data.client.show_errors = false;
 	if(data.client.client_id === ''){
@@ -66,7 +100,7 @@ watch(() => data.client.client_id, () => {
 	}
 });
 
-watch(() => data.amount.value, () => {
+watch(() => data.amount.value, () : void => {
 
 	data.amount.error = '';
 
@@ -76,19 +110,20 @@ watch(() => data.amount.value, () => {
 
 });
 
-const handleClientSelect = (ev) => {
+const handleClientSelect = (ev : {data : {currency : {id: number, code : string}}, value : number, text:string}) => {
 
 	data.currency_id = 0;
 	data.client.client_id = '';
 
 	if(Object.keys(ev).length > 0){
 		data.currency_id = ev.data.currency.id;
+		data.client_currency = ev.data.currency.code;
 		data.client.client_id = ev.value+'';
 		data.client.value = ev.text+'';
 	}
 }
 
-const handleSubmit = async () => {
+const handleSubmit = async () : Promise<void> => {
 
 	const amount_v = amount_ref?.value?.validate();
 	data.client.show_errors = false;
@@ -123,18 +158,56 @@ const handleSubmit = async () => {
 	}
 
 	try{
-		await api.post('manage-credits', {
-			client_id : data.client.client_id,
-			amount : data.amount.value
-		});
+		if(data.mode === 'create'){
+			await api.post('manage-credits', {
+				client_id : data.client.client_id,
+				amount : data.amount.value
+			});
+		}else{
+			await api.patch(`manage-credits/${data.credit_id}`, {
+				client_id : data.client.client_id,
+				amount : data.amount.value
+			});
+		}
+		
 		router.push('/credits');
 	}finally{
 		data.btn_disabled = false;
 	}
 	
-	
-	
-
 }
+
+const fetchCredit = async () : Promise<void> => {
+	data.loading = true;
+
+	try{
+
+		const response = await api.get(`manage-credits/edit/${data.credit_id}`);
+		data.client.value = response.data.credit.full_name;
+		data.client.client_id = response.data.credit.client_id;
+		data.client_currency = response.data.credit.client_currency;
+		data.credit_currency = response.data.credit.credit_currency;
+		data.access = +response.data.full_access === 1 ? true : false;
+		data.applied_amount = response.data.credit.applied_amount;
+		data.amount.value = response.data.credit.amount+'';
+		nextTick(() => {
+			data.amount.error = '';
+			amount_ref?.value?.validate();
+		});
+		
+		
+	}finally{
+		data.loading = false;
+	}
+}
+
+onMounted(() : void => {
+	const credit_id = route.params.id;
+	if(typeof credit_id !== 'undefined'){
+		data.credit_id = +credit_id;
+		data.mode = 'edit';
+		fetchCredit();
+	}
+})
 
 </script>

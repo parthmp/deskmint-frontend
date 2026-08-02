@@ -315,6 +315,11 @@ const routes = [
 				meta: { requires_auth: true }
 			},
 			{
+				path: '/credits/edit/:id',
+				component: CreditsCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
 				path: '/transactions',
 				component: Transactions,
 				meta: { requires_auth: true }
