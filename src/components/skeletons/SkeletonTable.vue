@@ -1,17 +1,17 @@
 <template>
 	<span>
 		<div class="table-skeleton">
-			<div class="h-[50px] w-full lg:w-[150px] animate-[pulse_1s_ease-in-out_infinite] float-end">
+			<div v-if="!table_only" class="h-[50px] w-full lg:w-[150px] animate-[pulse_1s_ease-in-out_infinite] float-end">
 				<div class="h-[38px] bg-deskmint-loading rounded-lg w-full"></div>
 			</div>
-			<div class="clear-both mb-2"></div>
-			<div class="h-[50px] lg:w-[150px] w-full animate-[pulse_1s_ease-in-out_infinite] float-start">
+			<div v-if="!table_only" class="clear-both mb-2"></div>
+			<div v-if="!table_only" class="h-[50px] lg:w-[150px] w-full animate-[pulse_1s_ease-in-out_infinite] float-start">
 				<div class="h-[38px] rounded-lg bg-deskmint-loading w-full"></div>
 			</div>
-			<div class="lg:ml-[25px] h-[50px] lg:w-[180px] w-full animate-[pulse_1s_ease-in-out_infinite] float-start">
+			<div v-if="!table_only" class="lg:ml-[25px] h-[50px] lg:w-[180px] w-full animate-[pulse_1s_ease-in-out_infinite] float-start">
 				<div class="h-[38px] rounded-lg bg-deskmint-loading w-full"></div>
 			</div>
-			<div class="h-[50px] lg:w-[350px] w-full animate-[pulse_1s_ease-in-out_infinite] float-end">
+			<div v-if="!table_only" class="h-[50px] lg:w-[350px] w-full animate-[pulse_1s_ease-in-out_infinite] float-end">
 				<div class="h-[38px] rounded-lg bg-deskmint-sage-loading w-full"></div>
 			</div>
 			<div class="clear-both mb-2"></div>
@@ -32,7 +32,8 @@
 	export default defineComponent({
 		name : 'SkeletonTable',
 		props: {
-			rows:Number
+			rows:Number,
+			table_only:Boolean
 		},
 		components : {
 

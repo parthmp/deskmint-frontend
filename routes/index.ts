@@ -65,6 +65,7 @@ import TransactionView from '../src/components/transactions/TransactionView.vue'
 import LoginSettings from '../src/components/settings/login/LoginSettings.vue';
 import Credits from '../src/components/credits/Credits.vue';
 import CreditsCreateEdit from '../src/components/credits/CreditsCreateEdit.vue';
+import CreditView from '../src/components/credits/CreditView.vue';
 
 const routes = [
 	{
@@ -317,6 +318,11 @@ const routes = [
 			{
 				path: '/credits/edit/:id',
 				component: CreditsCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/credits/view/:id',
+				component: CreditView,
 				meta: { requires_auth: true }
 			},
 			{

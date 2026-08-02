@@ -6,7 +6,8 @@
 			<BackButton></BackButton>
 			<p class="text-red-900 mb-2" v-if="data.mode === 'edit' && data.client_currency !== data.credit_currency && data.access">Updating this credit will change its currency from {{ data.credit_currency }} to {{ data.client_currency }} as client's currency had been changed.</p>
 			<p class="text-red-900 mb-2" v-if="data.mode === 'edit' && !data.access">You can not go below {{ data.applied_amount }} to update this entry. {{ data.applied_amount }} amount already applied to invoice(s).</p>
-			<form @submit.prevent="handleSubmit">
+			<CreditCreateEditSkeleton v-if="data.loading"></CreditCreateEditSkeleton>
+			<form v-if="!data.loading" @submit.prevent="handleSubmit">
 				<div class="grid grid-cols-12">
 					<div class="col-span-12">
 						<input-auto-complete :disabled="!data.access" label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients" :show_errors="data.client.show_errors"></input-auto-complete>
@@ -37,6 +38,7 @@ import { toastEvents } from '../../events/toastEvents.ts';
 import api from '../../helpers/api.ts';
 import { useRoute, useRouter } from 'vue-router';
 import type { TextFieldType } from '../../types/InputTypes.ts';
+import CreditCreateEditSkeleton from '../skeletons/CreditCreateEditSkeleton.vue';
 
 interface InputComponent{
 	validate: () => boolean
