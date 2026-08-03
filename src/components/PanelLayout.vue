@@ -449,6 +449,32 @@ export default defineComponent({
 						submenu: []
 					},
 					{
+						path: '',
+						icon: 'IconSquarePlus2',
+						icon_size: 22,
+						menu_text: 'Payments',
+						has_submenu : true,
+						show_submenu : false,
+						is_active: false,
+						submenu: [
+							{
+								path: '/payments/payments',
+								icon: 'IconUsers',
+								icon_size: 22,
+								is_active: false,
+								menu_text: 'Payments'
+							},
+							{
+								path: '/payments/types',
+								icon: 'IconFileDollar',
+								icon_size: 22,
+								is_active: false,
+								menu_text: 'Payment types'
+							}
+							
+						]
+					},
+					{
 						path: '/transactions',
 						icon: 'IconDatabaseDollar',
 						icon_size: 22,
