@@ -300,7 +300,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport, IconMail, IconCoin, IconDatabaseDollar, IconLock, IconMoneybagPlus } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport, IconMail, IconCoin, IconDatabaseDollar, IconLock, IconMoneybagPlus, IconReceiptDollar, IconClipboardList, IconCreditCardPay } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -368,7 +368,10 @@ export default defineComponent({
 		IconMail:IconMail,
 		IconDatabaseDollar:IconDatabaseDollar,
 		IconLock:IconLock,
-		IconMoneybagPlus:IconMoneybagPlus
+		IconMoneybagPlus:IconMoneybagPlus,
+		IconReceiptDollar:IconReceiptDollar,
+		IconClipboardList:IconClipboardList,
+		IconCreditCardPay:IconCreditCardPay
 	},
 	data() : PanelData{
 		return {
@@ -450,7 +453,7 @@ export default defineComponent({
 					},
 					{
 						path: '',
-						icon: 'IconSquarePlus2',
+						icon: 'IconReceiptDollar',
 						icon_size: 22,
 						menu_text: 'Payments',
 						has_submenu : true,
@@ -459,14 +462,21 @@ export default defineComponent({
 						submenu: [
 							{
 								path: '/payments/payments',
-								icon: 'IconUsers',
+								icon: 'IconReceiptDollar',
 								icon_size: 22,
 								is_active: false,
 								menu_text: 'Payments'
 							},
 							{
+								path: '/payments/requests',
+								icon: 'IconCreditCardPay',
+								icon_size: 22,
+								is_active: false,
+								menu_text: 'Requests'
+							},
+							{
 								path: '/payments/types',
-								icon: 'IconFileDollar',
+								icon: 'IconClipboardList',
 								icon_size: 22,
 								is_active: false,
 								menu_text: 'Payment types'

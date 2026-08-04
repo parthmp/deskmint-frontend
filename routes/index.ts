@@ -69,6 +69,7 @@ import CreditView from '../src/components/credits/CreditView.vue';
 import Payments from '../src/components/payments/payments/Payments.vue';
 import PaymentTypes from '../src/components/payments/payment_types/PaymentTypes.vue';
 import PaymentTypeCreateEdit from '../src/components/payments/payment_types/PaymentTypeCreateEdit.vue';
+import Requests from '../src/components/payments/requests/Requests.vue';
 
 const routes = [
 	{
@@ -331,6 +332,11 @@ const routes = [
 			{
 				path: '/payments/payments',
 				component: Payments,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/payments/requests',
+				component: Requests,
 				meta: { requires_auth: true }
 			},
 			{

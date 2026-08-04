@@ -5,7 +5,7 @@
         <br v-if="!compact">
         <skeleton-table v-if="data_loading" :rows="10"></skeleton-table>
 		
-		<input-button v-if="enable_arranged_columns" class="lg:float-start mb-5 lg:mb-0" btn_text="Arrange columns" icon="IconColumns3" @click="showPopup"></input-button>
+		<input-button v-if="enable_arranged_columns" class="lg:float-start mb-5 lg:mb-0" btn_text="Columns" icon="IconColumns3" @click="showPopup"></input-button>
 		
 		<popup v-if="enable_arranged_columns" :show_popup="show_popup" @closed="closePopup" header="Columns">
 			<div>
