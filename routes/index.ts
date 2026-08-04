@@ -70,6 +70,7 @@ import Payments from '../src/components/payments/payments/Payments.vue';
 import PaymentTypes from '../src/components/payments/payment_types/PaymentTypes.vue';
 import PaymentTypeCreateEdit from '../src/components/payments/payment_types/PaymentTypeCreateEdit.vue';
 import Requests from '../src/components/payments/requests/Requests.vue';
+import RequestCreateEdit from '../src/components/payments/requests/RequestCreateEdit.vue';
 
 const routes = [
 	{
@@ -337,6 +338,16 @@ const routes = [
 			{
 				path: '/payments/requests',
 				component: Requests,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/payments/requests/create',
+				component: RequestCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/payments/requests/edit/:id',
+				component: RequestCreateEdit,
 				meta: { requires_auth: true }
 			},
 			{
