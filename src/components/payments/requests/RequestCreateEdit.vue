@@ -17,7 +17,15 @@
 				</div>
 				<div class="grid grid-cols-12 lg:gap-5 mt-[25px]">
 					<div class="col-span-12 lg:col-span-6">
-						<input-number :disabled="false" label="Amount" v-model="data.amount.value" :error="data.amount.error" :required="true" placeholder="Type amount" :min="0.01" :max="999999999" :step="0.01" ref="amount_ref"></input-number>
+						<div class="grid grid-cols-12">
+							<div class="col-span-11">
+								<input-number :disabled="false" label="Amount" v-model="data.amount.value" :error="data.amount.error" :required="true" placeholder="Type amount" :min="0.01" :max="999999999" :step="0.01" ref="amount_ref"></input-number>
+							</div>
+							<div class="col-span-1 self-center mt-5 ml-5 font-bold">
+								{{ data.client_currency }}
+							</div>
+						</div>
+						
 					</div>
 					<div class="col-span-12 mt-[25px] lg:col-span-6 lg:mt-0">
 						<input-select label="Payment gateway" placeholder="Select payment gateway" :disabled="false" v-model="data.payment_gateway.value" :error="data.payment_gateway.error" :required="true" :options="data.payment_gateways" ref="payment_gateway_ref"></input-select>
@@ -110,7 +118,7 @@ const data = reactive<RequestInterface>({
 	payment_gateways: [],
 	clients: [],
 	currency_id : 0,
-	client_currency : '',
+	client_currency : '-',
 	send_reminders: true,
 	send_request: true,
 	disabled: false,
