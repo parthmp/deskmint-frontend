@@ -5,8 +5,9 @@
 			<h1 class="text-2xl!" v-if="data.mode === 'edit'">Edit payment request</h1>
 
 			<BackButton></BackButton>
-
-			<form @submit.prevent="handleSubmit">
+			<p v-if="data.mode === 'edit' && data.pr_currency_code !== data.client_currency">This payment request currency will be changed from  {{ data.pr_currency_code }} to {{ data.client_currency }}, as the client's currency had been changed.</p>
+			<CreateEditPaymentRequestSkeleton v-if="data.loading"></CreateEditPaymentRequestSkeleton>
+			<form @submit.prevent="handleSubmit" v-if="!data.loading">
 				<div class="grid grid-cols-12 lg:gap-5">
 					<div class="col-span-12 lg:col-span-6">
 						<input-auto-complete :disabled="false" label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients" :show_errors="data.client.show_errors"></input-auto-complete>
@@ -61,6 +62,7 @@ import api from '../../../helpers/api.ts';
 import { toastEvents } from '../../../events/toastEvents.ts';
 import { useRoute, useRouter } from 'vue-router';
 import type { TextFieldType } from '../../../types/InputTypes.ts';
+import CreateEditPaymentRequestSkeleton from '../../skeletons/CreateEditPaymentRequestSkeleton.vue';
 
 interface InputComponent{
 	validate: () => boolean
@@ -80,7 +82,9 @@ interface RequestInterface{
 	payment_gateways: Array<{text:string, value:string}>,
 	clients: Array<object>,
 	currency_id : number,
+	pr_currency_id : number,
 	client_currency : string,
+	pr_currency_code : string,
 	send_request: boolean,
 	disabled: boolean,
 	loading: boolean,
@@ -110,7 +114,9 @@ const data = reactive<RequestInterface>({
 	payment_gateways: [],
 	clients: [],
 	currency_id : 0,
+	pr_currency_id : 0,
 	client_currency : '-',
+	pr_currency_code : '-',
 	send_request: true,
 	disabled: false,
 	loading: false,
@@ -201,13 +207,24 @@ const handleSubmit = async () : Promise<void> => {
 	}
 
 	try{
-		await api.post(`manage-payment-requests`, {
-			client_id : data.client.client_id,
-			label : data.label.value,
-			amount : data.amount.value,
-			payment_gateway : data.payment_gateway.value,
-			send_request : data.send_request
-		});
+		if(data.mode === 'create'){
+			await api.post(`manage-payment-requests`, {
+				client_id : data.client.client_id,
+				label : data.label.value,
+				amount : data.amount.value,
+				payment_gateway : data.payment_gateway.value,
+				send_request : data.send_request
+			});
+		}else{
+			await api.patch(`manage-payment-requests/${data.id}`, {
+				client_id : data.client.client_id,
+				label : data.label.value,
+				amount : data.amount.value,
+				payment_gateway : data.payment_gateway.value,
+				send_request : data.send_request
+			});
+		}
+		
 		router.push('/payments/requests');
 	}finally{
 		data.disabled = false;
@@ -241,8 +258,41 @@ const fetchInit = async () : Promise<void> => {
 
 }
 
+const fetchPaymentRequest = async () : Promise<void> => {
+	data.loading = true;
+	try{
+		
+		
+		const response = await api.get(`manage-payment-requests/${data.id}`);
+		const rd = response.data;
+		data.client.value = rd.full_name;
+		data.client.client_id = rd.client_id;
+		data.label.value = rd.label;
+		data.amount.value = rd.amount;
+		data.payment_gateway.value = rd.payment_gateway;
+		data.payment_gateways = rd.payment_gateways;
+		data.client_currency = rd.client_currency;
+		data.currency_id = rd.client_currency_id;
+		data.pr_currency_id = rd.payment_request_currency_id;
+		data.pr_currency_code = rd.payment_request_currency;
+		data.send_request = false;
+		data.loading = false;
+
+	}finally{}
+}
+
 onMounted(() => {
-	fetchInit();
+	const id = +route.params.id;
+	if(!isNaN(id)){
+		data.mode = 'edit';
+		data.id = id;
+	}
+	if(data.mode === 'create'){
+		fetchInit();
+	}else{
+		fetchPaymentRequest();
+	}
+	
 });
 
 </script>
