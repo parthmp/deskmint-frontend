@@ -292,6 +292,10 @@ export default {
 			.replace(/[^a-z0-9]/g, '_')
 			.replace(/^_+|_+$/g, '')
 			.replace(/^(\d)/, 'c$1');
+	},
+
+	parseDropDownAction(str : string){
+		return str.split('_').join(' ').replace(/\b\w/g, char => char.toUpperCase());
 	}
 
 

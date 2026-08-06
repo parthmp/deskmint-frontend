@@ -32,13 +32,13 @@
 									<span v-for="(value, key) in option.labels" :key="key">
 										<a v-if="Array.isArray(option.labels[key]) && option.labels[key].includes(row[option.mapped].value)" href="javascript:;"
 											@click="updatePerPage(key, { [option.mapped] : option.labels[key] })"
-											class="capitalize-first hover:bg-deskmint-green-light hover:text-deskmint-original-dark-plus! dark:hover:text-deskmint-green! rounded-lg">
-											{{ key }}
+											class="hover:bg-deskmint-green-light hover:text-deskmint-original-dark-plus! dark:hover:text-deskmint-green! rounded-lg">
+											{{ parseDropDownAction(key+'') }}
 										</a>
 										<a v-else-if="row[option.mapped].value == option.labels[key]" href="javascript:;"
 											@click="updatePerPage(key, { [option.mapped] : option.labels[key] })"
 											class="capitalize-first hover:bg-deskmint-green-light hover:text-deskmint-original-dark-plus! dark:hover:text-deskmint-green! rounded-lg">
-											{{ key }}
+											{{ parseDropDownAction(key+'') }}
 										</a>
 									</span>
 									
@@ -116,6 +116,10 @@
 			};
 		},
 		methods: {
+
+			parseDropDownAction(str : string){
+				return common.parseDropDownAction(str);
+			},
 
 			toggleMenu() {
 				this.show_menu = !this.show_menu;
