@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage payment requests" :add_new="true" :enable_arranged_columns="true" base_url="manage-payment-requests" slug="payments/requests" :actions="['view']" :checkbox_actions="['Export CSV']"></general-index-page>
+	<general-index-page page_title="Manage payment requests" :add_new="true" :enable_arranged_columns="true" base_url="manage-payment-requests" slug="payments/requests" :actions="['Edit', 'Delete', 'Cancel', 'Send', 'Mark Sent', 'Mark Completed']" :checkbox_actions="['Export CSV']"></general-index-page>
 </template>
 
 <script lang="ts" setup>

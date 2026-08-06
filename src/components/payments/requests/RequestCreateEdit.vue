@@ -31,13 +31,6 @@
 						<input-select label="Payment gateway" placeholder="Select payment gateway" :disabled="false" v-model="data.payment_gateway.value" :error="data.payment_gateway.error" :required="true" :options="data.payment_gateways" ref="payment_gateway_ref"></input-select>
 					</div>
 				</div>
-			
-				<span class="flex gap-5 items-center mt-[25px]">
-					<input-switch v-model="data.send_reminders" />
-					<span @click.prevent="data.send_reminders = !data.send_reminders">
-						On/Off Send reminders
-					</span>
-				</span>
 				<span class="flex gap-5 items-center mt-[25px]">
 					<input-switch v-model="data.send_request" />
 					<span @click.prevent="data.send_request = !data.send_request">
@@ -88,7 +81,6 @@ interface RequestInterface{
 	clients: Array<object>,
 	currency_id : number,
 	client_currency : string,
-	send_reminders: boolean,
 	send_request: boolean,
 	disabled: boolean,
 	loading: boolean,
@@ -119,7 +111,6 @@ const data = reactive<RequestInterface>({
 	clients: [],
 	currency_id : 0,
 	client_currency : '-',
-	send_reminders: true,
 	send_request: true,
 	disabled: false,
 	loading: false,
@@ -215,7 +206,6 @@ const handleSubmit = async () : Promise<void> => {
 			label : data.label.value,
 			amount : data.amount.value,
 			payment_gateway : data.payment_gateway.value,
-			send_reminders : data.send_reminders,
 			send_request : data.send_request
 		});
 		router.push('/payments/requests');
