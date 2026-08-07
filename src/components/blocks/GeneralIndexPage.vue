@@ -7,7 +7,7 @@
 		
 		<input-button v-if="enable_arranged_columns" class="lg:float-start mb-5 lg:mb-0" btn_text="Columns" icon="IconColumns3" @click="showPopup"></input-button>
 		
-		<popup v-if="enable_arranged_columns" :show_popup="show_popup" @closed="closePopup" header="Columns">
+		<popup v-if="enable_arranged_columns" :show_popup="show_popup" @closed="closePopup" header="Columns" :close_outside="true">
 			<div>
 				<div class="mt-4 overflow-auto max-h-[550px] styled-scrollbar">
 					<p class="mb-5">Drag and drop to arrange columns, use switches to show/hide and enable/disable column search.</p>
@@ -18,12 +18,12 @@
 							<span class="col-span-4 lg:col-span-2 text-center">Searchable</span>
 						</span>
 					</div>
-					<draggable v-if="!arrange_columns_loading" v-model="columns" group="people" @start="drag=true" @end="drag=false" item-key="id" :animation="200">
+					<draggable v-if="!arrange_columns_loading" v-model="columns" group="people" @start="drag=true" @end="drag=false" item-key="id" :animation="200" handle=".drag-handle">
 						<template #item="{element, index}">
 							<transition-group name="fade" tag="div">
 								<div class="px-5 py-2 mt-3 rounded-xl shadow-sm outline-1 outline-deskmint-green-light dark:bg-deskmint-cyan-light" :key="element.id">
 									<span class="grid grid-cols-12 gap-1">
-										<span class="col-span-4 lg:col-span-8"><icon-grain class="inline-block" />&nbsp;{{element.text}}</span>
+										<span class="col-span-4 lg:col-span-8"><icon-grain  class="inline-block drag-handle" />&nbsp;{{element.text}}</span>
 										<span class="col-span-4 lg:col-span-2 m-auto"><input-switch v-model="element.show"></input-switch></span>
 										<span class="col-span-4 lg:col-span-2 m-auto"><input-switch v-model="element.searchable"></input-switch></span>
 									</span>

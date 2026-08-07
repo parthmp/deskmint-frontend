@@ -4,8 +4,12 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), tailwindcss(),
+  plugins: [vue(), tailwindcss()
 ],
+server: {
+    // Allows the development server to respond to any incoming host
+    //allowedHosts: ['postposted-welding-competition-julia.trycloudflare.com'] 
+  },
 // build: {
 //         rollupOptions: {
 //             output:{
