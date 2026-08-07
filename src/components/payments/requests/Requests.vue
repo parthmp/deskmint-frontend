@@ -132,10 +132,7 @@ const handleAction = (action:ActionType) : void => {
 }
 
 const handleSubmitCompleted = () => {
-	data.row.status.value = 4;
-	data.row.status.highlight = 'success';
-	data.row.status.text = 'Completed';
-		
+	
 	makePaymentRequest(data.row.id, 'completed');
 }
 
@@ -156,7 +153,10 @@ const makePaymentRequest = async (id : number, slug : string) : Promise<void> =>
 				return ;
 			}
 		}
-
+		data.row.status.value = 4;
+		data.row.status.highlight = 'success';
+		data.row.status.text = 'Completed';
+		
 		data.disabled = true;
 	}
 	let patch_url = `manage-payment-requests/${slug}/${id}`;
