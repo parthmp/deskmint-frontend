@@ -31,7 +31,7 @@ interface RequestsInterface {
 	},
 	loading : boolean
 }
-type RowType = {status : {value : number, highlight:string, text:string}, id :number, sent_at: string};
+type RowType = {status : {value : number, highlight:string, text:string}, id :number, sent_at: string, paid_at:string};
 type ActionType = {
 	row : RowType,
 	action: string
@@ -91,7 +91,8 @@ const data = reactive<RequestsInterface>({
 	row : {
 		status : { value : 0, highlight : '', text:'' },
 		id : 0,
-		sent_at: ''
+		sent_at: '',
+		paid_at: ''
 	},
 	payment_types : [],
 	payment_type : {
@@ -156,6 +157,8 @@ const makePaymentRequest = async (id : number, slug : string) : Promise<void> =>
 		data.row.status.value = 4;
 		data.row.status.highlight = 'success';
 		data.row.status.text = 'Completed';
+		const sql_datetime = common.toLocalSqlDatetime();
+		data.row.paid_at = common.formatDate(sql_datetime, false);
 		
 		data.disabled = true;
 	}
