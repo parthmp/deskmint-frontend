@@ -29,7 +29,7 @@ const data = reactive<{time_offset_minutes:number}>({
 const apply_credit = {
 
 	labels: {
-		apply: [1,2],
+		apply_or_unapply: [1,2],
 	},
 	mapped : 'status'
 
@@ -39,9 +39,9 @@ const apply_credit = {
 
 const handleAction = (obj:actionObject) => {
 	
-	if(obj.action.toLowerCase() === 'apply_credit'){
-		
-		
+	if(obj.action.toLowerCase() === 'apply_or_unapply'){
+		console.log(obj);
+		router.push(`/credits/apply/${obj.row.id}`);
 	}
 
 }
