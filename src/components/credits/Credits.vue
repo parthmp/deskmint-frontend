@@ -40,7 +40,6 @@ const apply_credit = {
 const handleAction = (obj:actionObject) => {
 	
 	if(obj.action.toLowerCase() === 'apply_or_unapply'){
-		console.log(obj);
 		router.push(`/credits/apply/${obj.row.id}`);
 	}
 
