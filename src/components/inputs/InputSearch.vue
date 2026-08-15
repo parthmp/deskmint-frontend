@@ -21,12 +21,15 @@
 
 <script lang="ts">
 export interface InputSearchInterface {
-	search_value: string
+	search_value: string,
+	typing_timeout: any,
+	status: string
 }
 
 import common from '../../helpers/common';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { IconSearch, IconX } from '@tabler/icons-vue';
+
 
 export default defineComponent({
 	name: 'InputSearch',
@@ -46,7 +49,9 @@ export default defineComponent({
 	
 	data(): InputSearchInterface {
 		return {
-			search_value: this.modelValue || ''
+			search_value: this.modelValue || '',
+			typing_timeout: null,
+			status: ''
 		};
 	},
 
@@ -63,8 +68,14 @@ export default defineComponent({
 
 	methods: {
 		updateValue(): void {
-			const sanitizedValue = this.sanitizeInput(this.search_value);
-			this.$emit('update:modelValue', sanitizedValue);
+
+			clearTimeout(this.typing_timeout);
+
+			this.typing_timeout = setTimeout(() => {
+				const sanitizedValue = this.sanitizeInput(this.search_value);
+				this.$emit('update:modelValue', sanitizedValue);
+			}, 350);
+			
 		},
 		
 		clearSearch(): void {

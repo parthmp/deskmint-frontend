@@ -390,7 +390,7 @@ body, p, h1, h2, h3, h4, h5, h6, li, div, input, a{
 .table thead tr:first-child, .table tfoot tr:last-child{
 	@apply bg-deskmint-cyan text-gray-100 rounded-lg font-medium;
 }
-.table thead th, .table tfoot th{
+.table thead th, .table tfoot th, .table thead td, .table tfoot td{
 	@apply border-none p-[10px] text-left;
 }
 .table tbody tr:nth-child(even){

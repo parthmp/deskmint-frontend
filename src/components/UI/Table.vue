@@ -1,5 +1,5 @@
 <template>
-	<div class="overflow-auto! max-h-60 relative">
+	<div>
 		<table class="table">
 			<thead>
 				<slot name="headers"></slot>
