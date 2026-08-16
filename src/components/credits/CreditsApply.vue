@@ -21,6 +21,8 @@
 							<ApplyUnapplyTable :searching="false" :headers="data.table.headers" :data="data.applied" mode="edit" @apply="(obj) => handleApply(obj, 'edit')" @remove="removeApplied" @modify_amount_left="addToAmountLeft" @edit="handleEdit" :max="data.amount_left"></ApplyUnapplyTable>
 						</div>
 					</div>
+					<InputButton @click.prevent="handleAppliedCredits" v-show="data.applied.length > 0" btn_text="Save" :disabled="data.disabled" icon="IconCheck" class="lg:float-end"></InputButton>
+					<div class="clear-both"></div>
 				</div>
 				
 				
@@ -38,6 +40,7 @@ import { toastEvents } from '../../events/toastEvents.ts';
 import api from '../../helpers/api.ts';
 import { useRoute, useRouter } from 'vue-router';
 import CreditsApplyUnapplySkeleton from '../skeletons/CreditsApplyUnapplySkeleton.vue';
+import InputButton from '../inputs/InputButton.vue';
 
 type TableRow = {
 	id : number,
@@ -63,7 +66,8 @@ interface CreditsApply {
 	applied : Array<TableRow>,
 	applied_ids : Array<number>,
 	loading : boolean,
-	searching:boolean
+	searching:boolean,
+	disabled : boolean
 }
 
 const route = useRoute();
@@ -83,7 +87,8 @@ const data = reactive<CreditsApply>({
 	applied : [],
 	applied_ids : [],
 	loading : false,
-	searching : false
+	searching : false,
+	disabled : false
 });
 
 watch(() => data.searched, () => {
@@ -141,6 +146,19 @@ const removeApplied = (obj:TableRow) : void => {
 	if(!exists){
 		data.table.data.push(obj);
 	}
+}
+
+const handleAppliedCredits = async () : Promise<void> => {
+	try{
+		data.disabled = true;
+		const response = await api.patch('manage-credits/apply-unapply-credit', {
+			applied : data.applied,
+			credit_id : data.credit_id
+		});
+	}finally{
+		data.disabled = false;
+	}
+	
 }
 
 const fetchInvoices = async () : Promise<void> => {
