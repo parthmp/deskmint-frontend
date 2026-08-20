@@ -21,7 +21,7 @@
 							<ApplyUnapplyTable :searching="false" :headers="data.table.headers" :data="data.applied" mode="edit" @apply="(obj) => handleApply(obj, 'edit')" @remove="removeApplied" @modify_amount_left="addToAmountLeft" @edit="handleEdit" :max="data.amount_left"></ApplyUnapplyTable>
 						</div>
 					</div>
-					<InputButton @click.prevent="handleAppliedCredits" v-show="data.applied.length > 0" btn_text="Save" :disabled="data.disabled" icon="IconCheck" class="lg:float-end"></InputButton>
+					<InputButton @click.prevent="handleAppliedCredits" btn_text="Save" :disabled="data.disabled" icon="IconCheck" class="lg:float-end"></InputButton>
 					<div class="clear-both"></div>
 				</div>
 				
@@ -69,6 +69,7 @@ interface CreditsApply {
 	loading : boolean,
 	searching:boolean,
 	disabled : boolean
+	removed_ids : Array<number>
 }
 
 const route = useRoute();
@@ -89,7 +90,8 @@ const data = reactive<CreditsApply>({
 	applied_ids : [],
 	loading : false,
 	searching : false,
-	disabled : false
+	disabled : false,
+	removed_ids : []
 });
 
 watch(() => data.searched, () => {
@@ -117,6 +119,7 @@ const handleApply = (obj:TableRow, mode:string) : void => {
 	data.amount_left = sum.toFixed(2).toString();
 	obj.show_text_input = false;
 	if(mode === 'add'){
+		
 		if(!data.applied_ids.includes(obj.id)){
 			data.applied_ids.push(obj.id);
 			data.applied.push(obj);
@@ -126,6 +129,8 @@ const handleApply = (obj:TableRow, mode:string) : void => {
 		}
 		
 	}
+
+	data.removed_ids = data.removed_ids.filter(id => id !== obj.id);
 }
 
 const handleEdit = (obj:TableRow) : void => {
@@ -143,6 +148,7 @@ const removeApplied = (obj:TableRow) : void => {
 	data.applied_ids = data.applied_ids.filter(id => id !== obj.id);
 	addToAmountLeft(obj.amount);
 	obj.amount = '';
+	data.removed_ids.push(+obj.id);
 	const exists = data.table.data.some(row => row.id === obj.id);
 	if(!exists){
 		data.table.data.push(obj);
@@ -154,7 +160,8 @@ const handleAppliedCredits = async () : Promise<void> => {
 		data.disabled = true;
 		const response = await api.patch('manage-credits/apply-unapply-credit', {
 			applied : data.applied,
-			credit_id : data.credit_id
+			credit_id : data.credit_id,
+			removed_ids : data.removed_ids
 		});
 	}finally{
 		data.disabled = false;
@@ -220,7 +227,8 @@ const fetchCredit = async () : Promise<void> => {
 		data.currency_code = rd.currency_code;
 		data.full_name = rd.full_name;
 
-		fetchInvoices();
+		await fetchAlreadyApplied();
+		await fetchInvoices();
 		
 	}catch(e){
 		router.push('/credits');
@@ -229,6 +237,39 @@ const fetchCredit = async () : Promise<void> => {
 	}
 	
 	
+}
+
+const fetchAlreadyApplied = async () : Promise<void> => {
+	const response = await api.get('manage-credits/fetch-already-applied', {
+		params : {
+			credit_id : data.credit_id
+		}
+	});
+
+	const rd = response.data;
+
+	const to_be_applied:Array<TableRow> = [];
+	rd.forEach((t_row:TableRow) => {
+
+		const due = new Decimal(t_row.due);
+		const amount = new Decimal(t_row.amount);
+		const allowed = due.plus(amount);
+
+		to_be_applied.push({
+			id: t_row.id,
+			invoice : t_row.invoice,
+			total : t_row.total,
+			due : t_row.due,
+			allowed : allowed.toFixed(2).toString(),
+			amount : t_row.total,
+			add: '',
+			show_text_input : false
+		});
+	
+	});
+
+	data.applied = to_be_applied;
+
 }
 
 onMounted(() : void => {
