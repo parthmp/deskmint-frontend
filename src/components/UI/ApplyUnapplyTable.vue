@@ -71,6 +71,7 @@ type TableRow = {
 	invoice : string,
 	total : string,
 	due : string,
+	allowed : string,
 	amount : string,
 	add: string,
 	show_text_input:boolean
@@ -106,9 +107,9 @@ const addToApplied = (obj:TableRow, mode:string) : void => {
 	}
 
 	const amount = new Decimal(obj.amount);
-	const due = new Decimal(obj.due);
+	const allowed = new Decimal(obj.allowed);
 
-	if(!amount.greaterThan(due)){
+	if(!amount.greaterThan(allowed)){
 		emit(mode, obj);
 		return ;
 	}

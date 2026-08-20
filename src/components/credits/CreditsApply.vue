@@ -47,6 +47,7 @@ type TableRow = {
 	invoice : string,
 	total : string,
 	due : string,
+	allowed : string,
 	amount : string,
 	add: string,
 	show_text_input:boolean
@@ -81,7 +82,7 @@ const data = reactive<CreditsApply>({
 	full_name : '',
 	searched : '',
 	table : {
-		headers : ['ID', 'Invoice', 'Total', 'Due', 'Amount', '-'],
+		headers : ['ID', 'Invoice', 'Total', 'Due', 'Allowed', 'Amount', '-'],
 		data : []
 	},
 	applied : [],
@@ -183,6 +184,7 @@ const fetchInvoices = async () : Promise<void> => {
 				invoice : t_row.invoice,
 				total : t_row.total,
 				due : t_row.due,
+				allowed : t_row.due,
 				amount : '',
 				add: '',
 				show_text_input : false
