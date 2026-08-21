@@ -2,50 +2,56 @@
 		<Table>
 			<template #headers>
 				<tr class="sticky! w-full top-0">
-					<th v-for="(header, hi) in props.headers" :key="hi">
-						{{ header }}
-					</th>
+					<template v-for="(header, hi) in props.headers" :key="hi" >
+						<th v-if="((header.toLocaleLowerCase() !== 'allowed' && props.mode === 'add') || (props.mode === 'edit'))">
+							
+							{{ header }}
+							
+						</th>
+					</template>
 				</tr>
 			</template>
 			<template #body>
 				
 				<tr v-if="!props.searching" v-for="(obj,i) in props.data" :key="i">
 					<template v-for="(obj2, k) in obj" :key="k">
-						<td v-if="k !== 'show_text_input'">
-							<span>
-								<span v-if="k === 'add' && props.mode === 'add'">
-									<InputButton @click="() => addToApplied(obj, 'apply')" btn_text="Add" :full_width="false"></InputButton>
-								</span>
-								<span v-if="k === 'add' && props.mode === 'edit'" class="flex gap-10">
-									<IconCheck v-if="obj.show_text_input" class="float-end text-green-500! cursor-pointer" @click="() => modifyToApplied(obj)"></IconCheck>
-									<IconEdit v-if="!obj.show_text_input" @click.prevent="showInput(obj)" class="float-end text-blue-500! cursor-pointer"></IconEdit>
-									<IconTrash class="float-end text-red-500! cursor-pointer" @click="removeApplied(obj)"></IconTrash>
-								</span>
-								
-								<span v-else-if="k === 'amount' && props.mode === 'add'">
-									<InputNumber :max="props.max" @keyup.enter="() => addToApplied(obj, 'apply')" v-model="obj[k]" placeholder="Amount" step="0.01"></InputNumber>
-								</span>
-								
-								<span v-else>
-									<span v-if="props.mode === 'edit'">
-										<span v-if="!obj.show_text_input && k === 'amount'">
-											{{ obj2 }}
-										</span>
-										<span v-else-if="k !== 'amount'">
-											{{ obj2 }}
-										</span>
-										<span v-if="k === 'amount' && obj.show_text_input">
-											<InputNumber :max="props.max" @keyup.enter="() => modifyToApplied(obj)" v-model="obj[k]" placeholder="Amount" step="0.01"></InputNumber>
-										</span>
+						<template v-if="((k !== 'allowed' && props.mode === 'add') || (props.mode === 'edit'))">
+							<td v-if="k !== 'show_text_input'">
+								<span>
+									<span v-if="k === 'add' && props.mode === 'add'">
+										<InputButton @click="() => addToApplied(obj, 'apply')" btn_text="Add" :full_width="false"></InputButton>
 									</span>
-									<span v-if="props.mode === 'add'">
-										{{ obj2 }}
+									<span v-if="k === 'add' && props.mode === 'edit'" class="flex gap-10">
+										<IconCheck v-if="obj.show_text_input" class="float-end text-green-500! cursor-pointer" @click="() => modifyToApplied(obj)"></IconCheck>
+										<IconEdit v-if="!obj.show_text_input" @click.prevent="showInput(obj)" class="float-end text-blue-500! cursor-pointer"></IconEdit>
+										<IconTrash class="float-end text-red-500! cursor-pointer" @click="removeApplied(obj)"></IconTrash>
+									</span>
+									
+									<span v-else-if="k === 'amount' && props.mode === 'add'">
+										<InputNumber :max="props.max" @keyup.enter="() => addToApplied(obj, 'apply')" v-model="obj[k]" placeholder="Amount" step="0.01"></InputNumber>
+									</span>
+									
+									<span v-else>
+										<span v-if="props.mode === 'edit'">
+											<span v-if="!obj.show_text_input && k === 'amount'">
+												{{ obj2 }}
+											</span>
+											<span v-else-if="k !== 'amount'">
+												{{ obj2 }}
+											</span>
+											<span v-if="k === 'amount' && obj.show_text_input">
+												<InputNumber :max="props.max" @keyup.enter="() => modifyToApplied(obj)" v-model="obj[k]" placeholder="Amount" step="0.01"></InputNumber>
+											</span>
+										</span>
+										<span v-if="props.mode === 'add'">
+											{{ obj2 }}
+										</span>
+										
 									</span>
 									
 								</span>
-								
-							</span>
-						</td>
+							</td>
+						</template>
 					</template>
 				</tr>
 				<tr v-if="props.data.length === 0 && !props.searching">

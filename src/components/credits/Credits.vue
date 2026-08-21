@@ -29,7 +29,7 @@ const data = reactive<{time_offset_minutes:number}>({
 const apply_credit = {
 
 	labels: {
-		apply_or_unapply: [1,2],
+		apply_or_unapply: [1,2, 3],
 	},
 	mapped : 'status'
 

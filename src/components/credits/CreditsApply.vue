@@ -185,14 +185,25 @@ const fetchInvoices = async () : Promise<void> => {
 
 		const rd = response.data;
 		const to_be_assigned:Array<TableRow> = [];
+
+		const credit_amount_left = new Decimal(data.amount_left);
 		
 		rd.forEach((t_row:TableRow) => {
+
+			const due = new Decimal(t_row.due);
+			let allowed = null;
+			if(due.lessThan(credit_amount_left) || due.equals(credit_amount_left)){
+				allowed = due;
+			}else{
+				allowed = credit_amount_left;
+			}
+			
 			to_be_assigned.push({
 				id: t_row.id,
 				invoice : t_row.invoice,
 				total : t_row.total,
 				due : t_row.due,
-				allowed : t_row.due,
+				allowed : allowed.toFixed(2).toString(),
 				amount : '',
 				add: '',
 				show_text_input : false
