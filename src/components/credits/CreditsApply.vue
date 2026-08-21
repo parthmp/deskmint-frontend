@@ -163,6 +163,7 @@ const handleAppliedCredits = async () : Promise<void> => {
 			credit_id : data.credit_id,
 			removed_ids : data.removed_ids
 		});
+		router.push('/credits');
 	}finally{
 		data.disabled = false;
 	}
@@ -173,7 +174,7 @@ const fetchInvoices = async () : Promise<void> => {
 	data.searching = true;
 	data.table.data = [];
 	try{
-
+		
 		const response = await api.get('manage-credits/apply-unapply-search-invoices', {
 			params : {
 				searched : data.searched,
@@ -254,14 +255,14 @@ const fetchAlreadyApplied = async () : Promise<void> => {
 		const due = new Decimal(t_row.due);
 		const amount = new Decimal(t_row.amount);
 		const allowed = due.plus(amount);
-
+		data.applied_ids.push(+t_row.id);
 		to_be_applied.push({
 			id: t_row.id,
 			invoice : t_row.invoice,
 			total : t_row.total,
 			due : t_row.due,
 			allowed : allowed.toFixed(2).toString(),
-			amount : t_row.total,
+			amount : t_row.amount,
 			add: '',
 			show_text_input : false
 		});
