@@ -31,6 +31,13 @@
 	</section>
 </template>
 <script lang="ts" setup>
+
+/**
+ * type 1 : the entries that user searched, not applied yet.
+ * type 2 : the entries that user applied from searched, not saved to db yet, the due amount includes the applied amount.
+ * type 3 : the entries that user applied and fetched from db, means already applied and deducted from the amount_left from credit amount, due does not include applied amount.
+ */
+
 import { onMounted, reactive, watch } from 'vue';
 import BackButton from '../blocks/BackButton.vue';
 import InputSearch from '../inputs/InputSearch.vue';
@@ -50,6 +57,8 @@ type TableRow = {
 	allowed : string,
 	amount : string,
 	add: string,
+	type: number,
+	fetched_amount: string,
 	show_text_input:boolean
 };
 
@@ -70,6 +79,7 @@ interface CreditsApply {
 	searching:boolean,
 	disabled : boolean
 	removed_ids : Array<number>
+	fetched_entries : Array<TableRow>
 }
 
 const route = useRoute();
@@ -91,12 +101,89 @@ const data = reactive<CreditsApply>({
 	loading : false,
 	searching : false,
 	disabled : false,
-	removed_ids : []
+	removed_ids : [],
+	fetched_entries : []
 });
 
 watch(() => data.searched, () => {
 	fetchInvoices();
 });
+
+const calculateAllowedForApplied = (modify_for_allowed:Array<TableRow>) : void  => {
+
+	const remaining_credit = new Decimal(data.amount_left);
+	
+	modify_for_allowed.forEach(row => {
+
+		let due = new Decimal(row.due);
+
+		if(row.type === 1){
+			
+			let allowed = due;
+			if(due.greaterThan(remaining_credit) || due.equals(remaining_credit)){
+				allowed = remaining_credit;
+			}
+
+			row.allowed = allowed.toFixed(2).toString();
+
+
+		}else if(row.type === 2){
+
+			//this section, the due is not deducted yet for the applied amount as it is not saved into db yet.
+			//allowed should be applied + due, if applied + due is greater than remaining then it should be amount + remaining
+			let applied_amount = new Decimal(row.amount);
+			let allowed = applied_amount.plus(due);
+
+			if(allowed.greaterThan(remaining_credit) || allowed.equals(remaining_credit)){
+				allowed = applied_amount.plus(remaining_credit);
+			}else{
+				allowed = due;
+			}
+
+			row.allowed = allowed.toFixed(2).toString();
+			
+		}else if(row.type === 3){
+
+			//type 3 always have amount deducted from due, use fetched_amount for this for calculation.
+			//type 3 entry can exist in search or in fetched entries
+			//check if amount has value, if it has then it is inside fetched entries, if not, it is showing in search results.
+			//for search : allowed should be fetched_amount + due, if fetched_amount + due is greater than remaining then it should be fetched_amount + remaining, if allowed greater than remaining then it should be remaining credit amount
+			//for fetched entry : allowed should be amount + due, if amount + due is greater than remaining then it should be amount + remaining.
+			//amount/fetched_amount always included for this because this entry already applied in db.
+
+			const in_search = (row.amount === '');
+
+			let allowed = null;
+
+			if(in_search){
+				let applied_fetched_amount = new Decimal(row.fetched_amount);
+				allowed = applied_fetched_amount.plus(due);
+				if(allowed.greaterThan(remaining_credit) || allowed.equals(remaining_credit)){
+					//allowed = applied_fetched_amount.plus(remaining_credit);
+					allowed = remaining_credit;
+				}else{
+					allowed = applied_fetched_amount.plus(due);
+				}
+
+				
+			}else{
+				let applied_amount = new Decimal(row.fetched_amount);
+				allowed = applied_amount.plus(due);
+				if(allowed.greaterThan(remaining_credit) || allowed.equals(remaining_credit)){
+					allowed = applied_amount.plus(remaining_credit);
+				}else{
+
+				}
+				console.log(allowed.toFixed(2).toString());
+			}
+
+			row.allowed = allowed.toFixed(2).toString();
+
+		}
+
+	});
+
+}
 
 const removeObjectById = (id:number) : void => {
 	data.table.data = data.table.data.filter(item => item.id !== id);
@@ -121,6 +208,7 @@ const handleApply = (obj:TableRow, mode:string) : void => {
 	if(mode === 'add'){
 		
 		if(!data.applied_ids.includes(obj.id)){
+			obj.type = 2; //changed type to 2
 			data.applied_ids.push(obj.id);
 			data.applied.push(obj);
 			removeObjectById(obj.id);
@@ -129,8 +217,10 @@ const handleApply = (obj:TableRow, mode:string) : void => {
 		}
 		
 	}
-
+	
 	data.removed_ids = data.removed_ids.filter(id => id !== obj.id);
+	calculateAllowedForApplied(data.table.data);
+	calculateAllowedForApplied(data.applied);
 }
 
 const handleEdit = (obj:TableRow) : void => {
@@ -144,6 +234,13 @@ const addToAmountLeft = (amount:string) : void => {
 }
 
 const removeApplied = (obj:TableRow) : void => {
+
+	//when we remove the entry, check if it is type 2, if it is, make it type 1 because user did not save it yet. (doesn't exist in db)
+	//type 3 never changes its type.
+	if(obj.type === 2){
+		obj.type = 1;
+	}
+
 	data.applied = data.applied.filter(item => item.id !== obj.id);
 	data.applied_ids = data.applied_ids.filter(id => id !== obj.id);
 	addToAmountLeft(obj.amount);
@@ -153,6 +250,10 @@ const removeApplied = (obj:TableRow) : void => {
 	if(!exists){
 		data.table.data.push(obj);
 	}
+
+	calculateAllowedForApplied(data.table.data);
+	calculateAllowedForApplied(data.applied);
+	
 }
 
 const handleAppliedCredits = async () : Promise<void> => {
@@ -186,26 +287,18 @@ const fetchInvoices = async () : Promise<void> => {
 		const rd = response.data;
 		const to_be_assigned:Array<TableRow> = [];
 
-		const credit_amount_left = new Decimal(data.amount_left);
-		
 		rd.forEach((t_row:TableRow) => {
-
-			const due = new Decimal(t_row.due);
-			let allowed = null;
-			if(due.lessThan(credit_amount_left) || due.equals(credit_amount_left)){
-				allowed = due;
-			}else{
-				allowed = credit_amount_left;
-			}
 			
 			to_be_assigned.push({
 				id: t_row.id,
 				invoice : t_row.invoice,
 				total : t_row.total,
 				due : t_row.due,
-				allowed : allowed.toFixed(2).toString(),
+				allowed : '',
 				amount : '',
 				add: '',
+				fetched_amount : '',
+				type : 1,
 				show_text_input : false
 			});
 		
@@ -214,6 +307,7 @@ const fetchInvoices = async () : Promise<void> => {
 		data.table.data = to_be_assigned;
 		data.loading = false;
 		data.searching = false;
+		calculateAllowedForApplied(data.table.data);
 
 	}catch(e){
 		router.push('/credits');
@@ -263,24 +357,29 @@ const fetchAlreadyApplied = async () : Promise<void> => {
 	const to_be_applied:Array<TableRow> = [];
 	rd.forEach((t_row:TableRow) => {
 
-		const due = new Decimal(t_row.due);
-		const amount = new Decimal(t_row.amount);
-		const allowed = due.plus(amount);
+		// const due = new Decimal(t_row.due);
+		// const amount = new Decimal(t_row.amount);
+		// const allowed = due.plus(amount);
 		data.applied_ids.push(+t_row.id);
 		to_be_applied.push({
 			id: t_row.id,
 			invoice : t_row.invoice,
 			total : t_row.total,
 			due : t_row.due,
-			allowed : allowed.toFixed(2).toString(),
+			allowed : '',
 			amount : t_row.amount,
 			add: '',
+			type : 3,
+			fetched_amount : t_row.amount,
 			show_text_input : false
 		});
 	
 	});
 
 	data.applied = to_be_applied;
+	//data.fetched_entries = to_be_applied;
+	calculateAllowedForApplied(data.table.data);
+	calculateAllowedForApplied(data.applied);
 
 }
 

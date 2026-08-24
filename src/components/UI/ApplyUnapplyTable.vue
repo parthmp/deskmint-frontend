@@ -3,7 +3,7 @@
 			<template #headers>
 				<tr class="sticky! w-full top-0">
 					<template v-for="(header, hi) in props.headers" :key="hi" >
-						<th v-if="((header.toLocaleLowerCase() !== 'allowed' && props.mode === 'add') || (props.mode === 'edit'))">
+						<th v-if="header !== 'fetched_amount' && header !== 'edit_entry' && header !== 'type'">
 							
 							{{ header }}
 							
@@ -15,7 +15,7 @@
 				
 				<tr v-if="!props.searching" v-for="(obj,i) in props.data" :key="i">
 					<template v-for="(obj2, k) in obj" :key="k">
-						<template v-if="((k !== 'allowed' && props.mode === 'add') || (props.mode === 'edit'))">
+						<template v-if="(k !== 'fetched_amount') && (k !== 'edit_entry') && (k !== 'type')">
 							<td v-if="k !== 'show_text_input'">
 								<span>
 									<span v-if="k === 'add' && props.mode === 'add'">
@@ -24,7 +24,7 @@
 									<span v-if="k === 'add' && props.mode === 'edit'" class="flex gap-10">
 										<IconCheck v-if="obj.show_text_input" class="float-end text-green-500! cursor-pointer" @click="() => modifyToApplied(obj)"></IconCheck>
 										<IconEdit v-if="!obj.show_text_input" @click.prevent="showInput(obj)" class="float-end text-blue-500! cursor-pointer"></IconEdit>
-										<IconTrash class="float-end text-red-500! cursor-pointer" @click="removeApplied(obj)"></IconTrash>
+										<IconTrash v-if="!obj.show_text_input" class="float-end text-red-500! cursor-pointer" @click="removeApplied(obj)"></IconTrash>
 									</span>
 									
 									<span v-else-if="k === 'amount' && props.mode === 'add'">
@@ -80,6 +80,8 @@ type TableRow = {
 	allowed : string,
 	amount : string,
 	add: string,
+	edit_entry: boolean,
+	fetched_amount:string,
 	show_text_input:boolean
 };
 
@@ -114,6 +116,7 @@ const addToApplied = (obj:TableRow, mode:string) : void => {
 
 	const amount = new Decimal(obj.amount);
 	const allowed = new Decimal(obj.allowed);
+	//const allowed = new Decimal(obj.due);
 
 	if(!amount.greaterThan(allowed)){
 		emit(mode, obj);
