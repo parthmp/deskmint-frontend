@@ -15,7 +15,7 @@
 				
 				<tr v-if="!props.searching" v-for="(obj,i) in props.data" :key="i">
 					<template v-for="(obj2, k) in obj" :key="k">
-						<template v-if="(k !== 'fetched_amount') && (k !== 'edit_entry') && (k !== 'type')">
+						<template v-if="(k !== 'fetched_amount') && (k !== 'type')">
 							<td v-if="k !== 'show_text_input'">
 								<span>
 									<span v-if="k === 'add' && props.mode === 'add'">
@@ -77,10 +77,9 @@ type TableRow = {
 	invoice : string,
 	total : string,
 	due : string,
-	allowed : string,
 	amount : string,
 	add: string,
-	edit_entry: boolean,
+	type: number,
 	fetched_amount:string,
 	show_text_input:boolean
 };
@@ -89,6 +88,7 @@ interface PropsInterface {
 	headers: Array<string>,
 	data: Array<TableRow>,
 	max: string|number,
+	credit_left: string|number,
 	mode: string,
 	searching: boolean
 }
@@ -107,16 +107,29 @@ const props = defineProps<PropsInterface>();
 
 const emit = defineEmits(['apply', 'edit', 'modify_amount_left', 'remove']);
 
-
 const addToApplied = (obj:TableRow, mode:string) : void => {
 
 	if(+obj.amount <= 0 || isNaN(+obj.amount)){
 		return ;
 	}
-
+	
 	const amount = new Decimal(obj.amount);
-	const allowed = new Decimal(obj.allowed);
-	//const allowed = new Decimal(obj.due);
+	const credit_left = new Decimal(props.credit_left);
+	
+	let allowed = new Decimal(obj.due);
+	let error_message = `You can not apply more than due amount for #${obj.invoice}`;
+
+	if(obj.type === 3){
+		
+		const fetched_amount = new Decimal(obj.fetched_amount);
+		allowed = fetched_amount.plus(allowed);
+		error_message = `You can not apply more than allowed amount (${allowed.toFixed(2).toString()}) for #${obj.invoice}`;
+	}
+
+	if(allowed.greaterThan(credit_left) || allowed.equals(credit_left)){
+		allowed = credit_left;
+		error_message = `You can not apply more than credit left (${credit_left.toFixed(2).toString()}) for #${obj.invoice}`;
+	}
 
 	if(!amount.greaterThan(allowed)){
 		emit(mode, obj);
@@ -125,7 +138,7 @@ const addToApplied = (obj:TableRow, mode:string) : void => {
 
 	toastEvents.emit('toast',{
 		type:'error',
-		message : `You can not apply ${obj.amount} for this invoice`
+		message : error_message
 	});
 	
 }

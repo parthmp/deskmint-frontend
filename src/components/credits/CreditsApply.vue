@@ -11,17 +11,17 @@
 					<div class="mt-4">
 						<InputSearch v-model="data.searched"></InputSearch>
 						<div class="overflow-auto! max-h-[280px] relative styled-scrollbar">
-							<ApplyUnapplyTable :searching="data.searching" :headers="data.table.headers" :data="data.table.data" mode="add" @apply="(obj) => handleApply(obj, 'add')" :max="data.amount_left"></ApplyUnapplyTable>
+							<ApplyUnapplyTable :searching="data.searching" :headers="data.table.headers" :data="data.table.data" mode="add" @apply="(obj) => handleApply(obj, 'add')" :max="data.amount_left" :credit_left="data.amount_left"></ApplyUnapplyTable>
 						</div>
 						
 					</div>
 					<div v-if="data.applied.length > 0">
 						<p class="mt-6">Applied</p>
 						<div class="mt-4">
-							<ApplyUnapplyTable :searching="false" :headers="data.table.headers" :data="data.applied" mode="edit" @apply="(obj) => handleApply(obj, 'edit')" @remove="removeApplied" @modify_amount_left="addToAmountLeft" @edit="handleEdit" :max="data.amount_left"></ApplyUnapplyTable>
+							<ApplyUnapplyTable :searching="false" :headers="data.table.headers" :data="data.applied" mode="edit" @apply="(obj) => handleApply(obj, 'edit')" @remove="removeApplied" @modify_amount_left="addToAmountLeft" @edit="handleEdit" :max="data.amount_left" :credit_left="data.amount_left"></ApplyUnapplyTable>
 						</div>
 					</div>
-					<InputButton @click.prevent="handleAppliedCredits" btn_text="Save" :disabled="data.disabled" icon="IconCheck" class="lg:float-end"></InputButton>
+					<InputButton @click.prevent="handleSubmit" btn_text="Save" :disabled="data.disabled" icon="IconCheck" class="lg:float-end"></InputButton>
 					<div class="clear-both"></div>
 				</div>
 				
@@ -54,7 +54,6 @@ type TableRow = {
 	invoice : string,
 	total : string,
 	due : string,
-	allowed : string,
 	amount : string,
 	add: string,
 	type: number,
@@ -94,7 +93,7 @@ const data = reactive<CreditsApply>({
 	full_name : '',
 	searched : '',
 	table : {
-		headers : ['ID', 'Invoice', 'Total', 'Due', 'Allowed', 'Amount', '-'],
+		headers : ['ID', 'Invoice', 'Total', 'Due', 'Amount', '-'],
 		data : []
 	},
 	applied : [],
@@ -110,98 +109,6 @@ const data = reactive<CreditsApply>({
 watch(() => data.searched, () => {
 	fetchInvoices();
 });
-
-const calculateAllowedForApplied = (modify_for_allowed:Array<TableRow>, mode:string = 'add') : void  => {
-
-	const remaining_credit = new Decimal(data.amount_left);
-	
-	modify_for_allowed.forEach(row => {
-
-		let due = new Decimal(row.due);
-		const total = new Decimal(row.total);
-	
-
-		if(row.type === 1){
-			
-			let allowed = due;
-			if(due.greaterThan(remaining_credit) || due.equals(remaining_credit)){
-				allowed = remaining_credit;
-			}
-
-			row.allowed = allowed.toFixed(2).toString();
-
-
-		}else if(row.type === 2){
-
-			//this section, the due is not deducted yet for the applied amount as it is not saved into db yet.
-			//allowed should be applied + due, if applied + due is greater than remaining then it should be amount + remaining
-			let applied_amount = new Decimal(row.amount);
-			let allowed = applied_amount.plus(due);
-
-			if((allowed.greaterThan(remaining_credit) || allowed.equals(remaining_credit))){
-				allowed = applied_amount.plus(remaining_credit);
-				if(due.lessThan(allowed)){
-					allowed = due;
-				}
-			}else{
-				allowed = due;
-			}
-
-			row.allowed = allowed.toFixed(2).toString();
-			
-		}else if(row.type === 3){
-
-			//type 3 always have amount deducted from due, use fetched_amount for this for calculation.
-			//type 3 entry can exist in search or in fetched entries
-			//check if amount has value, if it has then it is inside fetched entries, if not, it is showing in search results.
-			//for search : allowed should be fetched_amount + due, if fetched_amount + due is greater than remaining then it should be fetched_amount + remaining, if allowed greater than remaining then it should be remaining credit amount
-			//for fetched entry : allowed should be amount + due, if amount + due is greater than remaining then it should be amount + remaining.
-			//amount/fetched_amount always included for this because this entry already applied in db.
-			
-			const in_search = (row.amount === '');
-			
-			let allowed = null;
-			
-
-			if(in_search){
-				
-				let applied_amount = new Decimal(row.fetched_amount);
-				allowed = applied_amount.plus(due);
-				if(allowed.greaterThan(remaining_credit) || allowed.equals(remaining_credit)){
-					//allowed = applied_fetched_amount.plus(remaining_credit);
-					allowed = remaining_credit;
-				}else{
-					allowed = applied_amount.plus(due);
-				}
-
-				
-			}else{
-				let applied_amount = null;
-				if(mode === 'edit'){
-					applied_amount = new Decimal(row.amount);
-				}else{
-					applied_amount = new Decimal(row.fetched_amount);
-				}
-				
-				allowed = applied_amount.plus(due);
-				if((allowed.greaterThan(remaining_credit) || allowed.equals(remaining_credit)) && due.greaterThan(remaining_credit)){
-					allowed = applied_amount.plus(remaining_credit);
-				}
-
-				if(due.equals(new Decimal(0))){
-					allowed = applied_amount;
-				}
-				
-				
-			}
-
-			row.allowed = allowed.toFixed(2).toString();
-
-		}
-
-	});
-
-}
 
 const removeObjectById = (id:number) : void => {
 	data.table.data = data.table.data.filter(item => item.id !== id);
@@ -225,12 +132,7 @@ const handleApply = (obj:TableRow, mode:string) : void => {
 	obj.show_text_input = false;
 	if(mode === 'add'){
 		if(!data.applied_ids.includes(obj.id)){
-			
-			//check if it is paid already
-			const due = new Decimal(obj.due);
-			if(!due.equals(new Decimal(0))){
-				obj.type = 2; //changed type to 2
-			}
+
 			data.applied_ids.push(obj.id);
 			data.applied.push(obj);
 			removeObjectById(obj.id);
@@ -241,12 +143,10 @@ const handleApply = (obj:TableRow, mode:string) : void => {
 	}
 	
 	data.removed_ids = data.removed_ids.filter(id => id !== obj.id);
-	calculateAllowedForApplied(data.table.data);
-	calculateAllowedForApplied(data.applied);
+	
 }
 
 const handleEdit = (obj:TableRow) : void => {
-	
 	handleApply(obj, 'edit');
 }
 
@@ -257,8 +157,6 @@ const addToAmountLeft = (amount:string) : void => {
 }
 
 const removeApplied = (obj:TableRow) : void => {
-
-	
 
 	data.applied = data.applied.filter(item => item.id !== obj.id);
 	data.applied_ids = data.applied_ids.filter(id => id !== obj.id);
@@ -284,12 +182,35 @@ const removeApplied = (obj:TableRow) : void => {
 		obj.type = 1;
 	}
 
-	calculateAllowedForApplied(data.table.data);
-	calculateAllowedForApplied(data.applied);
 	
 }
 
-const handleAppliedCredits = async () : Promise<void> => {
+const handleSubmit = async () : Promise<void> => {
+
+	const credit_amount = new Decimal(data.amount);
+	let sum = new Decimal(0);
+
+	for(let z = 0 ; z < data.applied.length ; z++){
+
+		if(data.applied[z].show_text_input){
+			toastEvents.emit('toast', {
+				type : 'error',
+				message: `Please finish the editing in applied section`
+			});
+			return ;
+		}
+
+		sum = sum.plus(data.applied[z].amount);
+	}
+
+	if(sum.greaterThan(credit_amount)){
+		toastEvents.emit('toast', {
+			type : 'error',
+			message: `You can not apply more than available credit amount`
+		});
+		return ;
+	}
+
 	try{
 		data.disabled = true;
 		const response = await api.patch('manage-credits/apply-unapply-credit', {
@@ -325,16 +246,21 @@ const fetchInvoices = async () : Promise<void> => {
 
 		unpaid_invoices.forEach((t_row:TableRow) => {
 			
+			let type = 1;
+
+			if(t_row.applied_amount !== ''){
+				type = 3;
+			}
+
 			to_be_assigned.push({
 				id: t_row.id,
 				invoice : t_row.invoice,
 				total : t_row.total,
 				due : t_row.due,
-				allowed : '',
 				amount : '',
 				add: '',
-				fetched_amount : '',
-				type : 1,
+				fetched_amount : t_row.applied_amount,
+				type : type,
 				show_text_input : false
 			});
 		
@@ -347,7 +273,6 @@ const fetchInvoices = async () : Promise<void> => {
 				invoice : t_row.invoice,
 				total : t_row.total,
 				due : t_row.due,
-				allowed : '',
 				amount :'',
 				add: '',
 				fetched_amount : t_row.applied_amount,
@@ -360,9 +285,7 @@ const fetchInvoices = async () : Promise<void> => {
 		data.table.data = to_be_assigned;
 		data.loading = false;
 		data.searching = false;
-		console.log(data.table.data);
-		calculateAllowedForApplied(data.table.data);
-		//router.push('/credits');
+
 	}catch(e){
 		
 	}finally{
@@ -410,17 +333,12 @@ const fetchAlreadyApplied = async () : Promise<void> => {
 
 	const to_be_applied:Array<TableRow> = [];
 	rd.forEach((t_row:TableRow) => {
-
-		// const due = new Decimal(t_row.due);
-		// const amount = new Decimal(t_row.amount);
-		// const allowed = due.plus(amount);
 		data.applied_ids.push(+t_row.id);
 		to_be_applied.push({
 			id: t_row.id,
 			invoice : t_row.invoice,
 			total : t_row.total,
 			due : t_row.due,
-			allowed : '',
 			amount : t_row.amount,
 			add: '',
 			type : 3,
@@ -431,10 +349,7 @@ const fetchAlreadyApplied = async () : Promise<void> => {
 	});
 
 	data.applied = to_be_applied;
-	//data.fetched_entries = to_be_applied;
-	calculateAllowedForApplied(data.table.data);
-	calculateAllowedForApplied(data.applied);
-
+	
 }
 
 onMounted(() : void => {
