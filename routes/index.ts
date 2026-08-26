@@ -73,6 +73,7 @@ import Requests from '../src/components/payments/requests/Requests.vue';
 import RequestCreateEdit from '../src/components/payments/requests/RequestCreateEdit.vue';
 import CreditsApply from '../src/components/credits/CreditsApply.vue';
 import PaymentsCreateEdit from '../src/components/payments/payments/PaymentsCreateEdit.vue';
+import PaymentView from '../src/components/payments/payments/PaymentView.vue';
 
 const routes = [
 	{
@@ -350,6 +351,11 @@ const routes = [
 			{
 				path: '/payments/payments/edit/:id',
 				component: PaymentsCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/payments/payments/view/:id',
+				component: PaymentView,
 				meta: { requires_auth: true }
 			},
 			{
