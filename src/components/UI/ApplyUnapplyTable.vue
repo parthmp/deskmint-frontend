@@ -128,7 +128,7 @@ const addToApplied = (obj:TableRow, mode:string) : void => {
 
 	if(allowed.greaterThan(credit_left) || allowed.equals(credit_left)){
 		allowed = credit_left;
-		error_message = `You can not apply more than credit left (${credit_left.toFixed(2).toString()}) for #${obj.invoice}`;
+		error_message = `You can not apply more than amount left (${credit_left.toFixed(2).toString()}) for #${obj.invoice}`;
 	}
 
 	if(!amount.greaterThan(allowed)){
