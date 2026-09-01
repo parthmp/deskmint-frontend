@@ -75,6 +75,7 @@ import CreditsApply from '../src/components/credits/CreditsApply.vue';
 import PaymentsCreateEdit from '../src/components/payments/payments/PaymentsCreateEdit.vue';
 import PaymentView from '../src/components/payments/payments/PaymentView.vue';
 import PaymentsApply from '../src/components/payments/payments/PaymentsApply.vue';
+import InvoiceManageCredits from '../src/components/invoices/InvoiceManageCredits.vue';
 
 const routes = [
 	{
@@ -312,6 +313,11 @@ const routes = [
 			{
 				path: '/invoices/view/:id',
 				component: InvoiceView,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/manage-credits/:id',
+				component: InvoiceManageCredits,
 				meta: { requires_auth: true }
 			},
 			{

@@ -1,26 +1,27 @@
 <template>
 	<section class="main-content">
     	<div class="card">
-			 <h1 class="text-2xl!" v-if="a_data.mode === 'create'">Create an invoice</h1>
-			 <h1 class="text-2xl!" v-if="a_data.mode === 'edit'">Edit invoice</h1>
-			 
-			 <p v-if="data.locked && !data.cancelled" class="font-bold dark:text-red-400! text-red-500!">This invoice has payments attached to it, so you can not edit it.</p>
-			 <p v-if="data.locked && data.cancelled" class="font-bold dark:text-red-400! text-red-500!">This invoice has been cancelled, so you can not edit it.</p>
-			 <br>
-			 <client-create-edit-skeleton :blocks="3" v-if="!a_data.fetched"></client-create-edit-skeleton>
-			 <tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue" v-if="a_data.fetched">
-				<template v-slot:tab-0>
-					<invoice-page ref="invoice_page_validation" @validated="handleInvoicePageValidated"></invoice-page>
-				</template>
-				<template v-slot:tab-1>
-					<div>
-						<CustomFieldsRenderer :disabled="data.locked" v-model="a_data.custom_fields" @validated="handleCustomFieldsValidated" ref="custom_fields_tab_ref"></CustomFieldsRenderer>
-					</div>
-				</template>
-				<template v-slot:tab-2>
-					<SettingsTab :btn_disabled="a_data.btn_disabled" :disabled="data.locked" v-model:payment_gateway="a_data.payment_gateway" v-model:send_invoice_in_email="a_data.send_invoice_in_email" v-model:gateways="a_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
-				</template>
-			 </tabs>
+			
+			<h1 class="text-2xl!" v-if="a_data.mode === 'create'">Create an invoice</h1>
+			<h1 class="text-2xl!" v-if="a_data.mode === 'edit'">Edit invoice</h1>
+			<BackButton></BackButton>
+			<p v-if="data.locked && !data.cancelled" class="font-bold dark:text-red-400! text-red-500!">This invoice has payments attached to it, so you can not edit it.</p>
+			<p v-if="data.locked && data.cancelled" class="font-bold dark:text-red-400! text-red-500!">This invoice has been cancelled, so you can not edit it.</p>
+			<br>
+			<client-create-edit-skeleton :blocks="3" v-if="!a_data.fetched"></client-create-edit-skeleton>
+			<tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue" v-if="a_data.fetched">
+			<template v-slot:tab-0>
+				<invoice-page ref="invoice_page_validation" @validated="handleInvoicePageValidated"></invoice-page>
+			</template>
+			<template v-slot:tab-1>
+				<div>
+					<CustomFieldsRenderer :disabled="data.locked" v-model="a_data.custom_fields" @validated="handleCustomFieldsValidated" ref="custom_fields_tab_ref"></CustomFieldsRenderer>
+				</div>
+			</template>
+			<template v-slot:tab-2>
+				<SettingsTab :btn_disabled="a_data.btn_disabled" :disabled="data.locked" v-model:payment_gateway="a_data.payment_gateway" v-model:send_invoice_in_email="a_data.send_invoice_in_email" v-model:gateways="a_data.gateways" @validated="handleSettingsValidated" ref="settings_tab_ref"></SettingsTab>
+			</template>
+			</tabs>
 		</div>
 	</section>
 </template>
@@ -43,6 +44,7 @@
 	import { useRoute, useRouter } from 'vue-router';
 
 	import ClientCreateEditSkeleton from '../skeletons/ClientCreateEditSkeleton.vue';
+	import BackButton from '../blocks/BackButton.vue';
 	
 
 	interface InvoiceCreateEditInterface{

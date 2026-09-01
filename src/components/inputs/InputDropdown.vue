@@ -20,7 +20,7 @@
 					v-if="show_menu"
 					ref="dropdownEl"
 					id="dropdown"
-					class="z-[9999] fixed divide-y rounded-lg shadow-sm w-44"
+					class="z-[9999] fixed divide-y rounded-lg shadow-sm w-54"
 					:style="dropdownStyle">
 					<ul class="dropdown_ul bg-background-2" aria-labelledby="dropdown_default">
 						<li
@@ -138,7 +138,7 @@
 				const viewport_height = window.innerHeight;
 				const gap = 4;
 				const edge_padding = 8;
-				const dropdown_width = 176; // w-44 = 11rem = 176px
+				const dropdown_width = 215; // w-44 = 11rem = 176px
 				const dropdown_height = 200;
 
 				const opens_downward = rect.bottom + dropdown_height + gap <= viewport_height;
