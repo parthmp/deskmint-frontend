@@ -7,6 +7,8 @@
 				<back-button></back-button>
 				<CreditViewSkeleton v-if="data.loading"></CreditViewSkeleton>
 				<div v-if="!data.loading">
+					<p>Credit# : {{ data.credit.credit_number }}</p>
+					<br>
 					<div class="lg:grid lg:grid-cols-12 lg:gap-4">
 						<div class="lg:col-span-4">
 							<p>Status : {{ data.credit.status_text }}</p>
@@ -67,6 +69,7 @@ import CreditViewSkeleton from '../skeletons/CreditViewSkeleton.vue';
 interface CreditView{
 	loading:boolean,
 	credit:{
+		credit_number : string,
 		status_text : string,
 		amount : string,
 		applied_amount : string,
@@ -89,6 +92,7 @@ const router = useRouter();
 const data = reactive<CreditView>({
 	loading : false,
 	credit : {
+		credit_number : '',
 		status_text : '',
 		amount : '',
 		applied_amount : '',

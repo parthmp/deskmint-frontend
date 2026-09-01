@@ -13,7 +13,7 @@
 <style scoped>
 	@reference "tailwindcss/theme";
 	.delete-popup{
-		@apply fixed left-1/2 top-2/8 w-[100%] lg:w-[initial] -translate-x-1/2 -translate-y-1/2 p-[25px] rounded-lg shadow-lg ;
+		@apply fixed left-1/2 top-3/8 w-[100%] lg:w-[initial] -translate-x-1/2 -translate-y-1/2 p-[25px] rounded-lg shadow-lg ;
 	}
 	.delete-popup h1{
 		@apply text-2xl text-center;
