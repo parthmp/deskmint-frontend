@@ -10,10 +10,15 @@
 			<form v-if="!data.loading" @submit.prevent="handleSubmit">
 				<div class="grid grid-cols-12">
 					<div class="col-span-12">
+						<input-text label="Credit number (Unique)" v-model="data.credit_number.value" :error="data.credit_number.error" placeholder="Enter credit number" :required="true" ref="credit_number_ref"></input-text>
+					</div>
+				</div>
+				<div class="grid grid-cols-12 mt-[20px]">
+					<div class="col-span-12">
 						<input-auto-complete :disabled="!data.access" label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients" :show_errors="data.client.show_errors"></input-auto-complete>
 					</div>
 				</div>
-				<div class="grid grid-cols-12 mt-[25px]">
+				<div class="grid grid-cols-12 mt-[20px]">
 					<div class="col-span-12">
 						<input-number :min="data.applied_amount" label="Amount" v-model="data.amount.value" :error="data.amount.error" placeholder="Enter an amount" :required="true" step="0.01" ref="amount_ref"></input-number>
 					</div>
@@ -39,6 +44,7 @@ import api from '../../helpers/api.ts';
 import { useRoute, useRouter } from 'vue-router';
 import type { TextFieldType } from '../../types/InputTypes.ts';
 import CreditCreateEditSkeleton from '../skeletons/CreditCreateEditSkeleton.vue';
+import InputText from '../inputs/InputText.vue';
 
 interface InputComponent{
 	validate: () => boolean
@@ -52,6 +58,7 @@ interface ClientInterface{
 		client_id : string
 	},
 	amount : TextFieldType,
+	credit_number : TextFieldType,
 	clients : Array<{value : string, text:string}>,
 	btn_disabled:boolean,
 	currency_id:number,
@@ -78,6 +85,10 @@ const data = reactive<ClientInterface>({
 		value : '',
 		error : 'Enter an amount'
 	},
+	credit_number: {
+		value : '',
+		error : 'Enter credit number'
+	},
 	clients: [],
 	btn_disabled : false,
 	currency_id : 0,
@@ -92,6 +103,7 @@ const data = reactive<ClientInterface>({
 });
 
 const amount_ref = ref<InputComponent>();
+const credit_number_ref = ref<InputComponent>();
 
 watch(() => data.client.client_id, () : void => {
 	data.client.error = '',
@@ -112,6 +124,18 @@ watch(() => data.amount.value, () : void => {
 
 });
 
+watch(() => data.credit_number.value, () : void => {
+	nextTick(() => {
+		data.credit_number.error = '';
+
+		if(!credit_number_ref?.value?.validate()){
+			data.credit_number.error = 'Enter credit number';
+		}
+	});
+	
+
+});
+
 const handleClientSelect = (ev : {data : {currency : {id: number, code : string}}, value : number, text:string}) => {
 
 	data.currency_id = 0;
@@ -128,10 +152,11 @@ const handleClientSelect = (ev : {data : {currency : {id: number, code : string}
 const handleSubmit = async () : Promise<void> => {
 
 	const amount_v = amount_ref?.value?.validate();
+	const credit_number_v = credit_number_ref?.value?.validate();
 	data.client.show_errors = false;
 	data.btn_disabled = true;
 
-	if(!amount_v || data.client.client_id === ''){
+	if(!amount_v || data.client.client_id === '' || !credit_number_v){
 		data.client.show_errors = true;
 		toastEvents.emit('toast', {
 			type: 'error',
@@ -163,12 +188,14 @@ const handleSubmit = async () : Promise<void> => {
 		if(data.mode === 'create'){
 			await api.post('manage-credits', {
 				client_id : data.client.client_id,
-				amount : data.amount.value
+				amount : data.amount.value,
+				credit_number : data.credit_number.value
 			});
 		}else{
 			await api.patch(`manage-credits/${data.credit_id}`, {
 				client_id : data.client.client_id,
-				amount : data.amount.value
+				amount : data.amount.value,
+				credit_number : data.credit_number.value
 			});
 		}
 		
@@ -192,6 +219,7 @@ const fetchCredit = async () : Promise<void> => {
 		data.access = +response.data.full_access === 1 ? true : false;
 		data.applied_amount = response.data.credit.applied_amount;
 		data.amount.value = response.data.credit.amount+'';
+		data.credit_number.value = response.data.credit.credit_number+'';
 		nextTick(() => {
 			data.amount.error = '';
 			amount_ref?.value?.validate();
@@ -209,6 +237,8 @@ onMounted(() : void => {
 		data.credit_id = +credit_id;
 		data.mode = 'edit';
 		fetchCredit();
+	}else{
+		data.credit_number.value = crypto.randomUUID();
 	}
 })
 

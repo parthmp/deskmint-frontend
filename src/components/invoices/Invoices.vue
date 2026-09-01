@@ -7,9 +7,11 @@
 				<p>Invoice : {{ data.selected_invoice_number }}</p>
 				<p>Due : {{ data.selected_invoice_due }} ({{ data.selected_invoice_currency }})</p>
 				<template v-if="data.apply_type === 'credit'">
+					<input-text label="Credit number (Unique)" v-model="data.uuid.value" :error="data.uuid.error" placeholder="Enter credit number" :required="true" ref="uuid_ref"></input-text>
 					<InputNumber step="0.01" min="0.01" label="Enter credit amount" v-model="data.apply_amount.value" :error="data.apply_amount.error" :required="true" ref="apply_amount_ref" placeholder="Enter credit amount"></InputNumber>
 				</template>
 				<template v-if="data.apply_type === 'payment'">
+					<input-text label="Payment number (Unique)" v-model="data.uuid.value" :error="data.uuid.error" placeholder="Enter payment number" :required="true" ref="uuid_ref"></input-text>
 					<InputNumber step="0.01" min="0.01" label="Enter payment amount" v-model="data.apply_amount.value" :error="data.apply_amount.error" :required="true" ref="apply_amount_ref" placeholder="Enter payment amount"></InputNumber>
 					<input-select label="Payment type" placeholder="Select payment type" :disabled="false" v-model="data.payment_type.value" :error="data.payment_type.error" :required="true" :options="data.payment_types" ref="payment_type_ref"></input-select>
 				</template>
@@ -34,6 +36,7 @@ import InputNumber from '../inputs/InputNumber.vue';
 import InputButton from '../inputs/InputButton.vue';
 import Decimal from 'decimal.js';
 import InputSelect from '../inputs/InputSelect.vue';
+import InputText from '../inputs/InputText.vue';
 import AddPaymentToInvoiceSkeleton from '../skeletons/AddPaymentToInvoiceSkeleton.vue';
 
 const router = useRouter();
@@ -59,6 +62,10 @@ interface InvoicesInterface {
 		error: string,
 		value : string
 	},
+	uuid : {
+		error: string,
+		value : string
+	},
 	btn_disabled: boolean,
 	loading: boolean,
 	payment_types : Array<object>
@@ -81,6 +88,10 @@ const data = reactive<InvoicesInterface>({
 		error: 'Please enter amount',
 		value : ''
 	},
+	uuid : {
+		error: '',
+		value : ''
+	},
 	btn_disabled : false,
 	loading : false,
 	payment_types : [],
@@ -92,6 +103,7 @@ const data = reactive<InvoicesInterface>({
 
 const payment_type_ref = ref();
 const apply_amount_ref = ref();
+const uuid_ref = ref();
 
 let temp_obj = null;
 
@@ -109,6 +121,27 @@ watch(() => data.apply_amount.value, () => {
 	if(!apply_amount_v){
 		data.apply_amount.error = 'Please enter amount';
 	}
+});
+
+watch(() => data.uuid.value, () => {
+	data.uuid.error = '';
+	if(!uuid_ref.value){
+		return ;
+	}
+	const uuid_ref_v = uuid_ref.value.validate();
+	if(!uuid_ref_v){
+		if(data.apply_type === 'credit'){
+			data.uuid.error = 'Please enter credit number';
+		}else{
+			data.uuid.error = 'Please enter payment number';
+		}
+		
+	}
+});
+
+
+watch(() => data.show_popup, () => {
+	data.uuid.value = crypto.randomUUID();
 });
 
 
@@ -263,6 +296,7 @@ const fetchPaymentTypes = async () => {
 const handleAddCreditOrPayment = async () : Promise<void> => {
 	
 	const apply_amount_v = apply_amount_ref.value.validate();
+	const uuid_v = uuid_ref.value.validate();
 
 	let payment_type_v = true;
 
@@ -270,7 +304,7 @@ const handleAddCreditOrPayment = async () : Promise<void> => {
 		payment_type_v = payment_type_ref.value.validate();
 	}
 	
-	if(!payment_type_v || !apply_amount_v){
+	if(!payment_type_v || !apply_amount_v || !uuid_v){
 		return ;
 	}
 
@@ -296,6 +330,7 @@ const handleAddCreditOrPayment = async () : Promise<void> => {
 			invoice_id : data.selected_invoice_id,
 			amount : data.apply_amount.value,
 			payment_type : data.payment_type.value,
+			uuid : data.uuid.value,
 			type : data.apply_type
 		});
 
@@ -320,6 +355,7 @@ const handleAddCreditOrPayment = async () : Promise<void> => {
 onMounted(() => {
 	const d = new Date();
 	data.time_offset_minutes = -(d.getTimezoneOffset());
+	
 });
 
 </script>
