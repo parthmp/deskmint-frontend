@@ -12,6 +12,7 @@
 				<div class="grid grid-cols-12">
 					<div class="col-span-12">
 						<input-auto-complete :disabled="!data.access" label="Client" v-model="data.client.value" @selected="handleClientSelect" :error="data.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="data.clients" :show_errors="data.client.show_errors"></input-auto-complete>
+						<input-text label="Payment number (Unique)" v-model="data.payment_number.value" :error="data.payment_number.error" placeholder="Enter Payment number" :required="true" ref="payment_number_ref"></input-text>
 						<input-number :min="data.applied_amount" label="Amount" v-model="data.amount.value" :error="data.amount.error" placeholder="Enter an amount" :required="true" step="0.01" ref="amount_ref"></input-number>
 						<input-select label="Payment type" placeholder="Select payment type" :disabled="false" v-model="data.payment_type.value" :error="data.payment_type.error" :required="true" :options="data.payment_types" ref="payment_type_ref"></input-select>
 					</div>
@@ -38,6 +39,8 @@ import { useRoute, useRouter } from 'vue-router';
 import type { TextFieldType } from '../../../types/InputTypes.ts';
 import InputSelect from '../../inputs/InputSelect.vue';
 import CreditCreateEditSkeleton from '../../skeletons/CreditCreateEditSkeleton.vue';
+import InputText from '../../inputs/InputText.vue';
+
 
 interface InputComponent{
 	validate: () => boolean
@@ -51,6 +54,7 @@ interface ClientInterface{
 		client_id : string
 	},
 	amount : TextFieldType,
+	payment_number : TextFieldType,
 	clients : Array<{value : string, text:string}>,
 	btn_disabled:boolean,
 	currency_id:number,
@@ -82,6 +86,10 @@ const data = reactive<ClientInterface>({
 		value : '',
 		error : 'Enter an amount'
 	},
+	payment_number: {
+		value : '',
+		error : 'Enter payment number'
+	},
 	clients: [],
 	btn_disabled : false,
 	currency_id : 0,
@@ -102,6 +110,8 @@ const data = reactive<ClientInterface>({
 
 const amount_ref = ref<InputComponent>();
 const payment_type_ref = ref<InputComponent>();
+const payment_number_ref = ref<InputComponent>();
+
 
 watch(() => data.client.client_id, () : void => {
 	data.client.error = '',
@@ -132,6 +142,18 @@ watch(() => data.payment_type.value, () : void => {
 
 });
 
+watch(() => data.payment_number.value, () : void => {
+	nextTick(() => {
+		data.payment_number.error = '';
+
+		if(!payment_number_ref?.value?.validate()){
+			data.payment_number.error = 'Enter payment number';
+		}
+	});
+	
+
+});
+
 const fetchPaymentTypes = async () => {
 	data.loading = true;
 	const response = await api.get(`manage-payment-requests/payment-types`);
@@ -156,10 +178,11 @@ const handleSubmit = async () : Promise<void> => {
 
 	const amount_v = amount_ref?.value?.validate();
 	const payment_type_v = payment_type_ref?.value?.validate();
+	const payment_number_v = payment_number_ref?.value?.validate();
 	data.client.show_errors = false;
 	data.btn_disabled = true;
 
-	if(!amount_v || data.client.client_id === '' || !payment_type_v){
+	if(!amount_v || data.client.client_id === '' || !payment_type_v || !payment_number_v){
 		data.client.show_errors = true;
 		toastEvents.emit('toast', {
 			type: 'error',
@@ -192,13 +215,15 @@ const handleSubmit = async () : Promise<void> => {
 			await api.post('manage-payments', {
 				client_id : data.client.client_id,
 				amount : data.amount.value,
-				payment_type : data.payment_type.value
+				payment_type : data.payment_type.value,
+				payment_number : data.payment_number.value,
 			});
 		}else{
 			await api.patch(`manage-payments/${data.payment_id}`, {
 				client_id : data.client.client_id,
 				amount : data.amount.value,
-				payment_type : data.payment_type.value
+				payment_type : data.payment_type.value,
+				payment_number : data.payment_number.value,
 			});
 		}
 		
@@ -224,6 +249,7 @@ const fetchPayment = async () : Promise<void> => {
 		data.applied_amount = response.data.payment.applied_amount;
 		data.amount.value = response.data.payment.amount+'';
 		data.payment_type.value = response.data.payment.payment_type_id;
+		data.payment_number.value = response.data.payment.payment_number;
 		nextTick(() => {
 			data.amount.error = '';
 			amount_ref?.value?.validate();
@@ -245,6 +271,8 @@ onMounted(() : void => {
 		data.payment_id = +payment_id;
 		data.mode = 'edit';
 		fetchPayment();
+	}else{
+		data.payment_number.value = crypto.randomUUID();
 	}
 })
 
