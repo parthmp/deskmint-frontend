@@ -98,7 +98,7 @@ const data = reactive<CreditsApply>({
 	full_name : '',
 	searched : '',
 	table : {
-		headers : ['ID', 'Invoice', 'Total', 'Due', 'Amount', '-'],
+		headers : ['ID', 'Credit', 'Amount', 'Left', 'Applied', '-'],
 		data : []
 	},
 	applied : [],
@@ -246,46 +246,46 @@ const fetchCredits = async () : Promise<void> => {
 
 		const rd = response.data;
 		const to_be_assigned:Array<TableRow> = [];
-		const unpaid_invoices = rd.unpaid_invoices;
-		const paid_invoices = rd.paid_invoices;
+		// const unpaid_invoices = rd.unpaid_invoices;
+		// const paid_invoices = rd.paid_invoices;
 
-		unpaid_invoices.forEach((t_row:TableRow) => {
+		// unpaid_invoices.forEach((t_row:TableRow) => {
 			
-			let type = 1;
+		// 	let type = 1;
 
-			if(t_row.applied_amount !== ''){
-				type = 3;
-			}
+		// 	if(t_row.applied_amount !== ''){
+		// 		type = 3;
+		// 	}
 
-			to_be_assigned.push({
-				id: t_row.id,
-				invoice : t_row.invoice,
-				total : t_row.total,
-				due : t_row.due,
-				amount : '',
-				add: '',
-				fetched_amount : t_row.applied_amount,
-				type : type,
-				show_text_input : false
-			});
+		// 	to_be_assigned.push({
+		// 		id: t_row.id,
+		// 		invoice : t_row.invoice,
+		// 		total : t_row.total,
+		// 		due : t_row.due,
+		// 		amount : '',
+		// 		add: '',
+		// 		fetched_amount : t_row.applied_amount,
+		// 		type : type,
+		// 		show_text_input : false
+		// 	});
 		
-		});
+		// });
 
-		paid_invoices.forEach((t_row:TableRow) => {
+		// paid_invoices.forEach((t_row:TableRow) => {
 			
-			to_be_assigned.push({
-				id: t_row.id,
-				invoice : t_row.invoice,
-				total : t_row.total,
-				due : t_row.due,
-				amount :'',
-				add: '',
-				fetched_amount : t_row.applied_amount,
-				type : 3,
-				show_text_input : false
-			});
+		// 	to_be_assigned.push({
+		// 		id: t_row.id,
+		// 		invoice : t_row.invoice,
+		// 		total : t_row.total,
+		// 		due : t_row.due,
+		// 		amount :'',
+		// 		add: '',
+		// 		fetched_amount : t_row.applied_amount,
+		// 		type : 3,
+		// 		show_text_input : false
+		// 	});
 		
-		});
+		// });
 
 		data.table.data = to_be_assigned;
 		data.loading = false;

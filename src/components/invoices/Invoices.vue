@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage invoices" :enable_arranged_columns="true" base_url="manage-invoices" slug="invoices" :actions="['view','edit', 'delete', cancel_data,add_payment, add_credit, 'Manage Credits', 'Manage Payments','download PDF', 'send Invoice']" @action="handleAction" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
+	<general-index-page page_title="Manage invoices" :enable_arranged_columns="true" base_url="manage-invoices" slug="invoices" :actions="['view','edit', 'delete', 'Archive', cancel_data,add_payment, add_credit, 'Manage Credits', 'Manage Payments','download PDF', 'send Invoice']" @action="handleAction" :checkbox_actions="['Delete', 'Archive', 'Export CSV']"></general-index-page>
 	<Popup :header="data.popup_header" :show_popup="data.show_popup" :blocker="true" :scrollable="false" @closed="closePopup" :close_outside="true" >
 		<AddPaymentToInvoiceSkeleton v-if="data.loading"></AddPaymentToInvoiceSkeleton>
 		<form @submit.prevent="handleAddCreditOrPayment" v-if="!data.loading">
