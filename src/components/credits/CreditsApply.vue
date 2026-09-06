@@ -18,7 +18,9 @@
 					<div v-if="data.applied.length > 0">
 						<p class="mt-6">Applied</p>
 						<div class="mt-4">
-							<ApplyUnapplyTable :searching="false" :headers="data.table.headers" :data="data.applied" mode="edit" @apply="(obj) => handleApply(obj, 'edit')" @remove="removeApplied" @modify_amount_left="addToAmountLeft" @edit="handleEdit" :max="data.amount_left" :credit_left="data.amount_left"></ApplyUnapplyTable>
+							<div class="overflow-auto! max-h-[280px] relative styled-scrollbar">
+								<ApplyUnapplyTable :searching="false" :headers="data.table.headers" :data="data.applied" mode="edit" @apply="(obj) => handleApply(obj, 'edit')" @remove="removeApplied" @modify_amount_left="addToAmountLeft" @edit="handleEdit" :max="data.amount_left" :credit_left="data.amount_left"></ApplyUnapplyTable>
+							</div>
 						</div>
 					</div>
 					<InputButton @click.prevent="handleSubmit" btn_text="Save" :disabled="data.disabled" icon="IconCheck" class="lg:float-end"></InputButton>

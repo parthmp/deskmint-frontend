@@ -90,6 +90,7 @@ interface PropsInterface {
 	max: string|number,
 	credit_left: string|number,
 	mode: string,
+	type: string|undefined,
 	searching: boolean
 }
 
@@ -116,19 +117,36 @@ const addToApplied = (obj:TableRow, mode:string) : void => {
 	const amount = new Decimal(obj.amount);
 	const credit_left = new Decimal(props.credit_left);
 	
-	let allowed = new Decimal(obj.due);
-	let error_message = `You can not apply more than due amount for #${obj.invoice}`;
+	let allowed = null;
+	let error_message = null;
+
+	allowed = new Decimal(obj.due ?? 0);
+	error_message = `You can not apply more than due amount for #${obj.invoice}`;
+	
+	if(props.type === 'invoice-credit'){
+		allowed = new Decimal(obj.left);
+		error_message = `You can not apply more than left amount for #${obj.credit}`;
+	}
+	
 
 	if(obj.type === 3){
-		
+		console.log(obj.fetched_amount);
 		const fetched_amount = new Decimal(obj.fetched_amount);
 		allowed = fetched_amount.plus(allowed);
+
 		error_message = `You can not apply more than allowed amount (${allowed.toFixed(2).toString()}) for #${obj.invoice}`;
+
+		if(props.type === 'invoice-credit'){
+			error_message = `You can not apply more than allowed amount (${allowed.toFixed(2).toString()}) for #${obj.credit}`;
+		}
 	}
 
 	if(allowed.greaterThan(credit_left) || allowed.equals(credit_left)){
 		allowed = credit_left;
 		error_message = `You can not apply more than amount left (${credit_left.toFixed(2).toString()}) for #${obj.invoice}`;
+		if(props.type === 'invoice-credit'){
+			error_message = `You can not apply more than amount left (${credit_left.toFixed(2).toString()}) for #${obj.credit}`;
+		}
 	}
 
 	if(!amount.greaterThan(allowed)){

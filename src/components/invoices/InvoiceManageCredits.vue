@@ -8,18 +8,20 @@
 				<div v-if="!data.loading">
 					<p>Invoice#: {{ data.invoice_number }}</p>
 					<p>Client: {{ data.full_name }}</p>
-					<p>Amount : {{ data.amount }} (left : {{ data.amount_left }}) Currency : {{ data.currency_code }}</p>
+					<p>Amount : {{ data.amount }}, Due ({{ data.balance_due }}) (left : {{ data.amount_left }}) Currency : {{ data.currency_code }}</p>
 					<div class="mt-4">
 						<InputSearch v-model="data.searched"></InputSearch>
 						<div class="overflow-auto! max-h-[280px] relative styled-scrollbar">
-							<ApplyUnapplyTable :searching="data.searching" :headers="data.table.headers" :data="data.table.data" mode="add" @apply="(obj) => handleApply(obj, 'add')" :max="data.amount_left" :credit_left="data.amount_left"></ApplyUnapplyTable>
+							<ApplyUnapplyTable :searching="data.searching" :headers="data.table.headers" :data="data.table.data" mode="add" @apply="(obj) => handleApply(obj, 'add')" :max="data.amount_left" :credit_left="data.amount_left" type="invoice-credit"></ApplyUnapplyTable>
 						</div>
 						
 					</div>
 					<div v-if="data.applied.length > 0">
 						<p class="mt-6">Applied</p>
 						<div class="mt-4">
-							<ApplyUnapplyTable :searching="false" :headers="data.table.headers" :data="data.applied" mode="edit" @apply="(obj) => handleApply(obj, 'edit')" @remove="removeApplied" @modify_amount_left="addToAmountLeft" @edit="handleEdit" :max="data.amount_left" :credit_left="data.amount_left"></ApplyUnapplyTable>
+							<div class="overflow-auto! max-h-[280px] relative styled-scrollbar">
+								<ApplyUnapplyTable :searching="false" :headers="data.table.headers" :data="data.applied" mode="edit" @apply="(obj) => handleApply(obj, 'edit')" @remove="removeApplied" @modify_amount_left="addToAmountLeft" @edit="handleEdit" :max="data.amount_left" :credit_left="data.amount_left" type="invoice-credit"></ApplyUnapplyTable>
+							</div>
 						</div>
 					</div>
 					<InputButton @click.prevent="handleSubmit" btn_text="Save" :disabled="data.disabled" icon="IconCheck" class="lg:float-end"></InputButton>
@@ -52,9 +54,9 @@ import InputButton from '../inputs/InputButton.vue';
 
 type TableRow = {
 	id : number,
-	invoice : string,
+	credit : string,
 	total : string,
-	due : string,
+	left : string,
 	amount : string,
 	add: string,
 	type: number,
@@ -66,6 +68,7 @@ interface CreditsApply {
 	invoice_id : number,
 	invoice_number : string,
 	amount : string,
+	balance_due : string,
 	amount_left:string,
 	currency_code:string,
 	due:string,
@@ -92,13 +95,14 @@ const data = reactive<CreditsApply>({
 	invoice_id : 0,
 	invoice_number : '',
 	amount : '100',
+	balance_due : '100',
 	amount_left: '100',
 	currency_code : 'USD',
 	due : '',
 	full_name : '',
 	searched : '',
 	table : {
-		headers : ['ID', 'Credit', 'Amount', 'Left', 'Applied', '-'],
+		headers : ['ID', 'Credit', 'Total', 'Left', 'Amount', '-'],
 		data : []
 	},
 	applied : [],
@@ -112,7 +116,7 @@ const data = reactive<CreditsApply>({
 });
 
 watch(() => data.searched, () => {
-	//fetchInvoices();
+	fetchCredits();
 });
 
 const removeObjectById = (id:number) : void => {
@@ -163,70 +167,70 @@ const addToAmountLeft = (amount:string) : void => {
 
 const removeApplied = (obj:TableRow) : void => {
 
-	// data.applied = data.applied.filter(item => item.id !== obj.id);
-	// data.applied_ids = data.applied_ids.filter(id => id !== obj.id);
-	// addToAmountLeft(obj.amount);
-	// obj.amount = '';
-	// data.removed_ids.push(+obj.id);
-	// const exists = data.table.data.some(row => row.id === obj.id);
-	// if(!exists){
-	// 	data.table.data.push(obj);
-	// }
+	data.applied = data.applied.filter(item => item.id !== obj.id);
+	data.applied_ids = data.applied_ids.filter(id => id !== obj.id);
+	addToAmountLeft(obj.amount);
+	obj.amount = '';
+	data.removed_ids.push(+obj.id);
+	const exists = data.table.data.some(row => row.id === obj.id);
+	if(!exists){
+		data.table.data.push(obj);
+	}
 
-	// if(obj.type === 3){
-	// 	//push id to fetched_and_removed_ids and send same while searching so it can fetch additional rows as well, this is for invoices that are paid, but user removes the row.
-	// 	const due = new Decimal(obj.due);
-	// 	if(due.equals(new Decimal(0))){
-	// 		data.fetched_and_removed_ids.push(+obj.id);
-	// 	}
-	// }
+	if(obj.type === 3){
+		//push id to fetched_and_removed_ids and send same while searching so it can fetch additional rows as well, this is for invoices that are paid, but user removes the row.
+		const left = new Decimal(obj.left);
+		if(left.equals(new Decimal(0))){
+			data.fetched_and_removed_ids.push(+obj.id);
+		}
+	}
 
-	// //when we remove the entry, check if it is type 2, if it is, make it type 1 because user did not save it yet. (doesn't exist in db)
-	// //type 3 never changes its type.
-	// if(obj.type === 2){
-	// 	obj.type = 1;
-	// }
+	//when we remove the entry, check if it is type 2, if it is, make it type 1 because user did not save it yet. (doesn't exist in db)
+	//type 3 never changes its type.
+	if(obj.type === 2){
+		obj.type = 1;
+	}
 
 	
 }
 
 const handleSubmit = async () : Promise<void> => {
 
-	// const credit_amount = new Decimal(data.amount);
-	// let sum = new Decimal(0);
+	const credit_amount = new Decimal(data.amount);
+	let sum = new Decimal(0);
 
-	// for(let z = 0 ; z < data.applied.length ; z++){
+	for(let z = 0 ; z < data.applied.length ; z++){
 
-	// 	if(data.applied[z].show_text_input){
-	// 		toastEvents.emit('toast', {
-	// 			type : 'error',
-	// 			message: `Please finish the editing in applied section`
-	// 		});
-	// 		return ;
-	// 	}
+		if(data.applied[z].show_text_input){
+			toastEvents.emit('toast', {
+				type : 'error',
+				message: `Please finish the editing in applied section`
+			});
+			return ;
+		}
 
-	// 	sum = sum.plus(data.applied[z].amount);
-	// }
+		sum = sum.plus(data.applied[z].amount);
+	}
 
-	// if(sum.greaterThan(credit_amount)){
-	// 	toastEvents.emit('toast', {
-	// 		type : 'error',
-	// 		message: `You can not apply more than available credit amount`
-	// 	});
-	// 	return ;
-	// }
+	if(sum.greaterThan(credit_amount)){
+		toastEvents.emit('toast', {
+			type : 'error',
+			message: `You can not apply more than available credit amount`
+		});
+		return ;
+	}
 
-	// try{
-	// 	data.disabled = true;
-	// 	const response = await api.patch('manage-credits/apply-unapply-credit', {
-	// 		applied : data.applied,
-	// 		credit_id : data.credit_id,
-	// 		removed_ids : data.removed_ids
-	// 	});
-	// 	router.push('/credits');
-	// }finally{
-	// 	data.disabled = false;
-	// }
+	try{
+		data.disabled = true;
+		const response = await api.patch(`manage-invoices/apply-unapply-credits/apply-unapply-credits`, {
+			applied : data.applied,
+			invoice_id : data.invoice_id,
+			removed_ids : data.removed_ids
+		});
+		router.push('/credits');
+	}finally{
+		data.disabled = false;
+	}
 	
 }
 
@@ -234,10 +238,10 @@ const fetchCredits = async () : Promise<void> => {
 	data.searching = true;
 	data.table.data = [];
 	try{
-		
+		console.log(data.applied_ids);
 		const response = await api.get('manage-invoices/apply-unapply-credits/search-credits', {
 			params : {
-				searched : data.searched,
+				searched : data.searched ?? '',
 				invoice_id : data.invoice_id,
 				applied_ids : data.applied_ids,
 				fetched_and_removed_ids : data.fetched_and_removed_ids
@@ -246,46 +250,46 @@ const fetchCredits = async () : Promise<void> => {
 
 		const rd = response.data;
 		const to_be_assigned:Array<TableRow> = [];
-		// const unpaid_invoices = rd.unpaid_invoices;
-		// const paid_invoices = rd.paid_invoices;
+		const not_fully_applied_credits = rd.not_fully_applied_credits;
+		const applied_credits = rd.applied_credits;
 
-		// unpaid_invoices.forEach((t_row:TableRow) => {
+		not_fully_applied_credits.forEach((row:TableRow) => {
 			
-		// 	let type = 1;
+			let type = 1;
 
-		// 	if(t_row.applied_amount !== ''){
-		// 		type = 3;
-		// 	}
+			if(row.applied_amount !== ''){
+				type = 3;
+			}
 
-		// 	to_be_assigned.push({
-		// 		id: t_row.id,
-		// 		invoice : t_row.invoice,
-		// 		total : t_row.total,
-		// 		due : t_row.due,
-		// 		amount : '',
-		// 		add: '',
-		// 		fetched_amount : t_row.applied_amount,
-		// 		type : type,
-		// 		show_text_input : false
-		// 	});
+			to_be_assigned.push({
+				id: row.id,
+				credit : row.credit,
+				total : row.total,
+				left : row.left,
+				amount : '',
+				add: '',
+				fetched_amount : row.applied_amount,
+				type : type,
+				show_text_input : false
+			});
 		
-		// });
+		});
 
-		// paid_invoices.forEach((t_row:TableRow) => {
-			
-		// 	to_be_assigned.push({
-		// 		id: t_row.id,
-		// 		invoice : t_row.invoice,
-		// 		total : t_row.total,
-		// 		due : t_row.due,
-		// 		amount :'',
-		// 		add: '',
-		// 		fetched_amount : t_row.applied_amount,
-		// 		type : 3,
-		// 		show_text_input : false
-		// 	});
+		applied_credits.forEach((row:TableRow) => {
+
+			to_be_assigned.push({
+				id: row.id,
+				credit : row.credit,
+				total : row.total,
+				left : row.left,
+				amount :'',
+				add: '',
+				fetched_amount : row.applied_amount,
+				type : 3,
+				show_text_input : false
+			});
 		
-		// });
+		});
 
 		data.table.data = to_be_assigned;
 		data.loading = false;
@@ -309,6 +313,7 @@ const fetchInvoice = async () : Promise<void> => {
 		data.invoice_number = rd.invoice_number;
 		data.amount = rd.amount;
 		data.amount_left = rd.amount_left;
+		data.balance_due = rd.amount_left;
 		data.due = rd.due;
 		data.currency_code = rd.currency_code;
 		data.full_name = rd.full_name;
@@ -326,32 +331,35 @@ const fetchInvoice = async () : Promise<void> => {
 }
 
 const fetchAlreadyApplied = async () : Promise<void> => {
-	// const response = await api.get('manage-credits/fetch-already-applied', {
-	// 	params : {
-	// 		credit_id : data.credit_id
-	// 	}
-	// });
 
-	// const rd = response.data;
+	const response = await api.get(`manage-invoices/apply-unapply-credits/fetch-already-applied`, {
+		params : {
+			invoice_id : data.invoice_id
+		}
+	});
 
-	// const to_be_applied:Array<TableRow> = [];
-	// rd.forEach((t_row:TableRow) => {
-	// 	data.applied_ids.push(+t_row.id);
-	// 	to_be_applied.push({
-	// 		id: t_row.id,
-	// 		invoice : t_row.invoice,
-	// 		total : t_row.total,
-	// 		due : t_row.due,
-	// 		amount : t_row.amount,
-	// 		add: '',
-	// 		type : 3,
-	// 		fetched_amount : t_row.amount,
-	// 		show_text_input : false
-	// 	});
+	const rd = response.data;
+
+	const to_be_applied:Array<TableRow> = [];
+	rd.forEach((row:TableRow) => {
+
+		data.applied_ids.push(+row.id);
+
+		to_be_applied.push({
+			id: row.id,
+			credit : row.credit,
+			total : row.total,
+			left : row.left,
+			amount : row.amount,
+			add: '',
+			type : 3,
+			fetched_amount : row.amount,
+			show_text_input : false
+		});
 	
-	// });
+	});
 
-	// data.applied = to_be_applied;
+	data.applied = to_be_applied;
 	
 }
 
