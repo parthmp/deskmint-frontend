@@ -2,7 +2,7 @@
 		<Table>
 			<template #headers>
 				<tr class="sticky! w-full top-0">
-					<template v-for="(header, hi) in props.headers" :key="hi" >
+					<template v-for="(header, hi) in data.local_headers" :key="hi" >
 						<th v-if="header !== 'fetched_amount' && header !== 'edit_entry' && header !== 'type'">
 							
 							{{ header }}
@@ -103,10 +103,23 @@ import { toastEvents } from '../../events/toastEvents.ts';
 import { IconTrash } from '@tabler/icons-vue';
 import { IconCheck } from '@tabler/icons-vue';
 import { IconEdit } from '@tabler/icons-vue';
+import { onMounted, reactive, watch } from 'vue';
 
 const props = defineProps<PropsInterface>();
 
 const emit = defineEmits(['apply', 'edit', 'modify_amount_left', 'remove']);
+
+watch(() => props.headers, () => {
+	setHeaders();
+});
+
+const data = reactive({
+	local_headers : []
+});
+
+const setHeaders = () : void => {
+	data.local_headers = props.headers;
+}
 
 const addToApplied = (obj:TableRow, mode:string) : void => {
 
@@ -172,5 +185,8 @@ const modifyToApplied = (obj:TableRow) : void => {
 	addToApplied(obj, 'edit');
 }
 
-
+onMounted(() => {
+	setHeaders();
+	
+});
 </script>
