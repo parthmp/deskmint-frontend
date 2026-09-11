@@ -272,8 +272,8 @@ const fetchEntries = async () : Promise<void> => {
 
 		const rd = response.data;
 		const to_be_assigned:Array<TableRow> = [];
-		const not_fully_applied_credits = rd.not_fully_applied_credits;
-		const applied_credits = rd.applied_credits;
+		const not_fully_applied_entries = rd.not_fully_applied_entries;
+		const applied_entries = rd.applied_entries;
 
 		let credit_or_payment = 'credit';
 
@@ -281,7 +281,7 @@ const fetchEntries = async () : Promise<void> => {
 			credit_or_payment = 'payment';
 		}
 
-		not_fully_applied_credits.forEach((row:TableRow) => {
+		not_fully_applied_entries.forEach((row:TableRow) => {
 			
 			let type = 1;
 
@@ -304,7 +304,7 @@ const fetchEntries = async () : Promise<void> => {
 		
 		});
 
-		applied_credits.forEach((row:TableRow) => {
+		applied_entries.forEach((row:TableRow) => {
 
 			to_be_assigned.push({
 				id: row.id,
