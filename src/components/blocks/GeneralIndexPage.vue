@@ -45,7 +45,7 @@
 			</span>
 			<div class="lg:clear-both"></div>
 			<br>
-			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="checkbox_actions" @deleted_rows="handleMultipleDelete" :static="false" :url_slug="slug" :row_actions="actions" @action="handleAction" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" :dynamic_loading_status="dynamic_loading_status"></data-table>
+			<data-table :data="table_data" :show_search="true" @deleted_row_id="handleDeleted" :paginate="true" :checkbox_actions="checkbox_actions" @deleted_rows="handleMultipleDelete" :static="false" :url_slug="slug" :row_actions="actions" @action="handleAction" :datetime_filter="true" :total_pages="total_pages" @handle_api="handleAPI" @checkbox_action="handleCheckboxActions" :dynamic_loading_status="dynamic_loading_status"></data-table>
 		</span>
 		
     </div>
@@ -223,6 +223,13 @@
 
 			handleAction(obj:object) : void {
 				this.$emit('action', obj);
+			},
+
+			handleCheckboxActions(obj) : void {
+				this.$emit('checkbox_action', {
+					action : obj.action,
+					data : obj.data
+				});
 			}
 
 		},

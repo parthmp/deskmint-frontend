@@ -300,7 +300,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport, IconMail, IconCoin, IconDatabaseDollar, IconLock, IconMoneybagPlus, IconReceiptDollar, IconClipboardList, IconCreditCardPay } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport, IconMail, IconCoin, IconDatabaseDollar, IconLock, IconMoneybagPlus, IconReceiptDollar, IconClipboardList, IconCreditCardPay, IconArchive } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -370,6 +370,7 @@ export default defineComponent({
 		IconLock:IconLock,
 		IconMoneybagPlus:IconMoneybagPlus,
 		IconReceiptDollar:IconReceiptDollar,
+		IconArchive:IconArchive,
 		IconClipboardList:IconClipboardList,
 		IconCreditCardPay:IconCreditCardPay
 	},
@@ -422,14 +423,27 @@ export default defineComponent({
 						submenu: []
 					},
 					{
-						path: '/invoices',
+						path: '',
 						icon: 'IconFileDollar',
 						icon_size: 22,
 						menu_text: 'Invoices',
-						has_submenu : false,
+						has_submenu : true,
 						show_submenu : false,
 						is_active: false,
-						submenu: []
+						submenu: [
+							{
+								path: '/invoices/invoices',
+								icon: 'IconFileDollar',
+								icon_size: 22,
+								menu_text: 'Invoices',
+							},
+							{
+								path: '/invoices/archived',
+								icon: 'IconArchive',
+								icon_size: 22,
+								menu_text: 'Archived',
+							},
+						]
 					},
 					{
 						path: '/recurring-invoices',

@@ -536,6 +536,11 @@ export default defineComponent({
 				}else{
 					this.exportToCSV(this.to_be_handled_rows_multiple);
 				}
+			}else{
+				this.$emit('checkbox_action', {
+					action : b_checkbox_action,
+					data : this.to_be_handled_rows_multiple
+				});
 			}
 		},
 

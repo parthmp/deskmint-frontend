@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage invoices" :enable_arranged_columns="true" base_url="manage-invoices" slug="invoices" :actions="['view','edit', 'delete', 'Archive', cancel_data,mark_sent, add_payment, add_credit, 'Manage Credits', 'Manage Payments','download PDF', 'send Invoice']" @action="handleAction" :checkbox_actions="['Delete', 'Archive', 'Export CSV']"></general-index-page>
+	<general-index-page v-if="data.type !== ''" :page_title="'Manage invoices '+(data.type === 'archived' ? '(Archived)' : '')" :enable_arranged_columns="true" :base_url="'manage-invoices/'+data.type" slug="invoices" :actions="['view','edit', 'delete', archive, restore, cancel_data,mark_sent, add_payment, add_credit, 'Manage Credits', 'Manage Payments','download PDF', 'send Invoice']" @action="handleAction" :checkbox_actions="['Delete', (data.type === 'archived' ? 'Restore' : 'Archive'), 'Export CSV']" @checkbox_action="handleCheckboxActions" :key="reload_key"></general-index-page>
 	<Popup :header="data.popup_header" :show_popup="data.show_popup" :blocker="true" :scrollable="false" @closed="closePopup" :close_outside="true" >
 		<AddPaymentToInvoiceSkeleton v-if="data.loading"></AddPaymentToInvoiceSkeleton>
 		<form @submit.prevent="handleAddCreditOrPayment" v-if="!data.loading">
@@ -25,11 +25,11 @@
 <script lang="ts" setup>
 	
 /* using compositon API */
-import { onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
 import api from '../../helpers/api.ts';
 import { toastEvents } from '../../events/toastEvents.ts';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import common from '../../helpers/common.ts';
 import Popup from '../UI/Popup.vue';
 import InputNumber from '../inputs/InputNumber.vue';
@@ -40,6 +40,7 @@ import InputText from '../inputs/InputText.vue';
 import AddPaymentToInvoiceSkeleton from '../skeletons/AddPaymentToInvoiceSkeleton.vue';
 
 const router = useRouter();
+const route = useRoute();
 
 type actionObject = {
 	action:string,
@@ -72,7 +73,8 @@ interface InvoicesInterface {
 	payment_type : {
 		error: string,
 		value : string
-	}
+	},
+	type : string
 }
 
 const data = reactive<InvoicesInterface>({
@@ -98,7 +100,8 @@ const data = reactive<InvoicesInterface>({
 	payment_type : {
 		error: 'Please select payment type',
 		value : ''
-	}
+	},
+	type : ''
 });
 
 const payment_type_ref = ref();
@@ -106,6 +109,13 @@ const apply_amount_ref = ref();
 const uuid_ref = ref();
 
 let temp_obj = null;
+
+const reload_key = ref(0);
+
+// 2. Increment the key value to force a complete reset/reload
+const reloadComponent = () => {
+	reload_key.value += 1;
+};
 
 watch(() => data.payment_type.value, () => {
 	data.payment_type.error = '';
@@ -177,9 +187,24 @@ const mark_sent = {
 	mapped : 'status'
 };
 
+const archive = {
+	labels : {
+		archive : [0]
+	},
+	mapped : 'is_archived'
+};
+
+const restore = {
+	labels : {
+		restore : [1]
+	},
+	mapped : 'is_archived'
+};
+
 const handleAction = (obj:actionObject) => {
 	
 	temp_obj = obj;
+	
 	if(obj.action.toLowerCase() === 'send invoice' || obj.action.toLowerCase() === 'mark_sent'){
 		if(obj.row.status.value == 1){
 			obj.row.status.value = 2;
@@ -197,9 +222,6 @@ const handleAction = (obj:actionObject) => {
 		sendInvoice(obj.row.company_id, obj.row.id, send_invoice);
 	}else if(obj.action.toLowerCase() === 'download pdf'){
 		downloadPDF(obj.row.company_id, obj.row.id);
-	}else if(obj.action.toLowerCase() === 'add payment'){
-		//TODO: redirect when we have the seperate payment module.
-		//router.push(`/transactions/create/${obj.row.id}`);
 	}else if(obj.action.toLowerCase() === 'cancel'){
 		obj.row.status.value = 3;
 		obj.row.status.highlight = 'error';
@@ -239,7 +261,28 @@ const handleAction = (obj:actionObject) => {
 		router.push(`/invoices/manage-credits/${obj.row.id}`);
 	}else if(obj.action.toLowerCase() === 'manage payments'){
 		router.push(`/invoices/manage-payments/${obj.row.id}`);
+
+	}else if(obj.action.toLowerCase() === 'archive'){
+		markArchived([+obj.row.id], 1);
+	}else if(obj.action.toLowerCase() === 'restore'){
+		markArchived([+obj.row.id], 0);
 	}
+}
+
+const markArchived = async (ids:Array<number>, archived : number)  : Promise<void> => {
+
+	try{
+		await api.patch('manage-invoices/change-archived-status', {
+			ids : ids,
+			archived : archived
+		});
+	}catch(e){
+		
+	}finally{
+		reloadComponent();
+	}
+
+	
 }
 
 const toggleInvoiceCancel = async (id : number, cancel_status : number) : Promise<void> => {
@@ -365,10 +408,30 @@ const handleAddCreditOrPayment = async () : Promise<void> => {
 
 }
 
+const handleCheckboxActions = (obj) => {
+	
+	let archived_status = 0;
+	if(obj.action === 'archive'){
+		archived_status = 1;
+	}
+
+	const ids = obj.data.map(row => row.id);
+
+	markArchived(ids, archived_status);
+
+}
+
+const lastSegment = computed(() => {
+	const segments = route.path.split('/').filter(Boolean);
+	return segments[segments.length - 1] || '';
+});
+
 onMounted(() => {
 	const d = new Date();
 	data.time_offset_minutes = -(d.getTimezoneOffset());
 	
+	data.type = lastSegment.value.toLocaleLowerCase();
+
 });
 
 </script>
