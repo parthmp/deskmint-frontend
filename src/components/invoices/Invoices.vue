@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage invoices" :enable_arranged_columns="true" base_url="manage-invoices" slug="invoices" :actions="['view','edit', 'delete', 'Archive', cancel_data,add_payment, add_credit, 'Manage Credits', 'Manage Payments','download PDF', 'send Invoice']" @action="handleAction" :checkbox_actions="['Delete', 'Archive', 'Export CSV']"></general-index-page>
+	<general-index-page page_title="Manage invoices" :enable_arranged_columns="true" base_url="manage-invoices" slug="invoices" :actions="['view','edit', 'delete', 'Archive', cancel_data,mark_sent, add_payment, add_credit, 'Manage Credits', 'Manage Payments','download PDF', 'send Invoice']" @action="handleAction" :checkbox_actions="['Delete', 'Archive', 'Export CSV']"></general-index-page>
 	<Popup :header="data.popup_header" :show_popup="data.show_popup" :blocker="true" :scrollable="false" @closed="closePopup" :close_outside="true" >
 		<AddPaymentToInvoiceSkeleton v-if="data.loading"></AddPaymentToInvoiceSkeleton>
 		<form @submit.prevent="handleAddCreditOrPayment" v-if="!data.loading">
@@ -170,10 +170,17 @@ const add_credit = {
 	mapped : 'status'
 };
 
+const mark_sent = {
+	labels : {
+		mark_sent : [1]
+	},
+	mapped : 'status'
+};
+
 const handleAction = (obj:actionObject) => {
 	
 	temp_obj = obj;
-	if(obj.action.toLowerCase() === 'send invoice'){
+	if(obj.action.toLowerCase() === 'send invoice' || obj.action.toLowerCase() === 'mark_sent'){
 		if(obj.row.status.value == 1){
 			obj.row.status.value = 2;
 			obj.row.status.text = 'Sent';
@@ -181,8 +188,13 @@ const handleAction = (obj:actionObject) => {
 			const sql_datetime = common.toLocalSqlDatetime();
 			obj.row.sent_at = common.formatDate(sql_datetime, false);
 		}
+
+		let send_invoice = true;
+		if(obj.action.toLowerCase() === 'mark_sent'){
+			send_invoice = false;
+		}
 		
-		sendInvoice(obj.row.company_id, obj.row.id);
+		sendInvoice(obj.row.company_id, obj.row.id, send_invoice);
 	}else if(obj.action.toLowerCase() === 'download pdf'){
 		downloadPDF(obj.row.company_id, obj.row.id);
 	}else if(obj.action.toLowerCase() === 'add payment'){
@@ -242,14 +254,15 @@ const toggleInvoiceCancel = async (id : number, cancel_status : number) : Promis
 	}
 }
 
-const sendInvoice = async (company_id : number, id : number) : Promise<void> => {
+const sendInvoice = async (company_id : number, id : number, send_invoice : boolean) : Promise<void> => {
 
 	try{
 		await api.get('manage-invoices/send-invoice', {
 			params : {
 				company_id : company_id,
 				invoice_id : id,
-				time_offset_minutes : data.time_offset_minutes
+				time_offset_minutes : data.time_offset_minutes,
+				send_invoice : send_invoice
 			}
 		});
 	}catch(e){
