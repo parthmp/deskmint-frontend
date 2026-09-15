@@ -30,7 +30,7 @@
 </style>
 <script lang="ts" setup>
 
-	import { nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
+	import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
 	import Tabs from '../UI/Tabs.vue';
 
 	import SettingsTab from './blocks/SettingsTab.vue';
@@ -59,7 +59,8 @@
 		btn_disabled: boolean,
 		mode: string,
 		invoice_id: number,
-		fetched: boolean
+		fetched: boolean,
+		type: string
 	}
 
 	type refType = {
@@ -91,7 +92,8 @@
 		btn_disabled : false,
 		mode : 'create',
 		invoice_id : 0,
-		fetched : false
+		fetched : false,
+		type : ''
 	});
 
 	const { addNewProductRow } = useInvoiceProducts();
@@ -194,7 +196,7 @@
 			}
 			
 
-			router.push('/invoices');
+			router.push(`/invoices/${a_data.type}`);
 			
 		}catch(e){
 			a_data.active_tab_index = e.response.data.tab_switch;
@@ -270,19 +272,27 @@
 		
 	}
 
-	onMounted(() => {
-		data.locked = false;
-		data.cancelled = false;
-		if(route.path.includes('edit')){
-			a_data.mode = 'edit';
-			a_data.invoice_id = +route.params.id;
-		}
-		fetchInitialData();
-		
-	})
+const lastSegment = (segment : number) => computed(() => {
+	const segments = route.path.split('/').filter(Boolean);
+	return segments[segments.length - segment] || '';
+});
 
-	onUnmounted(() : void => {
-		reset();
-	});
+onMounted(() => {
+	data.locked = false;
+	data.cancelled = false;
+	if(route.path.includes('edit')){
+		a_data.mode = 'edit';
+		a_data.invoice_id = +route.params.id;
+		a_data.type = lastSegment(3).value.toLocaleLowerCase();
+	}else{
+		a_data.type = lastSegment(2).value.toLocaleLowerCase();
+	}
+	fetchInitialData();
+	
+})
+
+onUnmounted(() : void => {
+	reset();
+});
 
 </script>

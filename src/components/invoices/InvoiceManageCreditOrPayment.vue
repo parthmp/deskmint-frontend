@@ -42,7 +42,7 @@
  * type 3 : the entries that user applied and fetched from db, means already applied and deducted from the amount_left from credit amount, due does not include applied amount.
  */
 
-import { onMounted, reactive, watch } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import BackButton from '../blocks/BackButton.vue';
 import InputSearch from '../inputs/InputSearch.vue';
 import ApplyUnapplyTable from '../UI/ApplyUnapplyTable.vue';
@@ -85,7 +85,8 @@ interface CreditsApply {
 	disabled : boolean
 	removed_ids : Array<number>
 	fetched_and_removed_ids : Array<number>
-	fetched_entries : Array<TableRow>
+	fetched_entries : Array<TableRow>,
+	type:string
 }
 
 const route = useRoute();
@@ -114,7 +115,8 @@ const data = reactive<CreditsApply>({
 	disabled : false,
 	removed_ids : [],
 	fetched_entries : [],
-	fetched_and_removed_ids : []
+	fetched_and_removed_ids : [],
+	type : ''
 });
 
 watch(() => data.searched, () => {
@@ -244,7 +246,7 @@ const handleSubmit = async () : Promise<void> => {
 			invoice_id : data.invoice_id,
 			removed_ids : data.removed_ids
 		});
-		router.push('/invoices');
+		router.push(`/invoices/${data.type}`);
 	}finally{
 		data.disabled = false;
 	}
@@ -403,8 +405,14 @@ const fetchAlreadyApplied = async () : Promise<void> => {
 	
 }
 
+const lastSegment = (segment : number) => computed(() => {
+	const segments = route.path.split('/').filter(Boolean);
+	return segments[segments.length - segment] || '';
+});
+
 onMounted(() : void => {
 	//data.loading = true;
+	data.type = lastSegment(3).value.toLocaleLowerCase();
 	let invoice_id = +route.params.id;
 	if(!isNaN(invoice_id)){
 		data.invoice_id = invoice_id;
@@ -415,6 +423,8 @@ onMounted(() : void => {
 	}
 	data.table.headers = headers;
 	fetchInvoice();
+	
+	
 });
 
 </script>

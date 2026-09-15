@@ -308,27 +308,47 @@ const routes = [
 				meta: { requires_auth: true }
 			},
 			{
-				path: '/invoices/create',
+				path: '/invoices/invoices/create',
 				component: InvoiceCreateEdit,
 				meta: { requires_auth: true }
 			},
 			{
-				path: '/invoices/edit/:id',
+				path: '/invoices/invoices/edit/:id',
 				component: InvoiceCreateEdit,
 				meta: { requires_auth: true }
 			},
 			{
-				path: '/invoices/view/:id',
+				path: '/invoices/archived/edit/:id',
+				component: InvoiceCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/invoices/view/:id',
 				component: InvoiceView,
 				meta: { requires_auth: true }
 			},
 			{
-				path: '/invoices/manage-credits/:id',
+				path: '/invoices/archived/view/:id',
+				component: InvoiceView,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/invoices/manage-credits/:id',
 				component: InvoiceManageCredits,
 				meta: { requires_auth: true }
 			},
 			{
-				path: '/invoices/manage-payments/:id',
+				path: '/invoices/archived/manage-credits/:id',
+				component: InvoiceManageCredits,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/invoices/manage-payments/:id',
+				component: InvoiceManagePayments,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/archived/manage-payments/:id',
 				component: InvoiceManagePayments,
 				meta: { requires_auth: true }
 			},
