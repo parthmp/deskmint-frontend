@@ -207,20 +207,14 @@ const handleAction = (obj:actionObject) => {
 	temp_obj = obj;
 	
 	if(obj.action.toLowerCase() === 'send invoice' || obj.action.toLowerCase() === 'mark_sent'){
-		if(obj.row.status.value == 1){
-			obj.row.status.value = 2;
-			obj.row.status.text = 'Sent';
-			obj.row.status.highlight = 'success';
-			const sql_datetime = common.toLocalSqlDatetime();
-			obj.row.sent_at = common.formatDate(sql_datetime, false);
-		}
+		
 
 		let send_invoice = true;
 		if(obj.action.toLowerCase() === 'mark_sent'){
 			send_invoice = false;
 		}
 		
-		sendInvoice(obj.row.company_id, obj.row.id, send_invoice);
+		sendInvoice(obj.row.company_id, obj.row.id, send_invoice, obj);
 	}else if(obj.action.toLowerCase() === 'download pdf'){
 		downloadPDF(obj.row.company_id, obj.row.id);
 	}else if(obj.action.toLowerCase() === 'cancel'){
@@ -298,7 +292,7 @@ const toggleInvoiceCancel = async (id : number, cancel_status : number) : Promis
 	}
 }
 
-const sendInvoice = async (company_id : number, id : number, send_invoice : boolean) : Promise<void> => {
+const sendInvoice = async (company_id : number, id : number, send_invoice : boolean, obj : object) : Promise<void> => {
 
 	try{
 		await api.get('manage-invoices/send-invoice', {
@@ -309,6 +303,16 @@ const sendInvoice = async (company_id : number, id : number, send_invoice : bool
 				send_invoice : send_invoice
 			}
 		});
+		if(obj.row.status.value == 1){
+			obj.row.status.value = 2;
+			obj.row.status.text = 'Sent';
+			obj.row.status.highlight = 'success';
+			
+		}
+
+		
+		const sql_datetime = common.toLocalSqlDatetime();
+		obj.row.sent_at = common.formatDate(sql_datetime, false);
 	}catch(e){
 		
 	}
