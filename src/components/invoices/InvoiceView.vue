@@ -5,49 +5,79 @@
 			<div v-if="!data.loading">
 				<h1 class="text-2xl!">View Invoice</h1>
 				<back-button></back-button>
-				<div class="lg:grid lg:grid-cols-12 lg:gap-4">
-					<div class="lg:col-span-4">
-						<p v-for="(item, z) in data.client" :key=z class="mt-3">
-							{{ item.text }} : {{ item.value }}
-						</p>
-					</div>
-					<div class="lg:col-span-4">
-						<p v-for="(item, z) in data.company" :key="z" class="mt-3">
-							{{ item.text }} : {{ item.value }}
-						</p>
-					</div>
-					<div class="lg:col-span-4">
-						<p v-for="(item, z) in data.invoice" :key="z" class="mt-3">
-							{{ item.text }} : {{ item.value }} <span v-if="item.text.toLowerCase() === 'total' || item.text.toLowerCase() === 'balance due'">{{ data.meta.currency }}</span>
-						</p>
-					</div>
-				</div>
-				<br>
-				<br>
-				<table class="table table-auto">
-					<thead>
-						<tr>
-							<th v-for="(header, z) in data.product_rows_headers" :key="z">
-								{{ header.text }}
-							</th>
-						</tr>
-						<tr v-for="(element, z) in data.product_rows_data" :key="z">
-							<td v-for="(element_data, x) in element" :key="x">
-								{{ element_data }}
-							</td>
-						</tr>
-					</thead>
-				</table>
-				<br>
-				<br>
-				<div class="lg:grid lg:grid-cols-12 lg:gap-4">
-					<div class="lg:col-span-8"></div>
-					<div class="lg:col-span-4">
-						<p v-for="(field, z) in data.totals" :key="z" class="text-xl! mb-[5px]">
-							{{ field.text }} : {{ field.value }} {{ data.meta.currency }}
-						</p>
-					</div>
-				</div>
+				<Tabs :horizontal="true" :options="['Info', 'Ledger']">
+					<template v-slot:tab-0>
+						<div class="lg:grid lg:grid-cols-12 lg:gap-4">
+							<div class="lg:col-span-4">
+								<p v-for="(item, z) in data.client" :key=z class="mt-3">
+									{{ item.text }} : {{ item.value }}
+								</p>
+							</div>
+							<div class="lg:col-span-4">
+								<p v-for="(item, z) in data.company" :key="z" class="mt-3">
+									{{ item.text }} : {{ item.value }}
+								</p>
+							</div>
+							<div class="lg:col-span-4">
+								<p v-for="(item, z) in data.invoice" :key="z" class="mt-3">
+									{{ item.text }} : {{ item.value }} <span v-if="item.text.toLowerCase() === 'total' || item.text.toLowerCase() === 'balance due'">{{ data.meta.currency }}</span>
+								</p>
+							</div>
+						</div>
+						<br>
+						<br>
+						<table class="table table-auto">
+							<thead>
+								<tr>
+									<th v-for="(header, z) in data.product_rows_headers" :key="z">
+										{{ header.text }}
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(element, z) in data.product_rows_data" :key="z">
+									<td v-for="(element_data, x) in element" :key="x">
+										{{ element_data }}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<br>
+						<br>
+						<div class="lg:grid lg:grid-cols-12 lg:gap-4">
+							<div class="lg:col-span-8"></div>
+							<div class="lg:col-span-4">
+								<p v-for="(field, z) in data.totals" :key="z" class="text-xl! mb-[5px]">
+									{{ field.text }} : {{ field.value }} {{ data.meta.currency }}
+								</p>
+							</div>
+						</div>
+					</template>
+					<template v-slot:tab-1>
+						<table class="table table-auto">
+							<thead>
+								<tr>
+									<th v-for="(header, z) in data.ledger_headers" :key="z">
+										{{ header }}
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(element, z) in data.ledger_rows" :key="z">
+									<td>{{ element.type }}</td>
+									<td>{{ element.id_number }}</td>
+									<td>{{ element.applied }}</td>
+									<td>{{ element.currency }}</td>
+									<td>{{ element.applied_at }}</td>
+									
+								</tr>
+							</tbody>
+						</table>
+						<p>Total applied : {{ data.ledger_meta.total_applied }}</p>
+					</template>
+					
+				</Tabs>
+				
 			</div>
 		</div>
 	</section>
@@ -58,9 +88,10 @@
 import { onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '../../helpers/api';
-import InputButton from '../inputs/InputButton.vue';
 import InvoiceViewSkeleton from '../skeletons/InvoiceViewSkeleton.vue';
 import BackButton from '../blocks/BackButton.vue';
+import Tabs from '../UI/Tabs.vue';
+import common from '../../helpers/common.ts';
 
 const route = useRoute();
 
@@ -94,6 +125,18 @@ type TermsType = {
 	invoice_terms : string
 };
 
+type LedgerRows = {
+	type : string,
+	id_number:string,
+	applied:number,
+	currency:string,
+	applied_at:string
+};
+
+type LedgerMeta = {
+	total_applied:string
+};
+
 interface InvoiceViewInterface{
 	client : Array<GenericType>,
 	company : Array<GenericType>,
@@ -105,7 +148,10 @@ interface InvoiceViewInterface{
 	product_rows_data : Array<object>,
 	terms : TermsType,
 	totals : Array<GenericType>,
-	invoice_id : number
+	invoice_id : number,
+	ledger_headers: Array<string>
+	ledger_rows: Array<LedgerRows>,
+	ledger_meta: LedgerMeta
 }
 
 const data = reactive<InvoiceViewInterface>({
@@ -134,7 +180,12 @@ const data = reactive<InvoiceViewInterface>({
 		invoice_terms : '',
 	},
 	totals : [],
-	invoice_id : 0
+	invoice_id : 0,
+	ledger_headers : ['Type', 'ID/Number', 'Applied', 'Currency', 'Applied at'],
+	ledger_rows : [],
+	ledger_meta : {
+		total_applied : ''
+	}
 
 });
 
@@ -144,14 +195,25 @@ const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 
 		try{
 			const response = await api.get('manage-invoices/snapshot/'+invoice_id);
-			data.client = response.data.client;
-			data.company = response.data.company;
-			data.invoice = response.data.invoice;
-			data.meta = response.data.meta;
-			data.meta = response.data.meta;
-			data.product_rows_headers = response.data.product_rows.headers;
-			data.product_rows_data = response.data.product_rows.data;
-			data.totals = response.data.totals;
+			const snapshot = response.data.snapshot;
+			const ledger_rows = response.data.ledger.rows;
+			const ledger_meta = response.data.ledger.meta;
+			data.ledger_rows = ledger_rows;
+
+			for(let z = 0 ; z < data.ledger_rows.length ; z++){
+				data.ledger_rows[z].applied_at = common.formatDate(data.ledger_rows[z].applied_at);
+			}
+
+			data.ledger_meta = ledger_meta;
+
+			data.client = snapshot.client;
+			data.company = snapshot.company;
+			data.invoice = snapshot.invoice;
+			data.meta = snapshot.meta;
+			data.meta = snapshot.meta;
+			data.product_rows_headers = snapshot.product_rows.headers;
+			data.product_rows_data = snapshot.product_rows.data;
+			data.totals = snapshot.totals;
 		}catch(e){
 
 		}finally{
