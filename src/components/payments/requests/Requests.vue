@@ -19,7 +19,6 @@
 <script lang="ts" setup>
 
 interface RequestsInterface {
-	time_offset_minutes : number,
 	create_payment_switch: boolean,
 	show_popup: boolean,
 	disabled : boolean,
@@ -84,7 +83,6 @@ const edit = {
 };
 
 const data = reactive<RequestsInterface>({
-	time_offset_minutes : 0,
 	create_payment_switch: true,
 	show_popup: false,
 	disabled : false,
@@ -178,8 +176,7 @@ const makePaymentRequest = async (id : number, slug : string) : Promise<void> =>
 }
 
 onMounted(() => {
-	const d = new Date();
-	data.time_offset_minutes = -(d.getTimezoneOffset());
+	
 });
 
 </script>

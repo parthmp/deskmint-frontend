@@ -5,16 +5,8 @@
 <script lang="ts" setup>
 	
 /* using compositon API */
-import { onMounted, reactive } from 'vue';
+
 import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
 
-const data = reactive<{time_offset_minutes:number}>({
-	time_offset_minutes : 0
-});
-
-onMounted(() => {
-	const d = new Date();
-	data.time_offset_minutes = -(d.getTimezoneOffset());
-});
 
 </script>
