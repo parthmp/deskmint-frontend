@@ -296,6 +296,10 @@ export default {
 
 	parseDropDownAction(str : string){
 		return str.split('_').join(' ').replace(/\b\w/g, char => char.toUpperCase());
+	},
+
+	getTimezoneString(){
+		return Intl.DateTimeFormat().resolvedOptions().timeZone;
 	}
 
 

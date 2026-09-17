@@ -45,6 +45,7 @@
 
 	import ClientCreateEditSkeleton from '../skeletons/ClientCreateEditSkeleton.vue';
 	import BackButton from '../blocks/BackButton.vue';
+import common from '../../helpers/common.ts';
 	
 
 	interface InvoiceCreateEditInterface{
@@ -77,9 +78,8 @@
 
 	const data = useInvoiceStore();
 
-	const d = new Date();
-	const timezone_offset_minutes = -(d.getTimezoneOffset());
-
+	const timezone = common.getTimezoneString();
+	
 	const a_data = reactive<InvoiceCreateEditInterface>({
 		active_tab_index: 0,
 		custom_fields : [],
@@ -106,10 +106,10 @@
 
 	const fetchInitialData = async () : Promise<void> =>  {
 
-		
+		//done
 		const response = await api.get('manage-invoices/fetch-initial-data', {
 			params : {
-				timezone_offset_minutes : timezone_offset_minutes
+				timezone : timezone
 			}
 		});
 
@@ -173,7 +173,9 @@
 
 		/**
 		 * switch tabs by validating server side.
+		 * also used to save and update invoices
 		 * */
+		//done
 		a_data.btn_disabled = true;
 		try{
 
@@ -186,7 +188,7 @@
 								data:data,
 								custom_fields:a_data.custom_fields,
 								settings : post_settings,
-								timezone_offset_minutes : timezone_offset_minutes
+								timezone : timezone
 							};
 
 			if(a_data.mode === 'create'){
@@ -208,11 +210,11 @@
 
 	const fetchInvoice = async (invoice_id : number) : Promise<void> => {
 
-		const timezone_offset_minutes = -(d.getTimezoneOffset());
-
+		//const timezone_offset_minutes = -(d.getTimezoneOffset());
+		//done
 		const response = await api.get('manage-invoices/'+invoice_id, {
 			params : {
-				timezone_offset_minutes:timezone_offset_minutes
+				timezone:timezone
 			}
 		});
 

@@ -52,7 +52,7 @@ type actionObject = {
 };
 
 interface InvoicesInterface {
-	time_offset_minutes : number,
+	timezone : string,
 	show_popup : boolean,
 	popup_header : string,
 	apply_type: string,
@@ -79,7 +79,7 @@ interface InvoicesInterface {
 }
 
 const data = reactive<InvoicesInterface>({
-	time_offset_minutes : 0,
+	timezone : '',
 	show_popup : false,
 	popup_header : '',
 	apply_type : '',
@@ -299,7 +299,7 @@ const sendInvoice = async (company_id : number, id : number, send_invoice : bool
 			params : {
 				company_id : company_id,
 				invoice_id : id,
-				time_offset_minutes : data.time_offset_minutes,
+				timezone : data.timezone,
 				send_invoice : send_invoice
 			}
 		});
@@ -325,7 +325,7 @@ const downloadPDF = async (company_id : number, id : number) : Promise<void> => 
 			params : {
 				company_id : company_id,
 				invoice_id : id,
-				time_offset_minutes : data.time_offset_minutes
+				timezone : data.timezone
 			}
 		});
 		toastEvents.emit('toast', {
@@ -432,9 +432,9 @@ const lastSegment = computed(() => {
 });
 
 onMounted(() => {
-	const d = new Date();
-	data.time_offset_minutes = -(d.getTimezoneOffset());
 	
+	data.timezone = common.getTimezoneString();
+
 	data.type = lastSegment.value.toLocaleLowerCase();
 
 });
