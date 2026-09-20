@@ -422,6 +422,14 @@ const handleCheckboxActions = (obj) => {
 
 	const ids = obj.data.map(row => row.id);
 
+	if(ids.length == 0){
+		toastEvents.emit('toast', {
+			message : 'Please select at least one invoice',
+			type : 'error'
+		});
+		return ;
+	}
+
 	markArchived(ids, archived_status);
 
 }

@@ -300,7 +300,7 @@
 </style>
 <script lang="ts">
 
-import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport, IconMail, IconCoin, IconDatabaseDollar, IconLock, IconMoneybagPlus, IconReceiptDollar, IconClipboardList, IconCreditCardPay, IconArchive } from '@tabler/icons-vue';
+import { IconCircle, IconCircleDot, IconX, IconDashboard, IconChevronRight, IconChevronDown, IconAlignLeft, IconMoon, IconSun, IconDeviceImac, IconTableShortcut, IconCarSuv, IconBell, IconUser, IconSettings, IconLogout, IconUsersGroup, IconUserShield, IconSquarePlus2, IconCircleDotted, IconPackages, IconFileDollar, IconScript, IconUsers, IconBuildingFactory, IconFileReport, IconMail, IconCoin, IconDatabaseDollar, IconLock, IconMoneybagPlus, IconReceiptDollar, IconClipboardList, IconCreditCardPay, IconArchive, IconNote, IconBuildingCommunity, IconFileDescription, IconMoneybagMove, IconChartDots, IconFileCheck } from '@tabler/icons-vue';
 
 import { useThemeOptions } from '../stores/theme';
 import { defineComponent } from 'vue';
@@ -372,6 +372,12 @@ export default defineComponent({
 		IconReceiptDollar:IconReceiptDollar,
 		IconArchive:IconArchive,
 		IconClipboardList:IconClipboardList,
+		IconNote:IconNote,
+		IconBuildingCommunity:IconBuildingCommunity,
+		IconFileDescription:IconFileDescription,
+		IconMoneybagMove:IconMoneybagMove,
+		IconChartDots:IconChartDots,
+		IconFileCheck:IconFileCheck,
 		IconCreditCardPay:IconCreditCardPay
 	},
 	data() : PanelData{
@@ -438,6 +444,12 @@ export default defineComponent({
 								menu_text: 'Invoices',
 							},
 							{
+								path: '/invoices/reccuring',
+								icon: 'IconFileReport',
+								icon_size: 22,
+								menu_text: 'Reccuring',
+							},
+							{
 								path: '/invoices/archived',
 								icon: 'IconArchive',
 								icon_size: 22,
@@ -446,10 +458,10 @@ export default defineComponent({
 						]
 					},
 					{
-						path: '/recurring-invoices',
-						icon: 'IconFileReport',
+						path: '/quotes',
+						icon: 'IconNote',
 						icon_size: 22,
-						menu_text: 'Recurring Invoices',
+						menu_text: 'Quotes',
 						has_submenu : false,
 						show_submenu : false,
 						is_active: false,
@@ -497,6 +509,56 @@ export default defineComponent({
 							}
 							
 						]
+					},
+					{
+						path: '/contracts',
+						icon: 'IconFileCheck',
+						icon_size: 22,
+						menu_text: 'Contracts',
+						has_submenu : false,
+						show_submenu : false,
+						is_active: false,
+						submenu: []
+					},
+					{
+						path: '/vendors',
+						icon: 'IconBuildingCommunity',
+						icon_size: 22,
+						menu_text: 'Vendors',
+						has_submenu : false,
+						show_submenu : false,
+						is_active: false,
+						submenu: []
+					},
+					{
+						path: '/purchase-orders',
+						icon: 'IconFileDescription',
+						icon_size: 22,
+						menu_text: 'Purchase Orders',
+						has_submenu : false,
+						show_submenu : false,
+						is_active: false,
+						submenu: []
+					},
+					{
+						path: '/expenses',
+						icon: 'IconMoneybagMove',
+						icon_size: 22,
+						menu_text: 'Expenses',
+						has_submenu : false,
+						show_submenu : false,
+						is_active: false,
+						submenu: []
+					},
+					{
+						path: '/reports',
+						icon: 'IconChartDots',
+						icon_size: 22,
+						menu_text: 'Reports',
+						has_submenu : false,
+						show_submenu : false,
+						is_active: false,
+						submenu: []
 					},
 					{
 						path: '/transactions',
