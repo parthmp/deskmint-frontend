@@ -78,6 +78,8 @@ import PaymentsApply from '../src/components/payments/payments/PaymentsApply.vue
 import InvoiceManageCredits from '../src/components/invoices/InvoiceManageCredits.vue';
 import InvoiceManagePayments from '../src/components/invoices/InvoiceManagePayments.vue';
 import InvoicesArchived from '../src/components/invoices/InvoicesArchived.vue';
+import RecurringInvoices from '../src/components/recurring_invoices/RecurringInvoices.vue';
+import RecurringInvoiceCreateEdit from '../src/components/recurring_invoices/RecurringInvoiceCreateEdit.vue';
 
 const routes = [
 	{
@@ -350,6 +352,16 @@ const routes = [
 			{
 				path: '/invoices/archived/manage-payments/:id',
 				component: InvoiceManagePayments,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/recurring',
+				component: RecurringInvoices,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/recurring/create',
+				component: RecurringInvoiceCreateEdit,
 				meta: { requires_auth: true }
 			},
 			{

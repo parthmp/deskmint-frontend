@@ -444,10 +444,10 @@ export default defineComponent({
 								menu_text: 'Invoices',
 							},
 							{
-								path: '/invoices/reccuring',
+								path: '/invoices/recurring',
 								icon: 'IconFileReport',
 								icon_size: 22,
-								menu_text: 'Reccuring',
+								menu_text: 'Recurring',
 							},
 							{
 								path: '/invoices/archived',
