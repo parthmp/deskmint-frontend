@@ -2,11 +2,11 @@
 	<div class="lg:grid lg:grid-cols-12 lg:gap-5">
 		<div class="lg:col-span-4">
 			<div class="grid grid-cols-12 gap-2">
-				<div class="col-span-9">
+				<div :class="{'col-span-9' : (props.type !== 'recurring'), 'col-span-10' : (props.type === 'recurring')}">
 					<input-auto-complete label="Client" :disabled="data.locked" v-model="details.client.value" @selected="handleClientSelect" :error="details.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="details.clients" :show_errors="details.client.show_errors"></input-auto-complete>
 				
 				</div>
-				<div class="col-span-3">
+				<div :class="{'col-span-3' : (props.type !== 'recurring'), 'col-span-2' : (props.type === 'recurring')}">
 					<input-button url="/clients/create" label="New" class="mt-[23.5px]"></input-button>
 					
 				</div>
@@ -14,22 +14,20 @@
 				
 			</div>
 		</div>
-		<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
+		<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]" v-if="props.type !== 'recurring'">
 			<input-date-time mode="date" label="Invoice date" :disabled="data.locked" v-model="details.invoice_date.value" :error="details.invoice_date.error" :required="true" ref="invoice_date_ref" placeholder="Select invoice date"></input-date-time>
 		</div>
-		<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]">
+		<div class="lg:col-span-4 mt-[20px] lg:mt-[0px]" v-if="props.type !== 'recurring'">
 			<input-date-time mode="date" label="Due date" v-model="details.due_date.value" :disabled="data.locked" :error="details.due_date.error" :required="true" placeholder="Select due date" ref="due_date_ref"></input-date-time>
 		</div>
-	</div>
-
-	<div class="lg:grid lg:grid-cols-12 lg:gap-5">
-		<div class="lg:col-span-4 mt-[20px]">
+	
+		<div class="lg:col-span-4 mt-[20px]" v-if="props.type !== 'recurring'">
 			<input-text label="Invoice number" v-model="details.invoice_number.value" :disabled="data.locked" :error="details.invoice_number.error" :required="true" placeholder="Invoice number" ref="invoice_number_ref"></input-text>
 		</div>
-		<div class="lg:col-span-4 mt-[20px]">
+		<div :class="{'lg:col-span-4 mt-[20px]' : (props.type !== 'recurring'), 'lg:col-span-4 ' : (props.type === 'recurring')}">
 			<input-text label="PO number" v-model="details.po_number" :disabled="data.locked" :required="false" placeholder="PO number"></input-text>
 		</div>
-		<div class="lg:col-span-4 mt-[20px]">
+		<div :class="{'lg:col-span-4 mt-[20px]' : (props.type !== 'recurring'), 'lg:col-span-4 ' : (props.type === 'recurring')}">
 			<div class="lg:grid lg:grid-cols-12 lg:gap-2">
 				<div class="lg:col-span-6 mt-[20px] lg:mt-[0px]">
 					<input-select label="Discount type (Post tax)" :disabled="data.locked" v-model="details.global_discount_type" :required="false" :options="discount_options"></input-select>
@@ -100,6 +98,8 @@ import { useInvoiceStore } from '../../../composables/invoice/useInvoiceStore.ts
 		value : string,
 		text : string
 	};
+
+	const props = defineProps(['type']);
 
 	const details = defineModel<InvoiceDetailsType>({required : true});
 	const data = useInvoiceStore();
@@ -204,24 +204,29 @@ import { useInvoiceStore } from '../../../composables/invoice/useInvoiceStore.ts
 			details.value.client.show_errors = true;
 			validated = false;
 		}
+
+		if(props.type !== 'recurring'){
+			details.value.invoice_date.error = '';
+			if(!invoice_date_ref?.value?.validate()){
+				details.value.invoice_date.error = 'Please select invoice date';
+				validated = false;
+			}
+
+			details.value.due_date.error = '';
+			if(!due_date_ref?.value?.validate()){
+				details.value.due_date.error = 'Please select due date';
+				validated = false;
+			}
+
+			details.value.invoice_number.error = '';
+			if(!invoice_number_ref?.value?.validate()){
+				details.value.invoice_number.error = 'Please enter invoice number';
+				validated = false;
+			}
+		}
+	
 		
-		details.value.invoice_date.error = '';
-		if(!invoice_date_ref?.value?.validate()){
-			details.value.invoice_date.error = 'Please select invoice date';
-			validated = false;
-		}
-
-		details.value.due_date.error = '';
-		if(!due_date_ref?.value?.validate()){
-			details.value.due_date.error = 'Please select due date';
-			validated = false;
-		}
-
-		details.value.invoice_number.error = '';
-		if(!invoice_number_ref?.value?.validate()){
-			details.value.invoice_number.error = 'Please enter invoice number';
-			validated = false;
-		}
+		
 
 		return validated;
 	}

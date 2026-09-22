@@ -2,7 +2,7 @@
 	<div>
 		<form @submit.prevent="validateInvoiceDetails">
 			
-			<invoice-details v-model="data.invoice_details" ref="invoice_details_ref"></invoice-details>
+			<invoice-details :type="props.type" v-model="data.invoice_details" ref="invoice_details_ref"></invoice-details>
 			
 			<br>
 			<br>
@@ -147,6 +147,8 @@
 	}
 
 	const data = useInvoiceStore();
+
+	const props = defineProps(['type']);
 
 	const { addNewProductRow, removeProductRow, handleProductSelect } = useInvoiceProducts();
 

@@ -8,7 +8,6 @@
 	
 import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
 
-
 const handleAction = () => {}
 
 </script>
