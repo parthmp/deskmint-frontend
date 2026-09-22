@@ -18,7 +18,7 @@
 					</div>
 				</template>
 				<template v-slot:tab-2>
-					<SettingsTab v-model="a_data.settings_tab"></SettingsTab>
+					<SettingsTab v-model="a_data.settings_tab" ref="settings_tab_ref" @validated="submitRecurringInvoice"></SettingsTab>
 				</template>
 			</tabs>
 		</div>
@@ -44,6 +44,24 @@ import ClientCreateEditSkeleton from '../skeletons/ClientCreateEditSkeleton.vue'
 import BackButton from '../blocks/BackButton.vue';
 import common from '../../helpers/common.ts';
 import SettingsTab from './SettingsTab.vue';
+import type { TextFieldType } from '../../types/InputTypes.ts';
+import { toastEvents } from '../../events/toastEvents.ts';
+
+type SettingsTab = {
+	payment_gateways : Array<{text : string, value : number}>,
+	frequencies : Array<{text : string, value : number}>,
+	disabled: boolean,
+	payment_gateway: TextFieldType,
+	frequency: TextFieldType,
+	custom_frequency: TextFieldType,
+	custom_frequency_value : number,
+	none_gateway_value : number,
+	send_email: boolean,
+	start_subscription: boolean,
+	show_start_subscription: boolean,
+	btn_disabled: boolean,
+	show_custom : boolean
+};
 
 
 interface InvoiceCreateEditInterface{
@@ -59,7 +77,8 @@ interface InvoiceCreateEditInterface{
 	mode: string,
 	invoice_id: number,
 	fetched: boolean,
-	type: string
+	type: string,
+	settings_tab : SettingsTab
 }
 
 type refType = {
@@ -101,6 +120,10 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 			error : ''
 		},
 		frequency: {
+			value : '',
+			error: ''
+		},
+		custom_frequency:  {
 			value : '',
 			error: ''
 		},
@@ -177,6 +200,8 @@ const fetchInitialData = async () : Promise<void> =>  {
 
 }
 
+
+
 const changedActiveTabValue = (tab_index: number) => {
 	
 	if(tab_index === 0){
@@ -206,6 +231,43 @@ const handleInvoicePageValidated = (is_valid: boolean) : void => {
 	if(is_valid){
 		a_data.active_tab_index = 1;
 	}
+}
+
+const submitRecurringInvoice = async () : Promise<void> => {
+
+	a_data.settings_tab.btn_disabled = true;
+	try{
+
+		const post_settings = {
+			payment_gateway : a_data.settings_tab.payment_gateway.value,
+			frequency : a_data.settings_tab.frequency.value,
+			custom_frequency_days : a_data.settings_tab.custom_frequency.value,
+			send_invoice : a_data.settings_tab.send_invoice_in_email,
+			start_subscription : a_data.settings_tab.start_subscription
+		};
+		
+		const post_data = {
+							data:data,
+							custom_fields:a_data.custom_fields,
+							settings : post_settings,
+							timezone : timezone
+						};
+
+		if(a_data.mode === 'create'){
+			await api.post('manage-recurring-invoices', post_data);
+		}else{
+			//await api.patch('manage-recurring-invoices/'+a_data.invoice_id, post_data);
+		}
+		
+
+		// router.push(`/invoices/${a_data.type}`);
+		
+	}catch(e){
+		a_data.active_tab_index = e.response.data.tab_switch;
+	}finally{
+		a_data.settings_tab.btn_disabled = false;
+	}
+
 }
 
 // const handleSettingsValidated = async (is_valid: boolean) => {
