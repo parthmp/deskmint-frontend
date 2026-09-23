@@ -38,6 +38,14 @@
 					Start subscription
 				</span>
 			</span>
+			<br>
+			<span v-if="!data.disabled && data.show_start_subscription" class="flex gap-5 items-center">
+				<input-switch v-model="data.mark_invoices_paid" />
+				<span @click.prevent="data.mark_invoices_paid = !data.mark_invoices_paid">
+					Mark generated invoices paid automatically
+				</span>
+			</span>
+			<p v-if="!data.show_start_subscription && data.payment_gateway.value !== ''">Subscription will start once client pays by the sent link.</p>
 			<input-button v-if="!data.disabled" :disabled="data.btn_disabled" btn_text="Save" icon="iconCheck" class="lg:float-end" />
 			<div class="clear-both"></div>
 		</form>

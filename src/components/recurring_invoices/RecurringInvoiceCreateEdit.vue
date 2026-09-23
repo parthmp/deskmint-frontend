@@ -7,8 +7,7 @@
 			<BackButton></BackButton>
 			<br>
 			<client-create-edit-skeleton :blocks="3" v-if="!a_data.fetched"></client-create-edit-skeleton>
-			<!-- <tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue" v-if="a_data.fetched"> -->
-			<tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="false" @tab-changed="changedActiveTabValue" v-if="a_data.fetched">
+			<tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue" v-if="a_data.fetched">
 				<template v-slot:tab-0>
 					<invoice-page ref="invoice_page_validation" :type="a_data.type" @validated="handleInvoicePageValidated"></invoice-page>
 				</template>
@@ -45,7 +44,6 @@ import BackButton from '../blocks/BackButton.vue';
 import common from '../../helpers/common.ts';
 import SettingsTab from './SettingsTab.vue';
 import type { TextFieldType } from '../../types/InputTypes.ts';
-import { toastEvents } from '../../events/toastEvents.ts';
 
 type SettingsTab = {
 	payment_gateways : Array<{text : string, value : number}>,
@@ -56,6 +54,7 @@ type SettingsTab = {
 	custom_frequency: TextFieldType,
 	custom_frequency_value : number,
 	none_gateway_value : number,
+	mark_invoices_paid: boolean,
 	send_email: boolean,
 	start_subscription: boolean,
 	show_start_subscription: boolean,
@@ -129,6 +128,7 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 		},
 		custom_frequency_value : 0,
 		none_gateway_value : 0,
+		mark_invoices_paid: false,
 		send_email: true,
 		start_subscription: false,
 		show_start_subscription: false,
@@ -242,7 +242,8 @@ const submitRecurringInvoice = async () : Promise<void> => {
 			payment_gateway : a_data.settings_tab.payment_gateway.value,
 			frequency : a_data.settings_tab.frequency.value,
 			custom_frequency_days : a_data.settings_tab.custom_frequency.value,
-			send_invoice : a_data.settings_tab.send_invoice_in_email,
+			send_email : a_data.settings_tab.send_email,
+			mark_invoices_paid : a_data.settings_tab.mark_invoices_paid,
 			start_subscription : a_data.settings_tab.start_subscription
 		};
 		
