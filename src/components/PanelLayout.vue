@@ -627,7 +627,7 @@ export default defineComponent({
 								menu_text: 'Invoice'
 							},
 							{
-								path: '/settings/email/content',
+								path: '/settings/email/invoices',
 								icon: 'IconMail',
 								icon_size: 22,
 								is_active: false,

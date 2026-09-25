@@ -21,7 +21,7 @@
 	}
 
 	const data = reactive<InvoiceSettingsInterface>({
-		tab_options : ['Content', 'Reminders', 'SMTP']
+		tab_options : ['Invoices', 'Recurring Invoices', 'Payment Requests', 'Reminders', 'SMTP']
 	});
 
 </script>

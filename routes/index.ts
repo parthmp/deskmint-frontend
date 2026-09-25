@@ -80,6 +80,9 @@ import InvoiceManagePayments from '../src/components/invoices/InvoiceManagePayme
 import InvoicesArchived from '../src/components/invoices/InvoicesArchived.vue';
 import RecurringInvoices from '../src/components/recurring_invoices/RecurringInvoices.vue';
 import RecurringInvoiceCreateEdit from '../src/components/recurring_invoices/RecurringInvoiceCreateEdit.vue';
+import EmailSettingsInvoiceContent from '../src/components/settings/email/blocks/EmailSettingsInvoiceContent.vue';
+import EmailSettingsPaymentRequestsContent from '../src/components/settings/email/blocks/EmailSettingsPaymentRequestsContent.vue';
+import EmailSettingsRecurringInvoiceContent from '../src/components/settings/email/blocks/EmailSettingsRecurringInvoiceContent.vue';
 
 const routes = [
 	{
@@ -455,13 +458,23 @@ const routes = [
 				meta: { requires_auth: true }
 			},
 			{
-				path: '/settings/email/content',
+				path: '/settings/email/invoices',
 				component: EmailSettingsRender,
 				meta: { requires_auth: true },
 				children : [
 					{
-						path:  '/settings/email/content',
-						component: EmailSettingsContent,
+						path:  '/settings/email/invoices',
+						component: EmailSettingsInvoiceContent,
+						meta: { requires_auth: true }
+					},
+					{
+						path:  '/settings/email/recurring-invoices',
+						component: EmailSettingsRecurringInvoiceContent,
+						meta: { requires_auth: true }
+					},
+					{
+						path:  '/settings/email/payment-requests',
+						component: EmailSettingsPaymentRequestsContent,
 						meta: { requires_auth: true }
 					},
 					{
