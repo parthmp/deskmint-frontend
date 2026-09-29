@@ -44,7 +44,7 @@
 		loading: false
 	});
 
-	const available_tags = 'Available tags are: {$client_first_name} ,  {$client_last_name} , {$frequency} , {$total} , {$subscription_url}';
+	const available_tags = 'Available tags are: {$client_first_name} ,  {$client_last_name} , {$frequency} , {$total} , {$currency} ,{$subscription_url}';
 
 	const saveEmailSettingsContent = async () : Promise<void> => {
 		
