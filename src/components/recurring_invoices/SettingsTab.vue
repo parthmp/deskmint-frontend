@@ -23,6 +23,18 @@
 				ref="frequency_ref"
 			/>
 			
+			<input-select
+				v-show="+data.payment_gateway.value === +data.none_gateway_value"
+				label="Payment type" 
+				:required="true"
+				:options="data.payment_types" 
+				placeholder="Select payment type"  
+				:disabled="data.disabled"
+				v-model="data.payment_type.value" 
+				:error="data.payment_type.error"
+				ref="payment_type_ref"
+			/>
+			
 			<InputNumber v-if="data.show_custom" v-model="data.custom_frequency.value" :error="data.custom_frequency.error" label="Custom frequency in days" min="1" max="365" placeholder="Custom frequency in days" ref="custom_frequency_ref" :required="data.show_custom"></InputNumber>
 			<br>
 			<span v-if="!data.disabled" class="flex gap-5 items-center">
@@ -85,6 +97,7 @@ interface InputComponent {
 const payment_method_ref = ref<InputComponent | null>(null);
 const frequency_ref = ref<InputComponent | null>(null);
 const custom_frequency_ref = ref<InputComponent | null>(null);
+const payment_type_ref = ref<InputComponent | null>(null);
 
 watch(() => data.value.payment_gateway.value, () => {
 	
@@ -93,6 +106,11 @@ watch(() => data.value.payment_gateway.value, () => {
 	if(!payment_method_ref.value?.validate()){
 		data.value.payment_gateway.error = 'Please select a payment gateway';
 	}
+
+	// if(+data.value.payment_gateway.value === +data.value.none_gateway_value){
+	// 	validatePaymentType();
+	// }
+
 });
 
 watch(() => data?.value?.frequency.value, () => {
@@ -104,6 +122,10 @@ watch(() => data?.value?.frequency.value, () => {
 	}
 });
 
+watch(() => data?.value?.payment_type.value, () => {
+	validatePaymentType();
+});
+
 watch(() => data.value.custom_frequency.value, () => {
 	
 	data.value.custom_frequency.error = '';
@@ -112,6 +134,15 @@ watch(() => data.value.custom_frequency.value, () => {
 		data.value.custom_frequency.error = 'Please enter frequency days';
 	}
 });
+
+const validatePaymentType = () => {
+	
+	data.value.payment_type.error = '';
+
+	if(!payment_type_ref.value?.validate()){
+		data.value.payment_type.error = 'Please select payment type';
+	}
+}
 
 const validateSettings = (): boolean => {
 
@@ -134,6 +165,13 @@ const validateSettings = (): boolean => {
 	if(!custom_frequency_ref.value?.validate()){
 		data.value.custom_frequency.error = 'Please enter frequency days';
 		valid = false;
+	}
+
+	if(+data.value?.payment_gateway.value === +data.value.none_gateway_value){
+		if(!payment_type_ref.value?.validate()){
+			data.value.payment_type.error = 'Please select payment type';
+			valid = false;
+		}
 	}
 
 	return valid;

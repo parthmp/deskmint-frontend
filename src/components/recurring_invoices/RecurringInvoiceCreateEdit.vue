@@ -48,9 +48,11 @@ import type { TextFieldType } from '../../types/InputTypes.ts';
 type SettingsTab = {
 	payment_gateways : Array<{text : string, value : number}>,
 	frequencies : Array<{text : string, value : number}>,
+	payment_types : Array<{text : string, value : number}>,
 	disabled: boolean,
 	payment_gateway: TextFieldType,
 	frequency: TextFieldType,
+	payment_type: TextFieldType,
 	custom_frequency: TextFieldType,
 	custom_frequency_value : number,
 	none_gateway_value : number,
@@ -113,12 +115,17 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 	settings_tab : {
 		payment_gateways : [],
 		frequencies : [],
+		payment_types : [],
 		disabled: false,
 		payment_gateway: {
 			value : '',
 			error : ''
 		},
 		frequency: {
+			value : '',
+			error: ''
+		},
+		payment_type: {
 			value : '',
 			error: ''
 		},
@@ -189,6 +196,7 @@ const fetchInitialData = async () : Promise<void> =>  {
 	a_data.settings_tab.frequencies = response.data.frequencies;
 	a_data.settings_tab.custom_frequency_value = response.data.custom_frequency_value;
 	a_data.settings_tab.none_gateway_value = response.data.none_gateway_value;
+	a_data.settings_tab.payment_types = response.data.payment_types;
 
 	
 	if(a_data.mode === 'create'){
@@ -244,6 +252,7 @@ const submitRecurringInvoice = async () : Promise<void> => {
 			custom_frequency_days : a_data.settings_tab.custom_frequency.value,
 			send_email : a_data.settings_tab.send_email,
 			mark_invoices_paid : a_data.settings_tab.mark_invoices_paid,
+			payment_type : a_data.settings_tab.payment_type.value,
 			start_subscription : a_data.settings_tab.start_subscription
 		};
 		
