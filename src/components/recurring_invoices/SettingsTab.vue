@@ -40,7 +40,14 @@
 			<span v-if="!data.disabled" class="flex gap-5 items-center">
 				<input-switch v-model="data.send_email" />
 				<span @click.prevent="data.send_email = !data.send_email">
-					Send email
+					Send email for recurring invoice (Notifying the client about recurring invoice creation)
+				</span>
+			</span>
+			<br>
+			<span v-if="!data.disabled" class="flex gap-5 items-center">
+				<input-switch v-model="data.send_email_for_invoice" />
+				<span @click.prevent="data.send_email_for_invoice = !data.send_email_for_invoice">
+					Send email for invoice generation (Sending an invoice when this recurring invoice entry creates invoices with frequencies/intervals)
 				</span>
 			</span>
 			<br>
@@ -72,19 +79,26 @@ import InputNumber from '../inputs/InputNumber.vue';
 import { reactive, ref, watch } from 'vue';
 
 type DataType = {
-	
-	payment_gateway: {
-		value : string,
-		error : string
-	},
-	frequency: {
-		value : string,
-		error : string
-	}
-	
+	payment_gateway: { value: string; error: string };
+	frequency: { value: string; error: string };
+	custom_frequency: { value: string; error: string };
+	payment_type: { value: string; error: string };
+	payment_gateways: [];                          
+	frequencies: [];                          
+	payment_types: [];                          
+	none_gateway_value: string | number;
+	disabled: boolean;
+	show_custom: boolean;
+	start_subscription: boolean;
+	show_start_subscription: boolean;
+	mark_invoices_paid: boolean;
+	btn_disabled: boolean;
+	send_email: boolean;
+	send_email_for_invoice: boolean;
 };
 
-const data = defineModel<DataType>();
+const data = defineModel<DataType>({ required: true });
+
 
 const emit = defineEmits<{
 	(e: 'validated', is_valid: boolean): void

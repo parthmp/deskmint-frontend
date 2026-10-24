@@ -58,6 +58,7 @@ type SettingsTab = {
 	none_gateway_value : number,
 	mark_invoices_paid: boolean,
 	send_email: boolean,
+	send_email_for_invoice: boolean,
 	start_subscription: boolean,
 	show_start_subscription: boolean,
 	btn_disabled: boolean,
@@ -137,6 +138,7 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 		none_gateway_value : 0,
 		mark_invoices_paid: false,
 		send_email: true,
+		send_email_for_invoice: true,
 		start_subscription: false,
 		show_start_subscription: false,
 		btn_disabled: false,
@@ -251,6 +253,7 @@ const submitRecurringInvoice = async () : Promise<void> => {
 			frequency : a_data.settings_tab.frequency.value,
 			custom_frequency_days : a_data.settings_tab.custom_frequency.value,
 			send_email : a_data.settings_tab.send_email,
+			send_email_for_invoice : a_data.settings_tab.send_email_for_invoice,
 			mark_invoices_paid : a_data.settings_tab.mark_invoices_paid,
 			payment_type : a_data.settings_tab.payment_type.value,
 			start_subscription : a_data.settings_tab.start_subscription

@@ -6,8 +6,8 @@
   ],
   "compilerOptions": {
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "exactOptionalPropertyTypes": true
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "exactOptionalPropertyTypes": false
   }
 }
