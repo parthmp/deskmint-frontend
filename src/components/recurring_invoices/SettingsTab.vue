@@ -51,11 +51,12 @@
 				</span>
 			</span>
 			<br>
-			<span v-if="!data.disabled && data.show_start_subscription" class="flex gap-5 items-center">
-				<input-switch v-model="data.start_subscription" />
+			<span v-if="!data.disabled && data.show_start_subscription">
+				<!-- <input-switch v-model="data.start_subscription" />
 				<span @click.prevent="data.start_subscription = !data.start_subscription">
 					Start subscription
-				</span>
+				</span> -->
+				<input-date-time mode="datetime" label="Subscription start datetime" v-model="data.subscription_start_datetime.value" :error="data.subscription_start_datetime.error" :required="true" ref="subscription_start_datetime_ref" placeholder="Select start date"></input-date-time>
 			</span>
 			<br>
 			<span v-if="!data.disabled && data.show_start_subscription" class="flex gap-5 items-center">
@@ -76,6 +77,7 @@ import InputButton from '../inputs/InputButton.vue';
 import InputSelect from '../inputs/InputSelect.vue';
 import InputSwitch from '../inputs/InputSwitch.vue';
 import InputNumber from '../inputs/InputNumber.vue';
+import InputDateTime from '../inputs/InputDateTime.vue';
 import { reactive, ref, watch } from 'vue';
 
 type DataType = {
@@ -83,13 +85,13 @@ type DataType = {
 	frequency: { value: string; error: string };
 	custom_frequency: { value: string; error: string };
 	payment_type: { value: string; error: string };
+	subscription_start_datetime: { value: string | Date | null; error: string };
 	payment_gateways: [];                          
 	frequencies: [];                          
 	payment_types: [];                          
 	none_gateway_value: string | number;
 	disabled: boolean;
 	show_custom: boolean;
-	start_subscription: boolean;
 	show_start_subscription: boolean;
 	mark_invoices_paid: boolean;
 	btn_disabled: boolean;
@@ -112,6 +114,7 @@ const payment_method_ref = ref<InputComponent | null>(null);
 const frequency_ref = ref<InputComponent | null>(null);
 const custom_frequency_ref = ref<InputComponent | null>(null);
 const payment_type_ref = ref<InputComponent | null>(null);
+const subscription_start_datetime_ref = ref<InputComponent | null>(null);
 
 watch(() => data.value.payment_gateway.value, () => {
 	
@@ -125,6 +128,15 @@ watch(() => data.value.payment_gateway.value, () => {
 	// 	validatePaymentType();
 	// }
 
+});
+
+watch(() => data.value.subscription_start_datetime.value, () => {
+	data.value.subscription_start_datetime.error = '';
+	if(subscription_start_datetime_ref.value){
+		if(!subscription_start_datetime_ref.value.validate()){
+			data.value.subscription_start_datetime.error = 'Please select start date';
+		}
+	}
 });
 
 watch(() => data?.value?.frequency.value, () => {
@@ -186,6 +198,12 @@ const validateSettings = (): boolean => {
 			data.value.payment_type.error = 'Please select payment type';
 			valid = false;
 		}
+
+		if(!subscription_start_datetime_ref.value?.validate()){
+			data.value.subscription_start_datetime.error = 'Please select start date';
+			valid = false;
+		}
+
 	}
 
 	return valid;

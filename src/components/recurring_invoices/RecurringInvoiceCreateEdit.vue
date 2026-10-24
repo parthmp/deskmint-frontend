@@ -54,6 +54,10 @@ type SettingsTab = {
 	frequency: TextFieldType,
 	payment_type: TextFieldType,
 	custom_frequency: TextFieldType,
+	subscription_start_datetime: {
+		value: string | Date | null,
+		error: string
+	},
 	custom_frequency_value : number,
 	none_gateway_value : number,
 	mark_invoices_paid: boolean,
@@ -131,6 +135,10 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 			error: ''
 		},
 		custom_frequency:  {
+			value : '',
+			error: ''
+		},
+		subscription_start_datetime : {
 			value : '',
 			error: ''
 		},
@@ -256,7 +264,7 @@ const submitRecurringInvoice = async () : Promise<void> => {
 			send_email_for_invoice : a_data.settings_tab.send_email_for_invoice,
 			mark_invoices_paid : a_data.settings_tab.mark_invoices_paid,
 			payment_type : a_data.settings_tab.payment_type.value,
-			start_subscription : a_data.settings_tab.start_subscription
+			subscription_start_datetime : a_data.settings_tab.subscription_start_datetime.value
 		};
 		
 		const post_data = {
@@ -386,6 +394,9 @@ const submitRecurringInvoice = async () : Promise<void> => {
 
 
 onMounted(() => {
+
+	a_data.settings_tab.subscription_start_datetime.value = new Date();
+	
 	a_data.type = 'recurring';
 	data.locked = false;
 	data.cancelled = false;
