@@ -7,6 +7,8 @@
 			<form @submit.prevent="saveEmailSettingsContent">
 				<p>Place online gateway content between [{online-payment-start}] and [{online-payment-end}] tags, that content will only been displayed in email for invoices that has online gateways set.</p>
 				<input-textarea v-model="data.recurring_invoice_email_content" :rows="6" :label="`Email content to send for recurring invoice (${available_tags})`" :placeholder="`Email content to send with invoice`"></input-textarea>
+
+				<input-textarea v-model="data.recurring_invoice_email_content_invoice" :rows="6" :label="`Email content to send when invoice gets generated (${available_tags_invoice})`" :placeholder="`Email content to send with invoice`"></input-textarea>
 				
 				<input-button class="lg:float-end" btn_text="Save" icon="IconCheck" :disabled="data.btn_disabled"></input-button>
 				<div class="clear-both"></div>
@@ -28,23 +30,27 @@
 	interface EmailSettingsContentInterface{
 		show_popup:boolean,
 		recurring_invoice_email_content:string,
+		recurring_invoice_email_content_invoice:string,
 		btn_disabled:boolean,
 		loading:boolean
 	}
 
 	interface FetchedResponse{
 		recurring_invoice_email_content : string,
+		recurring_invoice_email_content_invoice : string,
 		payment_details : string
 	}
 
 	const data = reactive<EmailSettingsContentInterface>({
 		show_popup: false,
 		recurring_invoice_email_content : '',
+		recurring_invoice_email_content_invoice : '',
 		btn_disabled: false,
 		loading: false
 	});
 
-	const available_tags = 'Available tags are: {$client_first_name} ,  {$client_last_name} , {$frequency} , {$total} , {$currency} ,{$subscription_url}';
+	const available_tags = 'Available tags are: {$client_first_name} ,  {$client_last_name} , {$frequency} , {$total} ,{$subscription_url}';
+	const available_tags_invoice = 'Available tags are: {$client_first_name} ,  {$client_last_name}, {$invoice_date} , {$invoice_number}, {$total} , {$unpaid_balance}';
 
 	const saveEmailSettingsContent = async () : Promise<void> => {
 		
@@ -54,6 +60,7 @@
 			await api.post('manage-email-settings-content', {
 				data : {
 					recurring_invoice_email_content:data.recurring_invoice_email_content,
+					recurring_invoice_email_content_invoice:data.recurring_invoice_email_content_invoice,
 				},
 				key: 'recurring_invoices_email_content'
 			});
@@ -74,6 +81,7 @@
 		});
 		
 		data.recurring_invoice_email_content = response.data.recurring_invoice_email_content;
+		data.recurring_invoice_email_content_invoice = response.data.recurring_invoice_email_content_invoice;
 		
 		data.loading = false;
 
