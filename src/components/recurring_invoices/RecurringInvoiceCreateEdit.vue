@@ -281,7 +281,7 @@ const submitRecurringInvoice = async () : Promise<void> => {
 		}
 		
 
-		// router.push(`/invoices/${a_data.type}`);
+		router.push(`/invoices/recurring`);
 		
 	}catch(e){
 		a_data.active_tab_index = e.response.data.tab_switch;
