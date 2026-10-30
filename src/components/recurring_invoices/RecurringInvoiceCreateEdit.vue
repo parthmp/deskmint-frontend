@@ -5,7 +5,8 @@
 			<h1 class="text-2xl!" v-if="a_data.mode === 'create'">Create recurring invoice</h1>
 			<h1 class="text-2xl!" v-if="a_data.mode === 'edit'">Edit recurring invoice</h1>
 			<BackButton></BackButton>
-			<br>
+			<br v-if="!a_data.settings_tab.disabled">
+			<p v-if="a_data.settings_tab.disabled" class="mb-4 font-bold text-red-600! dark:text-red-400!">{{ a_data.locked_message }}</p>
 			<client-create-edit-skeleton :blocks="3" v-if="!a_data.fetched"></client-create-edit-skeleton>
 			<tabs :options="tab_options" :horizontal="true" :active_tab_index="a_data.active_tab_index" :disable_further="(a_data.mode !== 'edit')" @tab-changed="changedActiveTabValue" v-if="a_data.fetched">
 				<template v-slot:tab-0>
@@ -72,6 +73,7 @@ type SettingsTab = {
 
 interface InvoiceCreateEditInterface{
 	active_tab_index : number,
+	locked_message : string,
 	custom_fields : Array<object>,
 	payment_gateway : {
 		value:string,
@@ -81,7 +83,7 @@ interface InvoiceCreateEditInterface{
 	gateways: Array<string>,
 	btn_disabled: boolean,
 	mode: string,
-	invoice_id: number,
+	recurring_invoice_id: number,
 	fetched: boolean,
 	type: string,
 	settings_tab : SettingsTab
@@ -105,6 +107,7 @@ const timezone = common.getTimezoneString();
 
 const a_data = reactive<InvoiceCreateEditInterface>({
 	active_tab_index: 0,
+	locked_message : '',
 	custom_fields : [],
 	payment_gateway : {
 		value : '',
@@ -114,7 +117,7 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 	gateways : [],
 	btn_disabled : false,
 	mode : 'create',
-	invoice_id : 0,
+	recurring_invoice_id : 0,
 	fetched : false,
 	type : '',
 	settings_tab : {
@@ -213,7 +216,7 @@ const fetchInitialData = async () : Promise<void> =>  {
 		addNewProductRow();
 		a_data.fetched = true;
 	}else{
-		//fetchInvoice(a_data.invoice_id);
+		fetchRecurringInvoice(a_data.recurring_invoice_id);
 	}
 
 }
@@ -326,83 +329,100 @@ const submitRecurringInvoice = async () : Promise<void> => {
 
 // }
 
-// const fetchInvoice = async (invoice_id : number) : Promise<void> => {
+const fetchRecurringInvoice = async (recurring_invoice_id : number) : Promise<void> => {
 
-// 	//const timezone_offset_minutes = -(d.getTimezoneOffset());
-// 	//done
-// 	const response = await api.get('manage-invoices/'+invoice_id, {
-// 		params : {
-// 			timezone:timezone
-// 		}
-// 	});
+	//const timezone_offset_minutes = -(d.getTimezoneOffset());
+	//done
+	const response = await api.get('manage-recurring-invoices/'+recurring_invoice_id, {
+		params : {
+			timezone:timezone
+		}
+	});
 
-// 	data.locked = response.data.locked;
-// 	data.cancelled = response.data.cancelled;
-// 	data.invoice_details.client.value = response.data.invoice.first_name + ' ' + response.data.invoice.last_name;
-// 	data.invoice_details.client.client_id = response.data.invoice.client_id+'';
-// 	data.invoice_details.currency_id = response.data.invoice.currency_id;
-// 	data.invoice_details.currency_code = response.data.invoice.currency_code;
-// 	//data.invoice_details.invoice_date.value = new Date(response.data.invoice.invoice_date.replace(' ', 'T') + 'Z');
-// 	data.invoice_details.invoice_date.value = response.data.invoice.invoice_date;
+	const rd = response.data;
 
-// 	data.invoice_details.due_date.value = response.data.invoice.due_date;
-// 	data.invoice_details.invoice_number.value = response.data.invoice.invoice_number;
-// 	data.invoice_details.po_number = response.data.invoice.po_number;
-// 	data.invoice_details.global_discount_type = (response.data.invoice.discount_type === 1) ? 'percentage' : 'amount';
-
-// 	const product_rows = response.data.product_rows;
+	data.locked = response.data.locked;
 	
-// 	setTimeout(() => {
-		
-// 		data.invoice_details.global_discount = response.data.invoice.discount;
-// 		data.global_discount_amount = response.data.invoice.discount_amount;
+	data.client_locked = rd.locked_client;
+	a_data.settings_tab.disabled = data.locked;
 
-// 		product_rows.forEach(ele => {
-// 			addNewProductRow(ele);
-// 		});
+	a_data.settings_tab.payment_gateway.value = rd.invoice.payment_gateway;
+	a_data.settings_tab.frequency.value = rd.invoice.frequency;
+	a_data.settings_tab.payment_type.value = rd.invoice.payment_type;
+	a_data.settings_tab.send_email = false;
+	a_data.settings_tab.send_email_for_invoice = rd.invoice.send_invoice_email;
+
+	//a_data.settings_tab.subscription_start_datetime.value = rd.invoice.payment_type;
+	
+
+	
+
+	a_data.locked_message = response.data.locked_message;
+
+	data.cancelled = response.data.cancelled;
+	data.invoice_details.client.value = response.data.invoice.first_name + ' ' + response.data.invoice.last_name;
+	data.invoice_details.client.client_id = response.data.invoice.client_id+'';
+	data.invoice_details.currency_id = response.data.invoice.currency_id;
+	data.invoice_details.currency_code = response.data.invoice.currency_code;
+	//data.invoice_details.invoice_date.value = new Date(response.data.invoice.invoice_date.replace(' ', 'T') + 'Z');
+	data.invoice_details.invoice_date.value = response.data.invoice.invoice_date;
+
+	data.invoice_details.po_number = response.data.invoice.po_number;
+	data.invoice_details.global_discount_type = (response.data.invoice.discount_type === 1) ? 'percentage' : 'amount';
+
+	const product_rows = response.data.product_rows;
+	
+	setTimeout(() => {
 		
-// 		const saved_values = response.data.custom_fields; // raw edit values
+		data.invoice_details.global_discount = response.data.invoice.discount;
+		data.global_discount_amount = response.data.invoice.discount_amount;
+
+		product_rows.forEach(ele => {
+			addNewProductRow(ele);
+		});
 		
-// 		a_data.custom_fields = a_data.custom_fields.map(field => {
+		const saved_values = response.data.custom_fields; // raw edit values
+		
+		a_data.custom_fields = a_data.custom_fields.map(field => {
 			
-// 			const saved = saved_values.find(s => s.invoices_custom_field_id === field.id);
+			const saved = saved_values.find(s => s.recurring_invoices_custom_field_id === field.id);
 			
-// 			if(saved){
-// 				if(saved.invoices_custom_field.custom_field_type.input_type === 'multiselect'){
-// 					field.value = JSON.parse(saved.field_value);
-// 				}else{
-// 					field.value = saved.field_value;
-// 				}
+			if(saved){
+				if(saved.recurring_invoices_custom_field.custom_field_type.input_type === 'multiselect'){
+					field.value = JSON.parse(saved.field_value);
+				}else{
+					field.value = saved.field_value;
+				}
 				
-// 			}
-// 			return field;
-// 		});
+			}
+			return field;
+		});
 
-// 		data.global_subtotal = response.data.invoice.subtotal;
-// 		data.global_total = response.data.invoice.total;
-// 		data.global_tax_amount = response.data.invoice.tax_amount;
+		data.global_subtotal = response.data.invoice.subtotal;
+		data.global_total = response.data.invoice.total;
+		data.global_tax_amount = response.data.invoice.tax_amount;
 
-// 	}, 10);
+	}, 10);
 
-// 	a_data.payment_gateway.value = response.data.invoice.payment_gateway.toString();
-// 	a_data.send_invoice_in_email = false;
+	a_data.payment_gateway.value = response.data.invoice.payment_gateway.toString();
+	a_data.send_invoice_in_email = false;
 	
-// 	data.invoice_terms = response.data.invoice.invoice_terms;
-// 	a_data.fetched = true;
+	data.invoice_terms = response.data.invoice.invoice_terms;
+	a_data.fetched = true;
 	
-// }
+}
 
 
 onMounted(() => {
 
 	a_data.settings_tab.subscription_start_datetime.value = new Date();
-	
+	data.client_locked = false;
 	a_data.type = 'recurring';
 	data.locked = false;
 	data.cancelled = false;
 	if(route.path.includes('edit')){
 		a_data.mode = 'edit';
-		a_data.invoice_id = +route.params.id;
+		a_data.recurring_invoice_id = +route.params.id;
 	}
 	fetchInitialData();
 	

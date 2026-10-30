@@ -64,6 +64,7 @@ interface InvoiceCreateEditInterface{
 	global_tax_amount : string,
 	invoice_terms: string
 	locked: boolean,
+	client_locked: boolean,
 	cancelled: boolean
 }
 
@@ -109,6 +110,7 @@ const data = reactive<InvoiceCreateEditInterface>({
 	global_tax_amount : '0.00',
 	invoice_terms: '',
 	locked : false,
+	client_locked : false,
 	cancelled : false
 });
 

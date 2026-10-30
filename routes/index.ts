@@ -368,6 +368,11 @@ const routes = [
 				meta: { requires_auth: true }
 			},
 			{
+				path: '/invoices/recurring/edit/:id',
+				component: RecurringInvoiceCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
 				path: '/credits',
 				component: Credits,
 				meta: { requires_auth: true }

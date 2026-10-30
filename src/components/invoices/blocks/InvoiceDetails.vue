@@ -3,7 +3,7 @@
 		<div class="lg:col-span-4">
 			<div class="grid grid-cols-12 gap-2">
 				<div :class="{'col-span-9' : (props.type !== 'recurring'), 'col-span-10' : (props.type === 'recurring')}">
-					<input-auto-complete label="Client" :disabled="data.locked" v-model="details.client.value" @selected="handleClientSelect" :error="details.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="details.clients" :show_errors="details.client.show_errors"></input-auto-complete>
+					<input-auto-complete label="Client" :disabled="data.locked || data.client_locked" v-model="details.client.value" @selected="handleClientSelect" :error="details.client.error" endpoint="manage-invoices/fetch-clients" :required="true" placeholder="Type to select a client" :options="details.clients" :show_errors="details.client.show_errors"></input-auto-complete>
 				
 				</div>
 				<div :class="{'col-span-3' : (props.type !== 'recurring'), 'col-span-2' : (props.type === 'recurring')}">
