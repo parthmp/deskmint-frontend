@@ -59,6 +59,7 @@ type SettingsTab = {
 		value: string | Date | null,
 		error: string
 	},
+	mode : string,
 	custom_frequency_value : number,
 	none_gateway_value : number,
 	mark_invoices_paid: boolean,
@@ -67,7 +68,11 @@ type SettingsTab = {
 	start_subscription: boolean,
 	show_start_subscription: boolean,
 	btn_disabled: boolean,
-	show_custom : boolean
+	show_custom : boolean,
+	modified_charge_customer : boolean,
+	original_frequency : number,
+	original_frequency_days : number,
+	modified : boolean
 };
 
 
@@ -86,6 +91,7 @@ interface InvoiceCreateEditInterface{
 	recurring_invoice_id: number,
 	fetched: boolean,
 	type: string,
+	original_total: string,
 	settings_tab : SettingsTab
 }
 
@@ -120,6 +126,7 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 	recurring_invoice_id : 0,
 	fetched : false,
 	type : '',
+	original_total : '',
 	settings_tab : {
 		payment_gateways : [],
 		frequencies : [],
@@ -145,6 +152,7 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 			value : '',
 			error: ''
 		},
+		mode : 'create',
 		custom_frequency_value : 0,
 		none_gateway_value : 0,
 		mark_invoices_paid: false,
@@ -153,7 +161,11 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 		start_subscription: false,
 		show_start_subscription: false,
 		btn_disabled: false,
-		show_custom : false
+		show_custom : false,
+		modified_charge_customer : true,
+		original_frequency : 0,
+		original_frequency_days : 0,
+		modified : false
 	}
 });
 
@@ -179,6 +191,28 @@ watch(() => a_data?.settings_tab?.payment_gateway?.value, () => {
 		a_data.settings_tab.show_start_subscription = true;
 	}
 
+});
+
+watch(() => data.global_total, () => {
+	a_data.settings_tab.modified = false;
+	if(data.global_total.toString() !== a_data.original_total.toString() && a_data.mode === 'edit'){
+		a_data.settings_tab.modified = true;
+	}
+});
+
+watch(() => a_data.settings_tab.frequency.value, () => {
+	a_data.settings_tab.modified = false;
+	if(+a_data.settings_tab.frequency.value !== +a_data.settings_tab.original_frequency && a_data.mode === 'edit'){
+		a_data.settings_tab.modified = true;
+	}
+});
+
+
+watch(() => a_data.settings_tab.custom_frequency.value, () => {
+	a_data.settings_tab.modified = false;
+	if(+a_data.settings_tab.custom_frequency.value !== +a_data.settings_tab.original_frequency_days && a_data.mode === 'edit'){
+		a_data.settings_tab.modified = true;
+	}
 });
 
 const fetchInitialData = async () : Promise<void> =>  {
@@ -267,6 +301,7 @@ const submitRecurringInvoice = async () : Promise<void> => {
 			send_email_for_invoice : a_data.settings_tab.send_email_for_invoice,
 			mark_invoices_paid : a_data.settings_tab.mark_invoices_paid,
 			payment_type : a_data.settings_tab.payment_type.value,
+			charge_now : a_data.settings_tab.modified_charge_customer,
 			subscription_start_datetime : a_data.settings_tab.subscription_start_datetime.value
 		};
 		
@@ -280,11 +315,11 @@ const submitRecurringInvoice = async () : Promise<void> => {
 		if(a_data.mode === 'create'){
 			await api.post('manage-recurring-invoices', post_data);
 		}else{
-			//await api.patch('manage-recurring-invoices/'+a_data.invoice_id, post_data);
+			await api.patch('manage-recurring-invoices/'+a_data.recurring_invoice_id, post_data);
 		}
 		
 
-		router.push(`/invoices/recurring`);
+		//router.push(`/invoices/recurring`);
 		
 	}catch(e){
 		a_data.active_tab_index = e.response.data.tab_switch;
@@ -294,40 +329,6 @@ const submitRecurringInvoice = async () : Promise<void> => {
 
 }
 
-// const handleSettingsValidated = async (is_valid: boolean) => {
-
-	
-// 	a_data.btn_disabled = true;
-// 	try{
-
-// 		const post_settings = {
-// 			payment_gateway : a_data.payment_gateway.value,
-// 			send_invoice_in_email : a_data.send_invoice_in_email
-// 		};
-		
-// 		const post_data = {
-// 							data:data,
-// 							custom_fields:a_data.custom_fields,
-// 							settings : post_settings,
-// 							timezone : timezone
-// 						};
-
-// 		if(a_data.mode === 'create'){
-// 			await api.post('manage-invoices', post_data);
-// 		}else{
-// 			await api.patch('manage-invoices/'+a_data.invoice_id, post_data);
-// 		}
-		
-
-// 		router.push(`/invoices/${a_data.type}`);
-		
-// 	}catch(e){
-// 		a_data.active_tab_index = e.response.data.tab_switch;
-// 	}finally{
-// 		a_data.btn_disabled = false;
-// 	}
-
-// }
 
 const fetchRecurringInvoice = async (recurring_invoice_id : number) : Promise<void> => {
 
@@ -345,13 +346,22 @@ const fetchRecurringInvoice = async (recurring_invoice_id : number) : Promise<vo
 	
 	data.client_locked = rd.locked_client;
 	a_data.settings_tab.disabled = data.locked;
+	a_data.settings_tab.mode = a_data.mode;
 
 	a_data.settings_tab.payment_gateway.value = rd.invoice.payment_gateway;
 	a_data.settings_tab.frequency.value = rd.invoice.frequency;
-	a_data.settings_tab.payment_type.value = rd.invoice.payment_type;
+	a_data.settings_tab.original_frequency = rd.invoice.frequency;
+	a_data.settings_tab.payment_type.value = rd.invoice.payment_type_id;
 	a_data.settings_tab.send_email = false;
 	a_data.settings_tab.send_email_for_invoice = rd.invoice.send_invoice_email;
-
+	a_data.settings_tab.subscription_start_datetime.value = rd.invoice.next_invoice_on;
+	a_data.settings_tab.custom_frequency.value = '1';
+	if(+rd.invoice.custom_frequency_days > 0){
+		a_data.settings_tab.custom_frequency.value = rd.invoice.custom_frequency_days.toString();
+	}
+	a_data.settings_tab.show_custom = rd.show_custom;
+	a_data.settings_tab.original_frequency_days = rd.invoice.custom_frequency_days;
+	
 	//a_data.settings_tab.subscription_start_datetime.value = rd.invoice.payment_type;
 	
 
@@ -401,6 +411,7 @@ const fetchRecurringInvoice = async (recurring_invoice_id : number) : Promise<vo
 		data.global_subtotal = response.data.invoice.subtotal;
 		data.global_total = response.data.invoice.total;
 		data.global_tax_amount = response.data.invoice.tax_amount;
+		a_data.original_total = response.data.invoice.total;
 
 	}, 10);
 
