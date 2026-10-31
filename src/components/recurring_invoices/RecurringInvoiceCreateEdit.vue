@@ -72,6 +72,7 @@ type SettingsTab = {
 	modified_charge_customer : boolean,
 	original_frequency : number,
 	original_frequency_days : number,
+	is_stripe_active : boolean,
 	modified : boolean
 };
 
@@ -165,6 +166,7 @@ const a_data = reactive<InvoiceCreateEditInterface>({
 		modified_charge_customer : true,
 		original_frequency : 0,
 		original_frequency_days : 0,
+		is_stripe_active : false,
 		modified : false
 	}
 });
@@ -195,14 +197,14 @@ watch(() => a_data?.settings_tab?.payment_gateway?.value, () => {
 
 watch(() => data.global_total, () => {
 	a_data.settings_tab.modified = false;
-	if(data.global_total.toString() !== a_data.original_total.toString() && a_data.mode === 'edit'){
+	if(data.global_total.toString() !== a_data.original_total.toString() && a_data.mode === 'edit' && a_data.settings_tab.is_stripe_active){
 		a_data.settings_tab.modified = true;
 	}
 });
 
 watch(() => a_data.settings_tab.frequency.value, () => {
 	a_data.settings_tab.modified = false;
-	if(+a_data.settings_tab.frequency.value !== +a_data.settings_tab.original_frequency && a_data.mode === 'edit'){
+	if(+a_data.settings_tab.frequency.value !== +a_data.settings_tab.original_frequency && a_data.mode === 'edit' && a_data.settings_tab.is_stripe_active){
 		a_data.settings_tab.modified = true;
 	}
 });
@@ -210,7 +212,7 @@ watch(() => a_data.settings_tab.frequency.value, () => {
 
 watch(() => a_data.settings_tab.custom_frequency.value, () => {
 	a_data.settings_tab.modified = false;
-	if(+a_data.settings_tab.custom_frequency.value !== +a_data.settings_tab.original_frequency_days && a_data.mode === 'edit'){
+	if(+a_data.settings_tab.custom_frequency.value !== +a_data.settings_tab.original_frequency_days && a_data.mode === 'edit' && a_data.settings_tab.is_stripe_active){
 		a_data.settings_tab.modified = true;
 	}
 });
@@ -361,6 +363,7 @@ const fetchRecurringInvoice = async (recurring_invoice_id : number) : Promise<vo
 	}
 	a_data.settings_tab.show_custom = rd.show_custom;
 	a_data.settings_tab.original_frequency_days = rd.invoice.custom_frequency_days;
+	a_data.settings_tab.is_stripe_active = rd.is_stripe_active;
 	
 	//a_data.settings_tab.subscription_start_datetime.value = rd.invoice.payment_type;
 	
