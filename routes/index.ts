@@ -83,6 +83,7 @@ import RecurringInvoiceCreateEdit from '../src/components/recurring_invoices/Rec
 import EmailSettingsInvoiceContent from '../src/components/settings/email/blocks/EmailSettingsInvoiceContent.vue';
 import EmailSettingsPaymentRequestsContent from '../src/components/settings/email/blocks/EmailSettingsPaymentRequestsContent.vue';
 import EmailSettingsRecurringInvoiceContent from '../src/components/settings/email/blocks/EmailSettingsRecurringInvoiceContent.vue';
+import RecurringInvoiceView from '../src/components/recurring_invoices/RecurringInvoiceView.vue';
 
 const routes = [
 	{
@@ -370,6 +371,11 @@ const routes = [
 			{
 				path: '/invoices/recurring/edit/:id',
 				component: RecurringInvoiceCreateEdit,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/recurring/view/:id',
+				component: RecurringInvoiceView,
 				meta: { requires_auth: true }
 			},
 			{

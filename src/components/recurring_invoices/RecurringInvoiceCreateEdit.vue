@@ -321,7 +321,7 @@ const submitRecurringInvoice = async () : Promise<void> => {
 		}
 		
 
-		//router.push(`/invoices/recurring`);
+		router.push(`/invoices/recurring`);
 		
 	}catch(e){
 		a_data.active_tab_index = e.response.data.tab_switch;
@@ -364,6 +364,7 @@ const fetchRecurringInvoice = async (recurring_invoice_id : number) : Promise<vo
 	a_data.settings_tab.show_custom = rd.show_custom;
 	a_data.settings_tab.original_frequency_days = rd.invoice.custom_frequency_days;
 	a_data.settings_tab.is_stripe_active = rd.is_stripe_active;
+	a_data.settings_tab.mark_invoices_paid = +rd.invoice.mark_paid_automatically === 1 ? true : false;
 	
 	//a_data.settings_tab.subscription_start_datetime.value = rd.invoice.payment_type;
 	
