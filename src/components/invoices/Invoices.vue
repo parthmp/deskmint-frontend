@@ -1,5 +1,5 @@
 <template>
-	<general-index-page v-if="data.type !== ''" :page_title="'Manage invoices '+(data.type === 'archived' ? '(Archived)' : '')" :enable_arranged_columns="true" :base_url="'manage-invoices/'+data.type" :slug="`invoices/${data.type}`" :actions="['view','edit', 'delete', archive, restore, cancel_data,mark_sent, add_payment, add_credit, 'Manage Credits', 'Manage Payments','download PDF', 'send Invoice']" @action="handleAction" :add_new="(data.type === 'invoices') ? true : false" :checkbox_actions="['Delete', (data.type === 'archived' ? 'Restore' : 'Archive'), 'Export CSV']" @checkbox_action="handleCheckboxActions" :key="reload_key"></general-index-page>
+	<general-index-page v-if="data.type !== ''" :page_title="'Manage invoices '+(data.type === 'archived' ? '(Archived)' : '')" :enable_arranged_columns="true" :base_url="'manage-invoices/'+data.type" :slug="`invoices/${data.type}`" :actions="['view','edit', 'delete', archive, restore, cancel_data,mark_sent, add_payment, add_credit, 'Manage Credits', 'Manage Payments','download PDF', 'send Invoice']" @action="handleAction" :add_new="(data.type === 'invoices') ? true : false" :checkbox_actions="['Delete', (data.type === 'archived' ? 'Restore' : 'Archive'), 'Export CSV']" @checkbox_action="handleCheckboxActions" :key="reload_key" :filter_data="props.filter_data"></general-index-page>
 	
 	<Popup :header="data.popup_header" :show_popup="data.show_popup" :blocker="true" :scrollable="false" @closed="closePopup" :close_outside="true" >
 		<AddPaymentToInvoiceSkeleton v-if="data.loading"></AddPaymentToInvoiceSkeleton>
@@ -42,6 +42,8 @@ import AddPaymentToInvoiceSkeleton from '../skeletons/AddPaymentToInvoiceSkeleto
 
 const router = useRouter();
 const route = useRoute();
+
+const props = defineProps(['filter_data']);
 
 type actionObject = {
 	action:string,
@@ -439,11 +441,22 @@ const lastSegment = computed(() => {
 	return segments[segments.length - 1] || '';
 });
 
+const filterDataDefined = () : boolean => {
+	if(props.filter_data){
+		return true;
+	}
+
+	return false;
+}
+
 onMounted(() => {
 	
 	data.timezone = common.getTimezoneString();
 
 	data.type = lastSegment.value.toLocaleLowerCase();
+	if(filterDataDefined()){
+		data.type = 'invoices';
+	}
 
 });
 

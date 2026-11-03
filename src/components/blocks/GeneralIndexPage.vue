@@ -1,13 +1,13 @@
 <template>
-	<section :class="{'main-content' : !compact}">
-    <div class="card" :class="{'p-0!' : compact}">
-        <h1 class="text-2xl!">{{ page_title }}</h1>
-        <br v-if="!compact">
+	<section :class="{'main-content' : !compact && !filter_data_defined}">
+    <div class="card" :class="{'p-0!' : compact || filter_data_defined}">
+        <h1 class="text-2xl!" v-if="!filter_data_defined">{{ page_title }}</h1>
+        <br v-if="!compact && !filter_data_defined">
         <skeleton-table v-if="data_loading" :rows="10"></skeleton-table>
 		
-		<input-button v-if="enable_arranged_columns" class="lg:float-start mb-5 lg:mb-0" btn_text="Columns" icon="IconColumns3" @click="showPopup"></input-button>
+		<input-button v-if="enable_arranged_columns && !filter_data_defined" class="lg:float-start mb-5 lg:mb-0" btn_text="Columns" icon="IconColumns3" @click="showPopup" :class="{'mb-0!' : filter_data_defined}"></input-button>
 		
-		<popup v-if="enable_arranged_columns" :show_popup="show_popup" @closed="closePopup" header="Columns" :close_outside="true">
+		<popup v-if="enable_arranged_columns && !filter_data_defined" :show_popup="show_popup" @closed="closePopup" header="Columns" :close_outside="true">
 			<div>
 				<div class="mt-4 overflow-auto max-h-[550px] styled-scrollbar">
 					<p class="mb-5">Drag and drop to arrange columns, use switches to show/hide and enable/disable column search.</p>
@@ -41,7 +41,7 @@
 		</popup>
 		<span v-if="!data_loading" class="">
 			<span v-if="local_add_new">
-				<input-button v-if="!compact" class="lg:float-end" btn_text="Add New" :url="'../'+slug+'/create'" icon="IconPlus"></input-button>
+				<input-button v-if="!compact && !filter_data_defined" class="lg:float-end" btn_text="Add New" :url="'../'+slug+'/create'" icon="IconPlus"></input-button>
 			</span>
 			<div class="lg:clear-both"></div>
 			<br>
@@ -100,7 +100,7 @@
 			InputSwitch,
 			ArrangeColumnsSkeleton
 		},
-		props: ['page_title', 'enable_arranged_columns', 'base_url', 'slug', 'actions', 'compact', 'add_new', 'checkbox_actions'],
+		props: ['page_title', 'enable_arranged_columns', 'base_url', 'slug', 'actions', 'compact', 'add_new', 'checkbox_actions', 'filter_data'],
 		data(): ClientsInterface{
 			return {
 				data_loading : false,
@@ -123,6 +123,19 @@
 				this.setAddNew();
 			}
 		},
+		computed: {
+			filter_data_defined() : boolean {
+				if(!this.filter_data){
+					return false;
+				}
+
+				if(this.filter_data.length === 0){
+					return false;
+				}
+
+				return true;
+			}
+		},
 		methods : {
 			
 			setAddNew() : void {
@@ -138,12 +151,18 @@
 				}else{
 					this.dynamic_loading_status = true;
 				}
+
+				let send_filter_data = '';
+				if(this.filter_data_defined){
+					send_filter_data = btoa(JSON.stringify(this.filter_data));
+				}
 				
 				api.get(this.base_url, {
 					params: {
 						...(page_data || {}),
 						default_per_page: env.DEFAULT_TABLE_ROWS,
-						timezone: common.getBrowserTimezone()
+						timezone: common.getBrowserTimezone(),
+						filter_data:send_filter_data
 					}
 
 				}).then((response) => {

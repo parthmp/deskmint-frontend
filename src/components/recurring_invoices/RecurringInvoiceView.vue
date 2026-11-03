@@ -2,51 +2,62 @@
 	<section class="main-content">
     	<div class="card">
 			<h1 class="text-2xl!">View recurring invoice</h1>
-			<div class="lg:grid lg:grid-cols-12 lg:gap-4">
-				<div class="lg:col-span-4">
-					<p v-for="(item, z) in data.client" :key=z class="mt-3">
-						{{ item.text }} : {{ item.value }}
-					</p>
-				</div>
-				<div class="lg:col-span-4">
-					<p v-for="(item, z) in data.company" :key="z" class="mt-3">
-						{{ item.text }} : {{ item.value }}
-					</p>
-				</div>
-				<div class="lg:col-span-4">
-					<p v-for="(item, z) in data.invoice" :key="z" class="mt-3">
-						{{ item.text }} : {{ item.value }} <span v-if="item.text.toLowerCase() === 'total' || item.text.toLowerCase() === 'balance due'">{{ data.meta.currency }}</span>
-					</p>
-				</div>
-			</div>
-			<br>
-			<br>
-			<table class="table table-auto">
-				<thead>
-					<tr>
-						<th v-for="(header, z) in data.product_rows_headers" :key="z">
-							{{ header.text }}
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(element, z) in data.product_rows_data" :key="z">
-						<td v-for="(element_data, x) in element" :key="x">
-							{{ element_data }}
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<br>
-			<br>
-			<div class="lg:grid lg:grid-cols-12 lg:gap-4">
-				<div class="lg:col-span-8"></div>
-				<div class="lg:col-span-4">
-					<p v-for="(field, z) in data.totals" :key="z" class="text-xl! mb-[5px]">
-						{{ field.text }} : {{ field.value }} {{ data.meta.currency }}
-					</p>
-				</div>
-			</div>
+			<invoice-view-skeleton v-if="data.loading" class="mt-4"></invoice-view-skeleton>
+			<back-button></back-button>
+			<Tabs :horizontal="true" :options="['Info', 'Generated invoices']">
+				<template v-slot:tab-0>
+					<div class="lg:grid lg:grid-cols-12 lg:gap-4">
+						<div class="lg:col-span-4">
+							<p v-for="(item, z) in data.client" :key=z class="mt-3">
+								{{ item.text }} : {{ item.value }}
+							</p>
+						</div>
+						<div class="lg:col-span-4">
+							<p v-for="(item, z) in data.company" :key="z" class="mt-3">
+								{{ item.text }} : {{ item.value }}
+							</p>
+						</div>
+						<div class="lg:col-span-4">
+							<p v-for="(item, z) in data.invoice" :key="z" class="mt-3">
+								{{ item.text }} : {{ item.value }} <span v-if="item.text.toLowerCase() === 'total' || item.text.toLowerCase() === 'balance due'">{{ data.meta.currency }}</span>
+							</p>
+						</div>
+					</div>
+					<br>
+					<br>
+					<table class="table table-auto">
+						<thead>
+							<tr>
+								<th v-for="(header, z) in data.product_rows_headers" :key="z">
+									{{ header.text }}
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="(element, z) in data.product_rows_data" :key="z">
+								<td v-for="(element_data, x) in element" :key="x">
+									{{ element_data }}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<br>
+					<br>
+					<div class="lg:grid lg:grid-cols-12 lg:gap-4">
+						<div class="lg:col-span-8"></div>
+						<div class="lg:col-span-4">
+							<p v-for="(field, z) in data.totals" :key="z" class="text-xl! mb-[5px]">
+								<template v-if="field.text.toLowerCase() !== 'paid to date'">
+									{{ field.text }} : {{ field.value }} {{ data.meta.currency }}
+								</template>
+							</p>
+						</div>
+					</div>
+				</template>
+				<template v-slot:tab-1>
+					<Invoices :filter_data="[{filter_key:'recurring_invoice_id', filter_value: data.recurring_invoice_id}]"></Invoices>
+				</template>
+			</Tabs>
 		</div>
 	</section>
 </template>
@@ -55,6 +66,10 @@
 import { onMounted, reactive } from 'vue';
 import api from '../../helpers/api';
 import { useRoute } from 'vue-router';
+import BackButton from '../blocks/BackButton.vue';
+import Tabs from '../UI/Tabs.vue';
+import Invoices from '../invoices/Invoices.vue';
+import InvoiceViewSkeleton from '../skeletons/InvoiceViewSkeleton.vue';
 
 const route = useRoute();
 
@@ -90,21 +105,33 @@ const data = reactive({
 
 const fetchRecurringInvoice = async (recurring_invoice_id : number) : Promise<void> => {
 
-	const response = await api.get(`manage-recurring-invoices/invoice-view/${recurring_invoice_id}`);
+	data.loading = true;
 
-	const rd = response.data;
-	data.recurring_invoice = rd.invoice;
+	try{
 
-	const snapshot = rd.snapshot;
-	data.client = snapshot.client;
-	data.company = snapshot.company;
-	data.invoice = snapshot.invoice;
+		const response = await api.get(`manage-recurring-invoices/invoice-view/${recurring_invoice_id}`);
+
+		const rd = response.data;
+		data.recurring_invoice = rd.invoice;
+
+		const snapshot = rd.snapshot;
+		data.client = snapshot.client;
+		data.company = snapshot.company;
+		data.invoice = snapshot.invoice;
+		
+		data.meta = snapshot.meta;
+		data.meta = snapshot.meta;
+		data.product_rows_headers = snapshot.product_rows.headers;
+		data.product_rows_data = snapshot.product_rows.data;
+		data.totals = snapshot.totals;
+
+	}finally{
+		data.loading = false;
+	}
+
 	
-	data.meta = snapshot.meta;
-	data.meta = snapshot.meta;
-	data.product_rows_headers = snapshot.product_rows.headers;
-	data.product_rows_data = snapshot.product_rows.data;
-	data.totals = snapshot.totals;
+
+	
 
 }
 
