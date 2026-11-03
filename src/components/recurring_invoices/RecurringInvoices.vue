@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage recurring invoices" :enable_arranged_columns="true" base_url="manage-recurring-invoices" slug="invoices/recurring" :actions="['view','edit', 'delete',  send_sub_email]" @action="handleAction" :add_new="true" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
+	<general-index-page page_title="Manage recurring invoices" :enable_arranged_columns="true" base_url="manage-recurring-invoices" slug="invoices/recurring" :actions="['view','edit', 'delete',  send_sub_email, pause, start, 'Cancel']" @action="handleAction" :add_new="true" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
 	
 	
 </template>
@@ -36,7 +36,26 @@ const send_sub_email = {
 
 };
 
+const pause = {
+
+	labels: {
+		pause : [3]
+	},
+	mapped : 'status'
+
+};
+
+const start = {
+
+	labels: {
+		start : [1,2,4]
+	},
+	mapped : 'status'
+
+};
+
 const handleAction = (obj:actionObject) => {
+	console.log(obj);
 	if(obj.action.toLowerCase() === 'send'){
 		sendEmail(obj);
 	}
