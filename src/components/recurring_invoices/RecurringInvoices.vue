@@ -6,6 +6,7 @@
 
 <script lang="ts" setup>
 	
+import { toastEvents } from '../../events/toastEvents.ts';
 import api from '../../helpers/api.ts';
 import common from '../../helpers/common.ts';
 import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
@@ -55,10 +56,47 @@ const start = {
 };
 
 const handleAction = (obj:actionObject) => {
-	console.log(obj);
-	if(obj.action.toLowerCase() === 'send'){
+	
+	const action = obj.action.toLowerCase();
+
+	if(action === 'send'){
 		sendEmail(obj);
+	}else if(action === 'pause'){
+		pauseSubscription(obj);
+	}else if(action === 'start'){
+
+	}else if(action === 'cancel'){
+
 	}
+
+}
+
+const pauseSubscription = async (obj : actionObject) : Promise<void> => {
+
+	try{
+
+		if(obj.row.payment_gateway.text.toLowerCase() !== 'none'){
+			toastEvents.emit('toast', {
+				type : 'success',
+				message: `Contacting ${obj.row.payment_gateway.text}...`
+			});
+		}
+
+		const response = await api.get(`manage-recurring-invoices/pause/${obj.row.id}`);
+
+		const meta = response.data.meta;
+		
+		obj.row.status.value = +meta.status_value;
+		obj.row.status.text = meta.status_text;
+		obj.row.status.highlight = meta.highlight;
+
+		
+
+	}finally{
+
+	}
+	
+
 }
 
 const sendEmail = async (obj : actionObject) : Promise<void> => {
