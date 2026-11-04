@@ -1,5 +1,5 @@
 <template>
-	<general-index-page page_title="Manage recurring invoices" :enable_arranged_columns="true" base_url="manage-recurring-invoices" slug="invoices/recurring" :actions="['view','edit', 'delete',  send_sub_email, pause, start, 'Cancel']" @action="handleAction" :add_new="true" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
+	<general-index-page page_title="Manage recurring invoices" :enable_arranged_columns="true" base_url="manage-recurring-invoices" slug="invoices/recurring" :actions="['view','edit', 'delete',  send_sub_email, pause, start, cancel]" @action="handleAction" :add_new="true" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
 	
 	
 </template>
@@ -55,6 +55,15 @@ const start = {
 
 };
 
+const cancel = {
+
+	labels: {
+		cancel : [1,2,3,4,5,7]
+	},
+	mapped : 'status'
+
+};
+
 const handleAction = (obj:actionObject) => {
 	
 	const action = obj.action.toLowerCase();
@@ -62,16 +71,16 @@ const handleAction = (obj:actionObject) => {
 	if(action === 'send'){
 		sendEmail(obj);
 	}else if(action === 'pause'){
-		pauseSubscription(obj);
+		handleSubscriptionStatus(obj, 'pause');
 	}else if(action === 'start'){
-
+		handleSubscriptionStatus(obj, 'activate');
 	}else if(action === 'cancel'){
-
+		handleSubscriptionStatus(obj, 'cancel');
 	}
 
 }
 
-const pauseSubscription = async (obj : actionObject) : Promise<void> => {
+const handleSubscriptionStatus = async (obj : actionObject, status_call:string) : Promise<void> => {
 
 	try{
 
@@ -82,7 +91,7 @@ const pauseSubscription = async (obj : actionObject) : Promise<void> => {
 			});
 		}
 
-		const response = await api.get(`manage-recurring-invoices/pause/${obj.row.id}`);
+		const response = await api.get(`manage-recurring-invoices/${status_call}/${obj.row.id}`);
 
 		const meta = response.data.meta;
 		
