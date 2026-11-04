@@ -98,7 +98,10 @@ const handleSubscriptionStatus = async (obj : actionObject, status_call:string) 
 		obj.row.status.value = +meta.status_value;
 		obj.row.status.text = meta.status_text;
 		obj.row.status.highlight = meta.highlight;
-
+		
+		if(meta.iso_date){
+			obj.row.next_invoice_on = common.formatDate(meta.iso_date);
+		}
 		
 
 	}finally{
