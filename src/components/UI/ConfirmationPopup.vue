@@ -80,7 +80,7 @@
 
 			selfClick() : void{
 				if(this.local_close_outside){
-					this.closePopup(true);
+					this.closePopup(false);
 				}
 			},
 			
@@ -101,7 +101,7 @@
 					}
 				}
 			},
-			handleEsc(e) : void{
+			handleEsc(e : {key : string}) : void{
 				if (e.key === "Escape" && this.show_popup) {
 					this.closePopup(false);
 				}

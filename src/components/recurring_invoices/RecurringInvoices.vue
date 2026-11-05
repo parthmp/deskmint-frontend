@@ -1,32 +1,68 @@
 <template>
-	<general-index-page page_title="Manage recurring invoices" :enable_arranged_columns="true" base_url="manage-recurring-invoices" slug="invoices/recurring" :actions="['view','edit', 'delete',  send_sub_email, pause, start, cancel]" @action="handleAction" :add_new="true" :checkbox_actions="['Delete', 'Export CSV']"></general-index-page>
+	<general-index-page page_title="Manage recurring invoices" :enable_arranged_columns="true" base_url="manage-recurring-invoices" slug="invoices/recurring" :actions="['view','edit', delete_record,  send_sub_email, pause, start, cancel]" @action="handleAction" :add_new="true" :checkbox_actions="['Delete', 'Export CSV']" :key="data.key"></general-index-page>
 	
-	
+	<ConfirmationPopup :show_popup="data.show_popup" :confirm_text="'Are you sure?'" :blocker="true" :close_outside="false" :scrollable="false" @closed="(e) => closePopup(e)"></ConfirmationPopup>
 </template>
 
 <script lang="ts" setup>
 	
+import { reactive } from 'vue';
 import { toastEvents } from '../../events/toastEvents.ts';
 import api from '../../helpers/api.ts';
 import common from '../../helpers/common.ts';
 import GeneralIndexPage from '../blocks/GeneralIndexPage.vue';
+import ConfirmationPopup from '../UI/ConfirmationPopup.vue';
+
+type RowObj = {
+	company_id : number,
+	id : number,
+	payment_gateway: {
+		text : string,
+		value : number
+	},
+	status: {
+		text : string,
+		value : number,
+		highlight : string
+	},
+	sent_at : string,
+	next_invoice_on : string
+};
 
 type actionObject = {
 	action:string,
-	row : {
-		company_id : number,
-		id : number,
+	row : RowObj
+};
+
+type ReactiveType = {
+	show_popup : boolean,
+	row_object : RowObj,
+	popup_action_mode : string,
+	key: number
+};
+
+const data = reactive<ReactiveType>({
+	show_popup : false,
+	row_object : {
+
+		company_id : 0,
+		id : 0,
 		payment_gateway: {
-			value : number
+			text : '',
+			value : 0
 		},
 		status: {
-			text : string,
-			value : number,
-			highlight : string
+			text : '',
+			value : 0,
+			highlight : ''
 		},
-		sent_at : string
-	}
-};
+		sent_at : '',
+		next_invoice_on : ''
+
+	},
+	popup_action_mode : '',
+	key : 1
+});
 
 const send_sub_email = {
 
@@ -64,43 +100,60 @@ const cancel = {
 
 };
 
+const delete_record = {
+
+	labels: {
+		delete_record : [1,2,5,6,8]
+	},
+	mapped : 'status'
+
+};
+
+
+
 const handleAction = (obj:actionObject) => {
 	
 	const action = obj.action.toLowerCase();
-
+	console.log(action);
 	if(action === 'send'){
 		sendEmail(obj);
 	}else if(action === 'pause'){
-		handleSubscriptionStatus(obj, 'pause');
+		handleSubscriptionStatus(obj.row, 'pause');
 	}else if(action === 'start'){
-		handleSubscriptionStatus(obj, 'activate');
+		handleSubscriptionStatus(obj.row, 'activate');
 	}else if(action === 'cancel'){
-		handleSubscriptionStatus(obj, 'cancel');
+		data.show_popup = true;
+		data.row_object = obj.row;
+		data.popup_action_mode = 'cancel';
+	}else if(action === 'delete_record'){
+		data.show_popup = true;
+		data.row_object = obj.row;
+		data.popup_action_mode = 'delete_record'
 	}
 
 }
 
-const handleSubscriptionStatus = async (obj : actionObject, status_call:string) : Promise<void> => {
+const handleSubscriptionStatus = async (obj : RowObj, status_call:string) : Promise<void> => {
 
 	try{
 
-		if(obj.row.payment_gateway.text.toLowerCase() !== 'none'){
+		if(obj.payment_gateway.text.toLowerCase() !== 'none'){
 			toastEvents.emit('toast', {
 				type : 'success',
-				message: `Contacting ${obj.row.payment_gateway.text}...`
+				message: `Contacting ${obj.payment_gateway.text}...`
 			});
 		}
 
-		const response = await api.get(`manage-recurring-invoices/${status_call}/${obj.row.id}`);
+		const response = await api.get(`manage-recurring-invoices/${status_call}/${obj.id}`);
 
 		const meta = response.data.meta;
 		
-		obj.row.status.value = +meta.status_value;
-		obj.row.status.text = meta.status_text;
-		obj.row.status.highlight = meta.highlight;
+		obj.status.value = +meta.status_value;
+		obj.status.text = meta.status_text;
+		obj.status.highlight = meta.highlight;
 		
 		if(meta.iso_date){
-			obj.row.next_invoice_on = common.formatDate(meta.iso_date);
+			obj.next_invoice_on = common.formatDate(meta.iso_date);
 		}
 		
 
@@ -108,6 +161,24 @@ const handleSubscriptionStatus = async (obj : actionObject, status_call:string) 
 
 	}
 	
+
+}
+
+const deleteRecords = async (id: number) : Promise<void> => {
+
+	try{
+
+		await api.delete('manage-recurring-invoices', {
+			data : {
+				ids : [id]
+			}
+		});
+
+		data.key++;
+
+	}finally{
+		
+	}
 
 }
 
@@ -139,6 +210,22 @@ const sendEmail = async (obj : actionObject) : Promise<void> => {
 	}catch(e){
 		
 	}
+}
+
+const closePopup = (e : {value : boolean, closed : boolean}) => {
+
+	data.show_popup = false;
+
+	if(e.value){
+		console.log(data.row_object);
+		if(data.popup_action_mode === 'cancel'){
+			handleSubscriptionStatus(data.row_object, 'cancel');
+		}else if(data.popup_action_mode === 'delete_record'){
+			deleteRecords(data.row_object.id);
+		}
+		
+	}
+	
 }
 
 </script>
