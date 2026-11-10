@@ -84,6 +84,7 @@ import EmailSettingsInvoiceContent from '../src/components/settings/email/blocks
 import EmailSettingsPaymentRequestsContent from '../src/components/settings/email/blocks/EmailSettingsPaymentRequestsContent.vue';
 import EmailSettingsRecurringInvoiceContent from '../src/components/settings/email/blocks/EmailSettingsRecurringInvoiceContent.vue';
 import RecurringInvoiceView from '../src/components/recurring_invoices/RecurringInvoiceView.vue';
+import InvoiceRefund from '../src/components/invoices/InvoiceRefund.vue';
 
 const routes = [
 	{
@@ -356,6 +357,11 @@ const routes = [
 			{
 				path: '/invoices/archived/manage-payments/:id',
 				component: InvoiceManagePayments,
+				meta: { requires_auth: true }
+			},
+			{
+				path: '/invoices/invoices/refund/:id',
+				component: InvoiceRefund,
 				meta: { requires_auth: true }
 			},
 			{

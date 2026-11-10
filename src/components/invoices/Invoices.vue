@@ -1,5 +1,5 @@
 <template>
-	<general-index-page v-if="data.type !== ''" :page_title="'Manage invoices '+(data.type === 'archived' ? '(Archived)' : '')" :enable_arranged_columns="true" :base_url="'manage-invoices/'+data.type" :slug="`invoices/${data.type}`" :actions="['view','edit', 'delete', archive, restore, cancel_data,mark_sent, add_payment, add_credit, 'Manage Credits', 'Manage Payments','download PDF', 'send Invoice']" @action="handleAction" :add_new="(data.type === 'invoices') ? true : false" :checkbox_actions="['Delete', (data.type === 'archived' ? 'Restore' : 'Archive'), 'Export CSV']" @checkbox_action="handleCheckboxActions" :key="reload_key" :filter_data="props.filter_data"></general-index-page>
+	<general-index-page v-if="data.type !== ''" :page_title="'Manage invoices '+(data.type === 'archived' ? '(Archived)' : '')" :enable_arranged_columns="true" :base_url="'manage-invoices/'+data.type" :slug="`invoices/${data.type}`" :actions="['view','edit', 'delete', archive, restore, cancel_data,mark_sent, add_payment, add_credit, 'Manage Credits', 'Manage Payments', refund,'download PDF', 'send Invoice']" @action="handleAction" :add_new="(data.type === 'invoices') ? true : false" :checkbox_actions="['Delete', (data.type === 'archived' ? 'Restore' : 'Archive'), 'Export CSV']" @checkbox_action="handleCheckboxActions" :key="reload_key" :filter_data="props.filter_data"></general-index-page>
 	
 	<Popup :header="data.popup_header" :show_popup="data.show_popup" :blocker="true" :scrollable="false" @closed="closePopup" :close_outside="true" >
 		<AddPaymentToInvoiceSkeleton v-if="data.loading"></AddPaymentToInvoiceSkeleton>
@@ -204,6 +204,13 @@ const restore = {
 	mapped : 'is_archived'
 };
 
+const refund = {
+	labels : {
+		refund : [4,5]
+	},
+	mapped : 'status'
+};
+
 const handleAction = (obj:actionObject) => {
 	
 	temp_obj = obj;
@@ -263,6 +270,8 @@ const handleAction = (obj:actionObject) => {
 		markArchived([+obj.row.id], 1);
 	}else if(obj.action.toLowerCase() === 'restore'){
 		markArchived([+obj.row.id], 0);
+	}else if(obj.action.toLowerCase() === 'refund'){
+		router.push(`/invoices/invoices/refund/${obj.row.id}`);
 	}
 }
 

@@ -114,7 +114,7 @@ const delete_record = {
 const handleAction = (obj:actionObject) => {
 	
 	const action = obj.action.toLowerCase();
-	console.log(action);
+	
 	if(action === 'send'){
 		sendEmail(obj);
 	}else if(action === 'pause'){
